@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component name="InspectionProjectProfileManager">
+  <profile version="1.0">
+    <option name="myName" value="Project Default" />
+    <inspection_tool class="DartAnalysisOptionsFile" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="DartCodeInsightFixMe" enabled="true" level="WEAK WARNING" enabled_by_default="true" />
+    <inspection_tool class="DartMissingReturn" enabled="true" level="ERROR" enabled_by_default="true" />
+    <inspection_tool class="DartUnreachableCode" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="DartUnusedImport" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="TodoComment" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="UnusedProperty" enabled="true" level="WARNING" enabled_by_default="true" />
+  </profile>
+</component>
