@@ -62,11 +62,16 @@ flutter run
 
 #### Development Environment
 ```bash
+# Setup linting after git pull
+make setup-linting
+
 # Run tests
 flutter test
 flutter test integration_test
 
 # Code analysis
+make analyze
+# or
 dart analyze
 ```
 
