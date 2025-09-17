@@ -1,0 +1,16 @@
+# <AIDD-PRIVACY>
+#
+# You might want to ignore the following files and directories:
+#
+aidd
+aidd* # AIDD installation folder
+aidd/
+aidd-docs/
+aidd-generated/
+
+# </AIDD-PRIVACY>
+
+.idea
+.claude
+.mcp.json
+CLAUDE.md
