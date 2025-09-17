@@ -1,0 +1,351 @@
+name: CI for push
+
+on:
+  push:
+    branches:
+      - "**"
+  workflow_dispatch:
+
+env:
+  JAVA_VERSION: "17"
+  FLUTTER_VERSION: "3.35.4"
+  PUB_CACHE: ${{ github.workspace }}/.pub-cache
+
+jobs:
+  # Job de préparation - réchauffe tous les caches
+  prepare:
+    name: Prepare & Cache
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    outputs:
+      flutter-cache-key: ${{ steps.cache-keys.outputs.flutter-key }}
+      pub-cache-key: ${{ steps.cache-keys.outputs.pub-key }}
+      dart-cache-key: ${{ steps.cache-keys.outputs.dart-key }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Generate cache keys
+        id: cache-keys
+        run: |
+          echo "flutter-key=flutter-${{ env.FLUTTER_VERSION }}-${{ runner.os }}" >> $GITHUB_OUTPUT
+          echo "pub-key=pub-${{ hashFiles('**/pubspec.yaml', '**/pubspec.lock') }}" >> $GITHUB_OUTPUT
+          echo "dart-key=dart-${{ hashFiles('**/*.dart', 'analysis_options.yaml') }}" >> $GITHUB_OUTPUT
+
+      - name: Cache Flutter SDK
+        uses: actions/cache@v4
+        with:
+          path: |
+            /opt/hostedtoolcache/flutter
+            ~/.flutter
+          key: ${{ steps.cache-keys.outputs.flutter-key }}
+          restore-keys: |
+            flutter-${{ env.FLUTTER_VERSION }}
+            flutter-
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          cache: true
+
+      - name: Cache pub dependencies
+        uses: actions/cache@v4
+        with:
+          path: |
+            ${{ env.PUB_CACHE }}
+            ~/.pub-cache
+            .dart_tool/package_config.json
+          key: ${{ steps.cache-keys.outputs.pub-key }}
+          restore-keys: |
+            pub-${{ hashFiles('**/pubspec.yaml') }}
+            pub-
+
+      - name: Get dependencies (warm cache)
+        run: |
+          flutter pub get
+          flutter pub deps
+
+      - name: Cache Dart analysis
+        uses: actions/cache@v4
+        with:
+          path: |
+            .dart_tool/analysis_cache
+            .packages
+          key: ${{ steps.cache-keys.outputs.dart-key }}
+          restore-keys: |
+            dart-analysis-
+
+      - name: Pre-warm analyzer cache
+        run: |
+          dart analyze --no-fatal-warnings . || true
+          dart format --output=none . || true
+
+  lint:
+    name: Lint & Format
+    runs-on: ubuntu-latest
+    needs: prepare
+    timeout-minutes: 10
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Restore Flutter cache
+      uses: actions/cache/restore@v4
+      with:
+        path: |
+          /opt/hostedtoolcache/flutter
+          ~/.flutter
+        key: ${{ needs.prepare.outputs.flutter-cache-key }}
+
+    - name: Setup Flutter
+      uses: subosito/flutter-action@v2
+      with:
+        channel: stable
+        flutter-version: ${{ env.FLUTTER_VERSION }}
+        cache: true
+
+    - name: Verify Flutter version
+      run: |
+        flutter --version
+        if ! flutter --version | grep -q "${{ env.FLUTTER_VERSION }}"; then
+          echo "Error: Expected Flutter version ${{ env.FLUTTER_VERSION }}"
+          exit 1
+        fi
+        echo "✅ Flutter version ${{ env.FLUTTER_VERSION }} verified"
+
+    - name: Restore pub cache
+      uses: actions/cache/restore@v4
+      with:
+        path: |
+          ${{ env.PUB_CACHE }}
+          ~/.pub-cache
+          .dart_tool/package_config.json
+        key: ${{ needs.prepare.outputs.pub-cache-key }}
+
+    - name: Restore analysis cache
+      uses: actions/cache/restore@v4
+      with:
+        path: |
+          .dart_tool/analysis_cache
+          .packages
+        key: ${{ needs.prepare.outputs.dart-cache-key }}
+
+    - name: Get dependencies
+      run: flutter pub get
+      
+    - name: Verify formatting
+      run: dart format --output=none --set-exit-if-changed .
+      
+    - name: Analyze project source
+      run: flutter analyze --fatal-infos --fatal-warnings
+
+    - name: Run custom lints
+      if: steps.flutter-check.outputs.flutter_project == 'true'
+      run: flutter analyze
+
+    - name: Validate linting configuration
+      run: |
+        echo "Validating analysis_options.yaml exists..."
+        if [ -f "analysis_options.yaml" ]; then
+          echo "✅ analysis_options.yaml found"
+        else
+          echo "❌ analysis_options.yaml missing"
+          exit 1
+        fi
+
+    - name: Check for unused dependencies
+      run: |
+        flutter pub deps --json | jq '.packages[] | select(.kind == "direct") | .name' > used_deps.txt
+        grep -r "import 'package:" lib/ | sed "s/.*package:\([^\/]*\).*/\1/" | sort -u > imported_deps.txt
+        if ! diff -q used_deps.txt imported_deps.txt > /dev/null; then
+          echo "Unused dependencies detected"
+          echo "Used deps:"
+          cat used_deps.txt
+          echo "Imported deps:"
+          cat imported_deps.txt
+          exit 1
+        fi
+      continue-on-error: true
+
+    - name: Check for outdated dependencies
+      run: flutter pub outdated --exit-code
+      continue-on-error: true
+
+    - name: Pub audit for security vulnerabilities
+      run: dart pub deps --json | dart pub audit
+      continue-on-error: true
+
+    - name: Check file structure
+      run: |
+        # Verify standard Flutter project structure
+        required_dirs=("lib" "test" "integration_test" ".github/workflows")
+        for dir in "${required_dirs[@]}"; do
+          if [ ! -d "$dir" ]; then
+            echo "Missing required directory: $dir"
+            exit 1
+          fi
+        done
+        
+        # Check for proper test structure
+        if [ ! -f "test/helpers/test_helpers.dart" ]; then
+          echo "Missing test helpers"
+          exit 1
+        fi
+        
+        echo "Project structure validation passed"
+
+    - name: Security scan
+      run: |
+        # Check for common security issues
+        echo "Running basic security checks..."
+        
+        # Check for hardcoded secrets (improved patterns to avoid false positives)
+        # Look for actual hardcoded values, not just variable names or comments
+        echo "Checking for hardcoded secrets..."
+        
+        # Check for hardcoded API keys (actual values, not variable names)
+        if grep -r "api_key\s*=\s*['\"][^'\"]\+['\"]" lib/ --include="*.dart"; then
+          echo "Hardcoded API key found"
+          exit 1
+        fi
+        
+        # Check for hardcoded passwords (actual values)
+        if grep -r "password\s*=\s*['\"][^'\"]\+['\"]" lib/ --include="*.dart"; then
+          echo "Hardcoded password found"
+          exit 1
+        fi
+        
+        # Check for actual secret values (not just the word "secret")
+        if grep -r "secret\s*=\s*['\"][^'\"]\+['\"]" lib/ --include="*.dart"; then
+          echo "Hardcoded secret found"
+          exit 1
+        fi
+        
+        # Check for actual token values (not just variable names or function parameters)
+        if grep -r "token\s*=\s*['\"][^'\"]\+['\"]" lib/ --include="*.dart" | grep -v "const.*=.*token" | grep -v "keyApiToken"; then
+          echo "Hardcoded token found"
+          exit 1
+        fi
+        
+        # Check for common secret patterns
+        if grep -rE "(sk_|pk_|bearer\s+)[a-zA-Z0-9]{20,}" lib/ --include="*.dart"; then
+          echo "Potential API key pattern found"
+          exit 1
+        fi
+        
+        # Check for debug prints in production code
+        if grep -r "print(" lib/ --include="*.dart"; then
+          echo "Debug print statements found in lib/"
+          exit 1
+        fi
+        
+        echo "Security checks passed"
+
+    - name: Documentation check
+      run: |
+        # Check for missing documentation
+        echo "Checking documentation..."
+        
+        required_files=("README.md" "LICENSE" "SECURITY.md" "PRIVACY.md")
+        for file in "${required_files[@]}"; do
+          if [ ! -f "$file" ]; then
+            echo "Missing required file: $file"
+            exit 1
+          fi
+        done
+        
+        echo "Documentation check passed"
+
+
+  test:
+    name: Tests & Coverage
+    needs: [prepare]
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Restore Flutter cache
+      uses: actions/cache/restore@v4
+      with:
+        path: |
+          /opt/hostedtoolcache/flutter
+          ~/.flutter
+        key: ${{ needs.prepare.outputs.flutter-cache-key }}
+
+    - name: Setup Flutter
+      uses: subosito/flutter-action@v2
+      with:
+        flutter-version: ${{ env.FLUTTER_VERSION }}
+        cache: true
+
+
+    - name: Restore pub cache
+      uses: actions/cache/restore@v4
+      with:
+        path: |
+          ${{ env.PUB_CACHE }}
+          ~/.pub-cache
+          .dart_tool/package_config.json
+        key: ${{ needs.prepare.outputs.pub-cache-key }}
+
+    - name: Restore analysis cache
+      uses: actions/cache/restore@v4
+      with:
+        path: |
+          .dart_tool/analysis_cache
+          .packages
+        key: ${{ needs.prepare.outputs.dart-cache-key }}
+
+    - name: Get dependencies
+      run: flutter pub get
+
+    - name: Cache test files
+      uses: actions/cache@v4
+      with:
+        path: |
+          test/.test_cache
+          .dart_tool/test
+        key: test-cache-${{ hashFiles('test/**/*.dart') }}
+
+    - name: Run tests
+      run: flutter test --coverage --test-randomize-ordering-seed random
+
+    - name: Upload coverage reports
+      uses: actions/upload-artifact@v4
+      with:
+        name: coverage-report
+        path: coverage/
+        retention-days: 7
+
+    - name: Check test coverage
+      run: |
+        if [ -f coverage/lcov.info ]; then
+          total_lines=$(grep -E "^DA:" coverage/lcov.info | wc -l)
+          covered_lines=$(grep -E "^DA:" coverage/lcov.info | grep -E ",1$|,[2-9][0-9]*$" | wc -l)
+          if [ $total_lines -gt 0 ]; then
+            coverage=$((covered_lines * 100 / total_lines))
+            echo "Test coverage: ${coverage}%"
+            if [ $coverage -lt 60 ]; then
+              echo "Warning: Test coverage is below 60%"
+            fi
+          fi
+        fi
+
+  integration:
+    name: All Checks Passed
+    needs: [lint, test]
+    runs-on: ubuntu-latest
+    if: success()
+
+    steps:
+    - name: All checks passed
+      run: |
+        echo "✅ All CI checks passed successfully"
+        echo "- Linting: Passed"
+        echo "- Tests: Passed"

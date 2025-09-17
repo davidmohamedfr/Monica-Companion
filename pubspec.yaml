@@ -1,0 +1,44 @@
+name: monica_mobile_app
+description: A mobile companion application for Monica PRM
+publish_to: 'none'
+version: 0.0.1
+
+environment:
+  sdk: '>=3.8.0 <4.0.0'
+  flutter: ">=3.35.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  
+  # Core dependencies for future implementation
+  cupertino_icons: ^1.0.2
+  equatable: ^2.0.5
+  
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  integration_test:
+    sdk: flutter
+  
+  # Development and testing tools
+  flutter_lints: ^6.0.0
+  build_runner: ^2.4.7
+  mocktail: ^1.0.0
+  
+  # Code generation (for future use)
+  json_annotation: ^4.8.1
+  json_serializable: ^6.7.1
+  
+flutter:
+  uses-material-design: true
+  
+  # Assets placeholder
+  # assets:
+  #   - images/
+  
+  # Fonts placeholder  
+  # fonts:
+  #   - family: Custom
+  #     fonts:
+  #       - asset: fonts/Custom-Regular.ttf

@@ -1,0 +1,37 @@
+pre-commit:
+  commands:
+    # Dart/Flutter linting
+    dart-format:
+      glob: "*.dart"
+      run: dart format {staged_files} && git add {staged_files}
+      stage_fixed: true
+    
+    dart-analyze:
+      glob: "*.dart"
+      run: dart analyze --fatal-warnings {staged_files}
+
+post-merge:
+  commands:
+    # Update IDE configurations after pull
+    update-ide-config:
+      run: |
+        echo "Updating IDE configurations..."
+        # Ensure VS Code settings are applied
+        if [ -f ".vscode/settings.json" ]; then
+          echo "VS Code settings updated"
+        fi
+        # Ensure Android Studio settings are applied
+        if [ -d ".idea" ]; then
+          echo "Android Studio settings updated"
+        fi
+        echo "Linting configuration deployed successfully"
+
+post-checkout:
+  commands:
+    # Check for Flutter dependencies after branch switch
+    flutter-deps:
+      run: |
+        if [ -f "pubspec.yaml" ]; then
+          echo "Getting Flutter dependencies..."
+          flutter pub get || echo "Flutter not available, skipping pub get"
+        fi

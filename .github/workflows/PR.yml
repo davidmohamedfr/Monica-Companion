@@ -1,0 +1,231 @@
+name: CI for Pull Request
+
+on:
+  pull_request:
+    branches:
+    - main
+    - dev
+  workflow_run:
+    workflows:
+      - push
+    types:
+      - completed
+  workflow_dispatch:
+
+env:
+  JAVA_VERSION: "17"
+  FLUTTER_VERSION: "3.35.4"
+  PUB_CACHE: ${{ github.workspace }}/.pub-cache
+
+jobs:
+  # Job de préparation - réchauffe tous les caches
+  prepare:
+    name: Prepare & Cache
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    outputs:
+      flutter-cache-key: ${{ steps.cache-keys.outputs.flutter-key }}
+      pub-cache-key: ${{ steps.cache-keys.outputs.pub-key }}
+      dart-cache-key: ${{ steps.cache-keys.outputs.dart-key }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Generate cache keys
+        id: cache-keys
+        run: |
+          echo "flutter-key=flutter-${{ env.FLUTTER_VERSION }}-${{ runner.os }}" >> $GITHUB_OUTPUT
+          echo "pub-key=pub-${{ hashFiles('**/pubspec.yaml', '**/pubspec.lock') }}" >> $GITHUB_OUTPUT
+          echo "dart-key=dart-${{ hashFiles('**/*.dart', 'analysis_options.yaml') }}" >> $GITHUB_OUTPUT
+
+      - name: Cache Flutter SDK
+        uses: actions/cache@v4
+        with:
+          path: |
+            /opt/hostedtoolcache/flutter
+            ~/.flutter
+          key: ${{ steps.cache-keys.outputs.flutter-key }}
+          restore-keys: |
+            flutter-${{ env.FLUTTER_VERSION }}
+            flutter-
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          cache: true
+
+      - name: Cache pub dependencies
+        uses: actions/cache@v4
+        with:
+          path: |
+            ${{ env.PUB_CACHE }}
+            ~/.pub-cache
+            .dart_tool/package_config.json
+          key: ${{ steps.cache-keys.outputs.pub-key }}
+          restore-keys: |
+            pub-${{ hashFiles('**/pubspec.yaml') }}
+            pub-
+
+      - name: Get dependencies (warm cache)
+        run: |
+          flutter pub get
+          flutter pub deps
+
+      - name: Cache Dart analysis
+        uses: actions/cache@v4
+        with:
+          path: |
+            .dart_tool/analysis_cache
+            .packages
+          key: ${{ steps.cache-keys.outputs.dart-key }}
+          restore-keys: |
+            dart-analysis-
+
+      - name: Pre-warm analyzer cache
+        run: |
+          dart analyze --no-fatal-warnings . || true
+          dart format --output=none . || true
+
+  integration_test:
+    name: Integration Tests
+    runs-on: ubuntu-latest
+    needs: [prepare]
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Restore Flutter cache
+      uses: actions/cache/restore@v4
+      with:
+        path: |
+          /opt/hostedtoolcache/flutter
+          ~/.flutter
+        key: ${{ needs.prepare.outputs.flutter-cache-key }}
+
+    - name: Setup Flutter
+      uses: subosito/flutter-action@v2
+      with:
+        flutter-version: ${{ env.FLUTTER_VERSION }}
+        cache: true
+
+    - name: Restore pub cache
+      uses: actions/cache/restore@v4
+      with:
+        path: |
+          ${{ env.PUB_CACHE }}
+          ~/.pub-cache
+          .dart_tool/package_config.json
+        key: ${{ needs.prepare.outputs.pub-cache-key }}
+
+    - name: Restore analysis cache
+      uses: actions/cache/restore@v4
+      with:
+        path: |
+          .dart_tool/analysis_cache
+          .packages
+        key: ${{ needs.prepare.outputs.dart-cache-key }}
+
+    - name: Get dependencies
+      run: flutter pub get
+
+    - name: Enable KVM group perms
+      run: |
+        echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+        sudo udevadm control --reload-rules
+        sudo udevadm trigger --name-match=kvm
+        
+    - name: Setup Android SDK
+      uses: android-actions/setup-android@v3
+      
+    - name: AVD cache
+      uses: actions/cache@v3
+      id: avd-cache
+      with:
+        path: |
+          ~/.android/avd/*
+          ~/.android/adb*
+        key: avd-api-level-30
+        
+    - name: Create AVD and generate snapshot for caching
+      if: steps.avd-cache.outputs.cache-hit != 'true'
+      uses: reactivecircus/android-emulator-runner@v2
+      with:
+        api-level: 30
+        arch: x86_64
+        target: google_apis
+        force-avd-creation: false
+        emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+        disable-animations: false
+        script: echo "Generated AVD snapshot for caching."
+        
+    - name: Run integration tests
+      uses: reactivecircus/android-emulator-runner@v2
+      with:
+        api-level: 30
+        arch: x86_64
+        target: google_apis
+        emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+        disable-animations: true
+        script: flutter test integration_test/
+
+  build-android:
+    name: Build Android APK
+    runs-on: ubuntu-latest
+    needs: [integration_test]
+    timeout-minutes: 30
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup Java
+      uses: actions/setup-java@v4
+      with:
+        distribution: 'temurin'
+        java-version: ${{ env.JAVA_VERSION }}
+        cache: 'gradle'
+
+    - name: Setup Flutter
+      uses: subosito/flutter-action@v2
+      with:
+        channel: stable
+        flutter-version: ${{ env.FLUTTER_VERSION }}
+        cache: true
+
+    - name: Get dependencies
+      run: flutter pub get
+
+    - name: Build Android APK
+      run: flutter build apk --debug --build-number=${{ github.run_number }} --dart-define=MIN_SDK_VERSION=24
+
+    - name: Upload APK artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: android-apk-debug
+        path: build/app/outputs/flutter-apk/app-debug.apk
+        retention-days: 7
+
+    - name: Verify APK size
+      run: |
+        APK_SIZE=$(stat -c%s build/app/outputs/flutter-apk/app-debug.apk)
+        APK_SIZE_MB=$((APK_SIZE / 1048576))
+        echo "APK size: ${APK_SIZE_MB} MB"
+        if [ $APK_SIZE_MB -gt 100 ]; then
+          echo "Warning: APK size exceeds 100 MB"
+        fi
+
+  integration:
+    name: All Checks Passed
+    needs: [integration_test, build-android]
+    runs-on: ubuntu-latest
+    if: success()
+
+    steps:
+    - name: All checks passed
+      run: |
+        echo "✅ All CI checks passed successfully"
+        echo "- Integration Tests: Passed"
+        echo "- Android Build: Passed"

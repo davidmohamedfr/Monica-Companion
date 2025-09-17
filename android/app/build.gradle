@@ -1,0 +1,93 @@
+plugins {
+    id "com.android.application"
+    id "kotlin-android"
+    id "dev.flutter.flutter-gradle-plugin"
+}
+
+android {
+    namespace = "com.monica.app"
+    compileSdk = flutter.compileSdkVersion
+    ndkVersion = flutter.ndkVersion
+
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_1_8
+        targetCompatibility = JavaVersion.VERSION_1_8
+    }
+
+    kotlinOptions {
+        jvmTarget = JavaVersion.VERSION_1_8
+    }
+
+    defaultConfig {
+        applicationId = "com.monica.app"
+        minSdkVersion = flutter.minSdkVersion
+        targetSdkVersion = flutter.targetSdkVersion
+        versionCode = flutter.versionCode
+        versionName = flutter.versionName
+        resValue "string", "app_name", "Monica Dev"
+        buildConfigField "String", "FLAVOR", '"development"'
+        buildConfigField "String", "API_BASE_URL", '"https://dev-api.monica.com"'
+    }
+
+    buildFeatures {
+        buildConfig = true
+    }
+
+    // Temporarily disable flavors for integration tests to work
+    // flavorDimensions = ["environment"]
+
+    /*
+    productFlavors {
+        dev {
+            dimension "environment"
+            applicationIdSuffix ".dev"
+            versionNameSuffix "-dev"
+            resValue "string", "app_name", "Monica Dev"
+            buildConfigField "String", "FLAVOR", '"development"'
+            buildConfigField "String", "API_BASE_URL", '"https://dev-api.monica.com"'
+        }
+
+        // Staging and prod flavors commented out for now - uncomment when ready
+        staging {
+            dimension "environment"
+            applicationIdSuffix ".staging"
+            versionNameSuffix "-staging"
+            resValue "string", "app_name", "Monica Staging"
+            buildConfigField "String", "FLAVOR", '"staging"'
+            buildConfigField "String", "API_BASE_URL", '"https://staging-api.monica.com"'
+        }
+
+        prod {
+            dimension "environment"
+            resValue "string", "app_name", "Monica"
+            buildConfigField "String", "FLAVOR", '"production"'
+            buildConfigField "String", "API_BASE_URL", '"https://api.monica.com"'
+        }
+    }
+    */
+
+    buildTypes {
+        debug {
+            applicationIdSuffix '.debug'
+            debuggable true
+        }
+        
+        profile {
+            debuggable false
+        }
+        
+        release {
+            debuggable false
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+}
+
+flutter {
+    source = "../.."
+}
+
+dependencies {
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+}

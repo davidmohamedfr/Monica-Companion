@@ -1,0 +1,30 @@
+# Flutter/Dart/Pub related
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.packages
+pubspec.lock
+build/
+
+# IDE/Editor specific files
+.idea/
+*.iml
+*.ipr
+*.iws
+.vscode/
+lefthook-local.yml
+
+# Platform-specific build artifacts
+android/.gradle/
+android/app/build/
+android/local.properties
+ios/Flutter/
+ios/Pods/
+ios/.generated/
+
+# Miscellaneous
+*.DS_Store
+*.log
+*.tmp
+*.swp
+

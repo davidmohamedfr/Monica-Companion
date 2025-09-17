@@ -1,0 +1,35 @@
+# Template for lefthook-local.yml
+# Copy this file to lefthook-local.yml and customize as needed
+# 
+# This file allows local customization while ensuring the main 
+# lefthook.yml configuration still runs
+
+pre-commit:
+  commands:
+    # Your local pre-commit commands here (run first)
+    # Example:
+    # local-check:
+    #   run: echo "Running local checks..."
+    
+    # Call main lefthook configuration AFTER local commands
+    call-main-lefthook:
+      run: lefthook run pre-commit --config lefthook.yml
+      priority: 100  # Run last (higher priority = later execution)
+
+post-merge:
+  commands:
+    # Your local post-merge commands here
+    
+    # Call main lefthook configuration
+    call-main-lefthook:
+      run: lefthook run post-merge --config lefthook.yml
+      priority: 100
+
+post-checkout:
+  commands:
+    # Your local post-checkout commands here
+    
+    # Call main lefthook configuration  
+    call-main-lefthook:
+      run: lefthook run post-checkout --config lefthook.yml
+      priority: 100
