@@ -2,15 +2,17 @@
 #
 # You might want to ignore the following files and directories:
 #
+.claude
+.mcp.json
 aidd
 aidd* # AIDD installation folder
 aidd/
 aidd-docs/
 aidd-generated/
+CLAUDE.md
 
 # </AIDD-PRIVACY>
 
 .idea
-.claude
-.mcp.json
-CLAUDE.md
+.vscode
+lefthook-local.yml
