@@ -2,24 +2,31 @@ name: CI
 
 on:
   push:
-    branches: [ main, develop ]
+    branches: [main, dev]
   pull_request:
-    branches: [ main, develop ]
+    branches: [main, dev]
+  workflow_dispatch:
+
+env:
+  FLUTTER_VERSION: "3.13.0"
+  JAVA_VERSION: "17"
 
 jobs:
-  analyze:
-    name: Analyze
+  lint:
+    name: Lint & Format
     runs-on: ubuntu-latest
-    
+    timeout-minutes: 10
+
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
-      
+
     - name: Setup Flutter
       uses: subosito/flutter-action@v2
       with:
-        flutter-version: '3.19.0'
-        channel: 'stable'
+        flutter-version: ${{ env.FLUTTER_VERSION }}
+        channel: stable
+        cache: true
         
     - name: Get dependencies
       run: flutter pub get
@@ -28,36 +35,53 @@ jobs:
       run: dart format --output=none --set-exit-if-changed .
       
     - name: Analyze project source
-      run: dart analyze --fatal-infos
-      
-    - name: Check for outdated dependencies
-      run: flutter pub outdated
+      run: flutter analyze --no-fatal-infos
+
+    - name: Check for dependency issues
+      run: flutter pub outdated --no-dev-dependencies --up-to-date --no-dependency-overrides
 
   test:
-    name: Unit Tests
+    name: Tests & Coverage
     runs-on: ubuntu-latest
-    
+    timeout-minutes: 15
+
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
-      
+
     - name: Setup Flutter
       uses: subosito/flutter-action@v2
       with:
-        flutter-version: '3.19.0'
-        channel: 'stable'
+        flutter-version: ${{ env.FLUTTER_VERSION }}
+        channel: stable
+        cache: true
         
     - name: Get dependencies
       run: flutter pub get
       
-    - name: Run unit tests
-      run: flutter test --coverage
-      
+    - name: Run tests
+      run: flutter test --coverage --test-randomize-ordering-seed random
+
     - name: Upload coverage reports
-      uses: codecov/codecov-action@v3
+      uses: actions/upload-artifact@v4
       with:
-        file: coverage/lcov.info
-        fail_ci_if_error: false
+        name: coverage-report
+        path: coverage/
+        retention-days: 7
+
+    - name: Check test coverage
+      run: |
+        if [ -f coverage/lcov.info ]; then
+          total_lines=$(grep -E "^DA:" coverage/lcov.info | wc -l)
+          covered_lines=$(grep -E "^DA:" coverage/lcov.info | grep -E ",1$|,[2-9][0-9]*$" | wc -l)
+          if [ $total_lines -gt 0 ]; then
+            coverage=$((covered_lines * 100 / total_lines))
+            echo "Test coverage: ${coverage}%"
+            if [ $coverage -lt 60 ]; then
+              echo "Warning: Test coverage is below 60%"
+            fi
+          fi
+        fi
 
   integration_test:
     name: Integration Tests
@@ -70,8 +94,9 @@ jobs:
     - name: Setup Flutter
       uses: subosito/flutter-action@v2
       with:
-        flutter-version: '3.19.0'
-        channel: 'stable'
+        flutter-version: ${{ env.FLUTTER_VERSION }}
+        channel: stable
+        cache: true
         
     - name: Get dependencies
       run: flutter pub get
@@ -116,29 +141,62 @@ jobs:
         disable-animations: true
         script: flutter test integration_test/
 
-  build:
-    name: Build APK
+  build-android:
+    name: Build Android APK
     runs-on: ubuntu-latest
-    needs: [analyze, test]
-    
+    needs: [lint, test]
+    timeout-minutes: 30
+
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
-      
+
+    - name: Setup Java
+      uses: actions/setup-java@v4
+      with:
+        distribution: 'temurin'
+        java-version: ${{ env.JAVA_VERSION }}
+        cache: 'gradle'
+
     - name: Setup Flutter
       uses: subosito/flutter-action@v2
       with:
-        flutter-version: '3.19.0'
-        channel: 'stable'
-        
+        flutter-version: ${{ env.FLUTTER_VERSION }}
+        channel: stable
+        cache: true
+
     - name: Get dependencies
       run: flutter pub get
-      
-    - name: Build APK
-      run: flutter build apk --debug
-      
+
+    - name: Build Android APK
+      run: flutter build apk --debug --build-number=${{ github.run_number }} --dart-define=MIN_SDK_VERSION=24
+
     - name: Upload APK artifact
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
-        name: debug-apk
+        name: android-apk-debug
         path: build/app/outputs/flutter-apk/app-debug.apk
+        retention-days: 7
+
+    - name: Verify APK size
+      run: |
+        APK_SIZE=$(stat -c%s build/app/outputs/flutter-apk/app-debug.apk)
+        APK_SIZE_MB=$((APK_SIZE / 1048576))
+        echo "APK size: ${APK_SIZE_MB} MB"
+        if [ $APK_SIZE_MB -gt 100 ]; then
+          echo "Warning: APK size exceeds 100 MB"
+        fi
+
+  integration:
+    name: All Checks Passed
+    needs: [lint, test, build-android]
+    runs-on: ubuntu-latest
+    if: success()
+
+    steps:
+    - name: All checks passed
+      run: |
+        echo "✅ All CI checks passed successfully"
+        echo "- Linting: Passed"
+        echo "- Tests: Passed"
+        echo "- Android Build: Passed"

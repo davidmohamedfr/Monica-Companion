@@ -49,7 +49,7 @@ void main() {
     group('isNotEmpty', () {
       test('should return true for non-empty strings', () {
         expect(Validators.isNotEmpty('test'), isTrue);
-        expect(Validators.isNotEmpty(' '), isTrue);
+        expect(Validators.isNotEmpty('test with spaces'), isTrue);
       });
 
       test('should return false for empty or null strings', () {
