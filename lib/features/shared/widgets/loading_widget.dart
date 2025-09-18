@@ -14,7 +14,7 @@ class AppLoadingWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final ThemeData theme = Theme.of(context);
-    
+
     return Center(
       child: Column(
         mainAxisSize: MainAxisSize.min,

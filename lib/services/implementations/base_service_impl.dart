@@ -11,7 +11,8 @@ abstract class BaseServiceImpl implements BaseService {
   @override
   Future<void> initialize() async {
     if (_isInitialized) {
-      Logger.warning('Service ${runtimeType.toString()} is already initialized');
+      Logger.warning(
+          'Service ${runtimeType.toString()} is already initialized');
       return;
     }
 
@@ -20,7 +21,8 @@ abstract class BaseServiceImpl implements BaseService {
       _isInitialized = true;
       Logger.info('Service ${runtimeType.toString()} initialized successfully');
     } catch (e) {
-      Logger.error('Failed to initialize service ${runtimeType.toString()}', error: e);
+      Logger.error('Failed to initialize service ${runtimeType.toString()}',
+          error: e);
       rethrow;
     }
   }
@@ -37,7 +39,8 @@ abstract class BaseServiceImpl implements BaseService {
       _isInitialized = false;
       Logger.info('Service ${runtimeType.toString()} disposed successfully');
     } catch (e) {
-      Logger.error('Failed to dispose service ${runtimeType.toString()}', error: e);
+      Logger.error('Failed to dispose service ${runtimeType.toString()}',
+          error: e);
       rethrow;
     }
   }

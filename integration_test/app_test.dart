@@ -5,17 +5,18 @@ import 'package:integration_test/integration_test.dart';
 import 'helpers/integration_test_helpers.dart';
 
 void main() {
-  final IntegrationTestWidgetsFlutterBinding binding = 
+  final IntegrationTestWidgetsFlutterBinding binding =
       IntegrationTestHelpers.setupIntegrationTest();
 
   group('App Integration Tests', () {
-    testWidgets('app should start without crashing', (WidgetTester tester) async {
+    testWidgets('app should start without crashing',
+        (WidgetTester tester) async {
       // This is a placeholder integration test
       // In a real app, you would pump your main app widget here
-      
+
       // Example:
       // await tester.pumpWidget(const MyApp());
-      
+
       // For now, just create a simple test widget
       await tester.pumpWidget(
         const MaterialApp(
@@ -36,10 +37,11 @@ void main() {
       await IntegrationTestHelpers.takeScreenshot(binding, 'app_startup');
     });
 
-    testWidgets('navigation should work correctly', (WidgetTester tester) async {
+    testWidgets('navigation should work correctly',
+        (WidgetTester tester) async {
       // Placeholder test for navigation
       // This would test actual navigation in the real app
-      
+
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(

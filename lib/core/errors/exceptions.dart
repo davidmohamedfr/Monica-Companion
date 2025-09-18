@@ -6,7 +6,8 @@ abstract class AppException implements Exception {
   final String? code;
 
   @override
-  String toString() => 'AppException: $message${code != null ? ' (Code: $code)' : ''}';
+  String toString() =>
+      'AppException: $message${code != null ? ' (Code: $code)' : ''}';
 }
 
 /// Network-related exceptions

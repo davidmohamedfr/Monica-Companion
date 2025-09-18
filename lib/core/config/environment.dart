@@ -11,7 +11,8 @@ class EnvironmentConfig {
 
   /// Current environment
   static Environment get currentEnvironment {
-    const String flavor = String.fromEnvironment('FLAVOR', defaultValue: 'development');
+    const String flavor =
+        String.fromEnvironment('FLAVOR', defaultValue: 'development');
     switch (flavor) {
       case 'staging':
         return Environment.staging;
@@ -23,7 +24,8 @@ class EnvironmentConfig {
   }
 
   /// Check if running in development mode
-  static bool get isDevelopment => currentEnvironment == Environment.development;
+  static bool get isDevelopment =>
+      currentEnvironment == Environment.development;
 
   /// Check if running in staging mode
   static bool get isStaging => currentEnvironment == Environment.staging;
