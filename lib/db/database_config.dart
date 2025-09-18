@@ -40,7 +40,8 @@ class DatabaseConfig {
   ''';
 
   /// Get standard index creation SQL
-  static String createIndex(String tableName, String columnName, {bool unique = false}) {
+  static String createIndex(String tableName, String columnName,
+      {bool unique = false}) {
     final String uniqueKeyword = unique ? 'UNIQUE ' : '';
     return 'CREATE ${uniqueKeyword}INDEX IF NOT EXISTS idx_${tableName}_$columnName ON $tableName($columnName)';
   }

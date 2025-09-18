@@ -27,7 +27,8 @@ class TestHelpers {
   }
 
   /// Wait for async operations to complete in tests
-  static Future<void> pumpAndSettle(WidgetTester tester, [Duration? duration]) async {
+  static Future<void> pumpAndSettle(WidgetTester tester,
+      [Duration? duration]) async {
     await tester.pumpAndSettle(duration ?? const Duration(milliseconds: 100));
   }
 
