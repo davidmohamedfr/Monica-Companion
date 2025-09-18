@@ -1,1 +1,0 @@
- /Users/davidmohamed/dev/src/perso/MonicaMobileApp/.dart_tool/flutter_build/cf2ec4e5817a6d1c2ba5e11aed82af2e/native_assets.json: 
