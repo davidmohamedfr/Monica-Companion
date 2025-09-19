@@ -59,5 +59,6 @@ class ServiceLocator {
   }
 
   /// Get list of registered service types
-  List<Type> get registeredTypes => <Type>[..._services.keys, ..._factories.keys];
+  List<Type> get registeredTypes =>
+      <Type>[..._services.keys, ..._factories.keys];
 }

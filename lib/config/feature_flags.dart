@@ -1,4 +1,4 @@
-import '../core/config/environment.dart';
+import 'package:monica_mobile_app/core/config/environment.dart';
 
 /// Feature flags configuration for different environments
 class FeatureFlags {
@@ -75,7 +75,8 @@ class FeatureFlags {
       case Environment.development:
         return true;
       case Environment.staging:
-        return const bool.fromEnvironment('ENABLE_EXPERIMENTAL', defaultValue: false);
+        return const bool.fromEnvironment('ENABLE_EXPERIMENTAL',
+            defaultValue: false);
       case Environment.production:
         return false;
     }

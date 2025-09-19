@@ -24,15 +24,19 @@ android {
         targetSdkVersion = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName
+        resValue "string", "app_name", "Monica Dev"
+        buildConfigField "String", "FLAVOR", '"development"'
+        buildConfigField "String", "API_BASE_URL", '"https://dev-api.monica.com"'
     }
 
     buildFeatures {
         buildConfig = true
     }
 
+    // Temporarily disable flavors for integration tests to work
+    // flavorDimensions = ["environment"]
 
-    flavorDimensions = ["environment"]
-    
+    /*
     productFlavors {
         dev {
             dimension "environment"
@@ -42,9 +46,8 @@ android {
             buildConfigField "String", "FLAVOR", '"development"'
             buildConfigField "String", "API_BASE_URL", '"https://dev-api.monica.com"'
         }
-        
+
         // Staging and prod flavors commented out for now - uncomment when ready
-        /*
         staging {
             dimension "environment"
             applicationIdSuffix ".staging"
@@ -53,15 +56,15 @@ android {
             buildConfigField "String", "FLAVOR", '"staging"'
             buildConfigField "String", "API_BASE_URL", '"https://staging-api.monica.com"'
         }
-        
+
         prod {
             dimension "environment"
             resValue "string", "app_name", "Monica"
             buildConfigField "String", "FLAVOR", '"production"'
             buildConfigField "String", "API_BASE_URL", '"https://api.monica.com"'
         }
-        */
     }
+    */
 
     buildTypes {
         debug {

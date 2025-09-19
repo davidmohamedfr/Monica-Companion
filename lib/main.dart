@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'core/config/app_config.dart';
-import 'core/config/environment.dart';
-import 'config/feature_flags.dart';
+import 'package:monica_mobile_app/core/config/app_config.dart';
+import 'package:monica_mobile_app/core/config/environment.dart';
+import 'package:monica_mobile_app/config/feature_flags.dart';
 
 void main() {
   runApp(const MonicaApp());
@@ -43,7 +43,10 @@ class HomePage extends StatelessWidget {
               style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 16),
-            _buildConfigItem('Environment', EnvironmentConfig.currentEnvironment.name),
+            _buildConfigItem(
+              'Environment',
+              EnvironmentConfig.currentEnvironment.name,
+            ),
             _buildConfigItem('App Name', AppConfig.appName),
             _buildConfigItem('API Base URL', AppConfig.apiBaseUrl),
             _buildConfigItem('Package Name', AppConfig.packageName),

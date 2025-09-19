@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
@@ -8,12 +9,12 @@ class IntegrationTestHelpers {
 
   /// Setup integration test environment
   static IntegrationTestWidgetsFlutterBinding setupIntegrationTest() {
-    final IntegrationTestWidgetsFlutterBinding binding = 
+    final IntegrationTestWidgetsFlutterBinding binding =
         IntegrationTestWidgetsFlutterBinding.ensureInitialized();
-    
+
     // Set up common test configurations
     binding.framePolicy = LiveTestWidgetsFlutterBindingFramePolicy.fullyLive;
-    
+
     return binding;
   }
 
@@ -69,7 +70,7 @@ class IntegrationTestHelpers {
   static void expectWidgetVisible(Finder finder) {
     expect(finder, findsOneWidget);
     final Widget widget = finder.evaluate().first.widget;
-    
+
     // Check if widget is enabled (if it has an enabled property)
     if (widget is StatefulWidget) {
       // Additional checks can be added here based on widget type

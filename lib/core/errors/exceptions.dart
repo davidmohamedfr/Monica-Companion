@@ -6,7 +6,8 @@ abstract class AppException implements Exception {
   final String? code;
 
   @override
-  String toString() => 'AppException: $message${code != null ? ' (Code: $code)' : ''}';
+  String toString() =>
+      'AppException: $message${code != null ? ' (Code: $code)' : ''}';
 }
 
 /// Network-related exceptions
@@ -36,7 +37,7 @@ class ValidationException extends AppException {
 
 /// Server-related exceptions
 class ServerException extends AppException {
-  const ServerException(super.message, [super.code]);
+  const ServerException(super.message, [super.code]) : statusCode = null;
 
   final int? statusCode;
 

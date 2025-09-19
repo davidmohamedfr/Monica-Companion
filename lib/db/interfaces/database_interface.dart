@@ -13,7 +13,8 @@ abstract class DatabaseInterface {
   int get version;
 
   /// Execute a raw SQL query
-  Future<List<Map<String, dynamic>>> rawQuery(String sql, [List<dynamic>? arguments]);
+  Future<List<Map<String, dynamic>>> rawQuery(String sql,
+      [List<dynamic>? arguments]);
 
   /// Execute a raw SQL insert/update/delete
   Future<int> rawExecute(String sql, [List<dynamic>? arguments]);

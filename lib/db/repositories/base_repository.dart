@@ -5,7 +5,8 @@ import 'package:monica_mobile_app/db/interfaces/repository_interface.dart';
 import 'package:monica_mobile_app/db/models/base_model.dart';
 
 /// Base repository implementation with common CRUD operations
-abstract class BaseRepository<T extends BaseModel, ID> implements RepositoryInterface<T, ID> {
+abstract class BaseRepository<T extends BaseModel, ID>
+    implements RepositoryInterface<T, ID> {
   BaseRepository(this.database, this.tableName);
 
   final DatabaseInterface database;
@@ -19,11 +20,12 @@ abstract class BaseRepository<T extends BaseModel, ID> implements RepositoryInte
     try {
       final Map<String, dynamic> map = entity.toMap();
       map.remove('id'); // Remove ID for insert
-      
+
       final String columns = map.keys.join(', ');
       final String placeholders = map.keys.map((_) => '?').join(', ');
-      final String sql = 'INSERT INTO $tableName ($columns) VALUES ($placeholders)';
-      
+      final String sql =
+          'INSERT INTO $tableName ($columns) VALUES ($placeholders)';
+
       final int id = await database.rawExecute(sql, map.values.toList());
       return id as ID;
     } catch (e) {
@@ -35,14 +37,14 @@ abstract class BaseRepository<T extends BaseModel, ID> implements RepositoryInte
   @override
   Future<List<ID>> insertAll(List<T> entities) async {
     final List<ID> ids = <ID>[];
-    
+
     await database.transaction(() async {
       for (final T entity in entities) {
         final ID id = await insert(entity);
         ids.add(id);
       }
     });
-    
+
     return ids;
   }
 
@@ -51,15 +53,16 @@ abstract class BaseRepository<T extends BaseModel, ID> implements RepositoryInte
     try {
       final Map<String, dynamic> map = entity.toMap();
       final ID? id = map.remove('id') as ID?;
-      
+
       if (id == null) {
         throw const DatabaseException('Cannot update entity without ID');
       }
-      
-      final String setClause = map.keys.map((String key) => '$key = ?').join(', ');
+
+      final String setClause =
+          map.keys.map((String key) => '$key = ?').join(', ');
       final String sql = 'UPDATE $tableName SET $setClause WHERE id = ?';
       final List<dynamic> values = [...map.values, id];
-      
+
       final int rowsAffected = await database.rawExecute(sql, values);
       return rowsAffected > 0;
     } catch (e) {
@@ -83,7 +86,7 @@ abstract class BaseRepository<T extends BaseModel, ID> implements RepositoryInte
   @override
   Future<int> deleteAll(List<ID> ids) async {
     if (ids.isEmpty) return 0;
-    
+
     try {
       final String placeholders = ids.map((_) => '?').join(', ');
       final String sql = 'DELETE FROM $tableName WHERE id IN ($placeholders)';
@@ -98,8 +101,9 @@ abstract class BaseRepository<T extends BaseModel, ID> implements RepositoryInte
   Future<T?> findById(ID id) async {
     try {
       const String sql = 'SELECT * FROM ? WHERE id = ? LIMIT 1';
-      final List<Map<String, dynamic>> results = await database.rawQuery(sql, [tableName, id]);
-      
+      final List<Map<String, dynamic>> results =
+          await database.rawQuery(sql, [tableName, id]);
+
       if (results.isEmpty) return null;
       return fromMap(results.first);
     } catch (e) {
@@ -113,7 +117,7 @@ abstract class BaseRepository<T extends BaseModel, ID> implements RepositoryInte
     try {
       final String sql = 'SELECT * FROM $tableName ORDER BY id DESC';
       final List<Map<String, dynamic>> results = await database.rawQuery(sql);
-      
+
       return results.map((Map<String, dynamic> map) => fromMap(map)).toList();
     } catch (e) {
       Logger.error('Failed to find all entities in $tableName', error: e);
@@ -137,7 +141,8 @@ abstract class BaseRepository<T extends BaseModel, ID> implements RepositoryInte
   Future<bool> exists(ID id) async {
     try {
       final String sql = 'SELECT 1 FROM $tableName WHERE id = ? LIMIT 1';
-      final List<Map<String, dynamic>> results = await database.rawQuery(sql, [id]);
+      final List<Map<String, dynamic>> results =
+          await database.rawQuery(sql, [id]);
       return results.isNotEmpty;
     } catch (e) {
       Logger.error('Failed to check entity existence in $tableName', error: e);

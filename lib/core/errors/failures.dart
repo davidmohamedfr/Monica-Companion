@@ -18,7 +18,7 @@ class NetworkFailure extends Failure {
 
 /// Server-related failures
 class ServerFailure extends Failure {
-  const ServerFailure(super.message, [super.code]);
+  const ServerFailure(super.message, [super.code]) : statusCode = null;
 
   final int? statusCode;
 
