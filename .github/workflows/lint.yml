@@ -20,9 +20,19 @@ jobs:
         uses: subosito/flutter-action@v2
         with:
           channel: stable
-          flutter-version-file: pubspec.yaml
+          flutter-version: '3.35.3'
           cache: true
-          
+          cache-key: 'flutter-3.35.3-${{ runner.os }}'
+
+      - name: Verify Flutter version
+        run: |
+          flutter --version
+          if ! flutter --version | grep -q "3.35.3"; then
+            echo "Error: Expected Flutter version 3.35.3"
+            exit 1
+          fi
+          echo "✅ Flutter version 3.35.3 verified"
+
       - name: Check if Flutter project exists
         id: flutter-check
         run: |
@@ -82,8 +92,18 @@ jobs:
         uses: subosito/flutter-action@v2
         with:
           channel: stable
-          flutter-version-file: pubspec.yaml
+          flutter-version: '3.35.3'
           cache: true
+          cache-key: 'flutter-3.35.3-${{ runner.os }}'
+
+      - name: Verify Flutter version
+        run: |
+          flutter --version
+          if ! flutter --version | grep -q "3.35.3"; then
+            echo "Error: Expected Flutter version 3.35.3"
+            exit 1
+          fi
+          echo "✅ Flutter version 3.35.3 verified"
 
       - name: Check if Flutter project exists
         id: flutter-check-test
@@ -131,8 +151,18 @@ jobs:
         uses: subosito/flutter-action@v2
         with:
           channel: stable
-          flutter-version-file: pubspec.yaml
+          flutter-version: '3.35.3'
           cache: true
+          cache-key: 'flutter-3.35.3-${{ runner.os }}'
+
+      - name: Verify Flutter version
+        run: |
+          flutter --version
+          if ! flutter --version | grep -q "3.35.3"; then
+            echo "Error: Expected Flutter version 3.35.3"
+            exit 1
+          fi
+          echo "✅ Flutter version 3.35.3 verified"
 
       - name: Check if Flutter project exists
         id: flutter-check-build
