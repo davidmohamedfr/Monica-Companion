@@ -44,7 +44,9 @@ class HomePage extends StatelessWidget {
             ),
             const SizedBox(height: 16),
             _buildConfigItem(
-                'Environment', EnvironmentConfig.currentEnvironment.name),
+              'Environment',
+              EnvironmentConfig.currentEnvironment.name,
+            ),
             _buildConfigItem('App Name', AppConfig.appName),
             _buildConfigItem('API Base URL', AppConfig.apiBaseUrl),
             _buildConfigItem('Package Name', AppConfig.packageName),
