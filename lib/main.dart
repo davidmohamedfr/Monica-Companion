@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'core/config/app_config.dart';
-import 'core/config/environment.dart';
-import 'config/feature_flags.dart';
+import 'package:monica_mobile_app/core/config/app_config.dart';
+import 'package:monica_mobile_app/core/config/environment.dart';
+import 'package:monica_mobile_app/config/feature_flags.dart';
 
 void main() {
   runApp(const MonicaApp());
