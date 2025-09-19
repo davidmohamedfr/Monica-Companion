@@ -40,7 +40,9 @@ void main() {
       expect(find.text('App Name:'), findsOneWidget);
 
       await IntegrationTestHelpers.takeScreenshot(
-          binding, 'configuration_display');
+        binding,
+        'configuration_display',
+      );
     });
   });
 }

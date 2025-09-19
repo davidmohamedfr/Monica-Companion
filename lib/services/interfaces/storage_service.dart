@@ -15,7 +15,7 @@ abstract class StorageService extends BaseService {
   Future<int?> getInt(String key);
 
   /// Store a boolean value
-  Future<bool> setBool(String key, bool value);
+  Future<bool> setBool(String key, {required bool value});
 
   /// Retrieve a boolean value
   Future<bool?> getBool(String key);

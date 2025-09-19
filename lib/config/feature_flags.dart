@@ -65,9 +65,7 @@ class FeatureFlags {
   }
 
   /// Enable mock data for testing
-  static bool get enableMockData {
-    return const bool.fromEnvironment('ENABLE_MOCK_DATA', defaultValue: false);
-  }
+  static bool get enableMockData => false;
 
   /// Enable experimental features
   static bool get enableExperimentalFeatures {
@@ -75,8 +73,7 @@ class FeatureFlags {
       case Environment.development:
         return true;
       case Environment.staging:
-        return const bool.fromEnvironment('ENABLE_EXPERIMENTAL',
-            defaultValue: false);
+        return false;
       case Environment.production:
         return false;
     }
@@ -95,7 +92,7 @@ class FeatureFlags {
   }
 
   /// Get all feature flags as a map for debugging
-  static Map<String, dynamic> get allFlags => {
+  static Map<String, dynamic> get allFlags => <String, dynamic>{
         'enableDebugTools': enableDebugTools,
         'enableConsoleLogging': enableConsoleLogging,
         'enableCrashReporting': enableCrashReporting,

@@ -36,14 +36,14 @@ abstract class ApiService extends BaseService {
   /// POST request
   Future<ApiResponse<T>> post<T>(
     String endpoint, {
-    dynamic body,
+    Object? body,
     Map<String, String>? headers,
   });
 
   /// PUT request
   Future<ApiResponse<T>> put<T>(
     String endpoint, {
-    dynamic body,
+    Object? body,
     Map<String, String>? headers,
   });
 
@@ -56,7 +56,7 @@ abstract class ApiService extends BaseService {
   /// PATCH request
   Future<ApiResponse<T>> patch<T>(
     String endpoint, {
-    dynamic body,
+    Object? body,
     Map<String, String>? headers,
   });
 }

@@ -40,9 +40,8 @@ class ServiceLocator {
   }
 
   /// Check if service is registered
-  bool isRegistered<T extends Object>() {
-    return _services.containsKey(T) || _factories.containsKey(T);
-  }
+  bool isRegistered<T extends Object>() =>
+      _services.containsKey(T) || _factories.containsKey(T);
 
   /// Unregister a service
   void unregister<T extends Object>() {

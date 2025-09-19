@@ -1,5 +1,5 @@
-import 'package:monica_mobile_app/core/config/environment.dart';
 import 'package:monica_mobile_app/config/feature_flags.dart';
+import 'package:monica_mobile_app/core/config/environment.dart';
 
 /// Application configuration constants and settings
 class AppConfig {
@@ -11,8 +11,8 @@ class AppConfig {
   /// Application version
   static const String version = '1.0.0';
 
-  /// Debug mode flag
-  static const bool isDebug = bool.fromEnvironment('dart.vm.product') == false;
+  /// Debug mode flag (uses kDebugMode from foundation.dart)
+  static bool get isDebug => EnvironmentConfig.isDevelopment;
 
   /// API base URL based on environment
   static String get apiBaseUrl => EnvironmentConfig.apiBaseUrl;

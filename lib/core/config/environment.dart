@@ -9,21 +9,8 @@ enum Environment {
 class EnvironmentConfig {
   EnvironmentConfig._();
 
-  /// Current environment
-  static Environment get currentEnvironment {
-    const String flavor = String.fromEnvironment(
-      'FLAVOR',
-      defaultValue: 'development',
-    );
-    switch (flavor) {
-      case 'staging':
-        return Environment.staging;
-      case 'production':
-        return Environment.production;
-      default:
-        return Environment.development;
-    }
-  }
+  /// Current environment - defaults to development
+  static Environment get currentEnvironment => Environment.development;
 
   /// Check if running in development mode
   static bool get isDevelopment =>
@@ -39,20 +26,11 @@ class EnvironmentConfig {
   static String get apiBaseUrl {
     switch (currentEnvironment) {
       case Environment.development:
-        return const String.fromEnvironment(
-          'API_BASE_URL',
-          defaultValue: 'https://dev-api.monica.com',
-        );
+        return 'https://dev-api.monica.com';
       case Environment.staging:
-        return const String.fromEnvironment(
-          'API_BASE_URL',
-          defaultValue: 'https://staging-api.monica.com',
-        );
+        return 'https://staging-api.monica.com';
       case Environment.production:
-        return const String.fromEnvironment(
-          'API_BASE_URL',
-          defaultValue: 'https://api.monica.com',
-        );
+        return 'https://api.monica.com';
     }
   }
 

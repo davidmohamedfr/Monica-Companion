@@ -1,7 +1,8 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:monica_mobile_app/core/config/environment.dart';
-import 'package:monica_mobile_app/core/config/app_config.dart';
+
 import 'package:monica_mobile_app/config/feature_flags.dart';
+import 'package:monica_mobile_app/core/config/app_config.dart';
+import 'package:monica_mobile_app/core/config/environment.dart';
 
 void main() {
   group('Environment Configuration Tests', () {
@@ -34,7 +35,7 @@ void main() {
     });
 
     test('should return all feature flags as map', () {
-      final flags = FeatureFlags.allFlags;
+      final Map<String, dynamic> flags = FeatureFlags.allFlags;
       expect(flags.keys.length, 8);
       expect(flags.containsKey('enableDebugTools'), true);
       expect(flags.containsKey('enableConsoleLogging'), true);

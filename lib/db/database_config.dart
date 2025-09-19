@@ -40,15 +40,18 @@ class DatabaseConfig {
   ''';
 
   /// Get standard index creation SQL
-  static String createIndex(String tableName, String columnName,
-      {bool unique = false}) {
+  static String createIndex(
+    String tableName,
+    String columnName, {
+    bool unique = false,
+  }) {
     final String uniqueKeyword = unique ? 'UNIQUE ' : '';
-    return 'CREATE ${uniqueKeyword}INDEX IF NOT EXISTS idx_${tableName}_$columnName ON $tableName($columnName)';
+    return 'CREATE ${uniqueKeyword}INDEX IF NOT EXISTS '
+        'idx_${tableName}_$columnName ON $tableName($columnName)';
   }
 
   /// Get trigger SQL for updating updated_at column
-  static String createUpdateTrigger(String tableName) {
-    return '''
+  static String createUpdateTrigger(String tableName) => '''
       CREATE TRIGGER IF NOT EXISTS update_${tableName}_updated_at
       AFTER UPDATE ON $tableName
       FOR EACH ROW
@@ -56,5 +59,4 @@ class DatabaseConfig {
         UPDATE $tableName SET $columnUpdatedAt = CURRENT_TIMESTAMP WHERE $columnId = NEW.$columnId;
       END
     ''';
-  }
 }

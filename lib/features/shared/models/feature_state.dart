@@ -5,7 +5,7 @@ abstract class FeatureState extends Equatable {
   const FeatureState();
 
   @override
-  List<Object?> get props => [];
+  List<Object?> get props => <Object?>[];
 }
 
 /// Initial state
@@ -20,7 +20,7 @@ class LoadingState extends FeatureState {
   final String? message;
 
   @override
-  List<Object?> get props => [message];
+  List<Object?> get props => <Object?>[message];
 }
 
 /// Success state with data
@@ -31,7 +31,7 @@ class SuccessState<T> extends FeatureState {
   final String? message;
 
   @override
-  List<Object?> get props => [data, message];
+  List<Object?> get props => <Object?>[data, message];
 }
 
 /// Error state
@@ -43,7 +43,7 @@ class ErrorState extends FeatureState {
   final dynamic details;
 
   @override
-  List<Object?> get props => [message, code, details];
+  List<Object?> get props => <Object?>[message, code, details];
 }
 
 /// Empty state (when no data available)
@@ -53,5 +53,5 @@ class EmptyState extends FeatureState {
   final String? message;
 
   @override
-  List<Object?> get props => [message];
+  List<Object?> get props => <Object?>[message];
 }

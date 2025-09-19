@@ -15,7 +15,7 @@ class Validators {
     try {
       final Uri uri = Uri.parse(url);
       return uri.hasScheme && (uri.scheme == 'http' || uri.scheme == 'https');
-    } catch (e) {
+    } on FormatException {
       return false;
     }
   }
@@ -27,12 +27,10 @@ class Validators {
   }
 
   /// Check if string is not null and not empty
-  static bool isNotEmpty(String? value) {
-    return value != null && value.trim().isNotEmpty;
-  }
+  static bool isNotEmpty(String? value) =>
+      value != null && value.trim().isNotEmpty;
 
   /// Validate API token format (basic check for non-empty string)
-  static bool isValidApiToken(String token) {
-    return token.trim().isNotEmpty && token.length >= 10;
-  }
+  static bool isValidApiToken(String token) =>
+      token.trim().isNotEmpty && token.length >= 10;
 }

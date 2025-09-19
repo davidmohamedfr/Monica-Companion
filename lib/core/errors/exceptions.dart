@@ -39,13 +39,13 @@ class ValidationException extends AppException {
 class ServerException extends AppException {
   const ServerException(super.message, [super.code]) : statusCode = null;
 
-  final int? statusCode;
-
   const ServerException.withStatusCode(
     String message,
     this.statusCode, [
     String? code,
   ]) : super(message, code);
+
+  final int? statusCode;
 }
 
 /// Cache-related exceptions

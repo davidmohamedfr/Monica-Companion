@@ -8,7 +8,7 @@ abstract class Failure extends Equatable {
   final String? code;
 
   @override
-  List<Object?> get props => [message, code];
+  List<Object?> get props => <Object?>[message, code];
 }
 
 /// Network-related failures
@@ -20,16 +20,16 @@ class NetworkFailure extends Failure {
 class ServerFailure extends Failure {
   const ServerFailure(super.message, [super.code]) : statusCode = null;
 
-  final int? statusCode;
-
   const ServerFailure.withStatusCode(
     String message,
     this.statusCode, [
     String? code,
   ]) : super(message, code);
 
+  final int? statusCode;
+
   @override
-  List<Object?> get props => [message, code, statusCode];
+  List<Object?> get props => <Object?>[message, code, statusCode];
 }
 
 /// Database-related failures

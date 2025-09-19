@@ -18,8 +18,8 @@ abstract class BaseRepository<T extends BaseModel, ID>
   @override
   Future<ID> insert(T entity) async {
     try {
-      final Map<String, dynamic> map = entity.toMap();
-      map.remove('id'); // Remove ID for insert
+      final Map<String, dynamic> map = entity.toMap()
+        ..remove('id'); // Remove ID for insert
 
       final String columns = map.keys.join(', ');
       final String placeholders = map.keys.map((_) => '?').join(', ');
@@ -61,7 +61,7 @@ abstract class BaseRepository<T extends BaseModel, ID>
       final String setClause =
           map.keys.map((String key) => '$key = ?').join(', ');
       final String sql = 'UPDATE $tableName SET $setClause WHERE id = ?';
-      final List<dynamic> values = [...map.values, id];
+      final List<dynamic> values = <dynamic>[...map.values, id];
 
       final int rowsAffected = await database.rawExecute(sql, values);
       return rowsAffected > 0;
@@ -74,8 +74,8 @@ abstract class BaseRepository<T extends BaseModel, ID>
   @override
   Future<bool> delete(ID id) async {
     try {
-      const String sql = 'DELETE FROM ? WHERE id = ?';
-      final int rowsAffected = await database.rawExecute(sql, [tableName, id]);
+      final String sql = 'DELETE FROM $tableName WHERE id = ?';
+      final int rowsAffected = await database.rawExecute(sql, <dynamic>[id]);
       return rowsAffected > 0;
     } catch (e) {
       Logger.error('Failed to delete entity from $tableName', error: e);
@@ -85,7 +85,9 @@ abstract class BaseRepository<T extends BaseModel, ID>
 
   @override
   Future<int> deleteAll(List<ID> ids) async {
-    if (ids.isEmpty) return 0;
+    if (ids.isEmpty) {
+      return 0;
+    }
 
     try {
       final String placeholders = ids.map((_) => '?').join(', ');
@@ -100,11 +102,13 @@ abstract class BaseRepository<T extends BaseModel, ID>
   @override
   Future<T?> findById(ID id) async {
     try {
-      const String sql = 'SELECT * FROM ? WHERE id = ? LIMIT 1';
+      final String sql = 'SELECT * FROM $tableName WHERE id = ? LIMIT 1';
       final List<Map<String, dynamic>> results =
-          await database.rawQuery(sql, [tableName, id]);
+          await database.rawQuery(sql, <dynamic>[id]);
 
-      if (results.isEmpty) return null;
+      if (results.isEmpty) {
+        return null;
+      }
       return fromMap(results.first);
     } catch (e) {
       Logger.error('Failed to find entity by ID in $tableName', error: e);
@@ -118,7 +122,7 @@ abstract class BaseRepository<T extends BaseModel, ID>
       final String sql = 'SELECT * FROM $tableName ORDER BY id DESC';
       final List<Map<String, dynamic>> results = await database.rawQuery(sql);
 
-      return results.map((Map<String, dynamic> map) => fromMap(map)).toList();
+      return results.map(fromMap).toList();
     } catch (e) {
       Logger.error('Failed to find all entities in $tableName', error: e);
       throw DatabaseException('Failed to find entities: $e');
@@ -142,7 +146,7 @@ abstract class BaseRepository<T extends BaseModel, ID>
     try {
       final String sql = 'SELECT 1 FROM $tableName WHERE id = ? LIMIT 1';
       final List<Map<String, dynamic>> results =
-          await database.rawQuery(sql, [id]);
+          await database.rawQuery(sql, <dynamic>[id]);
       return results.isNotEmpty;
     } catch (e) {
       Logger.error('Failed to check entity existence in $tableName', error: e);

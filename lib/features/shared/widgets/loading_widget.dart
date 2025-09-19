@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 class AppLoadingWidget extends StatelessWidget {
   const AppLoadingWidget({
     this.message,
-    this.size = 32.0,
+    this.size = 32,
     super.key,
   });
 
@@ -23,7 +23,7 @@ class AppLoadingWidget extends StatelessWidget {
             width: size,
             height: size,
             child: CircularProgressIndicator(
-              strokeWidth: 3.0,
+              strokeWidth: 3,
               color: theme.colorScheme.primary,
             ),
           ),
@@ -46,13 +46,11 @@ class ListLoadingWidget extends StatelessWidget {
   const ListLoadingWidget({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return const Padding(
-      padding: EdgeInsets.all(16.0),
-      child: AppLoadingWidget(
-        message: 'Loading...',
-        size: 24.0,
-      ),
-    );
-  }
+  Widget build(BuildContext context) => const Padding(
+        padding: EdgeInsets.all(16),
+        child: AppLoadingWidget(
+          message: 'Loading...',
+          size: 24,
+        ),
+      );
 }

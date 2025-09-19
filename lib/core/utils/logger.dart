@@ -7,8 +7,12 @@ class Logger {
   Logger._();
 
   /// Log debug message
-  static void debug(String message,
-      {String? tag, Object? error, StackTrace? stackTrace}) {
+  static void debug(
+    String message, {
+    String? tag,
+    Object? error,
+    StackTrace? stackTrace,
+  }) {
     if (AppConfig.isDebug) {
       developer.log(
         message,
@@ -40,8 +44,12 @@ class Logger {
   }
 
   /// Log error message
-  static void error(String message,
-      {String? tag, Object? error, StackTrace? stackTrace}) {
+  static void error(
+    String message, {
+    String? tag,
+    Object? error,
+    StackTrace? stackTrace,
+  }) {
     developer.log(
       message,
       name: tag ?? 'ERROR',

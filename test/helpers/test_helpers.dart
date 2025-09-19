@@ -22,13 +22,14 @@ class TestHelpers {
     int hour = 0,
     int minute = 0,
     int second = 0,
-  }) {
-    return DateTime(year, month, day, hour, minute, second);
-  }
+  }) =>
+      DateTime(year, month, day, hour, minute, second);
 
   /// Wait for async operations to complete in tests
-  static Future<void> pumpAndSettle(WidgetTester tester,
-      [Duration? duration]) async {
+  static Future<void> pumpAndSettle(
+    WidgetTester tester, [
+    Duration? duration,
+  ]) async {
     await tester.pumpAndSettle(duration ?? const Duration(milliseconds: 100));
   }
 

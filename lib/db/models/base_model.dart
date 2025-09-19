@@ -29,5 +29,5 @@ abstract class BaseModel extends Equatable {
   BaseModel copyWith();
 
   @override
-  List<Object?> get props => [id, createdAt, updatedAt];
+  List<Object?> get props => <Object?>[id, createdAt, updatedAt];
 }

@@ -8,15 +8,9 @@ class IntegrationTestHelpers {
   IntegrationTestHelpers._();
 
   /// Setup integration test environment
-  static IntegrationTestWidgetsFlutterBinding setupIntegrationTest() {
-    final IntegrationTestWidgetsFlutterBinding binding =
-        IntegrationTestWidgetsFlutterBinding.ensureInitialized();
-
-    // Set up common test configurations
-    binding.framePolicy = LiveTestWidgetsFlutterBindingFramePolicy.fullyLive;
-
-    return binding;
-  }
+  static IntegrationTestWidgetsFlutterBinding setupIntegrationTest() =>
+      IntegrationTestWidgetsFlutterBinding.ensureInitialized()
+        ..framePolicy = LiveTestWidgetsFlutterBindingFramePolicy.fullyLive;
 
   /// Wait for app to fully load
   static Future<void> waitForAppToLoad(WidgetTester tester) async {
@@ -50,7 +44,7 @@ class IntegrationTestHelpers {
     Finder scrollable,
     Finder target,
   ) async {
-    await tester.scrollUntilVisible(target, 500.0, scrollable: scrollable);
+    await tester.scrollUntilVisible(target, 500, scrollable: scrollable);
     await tester.pumpAndSettle();
   }
 
