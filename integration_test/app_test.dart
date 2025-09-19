@@ -9,8 +9,9 @@ void main() {
       IntegrationTestHelpers.setupIntegrationTest();
 
   group('App Integration Tests', () {
-    testWidgets('app should start without crashing',
-        (WidgetTester tester) async {
+    testWidgets('app should start without crashing', (
+      WidgetTester tester,
+    ) async {
       // Launch the actual Monica app
       await tester.pumpWidget(const MonicaApp());
 
@@ -24,8 +25,9 @@ void main() {
       await IntegrationTestHelpers.takeScreenshot(binding, 'app_startup');
     });
 
-    testWidgets('configuration display should work correctly',
-        (WidgetTester tester) async {
+    testWidgets('configuration display should work correctly', (
+      WidgetTester tester,
+    ) async {
       // Launch the actual Monica app
       await tester.pumpWidget(const MonicaApp());
 

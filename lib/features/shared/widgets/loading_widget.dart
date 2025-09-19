@@ -2,11 +2,7 @@ import 'package:flutter/material.dart';
 
 /// Reusable loading widget for displaying loading states consistently
 class AppLoadingWidget extends StatelessWidget {
-  const AppLoadingWidget({
-    this.message,
-    this.size = 32,
-    super.key,
-  });
+  const AppLoadingWidget({this.message, this.size = 32, super.key});
 
   final String? message;
   final double size;
@@ -47,10 +43,7 @@ class ListLoadingWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => const Padding(
-        padding: EdgeInsets.all(16),
-        child: AppLoadingWidget(
-          message: 'Loading...',
-          size: 24,
-        ),
-      );
+    padding: EdgeInsets.all(16),
+    child: AppLoadingWidget(message: 'Loading...', size: 24),
+  );
 }

@@ -1,9 +1,5 @@
 /// Environment configuration for different build flavors
-enum Environment {
-  development,
-  staging,
-  production,
-}
+enum Environment { development, staging, production }
 
 /// Environment configuration manager
 class EnvironmentConfig {

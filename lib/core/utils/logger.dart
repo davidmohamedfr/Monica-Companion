@@ -26,21 +26,12 @@ class Logger {
 
   /// Log info message
   static void info(String message, {String? tag}) {
-    developer.log(
-      message,
-      name: tag ?? 'INFO',
-      level: 800,
-    );
+    developer.log(message, name: tag ?? 'INFO', level: 800);
   }
 
   /// Log warning message
   static void warning(String message, {String? tag, Object? error}) {
-    developer.log(
-      message,
-      name: tag ?? 'WARNING',
-      error: error,
-      level: 900,
-    );
+    developer.log(message, name: tag ?? 'WARNING', error: error, level: 900);
   }
 
   /// Log error message

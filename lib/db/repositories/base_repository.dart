@@ -58,8 +58,9 @@ abstract class BaseRepository<T extends BaseModel, ID>
         throw const DatabaseException('Cannot update entity without ID');
       }
 
-      final String setClause =
-          map.keys.map((String key) => '$key = ?').join(', ');
+      final String setClause = map.keys
+          .map((String key) => '$key = ?')
+          .join(', ');
       final String sql = 'UPDATE $tableName SET $setClause WHERE id = ?';
       final List<dynamic> values = <dynamic>[...map.values, id];
 
@@ -103,8 +104,10 @@ abstract class BaseRepository<T extends BaseModel, ID>
   Future<T?> findById(ID id) async {
     try {
       final String sql = 'SELECT * FROM $tableName WHERE id = ? LIMIT 1';
-      final List<Map<String, dynamic>> results =
-          await database.rawQuery(sql, <dynamic>[id]);
+      final List<Map<String, dynamic>> results = await database.rawQuery(
+        sql,
+        <dynamic>[id],
+      );
 
       if (results.isEmpty) {
         return null;
@@ -145,8 +148,10 @@ abstract class BaseRepository<T extends BaseModel, ID>
   Future<bool> exists(ID id) async {
     try {
       final String sql = 'SELECT 1 FROM $tableName WHERE id = ? LIMIT 1';
-      final List<Map<String, dynamic>> results =
-          await database.rawQuery(sql, <dynamic>[id]);
+      final List<Map<String, dynamic>> results = await database.rawQuery(
+        sql,
+        <dynamic>[id],
+      );
       return results.isNotEmpty;
     } catch (e) {
       Logger.error('Failed to check entity existence in $tableName', error: e);

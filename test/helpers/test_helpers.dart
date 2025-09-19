@@ -22,8 +22,7 @@ class TestHelpers {
     int hour = 0,
     int minute = 0,
     int second = 0,
-  }) =>
-      DateTime(year, month, day, hour, minute, second);
+  }) => DateTime(year, month, day, hour, minute, second);
 
   /// Wait for async operations to complete in tests
   static Future<void> pumpAndSettle(

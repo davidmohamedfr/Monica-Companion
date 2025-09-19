@@ -93,13 +93,13 @@ class FeatureFlags {
 
   /// Get all feature flags as a map for debugging
   static Map<String, dynamic> get allFlags => <String, dynamic>{
-        'enableDebugTools': enableDebugTools,
-        'enableConsoleLogging': enableConsoleLogging,
-        'enableCrashReporting': enableCrashReporting,
-        'enableAnalytics': enableAnalytics,
-        'enablePerformanceMonitoring': enablePerformanceMonitoring,
-        'enableMockData': enableMockData,
-        'enableExperimentalFeatures': enableExperimentalFeatures,
-        'apiTimeoutSeconds': apiTimeoutSeconds,
-      };
+    'enableDebugTools': enableDebugTools,
+    'enableConsoleLogging': enableConsoleLogging,
+    'enableCrashReporting': enableCrashReporting,
+    'enableAnalytics': enableAnalytics,
+    'enablePerformanceMonitoring': enablePerformanceMonitoring,
+    'enableMockData': enableMockData,
+    'enableExperimentalFeatures': enableExperimentalFeatures,
+    'apiTimeoutSeconds': apiTimeoutSeconds,
+  };
 }

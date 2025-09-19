@@ -33,7 +33,8 @@ class DatabaseConfig {
   static const String defaultCurrentTimestamp = 'DEFAULT CURRENT_TIMESTAMP';
 
   /// Common SQL fragments
-  static String get commonColumns => '''
+  static String get commonColumns =>
+      '''
     $columnId $typeInteger $primaryKey $autoIncrement,
     $columnCreatedAt $typeDatetime $defaultCurrentTimestamp,
     $columnUpdatedAt $typeDatetime $defaultCurrentTimestamp
@@ -51,7 +52,8 @@ class DatabaseConfig {
   }
 
   /// Get trigger SQL for updating updated_at column
-  static String createUpdateTrigger(String tableName) => '''
+  static String createUpdateTrigger(String tableName) =>
+      '''
       CREATE TRIGGER IF NOT EXISTS update_${tableName}_updated_at
       AFTER UPDATE ON $tableName
       FOR EACH ROW

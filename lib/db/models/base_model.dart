@@ -2,11 +2,7 @@ import 'package:equatable/equatable.dart';
 
 /// Base model class for all database entities
 abstract class BaseModel extends Equatable {
-  const BaseModel({
-    this.id,
-    this.createdAt,
-    this.updatedAt,
-  });
+  const BaseModel({this.id, this.createdAt, this.updatedAt});
 
   /// Primary key
   final int? id;
