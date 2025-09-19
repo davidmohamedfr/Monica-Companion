@@ -37,9 +37,6 @@ jobs:
     - name: Analyze project source
       run: flutter analyze --no-fatal-infos
 
-    # - name: Check for dependency issues
-    #   run: flutter pub outdated --no-dev-dependencies --up-to-date --no-dependency-overrides
-
   test:
     name: Tests & Coverage
     runs-on: ubuntu-latest
