@@ -37,11 +37,14 @@ class EnvironmentConfig {
   static String get apiBaseUrl {
     switch (currentEnvironment) {
       case Environment.development:
-        return const String.fromEnvironment('API_BASE_URL', defaultValue: 'https://dev-api.monica.com');
+        return const String.fromEnvironment('API_BASE_URL',
+            defaultValue: 'https://dev-api.monica.com');
       case Environment.staging:
-        return const String.fromEnvironment('API_BASE_URL', defaultValue: 'https://staging-api.monica.com');
+        return const String.fromEnvironment('API_BASE_URL',
+            defaultValue: 'https://staging-api.monica.com');
       case Environment.production:
-        return const String.fromEnvironment('API_BASE_URL', defaultValue: 'https://api.monica.com');
+        return const String.fromEnvironment('API_BASE_URL',
+            defaultValue: 'https://api.monica.com');
     }
   }
 

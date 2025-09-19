@@ -43,7 +43,8 @@ class HomePage extends StatelessWidget {
               style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 16),
-            _buildConfigItem('Environment', EnvironmentConfig.currentEnvironment.name),
+            _buildConfigItem(
+                'Environment', EnvironmentConfig.currentEnvironment.name),
             _buildConfigItem('App Name', AppConfig.appName),
             _buildConfigItem('API Base URL', AppConfig.apiBaseUrl),
             _buildConfigItem('Package Name', AppConfig.packageName),

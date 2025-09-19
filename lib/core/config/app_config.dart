@@ -18,7 +18,8 @@ class AppConfig {
   static String get apiBaseUrl => EnvironmentConfig.apiBaseUrl;
 
   /// HTTP request timeout based on environment
-  static Duration get defaultTimeout => Duration(seconds: FeatureFlags.apiTimeoutSeconds);
+  static Duration get defaultTimeout =>
+      Duration(seconds: FeatureFlags.apiTimeoutSeconds);
 
   /// Maximum retry attempts for network requests
   static const int maxRetryAttempts = 3;
@@ -30,5 +31,6 @@ class AppConfig {
   static const String packageNameBase = 'com.monica.app';
 
   /// Full package name with environment suffix
-  static String get packageName => packageNameBase + EnvironmentConfig.packageSuffix;
+  static String get packageName =>
+      packageNameBase + EnvironmentConfig.packageSuffix;
 }

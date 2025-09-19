@@ -37,7 +37,7 @@ class ValidationException extends AppException {
 
 /// Server-related exceptions
 class ServerException extends AppException {
-  const ServerException(super.message, [super.code]);
+  const ServerException(super.message, [super.code]) : statusCode = null;
 
   final int? statusCode;
 
