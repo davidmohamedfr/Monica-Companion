@@ -7,6 +7,9 @@ on:
     branches: [ main, develop ]
   workflow_dispatch:
 
+env:
+  FLUTTER_VERSION: "3.24.0"
+
 jobs:
   analyze:
     name: Analyze and Lint
@@ -20,18 +23,18 @@ jobs:
         uses: subosito/flutter-action@v2
         with:
           channel: stable
-          flutter-version: '3.24.0'
+          flutter-version: ${{ env.FLUTTER_VERSION }}
           cache: true
-          cache-key: 'flutter-3.24.0-${{ runner.os }}'
+          cache-key: 'flutter-${{ env.FLUTTER_VERSION }}-${{ runner.os }}'
 
       - name: Verify Flutter version
         run: |
           flutter --version
-          if ! flutter --version | grep -q "3.24.0"; then
-            echo "Error: Expected Flutter version 3.24.0"
+          if ! flutter --version | grep -q "${{ env.FLUTTER_VERSION }}"; then
+            echo "Error: Expected Flutter version ${{ env.FLUTTER_VERSION }}"
             exit 1
           fi
-          echo "✅ Flutter version 3.24.0 verified"
+          echo "✅ Flutter version ${{ env.FLUTTER_VERSION }} verified"
 
       - name: Check if Flutter project exists
         id: flutter-check
@@ -92,18 +95,18 @@ jobs:
         uses: subosito/flutter-action@v2
         with:
           channel: stable
-          flutter-version: '3.24.0'
+          flutter-version: ${{ env.FLUTTER_VERSION }}
           cache: true
-          cache-key: 'flutter-3.24.0-${{ runner.os }}'
+          cache-key: 'flutter-${{ env.FLUTTER_VERSION }}-${{ runner.os }}'
 
       - name: Verify Flutter version
         run: |
           flutter --version
-          if ! flutter --version | grep -q "3.24.0"; then
-            echo "Error: Expected Flutter version 3.24.0"
+          if ! flutter --version | grep -q "${{ env.FLUTTER_VERSION }}"; then
+            echo "Error: Expected Flutter version ${{ env.FLUTTER_VERSION }}"
             exit 1
           fi
-          echo "✅ Flutter version 3.24.0 verified"
+          echo "✅ Flutter version ${{ env.FLUTTER_VERSION }} verified"
 
       - name: Check if Flutter project exists
         id: flutter-check-test
@@ -151,18 +154,18 @@ jobs:
         uses: subosito/flutter-action@v2
         with:
           channel: stable
-          flutter-version: '3.24.0'
+          flutter-version: ${{ env.FLUTTER_VERSION }}
           cache: true
-          cache-key: 'flutter-3.24.0-${{ runner.os }}'
+          cache-key: 'flutter-${{ env.FLUTTER_VERSION }}-${{ runner.os }}'
 
       - name: Verify Flutter version
         run: |
           flutter --version
-          if ! flutter --version | grep -q "3.24.0"; then
-            echo "Error: Expected Flutter version 3.24.0"
+          if ! flutter --version | grep -q "${{ env.FLUTTER_VERSION }}"; then
+            echo "Error: Expected Flutter version ${{ env.FLUTTER_VERSION }}"
             exit 1
           fi
-          echo "✅ Flutter version 3.24.0 verified"
+          echo "✅ Flutter version ${{ env.FLUTTER_VERSION }} verified"
 
       - name: Check if Flutter project exists
         id: flutter-check-build

@@ -6,6 +6,9 @@ on:
   pull_request:
     branches: [ main, develop ]
 
+env:
+  FLUTTER_VERSION: "3.24.0"
+
 jobs:
   code_quality:
     name: Code Quality Checks
@@ -21,7 +24,7 @@ jobs:
       uses: subosito/flutter-action@v2
       with:
         channel: stable
-        flutter-version-file: pubspec.yaml
+        flutter-version: ${{ env.FLUTTER_VERSION }}
         cache: true
         
     - name: Get dependencies
@@ -31,7 +34,7 @@ jobs:
       run: dart format --output=none --set-exit-if-changed .
       
     - name: Analyze code
-      run: dart analyze --fatal-infos
+      run: dart analyze --fatal-infos --fatal-warnings
       
     - name: Check for unused dependencies
       run: |
