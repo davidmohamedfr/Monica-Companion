@@ -19,8 +19,8 @@ jobs:
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.16.0'
-          channel: 'stable'
+          channel: stable
+          flutter-version-file: pubspec.yaml
           cache: true
           
       - name: Check if Flutter project exists
@@ -81,8 +81,8 @@ jobs:
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.16.0'
-          channel: 'stable'
+          channel: stable
+          flutter-version-file: pubspec.yaml
           cache: true
 
       - name: Check if Flutter project exists
@@ -130,8 +130,8 @@ jobs:
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.16.0'
-          channel: 'stable'
+          channel: stable
+          flutter-version-file: pubspec.yaml
           cache: true
 
       - name: Check if Flutter project exists
