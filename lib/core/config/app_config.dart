@@ -1,5 +1,5 @@
-import 'environment.dart';
-import '../../config/feature_flags.dart';
+import 'package:monica_mobile_app/core/config/environment.dart';
+import 'package:monica_mobile_app/config/feature_flags.dart';
 
 /// Application configuration constants and settings
 class AppConfig {
