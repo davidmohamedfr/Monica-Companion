@@ -82,18 +82,17 @@ jobs:
 
   integration_test:
     name: Integration Tests
-    needs: [lint, test]
     runs-on: ubuntu-latest
-    
+
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
-      
+
     - name: Setup Flutter
       uses: subosito/flutter-action@v2
       with:
+        flutter-version: ${{ env.FLUTTER_VERSION }}
         channel: stable
-        flutter-version-file: pubspec.yaml
         cache: true
         
     - name: Get dependencies
