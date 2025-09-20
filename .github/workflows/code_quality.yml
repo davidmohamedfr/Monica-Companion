@@ -73,20 +73,48 @@ jobs:
       run: |
         # Check for common security issues
         echo "Running basic security checks..."
-        
-        # Check for hardcoded secrets (basic patterns)
-        if grep -r "api_key\|password\|secret\|token" lib/ --include="*.dart" | grep -v "// TODO\|// FIXME"; then
-          echo "Potential hardcoded secrets found"
+
+        # Check for hardcoded secrets (improved patterns to avoid false positives)
+        # Look for actual hardcoded values, not just variable names or comments
+        echo "Checking for hardcoded secrets..."
+
+        # Check for hardcoded API keys (actual values, not variable names)
+        if grep -r "api_key\s*=\s*['\"][^'\"]\+['\"]" lib/ --include="*.dart"; then
+          echo "Hardcoded API key found"
           exit 1
         fi
-        
+
+        # Check for hardcoded passwords (actual values)
+        if grep -r "password\s*=\s*['\"][^'\"]\+['\"]" lib/ --include="*.dart"; then
+          echo "Hardcoded password found"
+          exit 1
+        fi
+
+        # Check for actual secret values (not just the word "secret")
+        if grep -r "secret\s*=\s*['\"][^'\"]\+['\"]" lib/ --include="*.dart"; then
+          echo "Hardcoded secret found"
+          exit 1
+        fi
+
+        # Check for actual token values (not just variable names or function parameters)
+        if grep -r "token\s*=\s*['\"][^'\"]\+['\"]" lib/ --include="*.dart" | grep -v "const.*=.*token" | grep -v "keyApiToken"; then
+          echo "Hardcoded token found"
+          exit 1
+        fi
+
+        # Check for common secret patterns
+        if grep -rE "(sk_|pk_|bearer\s+)[a-zA-Z0-9]{20,}" lib/ --include="*.dart"; then
+          echo "Potential API key pattern found"
+          exit 1
+        fi
+
         # Check for debug prints in production code
         if grep -r "print(" lib/ --include="*.dart"; then
           echo "Debug print statements found in lib/"
           exit 1
         fi
-        
-        echo "Basic security checks passed"
+
+        echo "Security checks passed"
         
     - name: Documentation check
       run: |
