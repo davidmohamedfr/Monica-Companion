@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
-import 'package:monica_mobile_app/config/feature_flags.dart';
-import 'package:monica_mobile_app/core/config/app_config.dart';
-import 'package:monica_mobile_app/core/config/environment.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:monica_companion/core/config/app_config.dart';
+import 'package:monica_companion/core/config/environment.dart';
 
 void main() {
   runApp(const MonicaApp());
@@ -11,95 +11,153 @@ void main() {
 class MonicaApp extends StatelessWidget {
   const MonicaApp({super.key});
 
+  // Monica brand color constant
+  static const Color _monicaBrandColor = Color(0xFF6366F1);
+
   @override
   Widget build(BuildContext context) => MaterialApp(
-    title: AppConfig.appName,
+    title: 'Monica Companion',
     theme: ThemeData(
-      colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+      colorScheme: ColorScheme.fromSeed(
+        seedColor: _monicaBrandColor,
+      ).copyWith(
+        primary: _monicaBrandColor,
+      ),
       useMaterial3: true,
     ),
-    home: const HomePage(),
+    home: const WelcomeScreen(),
   );
 }
 
-class HomePage extends StatelessWidget {
-  const HomePage({super.key});
+class WelcomeScreen extends StatelessWidget {
+  const WelcomeScreen({super.key});
+
+  // Spacing constants
+  static const double _mainPadding = 24;
+  static const double _sectionSpacing = 40;
 
   @override
   Widget build(BuildContext context) => Scaffold(
-    appBar: AppBar(
-      backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-      title: Text(AppConfig.appName),
-    ),
-    body: Padding(
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          const Text(
-            'Environment Configuration',
-            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-          ),
-          const SizedBox(height: 16),
-          _buildConfigItem(
-            'Environment',
-            EnvironmentConfig.currentEnvironment.name,
-          ),
-          _buildConfigItem('App Name', AppConfig.appName),
-          _buildConfigItem('API Base URL', AppConfig.apiBaseUrl),
-          _buildConfigItem('Package Name', AppConfig.packageName),
-          const SizedBox(height: 24),
-          const Text(
-            'Feature Flags',
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-          ),
-          const SizedBox(height: 16),
-          ...FeatureFlags.allFlags.entries.map(
-            (MapEntry<String, dynamic> entry) =>
-                _buildFeatureFlag(entry.key, entry.value),
-          ),
-        ],
+    body: DecoratedBox(
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: <Color>[
+            Theme.of(context).colorScheme.primary,
+            Theme.of(context).colorScheme.primaryContainer,
+          ],
+        ),
       ),
-    ),
-  );
+      child: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.all(_mainPadding),
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+              const SizedBox(height: _sectionSpacing),
 
-  Widget _buildConfigItem(String label, String value) => Padding(
-    padding: const EdgeInsets.symmetric(vertical: 4),
-    child: Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: <Widget>[
-        SizedBox(
-          width: 120,
-          child: Text(
-            '$label:',
-            style: const TextStyle(fontWeight: FontWeight.w500),
+              // Logo Section
+              Container(
+                padding: const EdgeInsets.all(20),
+                decoration: BoxDecoration(
+                  color: Colors.white.withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: SvgPicture.asset(
+                  'assets/images/logos/monica_companion_logo.svg',
+                  height: 120,
+                  colorFilter: const ColorFilter.mode(
+                    Colors.white,
+                    BlendMode.srcIn,
+                  ),
+                ),
+              ),
+
+              const SizedBox(height: _sectionSpacing),
+
+              // App Title
+              Text(
+                'Monica Companion',
+                style: Theme.of(context).textTheme.headlineLarge?.copyWith(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                ),
+                textAlign: TextAlign.center,
+              ),
+
+              const SizedBox(height: 16),
+
+              // Tagline
+              Text(
+                'Personal relationships, perfectly managed',
+                style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                  color: Colors.white.withValues(alpha: 0.9),
+                ),
+                textAlign: TextAlign.center,
+              ),
+
+              const SizedBox(height: 32),
+
+              // Description
+              Container(
+                padding: const EdgeInsets.all(24),
+                decoration: BoxDecoration(
+                  color: Colors.white.withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                child: Text(
+                  'Welcome to Monica Companion - your mobile gateway to '
+                  'meaningful relationships. Document your life, organize '
+                  'interactions, and nurture the connections that matter most.',
+                  style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                    color: Colors.white.withValues(alpha: 0.8),
+                    height: 1.5,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+              ),
+
+              const SizedBox(height: _sectionSpacing),
+
+              // Development Info (temporary)
+              Container(
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: Colors.white.withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Column(
+                  children: <Widget>[
+                    Text(
+                      'Development Build',
+                      style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                        color: Colors.white.withValues(alpha: 0.7),
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      'Environment: '
+                      '${EnvironmentConfig.currentEnvironment.name}',
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        color: Colors.white.withValues(alpha: 0.6),
+                      ),
+                    ),
+                    Text(
+                      'Package: ${AppConfig.packageName}',
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        color: Colors.white.withValues(alpha: 0.6),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+            ),
           ),
         ),
-        Expanded(child: Text(value)),
-      ],
-    ),
-  );
-
-  Widget _buildFeatureFlag(String name, Object? value) => Padding(
-    padding: const EdgeInsets.symmetric(vertical: 2),
-    child: Row(
-      children: <Widget>[
-        Icon(
-          value == true ? Icons.check_circle : Icons.cancel,
-          color: value == true ? Colors.green : Colors.grey,
-          size: 16,
-        ),
-        const SizedBox(width: 8),
-        Text(name),
-        const Spacer(),
-        Text(
-          value.toString(),
-          style: TextStyle(
-            color: value == true ? Colors.green : Colors.grey,
-            fontWeight: FontWeight.w500,
-          ),
-        ),
-      ],
+      ),
     ),
   );
 }

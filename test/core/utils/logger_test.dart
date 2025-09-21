@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:monica_mobile_app/core/utils/logger.dart';
+import 'package:monica_companion/core/utils/logger.dart';
 
 void main() {
   group('Logger', () {

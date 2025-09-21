@@ -1,6 +1,6 @@
 import 'dart:developer' as developer;
 
-import 'package:monica_mobile_app/core/config/app_config.dart';
+import 'package:monica_companion/core/config/app_config.dart';
 
 /// Centralized logging utility
 class Logger {

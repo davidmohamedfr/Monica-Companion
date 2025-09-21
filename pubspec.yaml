@@ -1,5 +1,5 @@
-name: monica_mobile_app
-description: A mobile companion application for Monica PRM
+name: monica_companion
+description: Monica Companion - Personal relationships, perfectly managed
 publish_to: 'none'
 version: 0.0.1
 
@@ -14,6 +14,7 @@ dependencies:
   # Core dependencies for future implementation
   cupertino_icons: ^1.0.2
   equatable: ^2.0.5
+  flutter_svg: ^2.0.10+1
   
 dev_dependencies:
   flutter_test:
@@ -33,9 +34,9 @@ dev_dependencies:
 flutter:
   uses-material-design: true
   
-  # Assets placeholder
-  # assets:
-  #   - images/
+  # Assets
+  assets:
+    - assets/images/logos/
   
   # Fonts placeholder  
   # fonts:

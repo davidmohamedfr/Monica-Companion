@@ -7,7 +7,7 @@
 
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:monica_mobile_app/main.dart';
+import 'package:monica_companion/main.dart';
 
 void main() {
   testWidgets('App launches and displays Monica configuration', (

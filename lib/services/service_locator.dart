@@ -1,4 +1,4 @@
-import 'package:monica_mobile_app/core/utils/logger.dart';
+import 'package:monica_companion/core/utils/logger.dart';
 
 /// Simple service locator for dependency injection
 class ServiceLocator {

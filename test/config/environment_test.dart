@@ -1,8 +1,8 @@
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:monica_mobile_app/config/feature_flags.dart';
-import 'package:monica_mobile_app/core/config/app_config.dart';
-import 'package:monica_mobile_app/core/config/environment.dart';
+import 'package:monica_companion/config/feature_flags.dart';
+import 'package:monica_companion/core/config/app_config.dart';
+import 'package:monica_companion/core/config/environment.dart';
 
 void main() {
   group('Environment Configuration Tests', () {

@@ -1,4 +1,4 @@
-import 'package:monica_mobile_app/core/config/environment.dart';
+import 'package:monica_companion/core/config/environment.dart';
 
 /// Feature flags configuration for different environments
 class FeatureFlags {

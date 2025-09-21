@@ -1,4 +1,4 @@
-import 'package:monica_mobile_app/core/constants/app_constants.dart';
+import 'package:monica_companion/core/constants/app_constants.dart';
 
 /// Database configuration and schema management
 class DatabaseConfig {

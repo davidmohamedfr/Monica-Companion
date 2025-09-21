@@ -1,4 +1,4 @@
-import 'package:monica_mobile_app/services/interfaces/base_service.dart';
+import 'package:monica_companion/services/interfaces/base_service.dart';
 
 /// HTTP client response wrapper
 class ApiResponse<T> {
