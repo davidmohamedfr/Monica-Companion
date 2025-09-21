@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:flutter_test/flutter_test.dart';
+
 import 'package:monica_companion/core/config/app_config.dart';
 import 'package:monica_companion/core/config/environment.dart';
 import 'package:monica_companion/main.dart';
@@ -50,7 +51,8 @@ void main() {
     });
 
     test('should initialize app config without error', () {
-      // GREEN: This test verifies AppConfig initializes and returns valid values
+      // GREEN: This test verifies AppConfig initializes and returns valid
+      // values
       expect(() => AppConfig.packageName, returnsNormally);
       expect(AppConfig.packageName, isNotEmpty);
       expect(
@@ -162,7 +164,10 @@ void main() {
       // Verify the color scheme uses Monica's brand color as base
       // Monica brand color is #6366F1
       expect(colorScheme, isNotNull);
-      expect(colorScheme!.primary.value, equals(const Color(0xFF6366F1).value));
+      expect(
+        colorScheme!.primary.toARGB32(),
+        equals(const Color(0xFF6366F1).toARGB32()),
+      );
     });
 
     testWidgets('should display gradient background', (
@@ -173,7 +178,7 @@ void main() {
       await tester.pumpAndSettle();
 
       // Find all DecoratedBox widgets
-      final decoratedBoxes = find.byType(DecoratedBox);
+      final Finder decoratedBoxes = find.byType(DecoratedBox);
       expect(decoratedBoxes, findsWidgets);
 
       // Find the one with gradient decoration
@@ -206,8 +211,8 @@ void main() {
       await tester.pumpAndSettle();
 
       // Find key text widgets and verify they use white colors
-      final titleText = find.text('Monica Companion');
-      final taglineText = find.text(
+      final Finder titleText = find.text('Monica Companion');
+      final Finder taglineText = find.text(
         'Personal relationships, perfectly managed',
       );
 
@@ -223,8 +228,8 @@ void main() {
 
       // Verify tagline uses white with opacity
       expect(
-        taglineWidget.style?.color?.value,
-        equals(Colors.white.withValues(alpha: 0.9).value),
+        taglineWidget.style?.color?.toARGB32(),
+        equals(Colors.white.withValues(alpha: 0.9).toARGB32()),
       );
     });
   });
@@ -299,7 +304,7 @@ void main() {
       await tester.pumpAndSettle();
 
       // Find all Column widgets
-      final columns = find.byType(Column);
+      final Finder columns = find.byType(Column);
       expect(columns, findsWidgets);
 
       // Find the main Column with center alignment
@@ -318,7 +323,9 @@ void main() {
         reason: 'Should find main Column with center alignment',
       );
 
-      // Main Column should have multiple children (SizedBox, Container, SizedBox, Text, SizedBox, Text, SizedBox, Container, SizedBox, Container)
+      // Main Column should have multiple children (SizedBox, Container,
+      // SizedBox, Text, SizedBox, Text, SizedBox, Container, SizedBox,
+      // Container)
       expect(mainColumn!.children.length, greaterThanOrEqualTo(7));
 
       // Verify Column has proper alignment
@@ -333,17 +340,17 @@ void main() {
       await tester.pumpAndSettle();
 
       // Should find multiple SizedBox widgets for spacing
-      final sizedBoxes = find.byType(SizedBox);
+      final Finder sizedBoxes = find.byType(SizedBox);
       expect(sizedBoxes, findsWidgets);
 
       // Should have at least 3 SizedBox spacers for proper spacing
       expect(sizedBoxes.evaluate().length, greaterThanOrEqualTo(3));
 
       // Verify SizedBox widgets have consistent spacing
-      final sizedBoxWidgets = sizedBoxes
+      final List<SizedBox> sizedBoxWidgets = sizedBoxes
           .evaluate()
-          .map((element) => element.widget as SizedBox)
-          .where((box) => box.height != null)
+          .map((Element element) => element.widget as SizedBox)
+          .where((SizedBox box) => box.height != null)
           .toList();
 
       expect(
@@ -353,8 +360,8 @@ void main() {
       );
 
       // At least one SizedBox should use the _sectionSpacing constant (40.0)
-      final hasSectionSpacing = sizedBoxWidgets.any(
-        (box) => box.height == 40.0,
+      final bool hasSectionSpacing = sizedBoxWidgets.any(
+        (SizedBox box) => box.height == 40.0,
       );
 
       expect(

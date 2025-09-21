@@ -108,7 +108,8 @@ class WelcomeScreen extends StatelessWidget {
                   child: Text(
                     'Welcome to Monica Companion - your mobile gateway to '
                     'meaningful relationships. Document your life, organize '
-                    'interactions, and nurture the connections that matter most.',
+                    'interactions, and nurture the connections that matter '
+                    'most.',
                     style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                       color: Colors.white.withValues(alpha: 0.8),
                       height: 1.5,

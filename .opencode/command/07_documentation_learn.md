@@ -1,0 +1,1 @@
+/Users/davidmohamed/dev/src/perso/FakeProjectAidd/aidd/prompts/ide/07_documentation/learn.md

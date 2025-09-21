@@ -1,0 +1,1 @@
+/Users/davidmohamed/dev/src/perso/FakeProjectAidd/aidd/prompts/ide/03_plan/README.md
