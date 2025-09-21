@@ -1,8 +1,8 @@
-import 'package:monica_mobile_app/core/errors/exceptions.dart';
-import 'package:monica_mobile_app/core/utils/logger.dart';
-import 'package:monica_mobile_app/db/interfaces/database_interface.dart';
-import 'package:monica_mobile_app/db/interfaces/repository_interface.dart';
-import 'package:monica_mobile_app/db/models/base_model.dart';
+import 'package:monica_companion/core/errors/exceptions.dart';
+import 'package:monica_companion/core/utils/logger.dart';
+import 'package:monica_companion/db/interfaces/database_interface.dart';
+import 'package:monica_companion/db/interfaces/repository_interface.dart';
+import 'package:monica_companion/db/models/base_model.dart';
 
 /// Base repository implementation with common CRUD operations
 abstract class BaseRepository<T extends BaseModel, ID>

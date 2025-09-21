@@ -1,5 +1,5 @@
-import 'package:monica_mobile_app/config/feature_flags.dart';
-import 'package:monica_mobile_app/core/config/environment.dart';
+import 'package:monica_companion/config/feature_flags.dart';
+import 'package:monica_companion/core/config/environment.dart';
 
 /// Application configuration constants and settings
 class AppConfig {
@@ -28,7 +28,7 @@ class AppConfig {
   static const Duration defaultSyncInterval = Duration(hours: 4);
 
   /// Package name base
-  static const String packageNameBase = 'com.monica.app';
+  static const String packageNameBase = 'fr.m0hdaCorp.monica_companion';
 
   /// Full package name with environment suffix
   static String get packageName =>

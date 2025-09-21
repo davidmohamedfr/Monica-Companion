@@ -1,7 +1,7 @@
 import 'package:mocktail/mocktail.dart';
-import 'package:monica_mobile_app/db/interfaces/database_interface.dart';
-import 'package:monica_mobile_app/services/interfaces/api_service.dart';
-import 'package:monica_mobile_app/services/interfaces/storage_service.dart';
+import 'package:monica_companion/db/interfaces/database_interface.dart';
+import 'package:monica_companion/services/interfaces/api_service.dart';
+import 'package:monica_companion/services/interfaces/storage_service.dart';
 
 /// Mock database interface for testing
 class MockDatabaseInterface extends Mock implements DatabaseInterface {}

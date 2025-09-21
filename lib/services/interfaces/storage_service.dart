@@ -1,4 +1,4 @@
-import 'package:monica_mobile_app/services/interfaces/base_service.dart';
+import 'package:monica_companion/services/interfaces/base_service.dart';
 
 /// Local storage service interface for key-value storage
 abstract class StorageService extends BaseService {

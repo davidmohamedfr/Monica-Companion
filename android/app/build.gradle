@@ -5,7 +5,7 @@ plugins {
 }
 
 android {
-    namespace = "com.monica.app"
+    namespace = "fr.m0hdaCorp.monica_companion"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
 
@@ -19,12 +19,12 @@ android {
     }
 
     defaultConfig {
-        applicationId = "com.monica.app"
+        applicationId = "fr.m0hdaCorp.monica_companion"
         minSdkVersion = flutter.minSdkVersion
         targetSdkVersion = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName
-        resValue "string", "app_name", "Monica Dev"
+        resValue "string", "app_name", "Monica Companion"
         buildConfigField "String", "FLAVOR", '"development"'
         buildConfigField "String", "API_BASE_URL", '"https://dev-api.monica.com"'
     }
@@ -42,7 +42,7 @@ android {
             dimension "environment"
             applicationIdSuffix ".dev"
             versionNameSuffix "-dev"
-            resValue "string", "app_name", "Monica Dev"
+            resValue "string", "app_name", "Monica Companion"
             buildConfigField "String", "FLAVOR", '"development"'
             buildConfigField "String", "API_BASE_URL", '"https://dev-api.monica.com"'
         }

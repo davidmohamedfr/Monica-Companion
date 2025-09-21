@@ -1,5 +1,5 @@
-import 'package:monica_mobile_app/core/utils/logger.dart';
-import 'package:monica_mobile_app/services/interfaces/base_service.dart';
+import 'package:monica_companion/core/utils/logger.dart';
+import 'package:monica_companion/services/interfaces/base_service.dart';
 
 /// Base service implementation with common functionality
 abstract class BaseServiceImpl implements BaseService {
