@@ -13,16 +13,18 @@ void main() {
       expect(() => const MonicaApp(), returnsNormally);
     });
 
-    testWidgets('should execute main function without crashing',
-        (WidgetTester tester) async {
+    testWidgets('should execute main function without crashing', (
+      WidgetTester tester,
+    ) async {
       // GREEN: This test verifies that runApp executes without throwing
       expect(() {
         runApp(const MonicaApp());
       }, returnsNormally);
     });
 
-    testWidgets('should display welcome screen on startup',
-        (WidgetTester tester) async {
+    testWidgets('should display welcome screen on startup', (
+      WidgetTester tester,
+    ) async {
       // GREEN: This test verifies WelcomeScreen widget is displayed
       await tester.pumpWidget(const MonicaApp());
 
@@ -30,8 +32,9 @@ void main() {
       expect(find.byType(WelcomeScreen), findsOneWidget);
     });
 
-    testWidgets('should load logo asset successfully',
-        (WidgetTester tester) async {
+    testWidgets('should load logo asset successfully', (
+      WidgetTester tester,
+    ) async {
       // GREEN: This test verifies SVG logo asset loads without error
       await tester.pumpWidget(const MonicaApp());
 
@@ -50,13 +53,17 @@ void main() {
       // GREEN: This test verifies AppConfig initializes and returns valid values
       expect(() => AppConfig.packageName, returnsNormally);
       expect(AppConfig.packageName, isNotEmpty);
-      expect(AppConfig.packageName, startsWith('fr.m0hdaCorp.monica_companion'));
+      expect(
+        AppConfig.packageName,
+        startsWith('fr.m0hdaCorp.monica_companion'),
+      );
     });
   });
 
   group('User Interface Behaviors', () {
-    testWidgets('should display Monica Companion title',
-        (WidgetTester tester) async {
+    testWidgets('should display Monica Companion title', (
+      WidgetTester tester,
+    ) async {
       // GREEN: This test verifies the main title is displayed
       await tester.pumpWidget(const MonicaApp());
       await tester.pumpAndSettle();
@@ -65,32 +72,37 @@ void main() {
       expect(find.text('Monica Companion'), findsOneWidget);
     });
 
-    testWidgets('should display correct tagline',
-        (WidgetTester tester) async {
+    testWidgets('should display correct tagline', (WidgetTester tester) async {
       // GREEN: This test verifies the tagline is displayed
       await tester.pumpWidget(const MonicaApp());
       await tester.pumpAndSettle();
 
       // Should find the tagline text
-      expect(find.text('Personal relationships, perfectly managed'),
-          findsOneWidget);
+      expect(
+        find.text('Personal relationships, perfectly managed'),
+        findsOneWidget,
+      );
     });
 
-    testWidgets('should display welcome description',
-        (WidgetTester tester) async {
+    testWidgets('should display welcome description', (
+      WidgetTester tester,
+    ) async {
       // GREEN: This test verifies the description text is displayed
       await tester.pumpWidget(const MonicaApp());
       await tester.pumpAndSettle();
 
       // Should find key parts of the description text
-      expect(find.textContaining('Welcome to Monica Companion'),
-          findsOneWidget);
+      expect(
+        find.textContaining('Welcome to Monica Companion'),
+        findsOneWidget,
+      );
       expect(find.textContaining('mobile gateway'), findsOneWidget);
       expect(find.textContaining('meaningful relationships'), findsOneWidget);
     });
 
-    testWidgets('should display development build info',
-        (WidgetTester tester) async {
+    testWidgets('should display development build info', (
+      WidgetTester tester,
+    ) async {
       // GREEN: This test verifies development info section is displayed
       await tester.pumpWidget(const MonicaApp());
       await tester.pumpAndSettle();
@@ -101,8 +113,9 @@ void main() {
       expect(find.textContaining('Package:'), findsOneWidget);
     });
 
-    testWidgets('should display current environment',
-        (WidgetTester tester) async {
+    testWidgets('should display current environment', (
+      WidgetTester tester,
+    ) async {
       // GREEN: This test verifies environment name is shown
       await tester.pumpWidget(const MonicaApp());
       await tester.pumpAndSettle();
@@ -111,21 +124,21 @@ void main() {
       expect(find.textContaining('Environment: development'), findsOneWidget);
     });
 
-    testWidgets('should display package name',
-        (WidgetTester tester) async {
+    testWidgets('should display package name', (WidgetTester tester) async {
       // GREEN: This test verifies package name is shown
       await tester.pumpWidget(const MonicaApp());
       await tester.pumpAndSettle();
 
       // Should find package information with actual value
-      expect(find.textContaining('Package: fr.m0hdaCorp.monica_companion'),
-          findsOneWidget);
+      expect(
+        find.textContaining('Package: fr.m0hdaCorp.monica_companion'),
+        findsOneWidget,
+      );
     });
   });
 
   group('Visual Theme Application', () {
-    testWidgets('should apply Material 3 theme',
-        (WidgetTester tester) async {
+    testWidgets('should apply Material 3 theme', (WidgetTester tester) async {
       // GREEN: This test verifies Material 3 is enabled
       await tester.pumpWidget(const MonicaApp());
 
@@ -136,8 +149,9 @@ void main() {
       expect(app.theme?.useMaterial3, isTrue);
     });
 
-    testWidgets('should use Monica brand color scheme',
-        (WidgetTester tester) async {
+    testWidgets('should use Monica brand color scheme', (
+      WidgetTester tester,
+    ) async {
       // GREEN: This test verifies Monica brand colors are used
       await tester.pumpWidget(const MonicaApp());
 
@@ -148,12 +162,12 @@ void main() {
       // Verify the color scheme uses Monica's brand color as base
       // Monica brand color is #6366F1
       expect(colorScheme, isNotNull);
-      expect(colorScheme!.primary.value,
-          equals(const Color(0xFF6366F1).value));
+      expect(colorScheme!.primary.value, equals(const Color(0xFF6366F1).value));
     });
 
-    testWidgets('should display gradient background',
-        (WidgetTester tester) async {
+    testWidgets('should display gradient background', (
+      WidgetTester tester,
+    ) async {
       // GREEN: This test verifies gradient background is displayed
       await tester.pumpWidget(const MonicaApp());
       await tester.pumpAndSettle();
@@ -172,24 +186,30 @@ void main() {
           foundGradient = true;
           expect(decoration!.gradient, isA<LinearGradient>());
 
-          final LinearGradient gradient = decoration.gradient! as LinearGradient;
+          final LinearGradient gradient =
+              decoration.gradient! as LinearGradient;
           expect(gradient.colors.length, equals(2));
           break;
         }
       }
 
-      expect(foundGradient, isTrue, reason: 'Should find at least one DecoratedBox with gradient');
+      expect(
+        foundGradient,
+        isTrue,
+        reason: 'Should find at least one DecoratedBox with gradient',
+      );
     });
 
-    testWidgets('should apply white text colors',
-        (WidgetTester tester) async {
+    testWidgets('should apply white text colors', (WidgetTester tester) async {
       // GREEN: This test verifies text uses white colors consistently
       await tester.pumpWidget(const MonicaApp());
       await tester.pumpAndSettle();
 
       // Find key text widgets and verify they use white colors
       final titleText = find.text('Monica Companion');
-      final taglineText = find.text('Personal relationships, perfectly managed');
+      final taglineText = find.text(
+        'Personal relationships, perfectly managed',
+      );
 
       expect(titleText, findsOneWidget);
       expect(taglineText, findsOneWidget);
@@ -202,14 +222,17 @@ void main() {
       expect(titleWidget.style?.color, equals(Colors.white));
 
       // Verify tagline uses white with opacity
-      expect(taglineWidget.style?.color?.value,
-          equals(Colors.white.withValues(alpha: 0.9).value));
+      expect(
+        taglineWidget.style?.color?.value,
+        equals(Colors.white.withValues(alpha: 0.9).value),
+      );
     });
   });
 
   group('Error Handling & Resilience', () {
-    testWidgets('should handle missing logo asset gracefully',
-        (WidgetTester tester) async {
+    testWidgets('should handle missing logo asset gracefully', (
+      WidgetTester tester,
+    ) async {
       // GREEN: This test verifies app doesn't crash with invalid asset path
 
       // Create a test app with invalid logo path
@@ -235,8 +258,7 @@ void main() {
       expect(find.byType(SvgPicture), findsOneWidget);
     });
 
-    test('should handle invalid environment configuration',
-        () {
+    test('should handle invalid environment configuration', () {
       // GREEN: This test verifies invalid env config doesn't crash app
       // Test environment config edge cases
 
@@ -252,8 +274,9 @@ void main() {
   });
 
   group('Layout & Responsiveness', () {
-    testWidgets('should implement SafeArea padding',
-        (WidgetTester tester) async {
+    testWidgets('should implement SafeArea padding', (
+      WidgetTester tester,
+    ) async {
       // GREEN: This test verifies SafeArea widget is properly used
       await tester.pumpWidget(const MonicaApp());
       await tester.pumpAndSettle();
@@ -268,8 +291,9 @@ void main() {
       expect(safeAreaWidget.child, isNotNull);
     });
 
-    testWidgets('should structure content in Column',
-        (WidgetTester tester) async {
+    testWidgets('should structure content in Column', (
+      WidgetTester tester,
+    ) async {
       // GREEN: This test verifies Column layout with proper children
       await tester.pumpWidget(const MonicaApp());
       await tester.pumpAndSettle();
@@ -288,7 +312,11 @@ void main() {
         }
       }
 
-      expect(mainColumn, isNotNull, reason: 'Should find main Column with center alignment');
+      expect(
+        mainColumn,
+        isNotNull,
+        reason: 'Should find main Column with center alignment',
+      );
 
       // Main Column should have multiple children (SizedBox, Container, SizedBox, Text, SizedBox, Text, SizedBox, Container, SizedBox, Container)
       expect(mainColumn!.children.length, greaterThanOrEqualTo(7));
@@ -297,8 +325,9 @@ void main() {
       expect(mainColumn.mainAxisAlignment, equals(MainAxisAlignment.center));
     });
 
-    testWidgets('should distribute space with spacers',
-        (WidgetTester tester) async {
+    testWidgets('should distribute space with spacers', (
+      WidgetTester tester,
+    ) async {
       // RED: This test verifies SizedBox widgets create proper spacing
       await tester.pumpWidget(const MonicaApp());
       await tester.pumpAndSettle();
@@ -311,20 +340,28 @@ void main() {
       expect(sizedBoxes.evaluate().length, greaterThanOrEqualTo(3));
 
       // Verify SizedBox widgets have consistent spacing
-      final sizedBoxWidgets = sizedBoxes.evaluate()
+      final sizedBoxWidgets = sizedBoxes
+          .evaluate()
           .map((element) => element.widget as SizedBox)
           .where((box) => box.height != null)
           .toList();
 
-      expect(sizedBoxWidgets, isNotEmpty,
-          reason: 'Should find SizedBox widgets with height for spacing');
+      expect(
+        sizedBoxWidgets,
+        isNotEmpty,
+        reason: 'Should find SizedBox widgets with height for spacing',
+      );
 
       // At least one SizedBox should use the _sectionSpacing constant (40.0)
-      final hasSectionSpacing = sizedBoxWidgets
-          .any((box) => box.height == 40.0);
+      final hasSectionSpacing = sizedBoxWidgets.any(
+        (box) => box.height == 40.0,
+      );
 
-      expect(hasSectionSpacing, isTrue,
-          reason: 'Should find SizedBox with section spacing (40.0)');
+      expect(
+        hasSectionSpacing,
+        isTrue,
+        reason: 'Should find SizedBox with section spacing (40.0)',
+      );
     });
   });
 }

@@ -21,7 +21,7 @@ void main() {
 
     test('should have correct app config values', () {
       expect(AppConfig.appName, 'Monica Dev');
-      expect(AppConfig.packageName, 'com.monica.app.dev');
+      expect(AppConfig.packageName, 'fr.m0hdaCorp.monica_companion.dev');
       expect(AppConfig.apiBaseUrl, 'https://dev-api.monica.com');
     });
 

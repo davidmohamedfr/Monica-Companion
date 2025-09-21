@@ -16,8 +16,8 @@ void main() {
     // Build our app and trigger a frame.
     await tester.pumpWidget(const MonicaApp());
 
-    // Verify that our app displays environment configuration
-    expect(find.text('Environment Configuration'), findsOneWidget);
-    expect(find.text('Feature Flags'), findsOneWidget);
+    // Verify that our app displays development build info
+    expect(find.text('Development Build'), findsOneWidget);
+    expect(find.textContaining('Environment:'), findsOneWidget);
   });
 }
