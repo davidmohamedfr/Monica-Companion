@@ -1,0 +1,122 @@
+---
+description: Clean Architecture principles for Flutter applications enforcing strict layer separation, dependency inversion, and feature-based modularization to ensure testable, maintainable, and scalable code with clear boundaries between business logic, data management, and UI presentation
+globs: lib/**/*.dart
+alwaysApply: false
+---
+
+## Layer Separation
+
+- Domain layer contains only business logic
+- Data layer handles all external communications
+- Presentation layer manages UI and state
+- Dependencies flow inward only
+- No framework dependencies in domain
+
+```dart
+// domain/entities/contact.dart
+class Contact extends Equatable {
+  final String id;
+  final String name;
+}
+```
+
+## Domain Layer Rules
+
+- Entities are pure Dart classes
+- Use cases contain business rules
+- Repository interfaces define contracts
+- No Flutter imports in domain
+- Immutable entities with Equatable
+
+## Data Layer Rules
+
+- Implement repository interfaces from domain
+- DTOs for external data mapping
+- Data sources handle API/database calls
+- Mappers convert DTOs to entities
+- Error handling with custom exceptions
+
+```dart
+// data/repositories/contact_repository_impl.dart
+class ContactRepositoryImpl implements ContactRepository {
+  final ApiService apiService;
+  final ContactMapper mapper;
+}
+```
+
+## Presentation Layer Rules
+
+- Features organized by screens/pages
+- State management per feature
+- Widgets separated from logic
+- Controllers/BLoCs handle presentation logic
+- UI components in shared widgets
+
+## Feature Organization
+
+- Each feature is self-contained module
+- Feature contains all three layers
+- Shared components in @lib/features/shared
+- Cross-feature communication via use cases
+- Feature exports only public API
+
+```dart
+lib/features/contacts/
+├── domain/
+├── data/
+└── presentation/
+```
+
+## Dependency Rules
+
+- Domain has zero dependencies
+- Data depends only on domain
+- Presentation depends on domain
+- Service locator for dependency injection
+- Interfaces over concrete implementations
+
+## Use Case Rules
+
+- Single responsibility per use case
+- Execute method with clear parameters
+- Return Either<Failure, Success>
+- No UI or framework logic
+- Testable with mocks
+
+```dart
+class GetContactsUseCase {
+  Future<Either<Failure, List<Contact>>> execute() {}
+}
+```
+
+## Repository Pattern
+
+- Abstract repositories in domain
+- Concrete implementations in data
+- Repository interfaces at @lib/db/interfaces
+- Generic CRUD operations in base
+- Feature-specific repositories extend base
+
+## Error Handling
+
+- Custom exceptions in @lib/core/errors/exceptions
+- Failures in @lib/core/errors/failures
+- Transform exceptions to failures
+- Propagate failures through layers
+- Handle failures in presentation
+
+## State Management
+
+- State classes in @lib/features/shared/models
+- Loading, error, success states
+- Immutable state objects
+- State transitions in controllers
+- Reactive UI updates
+
+## Testing Structure
+
+- Unit tests per layer
+- Mock dependencies with interfaces
+- Test use cases independently
+- Integration tests for features
+- Widget tests for UI components

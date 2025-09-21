@@ -1,0 +1,2230 @@
+/Users/davidmohamed/dev/src/perso/MonicaMobileApp/..
+├── .DS_Store
+├── ai-driven-dev
+│   ├── .github
+│   │   ├── .DS_Store
+│   │   ├── profile
+│   │   │   ├── .vscode
+│   │   │   │   └── settings.json
+│   │   │   ├── docs
+│   │   │   │   └── sub_repository_template.md
+│   │   │   └── README.md
+│   │   └── README.md -> .github/README.md
+│   ├── agents
+│   │   ├── .claude
+│   │   │   └── settings.local.json
+│   │   ├── .github
+│   │   │   └── pull_request_template.md
+│   │   ├── agents
+│   │   │   ├── github.md
+│   │   │   └── jira-github-create-pr.md
+│   │   ├── ai-architect
+│   │   │   ├── project-structure.txt
+│   │   │   └── versions.jsonc
+│   │   ├── ai-editor
+│   │   │   └── coding-rules.md
+│   │   ├── assets
+│   │   │   └── jira-github-create-pr-agents.png
+│   │   ├── README.md
+│   │   └── WIP
+│   │       ├── claude-dev.md
+│   │       ├── cline.md
+│   │       └── prompt-engineering.md
+│   ├── discord
+│   │   ├── .env.example
+│   │   ├── .gitignore
+│   │   ├── blog.html
+│   │   ├── docker-compose.yml
+│   │   ├── Dockerfile
+│   │   ├── package-lock.json
+│   │   ├── package.json
+│   │   ├── README.md
+│   │   ├── src
+│   │   │   ├── commands
+│   │   │   │   ├── aiddnews.ts
+│   │   │   │   └── aiddtool.ts
+│   │   │   ├── config
+│   │   │   │   └── environment.ts
+│   │   │   ├── deploy-commands.ts
+│   │   │   ├── events
+│   │   │   │   ├── interactionCreate.ts
+│   │   │   │   └── ready.ts
+│   │   │   ├── index.ts
+│   │   │   └── utils
+│   │   │       ├── __tests__
+│   │   │       │   └── validateUrl.test.ts
+│   │   │       ├── deployCommands.ts
+│   │   │       ├── notionClient.ts
+│   │   │       └── validateUrl.ts
+│   │   └── tsconfig.json
+│   ├── flow
+│   │   └── flowchart.mmd
+│   ├── prompts
+│   │   ├── .github
+│   │   │   └── workflows
+│   │   │       └── release.yml
+│   │   ├── .gitignore
+│   │   ├── .husky
+│   │   │   ├── post-push
+│   │   │   └── pre-commit
+│   │   ├── .prettierrc
+│   │   ├── .vscode
+│   │   │   └── settings.json
+│   │   ├── CONTRIBUTION.md
+│   │   ├── docs
+│   │   │   ├── cursor-template-prompt.png
+│   │   │   └── espanso.gif
+│   │   ├── espanso
+│   │   │   ├── _manifest.yml
+│   │   │   ├── package.yml
+│   │   │   └── README.md
+│   │   ├── index.js
+│   │   ├── package-lock.json
+│   │   ├── package.json
+│   │   ├── README.md
+│   │   └── src
+│   │       ├── espanso-generation
+│   │       │   ├── __snapshots__
+│   │       │   │   ├── generateYaml.test.js.snap
+│   │       │   │   └── parseMarkdown.test.js.snap
+│   │       │   ├── convertToYaml.js
+│   │       │   ├── generateYaml.js
+│   │       │   ├── generateYaml.test.js
+│   │       │   ├── parseMarkdown.js
+│   │       │   ├── parseMarkdown.test.js
+│   │       │   └── README.txt
+│   │       ├── extract-scripts.js
+│   │       └── extract-scripts.test.js
+│   ├── rules
+│   │   ├── .cursor
+│   │   │   └── rules
+│   │   │       ├── 00-architecture
+│   │   │       │   ├── 0-clean-architecture.mdc
+│   │   │       │   └── 0-feature-based-architecture.mdc
+│   │   │       ├── 01-standards
+│   │   │       │   ├── 1-clean-code-frontend.mdc
+│   │   │       │   ├── 1-clean-code.mdc
+│   │   │       │   ├── 1-naming-conventions.mdc
+│   │   │       │   ├── 1-psr-12-conventions.mdc
+│   │   │       │   └── 1-psr-4-conventions.mdc
+│   │   │       ├── 02-programming-languages
+│   │   │       │   ├── 2-python-naming-conventions.mdc
+│   │   │       │   ├── 2-python.mdc
+│   │   │       │   ├── 2-typescript-naming-conventions.mdc
+│   │   │       │   └── 2-typescript.mdc
+│   │   │       ├── 03-frameworks-and-libraries
+│   │   │       │   ├── 3-mobx@6.mdc
+│   │   │       │   ├── 3-nestjs.mdc
+│   │   │       │   ├── 3-react-router@7.5-server-data-loading.mdc
+│   │   │       │   ├── 3-react.mdc
+│   │   │       │   ├── 3-symfony@7-best-practices.mdc
+│   │   │       │   └── 3-tailwind@4.1.mdc
+│   │   │       ├── 04-tools-and-configurations
+│   │   │       │   ├── .gitkeep
+│   │   │       │   └── 4-package-installation.mdc
+│   │   │       ├── 05-workflows-and-processes
+│   │   │       │   ├── .gitkeep
+│   │   │       │   └── 5-bug-finder.mdc
+│   │   │       ├── 06-templates-and-models
+│   │   │       │   └── .gitkeep
+│   │   │       ├── 07-quality-assurance
+│   │   │       │   ├── .gitkeep
+│   │   │       │   ├── 7-testing-backend.mdc
+│   │   │       │   ├── 7-testing-frontend.mdc
+│   │   │       │   ├── 7-testing-standards.mdc
+│   │   │       │   ├── 7-tests-integration.mdc
+│   │   │       │   └── 7-tests-units.mdc
+│   │   │       ├── 08-domain-specific-rules
+│   │   │       │   └── .gitkeep
+│   │   │       ├── 09-other
+│   │   │       │   └── .gitkeep
+│   │   │       └── meta-generator.mdc
+│   │   ├── .cursorindexignore
+│   │   ├── .env.example
+│   │   ├── .github
+│   │   │   └── pull_request_template.md
+│   │   ├── .gitignore
+│   │   ├── .vscode
+│   │   │   └── settings.json
+│   │   ├── biome.json
+│   │   ├── CONTRIBUTING.md
+│   │   ├── docs
+│   │   │   └── images
+│   │   │       ├── cursor-rules-live-hidden.png
+│   │   │       └── presentation-video.png
+│   │   ├── lefthook.yml
+│   │   ├── memory-bank
+│   │   │   ├── activeContext.md
+│   │   │   ├── productContext.md
+│   │   │   ├── progress.md
+│   │   │   ├── projectbrief.md
+│   │   │   ├── systemPatterns.md
+│   │   │   └── techContext.md
+│   │   ├── meta-rules
+│   │   │   ├── meta-compress.mdc
+│   │   │   └── semantic-language.yaml
+│   │   ├── README.md
+│   │   └── vscode
+│   │       └── ai-driven-dev-rules
+│   │           ├── .vscode
+│   │           │   ├── extensions.json
+│   │           │   ├── launch.json
+│   │           │   ├── settings.json
+│   │           │   └── tasks.json
+│   │           ├── .vscode-test.mjs
+│   │           ├── .vscodeignore
+│   │           ├── ai-driven-dev-rules-0.0.3.vsix
+│   │           ├── CHANGELOG.md
+│   │           ├── eslint.config.mjs
+│   │           ├── LICENSE.md
+│   │           ├── package-lock.json
+│   │           ├── package.json
+│   │           ├── pnpm-lock.yaml
+│   │           ├── README.md
+│   │           ├── src
+│   │           │   ├── api
+│   │           │   │   ├── github.ts
+│   │           │   │   └── types.ts
+│   │           │   ├── commands
+│   │           │   │   └── index.ts
+│   │           │   ├── extension.ts
+│   │           │   ├── services
+│   │           │   │   ├── download.ts
+│   │           │   │   ├── explorerStateService.ts
+│   │           │   │   ├── httpClient.ts
+│   │           │   │   ├── logger.ts
+│   │           │   │   ├── rateLimitManager.ts
+│   │           │   │   ├── selection.ts
+│   │           │   │   ├── statusBarService.ts
+│   │           │   │   ├── storage.ts
+│   │           │   │   └── updateCheckService.ts
+│   │           │   ├── utils
+│   │           │   │   ├── githubApiResponseHandler.ts
+│   │           │   │   └── githubUtils.ts
+│   │           │   └── views
+│   │           │       ├── explorer
+│   │           │       │   ├── explorerView.ts
+│   │           │       │   ├── treeItem.ts
+│   │           │       │   ├── treeItemFactory.ts
+│   │           │       │   └── treeProvider.ts
+│   │           │       └── welcome
+│   │           │           ├── getStarted.ts
+│   │           │           └── welcomeView.ts
+│   │           ├── tsconfig.json
+│   │           └── vsc-extension-quickstart.md
+│   ├── vscode
+│   │   ├── .cursorignore
+│   │   ├── .env.example
+│   │   ├── .gitignore
+│   │   ├── .husky
+│   │   │   └── pre-commit
+│   │   ├── .prettierrc
+│   │   ├── .vscode
+│   │   │   ├── extensions.json
+│   │   │   ├── keybindings.json
+│   │   │   └── settings.json
+│   │   ├── extension_aidd
+│   │   │   ├── .prettierrc
+│   │   │   ├── .vscodeignore
+│   │   │   ├── config
+│   │   │   │   ├── base-package.json
+│   │   │   │   └── workspace-settings.jsonc
+│   │   │   ├── icon.png
+│   │   │   ├── LICENSE.txt
+│   │   │   ├── package-lock.json
+│   │   │   ├── package.json
+│   │   │   ├── playground
+│   │   │   │   ├── index-to-rename.php
+│   │   │   │   ├── index.java
+│   │   │   │   ├── index.kt
+│   │   │   │   ├── index.php
+│   │   │   │   ├── index.ts
+│   │   │   │   ├── index.tsx
+│   │   │   │   └── README.md
+│   │   │   ├── README.md
+│   │   │   ├── snippets
+│   │   │   │   ├── java.json
+│   │   │   │   ├── kotlin.json
+│   │   │   │   ├── php.json
+│   │   │   │   ├── typescript.json
+│   │   │   │   └── typescriptreact.json
+│   │   │   ├── src
+│   │   │   │   ├── commands
+│   │   │   │   │   └── prettierCommands.ts
+│   │   │   │   └── extension.ts
+│   │   │   └── tsconfig.json
+│   │   ├── extension_copilot_pack
+│   │   │   ├── icon.png
+│   │   │   ├── LICENSE.txt
+│   │   │   ├── package.json
+│   │   │   └── README.md
+│   │   ├── LICENSE.txt
+│   │   ├── package-lock.json
+│   │   ├── package.json
+│   │   ├── README.md
+│   │   ├── scripts
+│   │   │   ├── languages-test.sh
+│   │   │   ├── local-install.sh
+│   │   │   └── publish.sh
+│   │   ├── setup.js
+│   │   └── setup.test.js
+│   └── webhooks
+│       ├── .claude
+│       │   └── settings.json
+│       ├── .dockerignore
+│       ├── .env.example
+│       ├── .gitignore
+│       ├── .vscode
+│       │   └── settings.json
+│       ├── api
+│       │   ├── health
+│       │   │   └── index.js
+│       │   ├── index.js
+│       │   ├── notion
+│       │   │   ├── course-duplication.js
+│       │   │   └── handlers
+│       │   │       ├── block-duplication.js
+│       │   │       └── page-properties.js
+│       │   ├── sio
+│       │   │   └── new-sell.js
+│       │   └── waalaxy
+│       │       ├── crm.js
+│       │       └── lead-magnets.js
+│       ├── CLAUDE.md
+│       ├── compose.yaml
+│       ├── docker-server.js
+│       ├── Dockerfile
+│       ├── docs
+│       │   ├── ARCHITECTURE.md
+│       │   ├── deployment.md
+│       │   ├── development.md
+│       │   ├── google-sheets-setup.md
+│       │   └── TESTING.md
+│       ├── eslint.config.js
+│       ├── examples
+│       │   ├── notion
+│       │   │   ├── example-page-to-duplicate.md
+│       │   │   ├── payload-received.json
+│       │   │   └── payload-sent.json
+│       │   └── waalaxy
+│       │       └── campaign-crm.json
+│       ├── lib
+│       │   ├── config
+│       │   │   └── mappings.js
+│       │   ├── services
+│       │   │   ├── googleSheets.js
+│       │   │   ├── googleSheetsReadOnly.js
+│       │   │   └── notion.js
+│       │   ├── types
+│       │   │   └── waalaxy.js
+│       │   └── utils
+│       │       ├── blockDuplication.js
+│       │       ├── logger.js
+│       │       ├── pageProperties.js
+│       │       └── response.js
+│       ├── logs
+│       │   └── .gitkeep
+│       ├── package-lock.json
+│       ├── package.json
+│       ├── README.md
+│       ├── scripts
+│       │   ├── create-service-account-template.js
+│       │   ├── generate-headers.js
+│       │   ├── init-sheets-headers.js
+│       │   ├── test-api-key-read.js
+│       │   ├── test-api-write.js
+│       │   ├── test-waalaxy-integration.js
+│       │   └── test-webhook.js
+│       ├── tests
+│       │   ├── integration
+│       │   │   ├── errors.test.js
+│       │   │   ├── health.test.js
+│       │   │   ├── notion.test.js
+│       │   │   ├── root.test.js
+│       │   │   ├── shared
+│       │   │   │   └── test-utils.js
+│       │   │   └── waalaxy.test.js
+│       │   ├── integration-test.js
+│       │   └── setup.js
+│       └── vitest.config.js
+├── ApprentissageFlutter
+│   ├── .gitignore
+│   ├── .metadata
+│   ├── analysis_options.yaml
+│   ├── android
+│   │   ├── .gitignore
+│   │   ├── .kotlin
+│   │   │   └── sessions
+│   │   ├── app
+│   │   │   ├── build.gradle.kts
+│   │   │   └── src
+│   │   │       ├── debug
+│   │   │       │   └── AndroidManifest.xml
+│   │   │       ├── main
+│   │   │       │   ├── AndroidManifest.xml
+│   │   │       │   ├── java
+│   │   │       │   │   └── io
+│   │   │       │   │       └── flutter
+│   │   │       │   │           └── plugins
+│   │   │       │   ├── kotlin
+│   │   │       │   │   └── fr
+│   │   │       │   │       └── m0hda
+│   │   │       │   │           └── apprentissage_flutter
+│   │   │       │   │               └── MainActivity.kt
+│   │   │       │   └── res
+│   │   │       │       ├── drawable
+│   │   │       │       │   └── launch_background.xml
+│   │   │       │       ├── drawable-v21
+│   │   │       │       │   └── launch_background.xml
+│   │   │       │       ├── mipmap-hdpi
+│   │   │       │       │   └── ic_launcher.png
+│   │   │       │       ├── mipmap-mdpi
+│   │   │       │       │   └── ic_launcher.png
+│   │   │       │       ├── mipmap-xhdpi
+│   │   │       │       │   └── ic_launcher.png
+│   │   │       │       ├── mipmap-xxhdpi
+│   │   │       │       │   └── ic_launcher.png
+│   │   │       │       ├── mipmap-xxxhdpi
+│   │   │       │       │   └── ic_launcher.png
+│   │   │       │       ├── values
+│   │   │       │       │   └── styles.xml
+│   │   │       │       └── values-night
+│   │   │       │           └── styles.xml
+│   │   │       └── profile
+│   │   │           └── AndroidManifest.xml
+│   │   ├── build.gradle.kts
+│   │   ├── gradle
+│   │   │   └── wrapper
+│   │   │       └── gradle-wrapper.properties
+│   │   ├── gradle.properties
+│   │   └── settings.gradle.kts
+│   ├── ios
+│   │   ├── .gitignore
+│   │   ├── Flutter
+│   │   │   ├── AppFrameworkInfo.plist
+│   │   │   ├── Debug.xcconfig
+│   │   │   └── Release.xcconfig
+│   │   ├── Runner
+│   │   │   ├── AppDelegate.swift
+│   │   │   ├── Assets.xcassets
+│   │   │   │   ├── AppIcon.appiconset
+│   │   │   │   │   ├── Contents.json
+│   │   │   │   │   ├── Icon-App-1024x1024@1x.png
+│   │   │   │   │   ├── Icon-App-20x20@1x.png
+│   │   │   │   │   ├── Icon-App-20x20@2x.png
+│   │   │   │   │   ├── Icon-App-20x20@3x.png
+│   │   │   │   │   ├── Icon-App-29x29@1x.png
+│   │   │   │   │   ├── Icon-App-29x29@2x.png
+│   │   │   │   │   ├── Icon-App-29x29@3x.png
+│   │   │   │   │   ├── Icon-App-40x40@1x.png
+│   │   │   │   │   ├── Icon-App-40x40@2x.png
+│   │   │   │   │   ├── Icon-App-40x40@3x.png
+│   │   │   │   │   ├── Icon-App-60x60@2x.png
+│   │   │   │   │   ├── Icon-App-60x60@3x.png
+│   │   │   │   │   ├── Icon-App-76x76@1x.png
+│   │   │   │   │   ├── Icon-App-76x76@2x.png
+│   │   │   │   │   └── Icon-App-83.5x83.5@2x.png
+│   │   │   │   └── LaunchImage.imageset
+│   │   │   │       ├── Contents.json
+│   │   │   │       ├── LaunchImage.png
+│   │   │   │       ├── LaunchImage@2x.png
+│   │   │   │       ├── LaunchImage@3x.png
+│   │   │   │       └── README.md
+│   │   │   ├── Base.lproj
+│   │   │   │   ├── LaunchScreen.storyboard
+│   │   │   │   └── Main.storyboard
+│   │   │   ├── Info.plist
+│   │   │   └── Runner-Bridging-Header.h
+│   │   ├── Runner.xcodeproj
+│   │   │   ├── project.pbxproj
+│   │   │   ├── project.xcworkspace
+│   │   │   │   ├── contents.xcworkspacedata
+│   │   │   │   └── xcshareddata
+│   │   │   │       ├── IDEWorkspaceChecks.plist
+│   │   │   │       ├── swiftpm
+│   │   │   │       │   └── configuration
+│   │   │   │       └── WorkspaceSettings.xcsettings
+│   │   │   └── xcshareddata
+│   │   │       └── xcschemes
+│   │   │           └── Runner.xcscheme
+│   │   ├── Runner.xcworkspace
+│   │   │   ├── contents.xcworkspacedata
+│   │   │   └── xcshareddata
+│   │   │       ├── IDEWorkspaceChecks.plist
+│   │   │       ├── swiftpm
+│   │   │       │   └── configuration
+│   │   │       └── WorkspaceSettings.xcsettings
+│   │   └── RunnerTests
+│   │       └── RunnerTests.swift
+│   ├── lib
+│   │   ├── main.dart
+│   │   └── pages
+│   │       ├── favorites_page.dart
+│   │       └── generator_page.dart
+│   ├── linux
+│   │   ├── .gitignore
+│   │   ├── CMakeLists.txt
+│   │   ├── flutter
+│   │   │   ├── CMakeLists.txt
+│   │   │   ├── generated_plugin_registrant.cc
+│   │   │   ├── generated_plugin_registrant.h
+│   │   │   └── generated_plugins.cmake
+│   │   └── runner
+│   │       ├── CMakeLists.txt
+│   │       ├── main.cc
+│   │       ├── my_application.cc
+│   │       └── my_application.h
+│   ├── macos
+│   │   ├── .gitignore
+│   │   ├── Flutter
+│   │   │   ├── Flutter-Debug.xcconfig
+│   │   │   ├── Flutter-Release.xcconfig
+│   │   │   └── GeneratedPluginRegistrant.swift
+│   │   ├── Runner
+│   │   │   ├── AppDelegate.swift
+│   │   │   ├── Assets.xcassets
+│   │   │   │   └── AppIcon.appiconset
+│   │   │   │       ├── app_icon_1024.png
+│   │   │   │       ├── app_icon_128.png
+│   │   │   │       ├── app_icon_16.png
+│   │   │   │       ├── app_icon_256.png
+│   │   │   │       ├── app_icon_32.png
+│   │   │   │       ├── app_icon_512.png
+│   │   │   │       ├── app_icon_64.png
+│   │   │   │       └── Contents.json
+│   │   │   ├── Base.lproj
+│   │   │   │   └── MainMenu.xib
+│   │   │   ├── Configs
+│   │   │   │   ├── AppInfo.xcconfig
+│   │   │   │   ├── Debug.xcconfig
+│   │   │   │   ├── Release.xcconfig
+│   │   │   │   └── Warnings.xcconfig
+│   │   │   ├── DebugProfile.entitlements
+│   │   │   ├── Info.plist
+│   │   │   ├── MainFlutterWindow.swift
+│   │   │   └── Release.entitlements
+│   │   ├── Runner.xcodeproj
+│   │   │   ├── project.pbxproj
+│   │   │   ├── project.xcworkspace
+│   │   │   │   └── xcshareddata
+│   │   │   │       ├── IDEWorkspaceChecks.plist
+│   │   │   │       └── swiftpm
+│   │   │   │           └── configuration
+│   │   │   └── xcshareddata
+│   │   │       └── xcschemes
+│   │   │           └── Runner.xcscheme
+│   │   ├── Runner.xcworkspace
+│   │   │   ├── contents.xcworkspacedata
+│   │   │   └── xcshareddata
+│   │   │       ├── IDEWorkspaceChecks.plist
+│   │   │       └── swiftpm
+│   │   │           └── configuration
+│   │   └── RunnerTests
+│   │       └── RunnerTests.swift
+│   ├── pubspec.lock
+│   ├── pubspec.yaml
+│   ├── README.md
+│   ├── test
+│   │   └── widget_test.dart
+│   ├── web
+│   │   ├── favicon.png
+│   │   ├── icons
+│   │   │   ├── Icon-192.png
+│   │   │   ├── Icon-512.png
+│   │   │   ├── Icon-maskable-192.png
+│   │   │   └── Icon-maskable-512.png
+│   │   ├── index.html
+│   │   └── manifest.json
+│   └── windows
+│       ├── .gitignore
+│       ├── CMakeLists.txt
+│       ├── flutter
+│       │   ├── CMakeLists.txt
+│       │   ├── generated_plugin_registrant.cc
+│       │   ├── generated_plugin_registrant.h
+│       │   └── generated_plugins.cmake
+│       └── runner
+│           ├── CMakeLists.txt
+│           ├── flutter_window.cpp
+│           ├── flutter_window.h
+│           ├── main.cpp
+│           ├── resource.h
+│           ├── resources
+│           │   └── app_icon.ico
+│           ├── runner.exe.manifest
+│           ├── Runner.rc
+│           ├── utils.cpp
+│           ├── utils.h
+│           ├── win32_window.cpp
+│           └── win32_window.h
+├── FakeProjectAidd
+│   ├── .gitignore
+│   ├── .mcp.json
+│   ├── AGENTS.md
+│   ├── CLAUDE.md -> /Users/davidmohamed/dev/src/perso/FakeProjectAidd/AGENTS.md
+│   └── lefthook.yml
+├── fittrackee-uploader
+│   ├── .env
+│   ├── fittrackee_progress.txt
+│   ├── fittrackee_upload.log
+│   └── fittrackee_upload.py
+├── geoveloToGpx
+│   ├── .DS_Store
+│   ├── boundary_fix.py
+│   ├── convert_geovelo.py
+│   ├── curl_command.txt
+│   ├── curl_parser.py
+│   ├── fittrackee_browser_headers.py
+│   ├── fittrackee_debug.py
+│   ├── gpx_exports
+│   │   ├── 20200615_192851_2018257.gpx
+│   │   ├── 20200616_080558_2020379.gpx
+│   │   ├── 20200617_013358_2027979.gpx
+│   │   ├── 20200617_175453_2033316.gpx
+│   │   ├── 20200618_081336_2037318.gpx
+│   │   ├── 20200618_183908_2043187.gpx
+│   │   ├── 20200619_002126_2044846.gpx
+│   │   ├── 20200619_200301_2052505.gpx
+│   │   ├── 20200620_013347_2053452.gpx
+│   │   ├── 20200622_144703_2074950.gpx
+│   │   ├── 20200622_152525_2075461.gpx
+│   │   ├── 20200622_153032_2075462.gpx
+│   │   ├── 20200622_164356_2076215.gpx
+│   │   ├── 20200622_171722_2082236.gpx
+│   │   ├── 20200623_085844_2082237.gpx
+│   │   ├── 20200623_183220_2089641.gpx
+│   │   ├── 20200625_122902_2106627.gpx
+│   │   ├── 20200625_130131_2106885.gpx
+│   │   ├── 20200625_175955_2109858.gpx
+│   │   ├── 20200625_192936_2111278.gpx
+│   │   ├── 20200625_195430_2111739.gpx
+│   │   ├── 20200625_210203_2119902.gpx
+│   │   ├── 20200626_190405_2120291.gpx
+│   │   ├── 20200626_193726_2120472.gpx
+│   │   ├── 20200626_194325_2120579.gpx
+│   │   ├── 20200626_200116_2120692.gpx
+│   │   ├── 20200628_162812_2135547.gpx
+│   │   ├── 20200628_190644_2137152.gpx
+│   │   ├── 20200628_193151_2137351.gpx
+│   │   ├── 20200628_195803_2137429.gpx
+│   │   ├── 20200629_124551_2141773.gpx
+│   │   ├── 20200629_125033_2141804.gpx
+│   │   ├── 20200629_172343_2144739.gpx
+│   │   ├── 20200629_174929_2144741.gpx
+│   │   ├── 20200630_082622_2149395.gpx
+│   │   ├── 20200630_122149_2151247.gpx
+│   │   ├── 20200630_123604_2151381.gpx
+│   │   ├── 20200630_124117_2151382.gpx
+│   │   ├── 20200630_182010_2154957.gpx
+│   │   ├── 20200630_183154_2155974.gpx
+│   │   ├── 20200630_192344_2156260.gpx
+│   │   ├── 20200701_190710_2165124.gpx
+│   │   ├── 20200701_194742_2165912.gpx
+│   │   ├── 20200702_081603_2168195.gpx
+│   │   ├── 20200702_210159_2176009.gpx
+│   │   ├── 20200702_211737_2176050.gpx
+│   │   ├── 20200702_212707_2176138.gpx
+│   │   ├── 20201230_162246_3378192.gpx
+│   │   ├── 20201230_174103_3378691.gpx
+│   │   ├── 20201230_191108_3378990.gpx
+│   │   ├── 20201230_194323_3379082.gpx
+│   │   ├── 20201231_151029_3380861.gpx
+│   │   ├── 20201231_160229_3380954.gpx
+│   │   ├── 20210104_162436_3390803.gpx
+│   │   ├── 20210104_180950_3392991.gpx
+│   │   ├── 20210105_091935_3392992.gpx
+│   │   ├── 20210105_101318_3393336.gpx
+│   │   ├── 20210106_104015_3397007.gpx
+│   │   ├── 20210106_110824_3397132.gpx
+│   │   ├── 20210106_115633_3398247.gpx
+│   │   ├── 20210106_153707_3398318.gpx
+│   │   ├── 20210106_155634_3398430.gpx
+│   │   ├── 20210107_082434_3402967.gpx
+│   │   ├── 20210318_081406_3723498.gpx
+│   │   ├── 20210322_083357_3746597.gpx
+│   │   ├── 20210322_181959_3750569.gpx
+│   │   ├── 20210323_081033_3752020.gpx
+│   │   ├── 20210323_183853_3757982.gpx
+│   │   ├── 20210324_081804_3759219.gpx
+│   │   ├── 20210324_185551_3765826.gpx
+│   │   ├── 20210325_085049_3767253.gpx
+│   │   ├── 20210325_181234_3771591.gpx
+│   │   ├── 20210325_181537_3771708.gpx
+│   │   ├── 20210325_182305_3771772.gpx
+│   │   ├── 20210325_183251_3771883.gpx
+│   │   ├── 20210326_083059_3773523.gpx
+│   │   ├── 20210326_181432_3777934.gpx
+│   │   ├── 20210329_083732_3796267.gpx
+│   │   ├── 20210329_190557_3802114.gpx
+│   │   ├── 20210330_082218_3803636.gpx
+│   │   ├── 20210330_183732_3810553.gpx
+│   │   ├── 20210330_192720_3810598.gpx
+│   │   ├── 20210330_193255_3810658.gpx
+│   │   ├── 20210331_083417_3812152.gpx
+│   │   ├── 20210331_185138_3819098.gpx
+│   │   ├── 20210401_082805_3820434.gpx
+│   │   ├── 20210401_131536_3823003.gpx
+│   │   ├── 20210406_085020_3853891.gpx
+│   │   ├── 20210406_191532_3857135.gpx
+│   │   ├── 20210407_084015_3857962.gpx
+│   │   ├── 20210407_183037_3861996.gpx
+│   │   ├── 20210408_085052_3863233.gpx
+│   │   ├── 20210408_184831_3867773.gpx
+│   │   ├── 20210409_085203_3869146.gpx
+│   │   ├── 20210409_181926_3873041.gpx
+│   │   ├── 20210412_083937_3882456.gpx
+│   │   ├── 20210412_180856_3886562.gpx
+│   │   ├── 20210413_085252_3887824.gpx
+│   │   ├── 20210419_082354_3930076.gpx
+│   │   ├── 20210419_190343_3935930.gpx
+│   │   ├── 20210420_100734_3937895.gpx
+│   │   ├── 20210420_190934_3944030.gpx
+│   │   ├── 20210420_195904_3944075.gpx
+│   │   ├── 20210426_081620_3991451.gpx
+│   │   ├── 20210426_174006_3995771.gpx
+│   │   ├── 20210426_185131_3996572.gpx
+│   │   ├── 20210427_083204_3998368.gpx
+│   │   ├── 20210427_184659_4004735.gpx
+│   │   ├── 20210428_082516_4006212.gpx
+│   │   ├── 20210428_190005_4012230.gpx
+│   │   ├── 20210429_081841_4013568.gpx
+│   │   ├── 20210429_185839_4020352.gpx
+│   │   ├── 20210430_084509_4020473.gpx
+│   │   ├── 20210430_184849_4025993.gpx
+│   │   ├── 20210503_084835_4043854.gpx
+│   │   ├── 20210503_192434_4051313.gpx
+│   │   ├── 20210503_215217_4051885.gpx
+│   │   ├── 20210504_083351_4053070.gpx
+│   │   ├── 20210504_190358_4059054.gpx
+│   │   ├── 20210504_202815_4059657.gpx
+│   │   ├── 20210504_203250_4059665.gpx
+│   │   ├── 20210504_203431_4059675.gpx
+│   │   ├── 20210505_084154_4061035.gpx
+│   │   ├── 20210505_084802_4061205.gpx
+│   │   ├── 20210505_191000_4068431.gpx
+│   │   ├── 20210505_194206_4068581.gpx
+│   │   ├── 20210510_123532_4111966.gpx
+│   │   ├── 20210510_123532_4112079.gpx
+│   │   ├── 20210510_131534_4112006.gpx
+│   │   ├── 20210510_133404_4112231.gpx
+│   │   ├── 20210510_190705_4117537.gpx
+│   │   ├── 20210511_084047_4118356.gpx
+│   │   ├── 20210511_182242_4124657.gpx
+│   │   ├── 20210511_185023_4125955.gpx
+│   │   ├── 20210512_084148_4127477.gpx
+│   │   ├── 20210512_184043_4135364.gpx
+│   │   ├── 20210512_192558_4135552.gpx
+│   │   ├── 20210513_180339_4143890.gpx
+│   │   ├── 20210513_182517_4144189.gpx
+│   │   ├── 20210514_085513_4145979.gpx
+│   │   ├── 20210514_180408_4170859.gpx
+│   │   ├── 20210517_090210_4170860.gpx
+│   │   ├── 20210517_121406_4170861.gpx
+│   │   ├── 20210517_132456_4171558.gpx
+│   │   ├── 20210517_184447_4175117.gpx
+│   │   ├── 20210518_085305_4177624.gpx
+│   │   ├── 20210518_182945_4184893.gpx
+│   │   ├── 20210519_085030_4187071.gpx
+│   │   ├── 20210519_185652_4197106.gpx
+│   │   ├── 20210520_085052_4206156.gpx
+│   │   ├── 20210520_191637_4206568.gpx
+│   │   ├── 20210521_090136_4209607.gpx
+│   │   ├── 20210521_182959_4216948.gpx
+│   │   ├── 20210525_084114_4245414.gpx
+│   │   ├── 20210525_184307_4254186.gpx
+│   │   ├── 20210526_133657_4259307.gpx
+│   │   ├── 20210526_185628_4264205.gpx
+│   │   ├── 20210527_090532_4277399.gpx
+│   │   ├── 20210527_190055_4277400.gpx
+│   │   ├── 20210527_202130_4278304.gpx
+│   │   ├── 20210527_211409_4278909.gpx
+│   │   ├── 20210528_085013_4282551.gpx
+│   │   ├── 20210528_180950_4320684.gpx
+│   │   ├── 20210531_190905_4331727.gpx
+│   │   ├── 20210601_090851_4335829.gpx
+│   │   ├── 20210601_181302_4343744.gpx
+│   │   ├── 20210601_191034_4345608.gpx
+│   │   ├── 20210602_085751_4349218.gpx
+│   │   ├── 20210602_183209_4357649.gpx
+│   │   ├── 20210602_184923_4357650.gpx
+│   │   ├── 20210602_184923_4357868.gpx
+│   │   ├── 20210602_195110_4357985.gpx
+│   │   ├── 20210603_091317_4361412.gpx
+│   │   ├── 20210603_191419_4375054.gpx
+│   │   ├── 20210604_084736_4375055.gpx
+│   │   ├── 20210604_130745_4375056.gpx
+│   │   ├── 20210604_132207_4375219.gpx
+│   │   ├── 20210604_182650_4378965.gpx
+│   │   ├── 20210607_141223_4411323.gpx
+│   │   ├── 20210607_182300_4416560.gpx
+│   │   ├── 20210608_091435_4421202.gpx
+│   │   ├── 20210608_180737_4429360.gpx
+│   │   ├── 20210608_193624_4431523.gpx
+│   │   ├── 20210608_201306_4431957.gpx
+│   │   ├── 20210609_085309_4435281.gpx
+│   │   ├── 20210609_190334_4450774.gpx
+│   │   ├── 20210610_085641_4450775.gpx
+│   │   ├── 20210610_190000_4460995.gpx
+│   │   ├── 20210611_084332_4465447.gpx
+│   │   ├── 20210611_185047_4475306.gpx
+│   │   ├── 20210615_083120_4522073.gpx
+│   │   ├── 20210615_113644_4529205.gpx
+│   │   ├── 20210615_183633_4529206.gpx
+│   │   ├── 20210615_193227_4530551.gpx
+│   │   ├── 20210616_090234_4535225.gpx
+│   │   ├── 20210616_185036_4544584.gpx
+│   │   ├── 20210617_085322_4548719.gpx
+│   │   ├── 20210617_180328_4556102.gpx
+│   │   ├── 20210618_085806_4561251.gpx
+│   │   ├── 20210618_174553_4567721.gpx
+│   │   ├── 20210621_090331_4592633.gpx
+│   │   ├── 20210621_182826_4599861.gpx
+│   │   ├── 20210622_090032_4604537.gpx
+│   │   ├── 20210622_180610_4610432.gpx
+│   │   ├── 20210622_191036_4615311.gpx
+│   │   ├── 20210623_091922_4615312.gpx
+│   │   ├── 20210623_183416_4622921.gpx
+│   │   ├── 20210623_200531_4624344.gpx
+│   │   ├── 20210623_230704_4625264.gpx
+│   │   ├── 20210624_084017_4627231.gpx
+│   │   ├── 20210624_165758_4633721.gpx
+│   │   ├── 20210625_084514_4640556.gpx
+│   │   ├── 20210628_181002_4678077.gpx
+│   │   ├── 20210629_084103_4681625.gpx
+│   │   ├── 20210629_134516_4684946.gpx
+│   │   ├── 20210629_181126_4688178.gpx
+│   │   ├── 20210629_190209_4692428.gpx
+│   │   ├── 20210630_090532_4692429.gpx
+│   │   ├── 20210630_183904_4701644.gpx
+│   │   ├── 20210701_084808_4703889.gpx
+│   │   ├── 20210701_200049_4714052.gpx
+│   │   ├── 20210702_084624_4717122.gpx
+│   │   ├── 20210702_185739_4725811.gpx
+│   │   ├── 20210703_180115_4734947.gpx
+│   │   ├── 20210705_085654_4744756.gpx
+│   │   ├── 20210705_183804_4751366.gpx
+│   │   ├── 20210706_085204_4755059.gpx
+│   │   ├── 20210706_180736_4761476.gpx
+│   │   ├── 20210706_191208_4762708.gpx
+│   │   ├── 20210706_201609_4763680.gpx
+│   │   ├── 20210708_091331_4778178.gpx
+│   │   ├── 20210708_182459_4785111.gpx
+│   │   ├── 20210708_190212_4845590.gpx
+│   │   ├── 20210715_085641_4845591.gpx
+│   │   ├── 20210715_180649_4857907.gpx
+│   │   ├── 20210716_101444_4864517.gpx
+│   │   ├── 20210716_180858_4864785.gpx
+│   │   ├── 20210719_203915_4901754.gpx
+│   │   ├── 20210719_205208_4902268.gpx
+│   │   ├── 20210720_084704_4904248.gpx
+│   │   ├── 20210720_181230_4913021.gpx
+│   │   ├── 20210720_191625_4914493.gpx
+│   │   ├── 20210720_213712_4915991.gpx
+│   │   ├── 20210721_085649_4927790.gpx
+│   │   ├── 20210721_185930_4932039.gpx
+│   │   ├── 20210722_085916_4932915.gpx
+│   │   ├── 20210722_185715_4942500.gpx
+│   │   ├── 20210722_193653_4942501.gpx
+│   │   ├── 20210723_090036_4945753.gpx
+│   │   ├── 20210723_182114_4953827.gpx
+│   │   ├── 20210726_090910_4975399.gpx
+│   │   ├── 20210726_181354_4982275.gpx
+│   │   ├── 20210726_192346_4983545.gpx
+│   │   ├── 20210726_221352_4984567.gpx
+│   │   ├── 20210727_084941_4997222.gpx
+│   │   ├── 20210728_094307_4997378.gpx
+│   │   ├── 20210728_191108_5006689.gpx
+│   │   ├── 20210729_084342_5009202.gpx
+│   │   ├── 20210729_165139_5016318.gpx
+│   │   ├── 20210729_174155_5018018.gpx
+│   │   ├── 20210729_181345_5018019.gpx
+│   │   ├── 20210802_084323_5052075.gpx
+│   │   ├── 20210802_184636_5060399.gpx
+│   │   ├── 20210803_085256_5070596.gpx
+│   │   ├── 20210803_180216_5070847.gpx
+│   │   ├── 20210803_190506_5072026.gpx
+│   │   ├── 20210819_225211_5257492.gpx
+│   │   ├── 20210820_085412_5258519.gpx
+│   │   ├── 20210820_183017_5266898.gpx
+│   │   ├── 20210820_194005_5268077.gpx
+│   │   ├── 20210821_161706_5276276.gpx
+│   │   ├── 20210823_100552_5291459.gpx
+│   │   ├── 20210823_182131_5298017.gpx
+│   │   ├── 20210823_191505_5299196.gpx
+│   │   ├── 20210824_085722_5301817.gpx
+│   │   ├── 20210824_180827_5309773.gpx
+│   │   ├── 20210824_184638_5310475.gpx
+│   │   ├── 20210824_191301_5311353.gpx
+│   │   ├── 20210824_225814_5312804.gpx
+│   │   ├── 20210825_085331_5314369.gpx
+│   │   ├── 20210825_190426_5324704.gpx
+│   │   ├── 20210826_083244_5327386.gpx
+│   │   ├── 20210826_190143_5337065.gpx
+│   │   ├── 20210826_192223_5337432.gpx
+│   │   ├── 20210826_223816_5338650.gpx
+│   │   ├── 20210827_083552_5339892.gpx
+│   │   ├── 20210827_184846_5348878.gpx
+│   │   ├── 20210829_193044_5369678.gpx
+│   │   ├── 20210830_090700_5371714.gpx
+│   │   ├── 20210830_185651_5379324.gpx
+│   │   ├── 20210831_090059_5382650.gpx
+│   │   ├── 20210831_174211_5389267.gpx
+│   │   ├── 20210831_183906_5391269.gpx
+│   │   ├── 20210901_081610_5394569.gpx
+│   │   ├── 20210901_192326_5405956.gpx
+│   │   ├── 20210902_084343_5408421.gpx
+│   │   ├── 20210902_182645_5417242.gpx
+│   │   ├── 20210902_193236_5418356.gpx
+│   │   ├── 20210902_193448_5419888.gpx
+│   │   ├── 20210902_233107_5419949.gpx
+│   │   ├── 20210903_090155_5421966.gpx
+│   │   ├── 20210903_190349_5431333.gpx
+│   │   ├── 20210904_074838_5433094.gpx
+│   │   ├── 20210905_165343_5453511.gpx
+│   │   ├── 20210906_082930_5458387.gpx
+│   │   ├── 20210906_183206_5473578.gpx
+│   │   ├── 20210906_185853_5473579.gpx
+│   │   ├── 20210907_091110_5474003.gpx
+│   │   ├── 20210907_182546_5483839.gpx
+│   │   ├── 20210908_002018_5486631.gpx
+│   │   ├── 20210908_085955_5488882.gpx
+│   │   ├── 20210908_184636_5498050.gpx
+│   │   ├── 20210908_190517_5499473.gpx
+│   │   ├── 20210908_221411_5500270.gpx
+│   │   ├── 20210909_084637_5502610.gpx
+│   │   ├── 20210909_181939_5510701.gpx
+│   │   ├── 20210909_195530_5512496.gpx
+│   │   ├── 20210910_091347_5515785.gpx
+│   │   ├── 20210910_184132_5523042.gpx
+│   │   ├── 20210911_104936_5527166.gpx
+│   │   ├── 20210911_113456_5527885.gpx
+│   │   ├── 20210911_135222_5530056.gpx
+│   │   ├── 20210911_140935_5530465.gpx
+│   │   ├── 20210911_152300_5531501.gpx
+│   │   ├── 20210911_154213_5531788.gpx
+│   │   ├── 20210913_083243_5551478.gpx
+│   │   ├── 20210913_184357_5561971.gpx
+│   │   ├── 20210913_220516_5563342.gpx
+│   │   ├── 20210914_095041_5566221.gpx
+│   │   ├── 20210914_183425_5576365.gpx
+│   │   ├── 20210915_090824_5576556.gpx
+│   │   ├── 20210915_185920_5583883.gpx
+│   │   ├── 20210916_082039_5586685.gpx
+│   │   ├── 20210916_114143_5590915.gpx
+│   │   ├── 20210916_134248_5590966.gpx
+│   │   ├── 20210916_142358_5591751.gpx
+│   │   ├── 20210916_184012_5600850.gpx
+│   │   ├── 20210917_090856_5601057.gpx
+│   │   ├── 20210917_175440_5609162.gpx
+│   │   ├── 20210918_000900_5612550.gpx
+│   │   ├── 20210918_192624_5622638.gpx
+│   │   ├── 20210919_020420_5623974.gpx
+│   │   ├── 20210920_125346_5638212.gpx
+│   │   ├── 20210920_131048_5638381.gpx
+│   │   ├── 20210920_182928_5642468.gpx
+│   │   ├── 20210920_183934_5643315.gpx
+│   │   ├── 20210920_221601_5649372.gpx
+│   │   ├── 20210921_184950_5657173.gpx
+│   │   ├── 20210921_194650_5661100.gpx
+│   │   ├── 20210922_000025_5661457.gpx
+│   │   ├── 20210922_090754_5661458.gpx
+│   │   ├── 20210922_120720_5663831.gpx
+│   │   ├── 20210922_185912_5673013.gpx
+│   │   ├── 20210923_091052_5675858.gpx
+│   │   ├── 20210923_190326_5685551.gpx
+│   │   ├── 20210924_083750_5689136.gpx
+│   │   ├── 20210924_091115_5689905.gpx
+│   │   ├── 20210924_095811_5690602.gpx
+│   │   ├── 20210924_194212_5699478.gpx
+│   │   ├── 20210925_184233_5710390.gpx
+│   │   ├── 20210925_193642_5710945.gpx
+│   │   ├── 20210927_091011_5721822.gpx
+│   │   ├── 20210927_190312_5728879.gpx
+│   │   ├── 20210928_085943_5732327.gpx
+│   │   ├── 20210928_193753_5742644.gpx
+│   │   ├── 20210928_220025_5743009.gpx
+│   │   ├── 20210929_090407_5745187.gpx
+│   │   ├── 20210929_190626_5753338.gpx
+│   │   ├── 20210930_090904_5757273.gpx
+│   │   ├── 20210930_180759_5764487.gpx
+│   │   ├── 20210930_192020_5766004.gpx
+│   │   ├── 20211001_090841_5770218.gpx
+│   │   ├── 20211001_194319_5783707.gpx
+│   │   ├── 20211002_162654_5783708.gpx
+│   │   ├── 20211002_180855_5784690.gpx
+│   │   ├── 20211004_090526_5793178.gpx
+│   │   ├── 20211004_183220_5798709.gpx
+│   │   ├── 20211005_090607_5802727.gpx
+│   │   ├── 20211005_181929_5808268.gpx
+│   │   ├── 20211005_224401_5809718.gpx
+│   │   ├── 20211006_090621_5812011.gpx
+│   │   ├── 20211006_190812_5819987.gpx
+│   │   ├── 20211007_091542_5833034.gpx
+│   │   ├── 20211007_181508_5833036.gpx
+│   │   ├── 20211008_090757_5836753.gpx
+│   │   ├── 20211008_185042_5845292.gpx
+│   │   ├── 20211011_091354_5870144.gpx
+│   │   ├── 20211011_190454_5882282.gpx
+│   │   ├── 20211012_091527_5882284.gpx
+│   │   ├── 20211012_185617_5889255.gpx
+│   │   ├── 20211013_091805_5893655.gpx
+│   │   ├── 20211014_091016_5906145.gpx
+│   │   ├── 20211014_185139_5914903.gpx
+│   │   ├── 20211015_081115_5917330.gpx
+│   │   ├── 20211020_184842_5979023.gpx
+│   │   ├── 20211021_091528_5982985.gpx
+│   │   ├── 20211021_190630_5989112.gpx
+│   │   ├── 20211021_233111_5991505.gpx
+│   │   ├── 20211022_083208_5991507.gpx
+│   │   ├── 20211022_091257_5998876.gpx
+│   │   ├── 20211022_183625_5998877.gpx
+│   │   ├── 20211022_185001_5999434.gpx
+│   │   ├── 20211022_234834_6000736.gpx
+│   │   ├── 20211023_004943_6000855.gpx
+│   │   ├── 20211023_200537_6009164.gpx
+│   │   ├── 20211023_231020_6009691.gpx
+│   │   ├── 20211024_181159_6016991.gpx
+│   │   ├── 20211025_000450_6018054.gpx
+│   │   ├── 20211025_090914_6019619.gpx
+│   │   ├── 20211025_183131_6028291.gpx
+│   │   ├── 20211026_090356_6028293.gpx
+│   │   ├── 20211026_190336_6035428.gpx
+│   │   ├── 20211027_092258_6047746.gpx
+│   │   ├── 20211027_190716_6054953.gpx
+│   │   ├── 20211028_090958_6056956.gpx
+│   │   ├── 20211028_190307_6056957.gpx
+│   │   ├── 20211028_200759_6058037.gpx
+│   │   ├── 20211029_075242_6059533.gpx
+│   │   ├── 20211029_123635_6061215.gpx
+│   │   ├── 20211102_091223_6080155.gpx
+│   │   ├── 20211102_190542_6086266.gpx
+│   │   ├── 20211103_001436_6086267.gpx
+│   │   ├── 20211103_091248_6094082.gpx
+│   │   ├── 20211103_232004_6094135.gpx
+│   │   ├── 20211104_091619_6096440.gpx
+│   │   ├── 20211104_190200_6100506.gpx
+│   │   ├── 20211105_092507_6103194.gpx
+│   │   ├── 20211106_170231_6115071.gpx
+│   │   ├── 20211106_181731_6115932.gpx
+│   │   ├── 20211108_092114_6124543.gpx
+│   │   ├── 20211108_192000_6131247.gpx
+│   │   ├── 20211109_091852_6140390.gpx
+│   │   ├── 20211109_183328_6140392.gpx
+│   │   ├── 20211109_231359_6144296.gpx
+│   │   ├── 20211110_092023_6144298.gpx
+│   │   ├── 20211110_182638_6149909.gpx
+│   │   ├── 20211115_090933_6179396.gpx
+│   │   ├── 20211115_185854_6184980.gpx
+│   │   ├── 20211116_092117_6188905.gpx
+│   │   ├── 20211116_191220_6194358.gpx
+│   │   ├── 20211117_093349_6198010.gpx
+│   │   ├── 20211117_192613_6203937.gpx
+│   │   ├── 20211118_091755_6213427.gpx
+│   │   ├── 20211118_183632_6213428.gpx
+│   │   ├── 20211119_075935_6216082.gpx
+│   │   ├── 20211119_084524_6216780.gpx
+│   │   ├── 20211119_091412_6217401.gpx
+│   │   ├── 20211119_194315_6223988.gpx
+│   │   ├── 20211122_091627_6244283.gpx
+│   │   ├── 20211122_184455_6246547.gpx
+│   │   ├── 20211123_091426_6246548.gpx
+│   │   ├── 20211123_185054_6252837.gpx
+│   │   ├── 20211123_233405_6253839.gpx
+│   │   ├── 20211124_091607_6255574.gpx
+│   │   ├── 20211124_200605_6476574.gpx
+│   │   ├── 20220103_091008_6476731.gpx
+│   │   ├── 20220103_190259_6480578.gpx
+│   │   ├── 20220104_092550_6482909.gpx
+│   │   ├── 20220104_190749_6524800.gpx
+│   │   ├── 20220112_082257_6524956.gpx
+│   │   ├── 20220112_153414_6527797.gpx
+│   │   ├── 20220221_185510_6787741.gpx
+│   │   ├── 20220222_092515_6790137.gpx
+│   │   ├── 20220222_185641_6795135.gpx
+│   │   ├── 20220223_092033_6803839.gpx
+│   │   ├── 20220223_185306_6803841.gpx
+│   │   ├── 20220224_095456_6806902.gpx
+│   │   ├── 20220224_184235_6811646.gpx
+│   │   ├── 20220225_093552_6814061.gpx
+│   │   ├── 20220225_184227_6819074.gpx
+│   │   ├── 20220228_091343_6836231.gpx
+│   │   ├── 20220228_191935_6841334.gpx
+│   │   ├── 20220301_093606_6843991.gpx
+│   │   ├── 20220301_190607_6852142.gpx
+│   │   ├── 20220302_085426_6852144.gpx
+│   │   ├── 20220302_120149_6853671.gpx
+│   │   ├── 20220302_130042_6854295.gpx
+│   │   ├── 20220303_091353_6860463.gpx
+│   │   ├── 20220307_092515_6893539.gpx
+│   │   ├── 20220307_185837_6895952.gpx
+│   │   ├── 20220308_093739_6902587.gpx
+│   │   ├── 20220308_190050_6904845.gpx
+│   │   ├── 20220309_091415_6913361.gpx
+│   │   ├── 20220309_130107_6915101.gpx
+│   │   ├── 20220309_192327_6915102.gpx
+│   │   ├── 20220310_093420_6924955.gpx
+│   │   ├── 20220310_185837_6924956.gpx
+│   │   ├── 20220310_194424_6925194.gpx
+│   │   ├── 20220311_092204_6928052.gpx
+│   │   ├── 20220311_192238_6933113.gpx
+│   │   ├── 20220314_080351_6945110.gpx
+│   │   ├── 20220321_091300_7010718.gpx
+│   │   ├── 20220321_184537_8261199.gpx
+│   │   ├── 20220528_194135_8149052.gpx
+│   │   ├── 20220528_194622_8149108.gpx
+│   │   ├── 20220528_200954_8149558.gpx
+│   │   ├── 20220528_223212_8150672.gpx
+│   │   ├── 20220528_224152_8150859.gpx
+│   │   ├── 20230730_195807_15219282.gpx
+│   │   ├── 20230730_200231_15219843.gpx
+│   │   ├── 20230802_165502_15283579.gpx
+│   │   ├── 20230802_165502_15283581.gpx
+│   │   ├── 20230802_181706_15288299.gpx
+│   │   ├── 20230805_114333_15338689.gpx
+│   │   ├── 20230805_130007_15342476.gpx
+│   │   ├── 20230823_195642_15841155.gpx
+│   │   ├── 20230823_205020_15841242.gpx
+│   │   ├── 20230830_190535_16010866.gpx
+│   │   ├── 20230830_215919_16014972.gpx
+│   │   ├── 20230917_100535_16516289.gpx
+│   │   ├── 20230917_115937_16520704.gpx
+│   │   ├── 20230920_114904_16606512.gpx
+│   │   ├── 20230920_130838_16609056.gpx
+│   │   ├── 20230920_183443_16620790.gpx
+│   │   ├── 20230920_215436_16626690.gpx
+│   │   ├── 20230928_181627_16846556.gpx
+│   │   ├── 20230928_184043_16847509.gpx
+│   │   ├── 20230928_230215_16854185.gpx
+│   │   ├── 20231003_122029_16979672.gpx
+│   │   ├── 20231003_142906_16983209.gpx
+│   │   ├── 20231005_184710_17060553.gpx
+│   │   ├── 20231005_204644_17064911.gpx
+│   │   ├── 20231215_155840_18387618.gpx
+│   │   ├── 20231215_163037_18388113.gpx
+│   │   ├── 20231215_193805_18393586.gpx
+│   │   ├── 20240103_142227_18602674.gpx
+│   │   ├── 20240103_144054_18602880.gpx
+│   │   ├── 20240103_170536_18604841.gpx
+│   │   ├── 20240103_173003_18605532.gpx
+│   │   ├── 20240103_175708_18606043.gpx
+│   │   ├── 20240103_195511_18608150.gpx
+│   │   ├── 20240105_164507_18632286.gpx
+│   │   ├── 20240106_192215_18646750.gpx
+│   │   ├── 20240106_200326_18646983.gpx
+│   │   ├── 20240111_145454_18708597.gpx
+│   │   ├── 20240111_154303_18709225.gpx
+│   │   ├── 20240111_235131_18716475.gpx
+│   │   ├── 20240114_140145_18746438.gpx
+│   │   ├── 20240114_183318_18749233.gpx
+│   │   ├── 20240121_181224_18841582.gpx
+│   │   ├── 20240123_141249_18870092.gpx
+│   │   ├── 20240124_191834_18897850.gpx
+│   │   ├── 20240125_164354_18913193.gpx
+│   │   ├── 20240130_185439_19008546.gpx
+│   │   ├── 20240202_210605_19074682.gpx
+│   │   ├── 20240206_224940_19140256.gpx
+│   │   ├── 20240220_174805_19368566.gpx
+│   │   ├── 20240220_193231_19372809.gpx
+│   │   ├── 20240221_010411_19375448.gpx
+│   │   ├── 20240221_183630_19390641.gpx
+│   │   ├── 20240221_191513_19391672.gpx
+│   │   ├── 20240223_193843_19421394.gpx
+│   │   ├── 20240223_232412_19422841.gpx
+│   │   ├── 20240224_121241_19426644.gpx
+│   │   ├── 20240224_163126_19430403.gpx
+│   │   ├── 20240224_163449_19430530.gpx
+│   │   ├── 20240224_164416_19430688.gpx
+│   │   ├── 20240224_175526_19431747.gpx
+│   │   ├── 20240225_175353_19439801.gpx
+│   │   ├── 20240225_230713_19440886.gpx
+│   │   ├── 20240304_172439_19565557.gpx
+│   │   ├── 20240304_182934_19568474.gpx
+│   │   ├── 20240304_191331_19570033.gpx
+│   │   ├── 20240319_113139_19862463.gpx
+│   │   ├── 20240319_114557_19862694.gpx
+│   │   ├── 20240403_195305_20179954.gpx
+│   │   ├── 20240416_121744_20477316.gpx
+│   │   ├── 20240416_123641_20477665.gpx
+│   │   ├── 20240416_135741_20479511.gpx
+│   │   ├── 20240423_211044_20650897.gpx
+│   │   ├── 20240424_011423_20652234.gpx
+│   │   ├── 20240430_175350_20822641.gpx
+│   │   ├── 20240501_123949_20836399.gpx
+│   │   ├── 20240501_185659_20848827.gpx
+│   │   ├── 20240501_202810_20850481.gpx
+│   │   ├── 20240503_190621_20927549.gpx
+│   │   ├── 20240503_201211_20930882.gpx
+│   │   ├── 20240503_205529_20930883.gpx
+│   │   ├── 20240504_141430_20945235.gpx
+│   │   ├── 20240505_085039_20962628.gpx
+│   │   ├── 20240506_201447_21026706.gpx
+│   │   ├── 20240506_234008_21029892.gpx
+│   │   ├── 20240507_005838_21030274.gpx
+│   │   ├── 20240507_115924_21047642.gpx
+│   │   ├── 20240507_134555_21053130.gpx
+│   │   ├── 20240507_192514_21076369.gpx
+│   │   ├── 20240507_194427_21077102.gpx
+│   │   ├── 20240507_202231_21079450.gpx
+│   │   ├── 20240508_162317_21106650.gpx
+│   │   ├── 20240508_163111_21107363.gpx
+│   │   ├── 20240508_163937_21114184.gpx
+│   │   ├── 20240508_190602_21117643.gpx
+│   │   ├── 20240508_220916_21122240.gpx
+│   │   ├── 20240510_121122_21186975.gpx
+│   │   ├── 20240510_134908_21193715.gpx
+│   │   ├── 20240511_133326_21243146.gpx
+│   │   ├── 20240511_135558_21243754.gpx
+│   │   ├── 20240511_144028_21245863.gpx
+│   │   ├── 20240515_100311_21423252.gpx
+│   │   ├── 20240515_104605_21424736.gpx
+│   │   ├── 20240515_111458_21425477.gpx
+│   │   ├── 20240515_142425_21434785.gpx
+│   │   ├── 20240515_150941_21436344.gpx
+│   │   ├── 20240517_120447_21537618.gpx
+│   │   ├── 20240517_134558_21568722.gpx
+│   │   ├── 20240518_171010_21601718.gpx
+│   │   ├── 20240519_001538_21613292.gpx
+│   │   ├── 20240519_135047_21631054.gpx
+│   │   ├── 20240519_184948_21645647.gpx
+│   │   ├── 20240520_182903_21681146.gpx
+│   │   ├── 20240520_205133_21684583.gpx
+│   │   ├── 20240521_000258_21686209.gpx
+│   │   ├── 20240521_191404_21732333.gpx
+│   │   ├── 20240521_232221_21739748.gpx
+│   │   ├── 20240521_232920_21739849.gpx
+│   │   ├── 20240521_233743_21740107.gpx
+│   │   ├── 20240522_103326_21758346.gpx
+│   │   ├── 20240522_140036_21767549.gpx
+│   │   ├── 20240522_142014_21768406.gpx
+│   │   ├── 20240522_180947_21782411.gpx
+│   │   ├── 20240522_195108_21792079.gpx
+│   │   ├── 20240522_233550_21798569.gpx
+│   │   ├── 20240523_192350_21852284.gpx
+│   │   ├── 20240523_212437_21857173.gpx
+│   │   ├── 20240523_214545_21857387.gpx
+│   │   ├── 20240524_001222_21859936.gpx
+│   │   ├── 20240524_120459_21880234.gpx
+│   │   ├── 20240524_134448_21887286.gpx
+│   │   ├── 20240524_191454_21909805.gpx
+│   │   ├── 20240524_195459_21911785.gpx
+│   │   ├── 20240525_195823_21960889.gpx
+│   │   ├── 20240526_032512_21966514.gpx
+│   │   ├── 20240527_173111_22039473.gpx
+│   │   ├── 20240527_192118_22051705.gpx
+│   │   ├── 20240527_204528_22055762.gpx
+│   │   ├── 20240527_204742_22056035.gpx
+│   │   ├── 20240528_124746_22084231.gpx
+│   │   ├── 20240528_185338_22109983.gpx
+│   │   ├── 20240528_232720_22120934.gpx
+│   │   ├── 20240530_194844_22223931.gpx
+│   │   ├── 20240530_222715_22229291.gpx
+│   │   ├── 20240530_233838_22230307.gpx
+│   │   ├── 20240531_120855_22249832.gpx
+│   │   ├── 20240531_134205_22257165.gpx
+│   │   ├── 20240602_192215_22341550.gpx
+│   │   ├── 20240602_235921_22344773.gpx
+│   │   ├── 20240604_194040_22444831.gpx
+│   │   ├── 20240605_184558_22491792.gpx
+│   │   ├── 20240605_230313_22502234.gpx
+│   │   ├── 20240606_174254_22539656.gpx
+│   │   ├── 20240606_184911_22547641.gpx
+│   │   ├── 20240606_235056_22556795.gpx
+│   │   ├── 20240607_122400_22579671.gpx
+│   │   ├── 20240607_175408_22592803.gpx
+│   │   ├── 20240607_202730_22602623.gpx
+│   │   ├── 20240608_095717_22610887.gpx
+│   │   ├── 20240608_105736_22613660.gpx
+│   │   ├── 20240608_123617_22618517.gpx
+│   │   ├── 20240608_141128_22623902.gpx
+│   │   ├── 20240608_145856_22625545.gpx
+│   │   ├── 20240608_160721_22628122.gpx
+│   │   ├── 20240608_183322_22634953.gpx
+│   │   ├── 20240609_010448_22641980.gpx
+│   │   ├── 20240609_153847_22662656.gpx
+│   │   ├── 20240609_192612_22672070.gpx
+│   │   ├── 20240609_223648_22674810.gpx
+│   │   ├── 20240610_115725_22690676.gpx
+│   │   ├── 20240610_123701_22694551.gpx
+│   │   ├── 20240610_135129_22695261.gpx
+│   │   ├── 20240611_101402_22734113.gpx
+│   │   ├── 20240611_104158_22736890.gpx
+│   │   ├── 20240612_084830_22777562.gpx
+│   │   ├── 20240612_180432_22804245.gpx
+│   │   ├── 20240612_195426_22813993.gpx
+│   │   ├── 20240613_175359_22853707.gpx
+│   │   ├── 20240613_225228_22868763.gpx
+│   │   ├── 20240614_120207_22881983.gpx
+│   │   ├── 20240614_133716_22886976.gpx
+│   │   ├── 20240614_174018_22895503.gpx
+│   │   ├── 20240614_204859_22904042.gpx
+│   │   ├── 20240615_015634_22906683.gpx
+│   │   ├── 20240615_173250_22926986.gpx
+│   │   ├── 20240624_122339_23240495.gpx
+│   │   ├── 20240624_174919_23259286.gpx
+│   │   ├── 20240624_201115_23268202.gpx
+│   │   ├── 20240624_220949_23269503.gpx
+│   │   ├── 20240625_131750_23295461.gpx
+│   │   ├── 20240626_074654_23329822.gpx
+│   │   ├── 20240626_085255_23355368.gpx
+│   │   ├── 20240626_181511_23359817.gpx
+│   │   ├── 20240626_182205_23360452.gpx
+│   │   ├── 20240626_182647_23367054.gpx
+│   │   ├── 20240626_220928_23372038.gpx
+│   │   ├── 20240626_230320_23372346.gpx
+│   │   ├── 20240627_195124_23417368.gpx
+│   │   ├── 20240627_213337_23420293.gpx
+│   │   ├── 20240627_222857_23420767.gpx
+│   │   ├── 20240627_230354_23421719.gpx
+│   │   ├── 20240628_194825_23461725.gpx
+│   │   ├── 20240628_231911_23466601.gpx
+│   │   ├── 20240629_201706_23491935.gpx
+│   │   ├── 20240630_010448_23494317.gpx
+│   │   ├── 20240630_153737_23511621.gpx
+│   │   ├── 20240630_160040_23514555.gpx
+│   │   ├── 20240701_180314_23553910.gpx
+│   │   ├── 20240703_183405_23642603.gpx
+│   │   ├── 20240703_232406_23651262.gpx
+│   │   ├── 20240704_192456_23690868.gpx
+│   │   ├── 20240705_003840_23697562.gpx
+│   │   ├── 20240705_183952_23732894.gpx
+│   │   ├── 20240706_000510_23739781.gpx
+│   │   ├── 20240706_172205_23756235.gpx
+│   │   ├── 20240706_214223_23762717.gpx
+│   │   ├── 20240707_005343_23764215.gpx
+│   │   ├── 20240707_134448_23777972.gpx
+│   │   ├── 20240707_140028_23778522.gpx
+│   │   ├── 20240707_172027_23786435.gpx
+│   │   ├── 20240707_174212_23789304.gpx
+│   │   ├── 20240708_013111_23794842.gpx
+│   │   ├── 20240708_180221_23823772.gpx
+│   │   ├── 20240708_220056_23834776.gpx
+│   │   ├── 20240709_184750_23869620.gpx
+│   │   ├── 20240710_024707_23878705.gpx
+│   │   ├── 20240710_190231_23914372.gpx
+│   │   ├── 20240711_020513_23922356.gpx
+│   │   ├── 20240711_114940_23936266.gpx
+│   │   ├── 20240711_140506_23942157.gpx
+│   │   ├── 20240711_194650_23959818.gpx
+│   │   ├── 20240711_202426_23961149.gpx
+│   │   ├── 20240712_003257_23964476.gpx
+│   │   ├── 20240713_132138_24008177.gpx
+│   │   ├── 20240713_171738_24017286.gpx
+│   │   ├── 20240716_141101_24116816.gpx
+│   │   ├── 20240716_185436_24133286.gpx
+│   │   ├── 20240717_085129_24148031.gpx
+│   │   ├── 20240717_182751_24177410.gpx
+│   │   ├── 20240717_191620_24181324.gpx
+│   │   ├── 20240717_194440_24184162.gpx
+│   │   ├── 20240718_003213_24189362.gpx
+│   │   ├── 20240719_182944_24273473.gpx
+│   │   ├── 20240720_021906_24281795.gpx
+│   │   ├── 20240720_135845_24296440.gpx
+│   │   ├── 20240720_184645_24307456.gpx
+│   │   ├── 20240720_191539_24309458.gpx
+│   │   ├── 20240721_043954_24313725.gpx
+│   │   ├── 20240814_093201_25057372.gpx
+│   │   ├── 20240814_101245_25058564.gpx
+│   │   ├── 20240814_173121_25077701.gpx
+│   │   ├── 20240814_185142_25078089.gpx
+│   │   ├── 20240814_192722_25079734.gpx
+│   │   ├── 20240815_001540_25083369.gpx
+│   │   ├── 20240816_190614_25137288.gpx
+│   │   ├── 20240816_202550_25139222.gpx
+│   │   ├── 20240816_231153_25140727.gpx
+│   │   ├── 20240817_132349_25149805.gpx
+│   │   ├── 20240820_194315_25253359.gpx
+│   │   ├── 20240820_233533_25255889.gpx
+│   │   ├── 20240821_132357_25271038.gpx
+│   │   ├── 20240821_141125_25273309.gpx
+│   │   ├── 20240821_203451_25292236.gpx
+│   │   ├── 20240822_002139_25294360.gpx
+│   │   ├── 20240822_192001_25328200.gpx
+│   │   ├── 20240823_003027_25338310.gpx
+│   │   ├── 20240823_095229_25338525.gpx
+│   │   ├── 20240823_103242_25339526.gpx
+│   │   ├── 20240823_191304_25359678.gpx
+│   │   ├── 20240824_014419_25364053.gpx
+│   │   ├── 20240826_184404_25446379.gpx
+│   │   ├── 20240827_000159_25458834.gpx
+│   │   ├── 20240828_201114_25533278.gpx
+│   │   ├── 20240829_195212_25571806.gpx
+│   │   ├── 20240829_212325_25573750.gpx
+│   │   ├── 20240830_000830_25575365.gpx
+│   │   ├── 20240905_195541_25807625.gpx
+│   │   ├── 20240906_001532_25810773.gpx
+│   │   ├── 20240906_150139_25829677.gpx
+│   │   ├── 20240906_152046_25830396.gpx
+│   │   ├── 20240906_165708_25834356.gpx
+│   │   ├── 20240907_141448_25861928.gpx
+│   │   ├── 20240907_151948_25864019.gpx
+│   │   ├── 20240907_152859_25864583.gpx
+│   │   ├── 20240907_161406_25868291.gpx
+│   │   ├── 20240907_185953_25873003.gpx
+│   │   ├── 20240908_013122_25889901.gpx
+│   │   ├── 20240909_121248_25911407.gpx
+│   │   ├── 20240909_142217_25915215.gpx
+│   │   ├── 20240909_175815_25924705.gpx
+│   │   ├── 20240909_223604_25934189.gpx
+│   │   ├── 20240910_131203_25953141.gpx
+│   │   ├── 20240910_135653_25954601.gpx
+│   │   ├── 20240910_143604_25955832.gpx
+│   │   ├── 20240911_170657_26001937.gpx
+│   │   ├── 20240911_173123_26003453.gpx
+│   │   ├── 20240911_192320_26011051.gpx
+│   │   ├── 20240911_233916_26015666.gpx
+│   │   ├── 20240913_191933_26090759.gpx
+│   │   ├── 20240913_220140_26094221.gpx
+│   │   ├── 20240919_223040_26339136.gpx
+│   │   ├── 20240920_085344_26347536.gpx
+│   │   ├── 20240920_200929_26379979.gpx
+│   │   ├── 20240921_174319_26406712.gpx
+│   │   ├── 20240921_195239_26411447.gpx
+│   │   ├── 20240922_173748_26429788.gpx
+│   │   ├── 20240922_175813_26430463.gpx
+│   │   ├── 20240922_181001_26430802.gpx
+│   │   ├── 20240923_191004_26464872.gpx
+│   │   ├── 20240923_220351_26468798.gpx
+│   │   ├── 20240925_120854_26520892.gpx
+│   │   ├── 20240925_141848_26525170.gpx
+│   │   ├── 20240925_161908_26528091.gpx
+│   │   ├── 20240927_120749_26582861.gpx
+│   │   ├── 20240927_130419_26584566.gpx
+│   │   ├── 20240927_135718_26586176.gpx
+│   │   ├── 20240928_095821_26605289.gpx
+│   │   ├── 20240928_110802_26608086.gpx
+│   │   ├── 20241003_174730_26791632.gpx
+│   │   ├── 20241003_222750_26803831.gpx
+│   │   ├── 20241005_095404_26847058.gpx
+│   │   ├── 20241005_105213_26849259.gpx
+│   │   ├── 20241016_142148_27201010.gpx
+│   │   ├── 20241016_155109_27203269.gpx
+│   │   ├── 20241016_175047_27209229.gpx
+│   │   ├── 20241016_201536_27217423.gpx
+│   │   ├── 20241017_170702_27239963.gpx
+│   │   ├── 20241017_214559_27250334.gpx
+│   │   ├── 20241018_011902_27251665.gpx
+│   │   ├── 20241021_162929_27343011.gpx
+│   │   ├── 20241021_191434_27354689.gpx
+│   │   ├── 20241022_202332_27390990.gpx
+│   │   ├── 20241022_223848_27392971.gpx
+│   │   ├── 20241023_080106_27395894.gpx
+│   │   ├── 20241023_085318_27399062.gpx
+│   │   ├── 20241028_170513_27552038.gpx
+│   │   ├── 20241028_175129_27554547.gpx
+│   │   ├── 20241028_183409_27557231.gpx
+│   │   ├── 20241028_185637_27559972.gpx
+│   │   ├── 20241030_200032_27624425.gpx
+│   │   ├── 20241030_233547_27627136.gpx
+│   │   ├── 20241031_195452_27653535.gpx
+│   │   ├── 20241101_113418_27660850.gpx
+│   │   ├── 20241101_201227_27674364.gpx
+│   │   ├── 20241102_164757_27689529.gpx
+│   │   ├── 20241102_223642_27695062.gpx
+│   │   ├── 20241107_175337_27852164.gpx
+│   │   ├── 20241108_011910_27855267.gpx
+│   │   ├── 20241114_175236_28031988.gpx
+│   │   ├── 20241114_225550_28041885.gpx
+│   │   ├── 20241130_132900_28431163.gpx
+│   │   ├── 20241130_135923_28431865.gpx
+│   │   ├── 20241215_150807_28793932.gpx
+│   │   ├── 20250103_121110_29064495.gpx
+│   │   ├── 20250103_135544_29066376.gpx
+│   │   ├── 20250103_141028_29066547.gpx
+│   │   ├── 20250103_142147_29066736.gpx
+│   │   ├── 20250124_104603_29473792.gpx
+│   │   ├── 20250124_124431_29476375.gpx
+│   │   ├── 20250308_122844_30472922.gpx
+│   │   ├── 20250308_131656_30474475.gpx
+│   │   ├── 20250308_162303_30480493.gpx
+│   │   ├── 20250308_163817_30481368.gpx
+│   │   ├── 20250308_182045_30484758.gpx
+│   │   ├── 20250426_234815_31947992.gpx
+│   │   ├── 20250427_024829_31948581.gpx
+│   │   ├── 20250427_165816_31968301.gpx
+│   │   ├── 20250427_194609_31975569.gpx
+│   │   ├── 20250429_155044_32052187.gpx
+│   │   ├── 20250429_162212_32054392.gpx
+│   │   ├── 20250429_163911_32055185.gpx
+│   │   ├── 20250429_192159_32070860.gpx
+│   │   ├── 20250430_005532_32078602.gpx
+│   │   ├── 20250430_011856_32078665.gpx
+│   │   ├── 20250501_175145_32169689.gpx
+│   │   ├── 20250606_173156_34304426.gpx
+│   │   ├── 20250606_175850_34309125.gpx
+│   │   ├── 20250606_195926_34314299.gpx
+│   │   ├── 20250607_152717_34335692.gpx
+│   │   ├── 20250607_191320_34345510.gpx
+│   │   ├── 20250607_231307_34349314.gpx
+│   │   ├── 20250608_020220_34350324.gpx
+│   │   ├── 20250608_170101_34374279.gpx
+│   │   ├── 20250608_193831_34382797.gpx
+│   │   ├── 20250608_213337_34384861.gpx
+│   │   ├── 20250609_232540_34426899.gpx
+│   │   ├── 20250610_000538_34427389.gpx
+│   │   ├── 20250610_144050_34457293.gpx
+│   │   ├── 20250610_183601_34476033.gpx
+│   │   ├── 20250610_214638_34487374.gpx
+│   │   ├── 20250610_224409_34488500.gpx
+│   │   ├── 20250611_182200_34535256.gpx
+│   │   ├── 20250612_005337_34550511.gpx
+│   │   ├── 20250612_173313_34590005.gpx
+│   │   ├── 20250614_122518_34680473.gpx
+│   │   ├── 20250614_173103_34695900.gpx
+│   │   ├── 20250614_192826_34702240.gpx
+│   │   ├── 20250614_235149_34706952.gpx
+│   │   ├── 20250614_235609_34707020.gpx
+│   │   ├── 20250615_000221_34707253.gpx
+│   │   ├── 20250617_165739_34837867.gpx
+│   │   ├── 20250617_210850_34862909.gpx
+│   │   ├── 20250619_115318_34947668.gpx
+│   │   ├── 20250619_220548_34985132.gpx
+│   │   ├── 20250620_180119_35027526.gpx
+│   │   ├── 20250620_230446_35041245.gpx
+│   │   ├── 20250622_013106_35082585.gpx
+│   │   ├── 20250623_184928_35160283.gpx
+│   │   ├── 20250624_004627_35171335.gpx
+│   │   ├── 20250624_155809_35204642.gpx
+│   │   ├── 20250624_193235_35225013.gpx
+│   │   ├── 20250624_235928_35233756.gpx
+│   │   ├── 20250625_173441_35269795.gpx
+│   │   ├── 20250626_014223_35287873.gpx
+│   │   ├── 20250626_134457_35310641.gpx
+│   │   ├── 20250626_170417_35319166.gpx
+│   │   ├── 20250626_171753_35320138.gpx
+│   │   ├── 20250626_181116_35325277.gpx
+│   │   ├── 20250626_212129_35336743.gpx
+│   │   ├── 20250626_220935_35337947.gpx
+│   │   ├── 20250627_115520_35357764.gpx
+│   │   ├── 20250627_161411_35369830.gpx
+│   │   ├── 20250627_165447_35372498.gpx
+│   │   ├── 20250628_201330_35428124.gpx
+│   │   ├── 20250628_215223_35428298.gpx
+│   │   ├── 20250628_232204_35429499.gpx
+│   │   ├── 20250629_132608_35446206.gpx
+│   │   ├── 20250629_170319_35453187.gpx
+│   │   ├── 20250629_222424_35461702.gpx
+│   │   ├── 20250629_231419_35462385.gpx
+│   │   ├── 20250630_175501_35497857.gpx
+│   │   ├── 20250630_204854_35508837.gpx
+│   │   ├── 20250630_221441_35510713.gpx
+│   │   ├── 20250702_120616_35580742.gpx
+│   │   ├── 20250702_225830_35610058.gpx
+│   │   ├── 20250705_164406_35744268.gpx
+│   │   ├── 20250705_183950_35749561.gpx
+│   │   ├── 20250705_193859_35752162.gpx
+│   │   ├── 20250705_200157_35752731.gpx
+│   │   ├── 20250707_122458_35792663.gpx
+│   │   ├── 20250707_142405_35796572.gpx
+│   │   ├── 20250707_180834_35806910.gpx
+│   │   ├── 20250707_201034_35814753.gpx
+│   │   ├── 20250707_212639_35816014.gpx
+│   │   ├── 20250708_133226_35840786.gpx
+│   │   ├── 20250708_181353_35856905.gpx
+│   │   ├── 20250710_143153_35957375.gpx
+│   │   ├── 20250710_150650_35957810.gpx
+│   │   ├── 20250710_152627_35958630.gpx
+│   │   ├── 20250710_213039_35983560.gpx
+│   │   ├── 20250710_223037_35984829.gpx
+│   │   ├── 20250711_132932_36008130.gpx
+│   │   ├── 20250711_184512_36026605.gpx
+│   │   ├── 20250711_211758_36032901.gpx
+│   │   ├── 20250712_000948_36035583.gpx
+│   │   ├── 20250716_115612_36215531.gpx
+│   │   ├── 20250720_172605_36409372.gpx
+│   │   ├── 20250722_191358_36498373.gpx
+│   │   ├── 20250723_130641_36525504.gpx
+│   │   ├── 20250723_193701_36546800.gpx
+│   │   ├── 20250723_220032_36550441.gpx
+│   │   ├── 20250724_172204_36582797.gpx
+│   │   ├── 20250724_173735_36583901.gpx
+│   │   ├── 20250725_030001_36599525.gpx
+│   │   ├── 20250725_141208_36620143.gpx
+│   │   ├── 20250725_181101_36634062.gpx
+│   │   ├── 20250725_220148_36643135.gpx
+│   │   ├── 20250727_033156_36684072.gpx
+│   │   ├── 20250728_195619_36760063.gpx
+│   │   ├── 20250728_201944_36760757.gpx
+│   │   ├── 20250730_160944_36848952.gpx
+│   │   ├── 20250731_194148_36921381.gpx
+│   │   ├── 20250801_131516_36942728.gpx
+│   │   ├── 20250801_174259_36956757.gpx
+│   │   ├── 20250802_215327_37004854.gpx
+│   │   ├── 20250803_010606_37006587.gpx
+│   │   ├── 20250803_122259_37019786.gpx
+│   │   ├── 20250803_180641_37038537.gpx
+│   │   ├── 20250804_175908_37084234.gpx
+│   │   ├── 20250805_014628_37098326.gpx
+│   │   ├── 20250806_151819_37182866.gpx
+│   │   ├── 20250806_173019_37192705.gpx
+│   │   ├── 20250807_122710_37230280.gpx
+│   │   ├── 20250807_181841_37253039.gpx
+│   │   ├── 20250807_223136_37265409.gpx
+│   │   ├── 20250808_133624_37290172.gpx
+│   │   ├── 20250808_180823_37304887.gpx
+│   │   ├── 20250808_203220_37312649.gpx
+│   │   ├── 20250811_203400_37444448.gpx
+│   │   ├── 20250811_210803_37445186.gpx
+│   │   ├── 20250812_000734_37447712.gpx
+│   │   ├── 20250812_193501_37493228.gpx
+│   │   ├── 20250812_214520_37497703.gpx
+│   │   ├── 20250813_173109_37533504.gpx
+│   │   └── 20250813_231626_37546899.gpx
+│   ├── import_fittrackee.py
+│   ├── quick_parser.py
+│   ├── simple_test.py
+│   └── token_extractor.py
+├── Herd
+│   ├── .DS_Store
+│   ├── lifeplanner
+│   │   ├── .claude
+│   │   │   ├── agents -> /Users/davidmohamed/dev/src/perso/Herd/lifeplanner/aidd/agents
+│   │   │   ├── commands
+│   │   │   │   ├── flows -> ../../aidd-docs/flows
+│   │   │   │   └── ide -> /Users/davidmohamed/dev/src/perso/Herd/lifeplanner/aidd/prompts/ide
+│   │   │   ├── output-styles -> /Users/davidmohamed/dev/src/perso/Herd/lifeplanner/aidd/supports/.claude/output-styles
+│   │   │   ├── settings.json -> /Users/davidmohamed/dev/src/perso/Herd/lifeplanner/aidd/supports/.claude/settings.json
+│   │   │   └── settings.local.json
+│   │   ├── .editorconfig
+│   │   ├── .env.example
+│   │   ├── .gitattributes
+│   │   ├── .github
+│   │   │   └── workflows
+│   │   │       ├── lint.yml
+│   │   │       └── tests.yml
+│   │   ├── .gitignore
+│   │   ├── .gitlab-ci.yml
+│   │   ├── .mcp.json
+│   │   ├── .php-cs-fixer.cache
+│   │   ├── .repomixignore
+│   │   ├── .windsurf
+│   │   │   └── rules
+│   │   │       └── coding_instructions.md
+│   │   ├── app
+│   │   │   ├── Application
+│   │   │   │   ├── DTOs
+│   │   │   │   │   ├── AuthenticationResultDTO.php
+│   │   │   │   │   ├── ChangeUserRoleDTO.php
+│   │   │   │   │   ├── RegisterUserDTO.php
+│   │   │   │   │   ├── RegisterUserResponseDTO.php
+│   │   │   │   │   ├── UserCredentialsDTO.php
+│   │   │   │   │   ├── UserDTO.php
+│   │   │   │   │   ├── UserProfileDTO.php
+│   │   │   │   │   └── ValidationResultDTO.php
+│   │   │   │   ├── Interfaces
+│   │   │   │   │   └── EmailVerificationInterface.php
+│   │   │   │   └── UseCases
+│   │   │   │       ├── AuthenticateUserUseCase.php
+│   │   │   │       ├── ChangeUserRoleUseCase.php
+│   │   │   │       ├── GetUserProfileUseCase.php
+│   │   │   │       ├── GetUserUseCase.php
+│   │   │   │       ├── RegisterUserUseCase.php
+│   │   │   │       ├── ValidateRegistrationDataUseCase.php
+│   │   │   │       └── VerifyEmailUseCase.php
+│   │   │   ├── Domain
+│   │   │   │   ├── Entities
+│   │   │   │   │   ├── Role.php
+│   │   │   │   │   └── User.php
+│   │   │   │   ├── Interfaces
+│   │   │   │   │   ├── ActivityLogRepositoryInterface.php
+│   │   │   │   │   ├── RegistrationValidationServiceInterface.php
+│   │   │   │   │   ├── RoleRepositoryInterface.php
+│   │   │   │   │   └── UserRepositoryInterface.php
+│   │   │   │   ├── Services
+│   │   │   │   │   ├── ActivityLogService.php
+│   │   │   │   │   ├── AuthenticationService.php
+│   │   │   │   │   ├── AuthTokenService.php
+│   │   │   │   │   ├── RegistrationValidationService.php
+│   │   │   │   │   ├── UserRoleService.php
+│   │   │   │   │   └── UserService.php
+│   │   │   │   └── ValueObjects
+│   │   │   │       ├── Email.php
+│   │   │   │       └── UserId.php
+│   │   │   ├── Http
+│   │   │   │   ├── Controllers
+│   │   │   │   │   └── Admin
+│   │   │   │   │       └── UserRoleController.php
+│   │   │   │   └── Middleware
+│   │   │   │       └── AdminMiddleware.php
+│   │   │   ├── Infrastructure
+│   │   │   │   ├── Eloquent
+│   │   │   │   │   ├── ActivityLogModel.php
+│   │   │   │   │   ├── Models
+│   │   │   │   │   │   └── User.php
+│   │   │   │   │   ├── RoleModel.php
+│   │   │   │   │   └── UserModel.php
+│   │   │   │   ├── Http
+│   │   │   │   │   ├── Controllers
+│   │   │   │   │   │   ├── Auth
+│   │   │   │   │   │   │   ├── RegisterController.php
+│   │   │   │   │   │   │   └── VerifyEmailController.php
+│   │   │   │   │   │   ├── Controller.php
+│   │   │   │   │   │   └── ProfileController.php
+│   │   │   │   │   └── Requests
+│   │   │   │   │       └── Auth
+│   │   │   │   │           └── EmailVerificationRequest.php
+│   │   │   │   ├── Livewire
+│   │   │   │   │   └── Actions
+│   │   │   │   │       └── Logout.php
+│   │   │   │   ├── Providers
+│   │   │   │   │   ├── AppServiceProvider.php
+│   │   │   │   │   ├── RepositoryServiceProvider.php
+│   │   │   │   │   ├── ValidationServiceProvider.php
+│   │   │   │   │   └── VoltServiceProvider.php
+│   │   │   │   ├── Repositories
+│   │   │   │   │   ├── ActivityLogRepository.php
+│   │   │   │   │   ├── EloquentRoleRepository.php
+│   │   │   │   │   ├── EloquentUserRepository.php
+│   │   │   │   │   └── UserProfileRepository.php
+│   │   │   │   └── Services
+│   │   │   │       ├── LaravelAuthenticationService.php
+│   │   │   │       ├── LaravelAuthTokenService.php
+│   │   │   │       └── LaravelEmailVerificationService.php
+│   │   │   └── Providers
+│   │   │       └── DomainServiceProvider.php
+│   │   ├── artisan
+│   │   ├── bootstrap
+│   │   │   ├── app.php
+│   │   │   ├── cache
+│   │   │   │   └── .gitignore
+│   │   │   └── providers.php
+│   │   ├── CLAUDE.md -> /Users/davidmohamed/dev/src/perso/Herd/lifeplanner/aidd-docs/AGENTS.md
+│   │   ├── composer.json
+│   │   ├── composer.lock
+│   │   ├── config
+│   │   │   ├── app.php
+│   │   │   ├── auth.php
+│   │   │   ├── cache.php
+│   │   │   ├── database.php
+│   │   │   ├── filesystems.php
+│   │   │   ├── logging.php
+│   │   │   ├── mail.php
+│   │   │   ├── queue.php
+│   │   │   ├── services.php
+│   │   │   └── session.php
+│   │   ├── database
+│   │   │   ├── .gitignore
+│   │   │   ├── factories
+│   │   │   │   └── UserFactory.php
+│   │   │   ├── migrations
+│   │   │   │   ├── 0001_01_01_000000_create_users_table.php
+│   │   │   │   ├── 0001_01_01_000001_create_cache_table.php
+│   │   │   │   ├── 0001_01_01_000002_create_jobs_table.php
+│   │   │   │   ├── 2025_07_10_000000_create_roles_table.php
+│   │   │   │   └── 2025_07_11_000000_create_activity_logs_table.php
+│   │   │   └── seeders
+│   │   │       └── DatabaseSeeder.php
+│   │   ├── lefthook.yml
+│   │   ├── package-lock.json
+│   │   ├── package.json
+│   │   ├── phpstan-baseline.neon
+│   │   ├── phpstan.neon
+│   │   ├── phpunit.xml
+│   │   ├── README.md
+│   │   ├── rector.php
+│   │   ├── repomix-output.xml.txt
+│   │   ├── repomix.config.json
+│   │   ├── resources
+│   │   │   ├── css
+│   │   │   │   └── app.css
+│   │   │   ├── js
+│   │   │   │   └── app.js
+│   │   │   └── views
+│   │   │       ├── components
+│   │   │       │   ├── action-message.blade.php
+│   │   │       │   ├── app-logo-icon.blade.php
+│   │   │       │   ├── app-logo.blade.php
+│   │   │       │   ├── auth-header.blade.php
+│   │   │       │   ├── auth-session-status.blade.php
+│   │   │       │   ├── input-label.blade.php
+│   │   │       │   ├── layouts
+│   │   │       │   │   ├── app
+│   │   │       │   │   │   ├── header.blade.php
+│   │   │       │   │   │   └── sidebar.blade.php
+│   │   │       │   │   ├── app.blade.php
+│   │   │       │   │   ├── auth
+│   │   │       │   │   │   ├── card.blade.php
+│   │   │       │   │   │   ├── simple.blade.php
+│   │   │       │   │   │   └── split.blade.php
+│   │   │       │   │   └── auth.blade.php
+│   │   │       │   ├── placeholder-pattern.blade.php
+│   │   │       │   ├── settings
+│   │   │       │   │   └── layout.blade.php
+│   │   │       │   └── text-input.blade.php
+│   │   │       ├── dashboard.blade.php
+│   │   │       ├── flux
+│   │   │       │   ├── icon
+│   │   │       │   │   ├── book-open-text.blade.php
+│   │   │       │   │   ├── chevrons-up-down.blade.php
+│   │   │       │   │   ├── folder-git-2.blade.php
+│   │   │       │   │   └── layout-grid.blade.php
+│   │   │       │   └── navlist
+│   │   │       │       └── group.blade.php
+│   │   │       ├── livewire
+│   │   │       │   ├── auth
+│   │   │       │   │   ├── confirm-password.blade.php
+│   │   │       │   │   ├── forgot-password.blade.php
+│   │   │       │   │   ├── login.blade.php
+│   │   │       │   │   ├── register.blade.php
+│   │   │       │   │   ├── reset-password.blade.php
+│   │   │       │   │   └── verify-email.blade.php
+│   │   │       │   └── settings
+│   │   │       │       ├── appearance.blade.php
+│   │   │       │       ├── delete-user-form.blade.php
+│   │   │       │       ├── password.blade.php
+│   │   │       │       └── profile.blade.php
+│   │   │       ├── partials
+│   │   │       │   ├── head.blade.php
+│   │   │       │   └── settings-heading.blade.php
+│   │   │       ├── profile
+│   │   │       │   └── show.blade.php
+│   │   │       └── welcome.blade.php
+│   │   ├── routes
+│   │   │   ├── auth.php
+│   │   │   ├── console.php
+│   │   │   └── web.php
+│   │   ├── storage
+│   │   │   ├── app
+│   │   │   │   ├── .gitignore
+│   │   │   │   └── private
+│   │   │   │       └── .gitignore
+│   │   │   ├── framework
+│   │   │   │   ├── .gitignore
+│   │   │   │   ├── cache
+│   │   │   │   │   ├── .gitignore
+│   │   │   │   │   └── data
+│   │   │   │   │       └── .gitignore
+│   │   │   │   ├── sessions
+│   │   │   │   │   └── .gitignore
+│   │   │   │   ├── testing
+│   │   │   │   │   └── .gitignore
+│   │   │   │   └── views
+│   │   │   │       └── .gitignore
+│   │   │   └── logs
+│   │   │       └── .gitignore
+│   │   ├── tests
+│   │   │   ├── E2E
+│   │   │   │   └── UserRoleModificationTest.php
+│   │   │   ├── Feature
+│   │   │   │   ├── Auth
+│   │   │   │   │   ├── AuthenticationTest.php
+│   │   │   │   │   ├── EmailVerificationTest.php
+│   │   │   │   │   ├── PasswordConfirmationTest.php
+│   │   │   │   │   ├── PasswordResetTest.php
+│   │   │   │   │   └── RegistrationTest.php
+│   │   │   │   ├── DashboardTest.php
+│   │   │   │   ├── ExampleTest.php
+│   │   │   │   ├── Http
+│   │   │   │   │   └── Controllers
+│   │   │   │   │       └── Admin
+│   │   │   │   │           └── UserRoleControllerTest.php
+│   │   │   │   ├── Livewire
+│   │   │   │   │   └── Auth
+│   │   │   │   │       └── RegisterTest.php
+│   │   │   │   ├── Profile
+│   │   │   │   │   └── UserProfileTest.php
+│   │   │   │   └── Settings
+│   │   │   │       ├── PasswordUpdateTest.php
+│   │   │   │       └── ProfileUpdateTest.php
+│   │   │   ├── TestCase.php
+│   │   │   └── Unit
+│   │   │       ├── Application
+│   │   │       │   ├── DTOs
+│   │   │       │   │   └── ChangeUserRoleDTOTest.php
+│   │   │       │   └── UseCases
+│   │   │       │       ├── AuthenticateUserUseCaseTest.php
+│   │   │       │       ├── GetUserProfileUseCaseTest.php
+│   │   │       │       └── RegisterUserUseCaseTest.php
+│   │   │       ├── Domain
+│   │   │       │   └── Services
+│   │   │       │       ├── ActivityLogServiceTest.php
+│   │   │       │       ├── AuthenticationServiceTest.php
+│   │   │       │       ├── RegistrationValidationServiceTest.php
+│   │   │       │       └── UserRoleServiceTest.php
+│   │   │       └── ExampleTest.php
+│   │   └── vite.config.js
+│   └── lifeplanner base project
+│       ├── .editorconfig
+│       ├── .env.example
+│       ├── .gitattributes
+│       ├── .github
+│       │   └── workflows
+│       │       ├── lint.yml
+│       │       └── tests.yml
+│       ├── .gitignore
+│       ├── .gitlab-ci.yml
+│       ├── .php-cs-fixer.cache
+│       ├── app
+│       │   ├── Application
+│       │   │   ├── DTOs
+│       │   │   │   └── UserDTO.php
+│       │   │   ├── Interfaces
+│       │   │   │   └── EmailVerificationInterface.php
+│       │   │   └── UseCases
+│       │   │       ├── GetUserUseCase.php
+│       │   │       └── VerifyEmailUseCase.php
+│       │   ├── Domain
+│       │   │   ├── Entities
+│       │   │   │   └── User.php
+│       │   │   ├── Interfaces
+│       │   │   │   └── UserRepositoryInterface.php
+│       │   │   ├── Services
+│       │   │   │   └── UserService.php
+│       │   │   └── ValueObjects
+│       │   ├── Http
+│       │   │   ├── Controllers
+│       │   │   │   ├── Auth
+│       │   │   │   │   └── VerifyEmailController.php
+│       │   │   │   └── Controller.php
+│       │   │   └── Requests
+│       │   │       └── Auth
+│       │   │           └── EmailVerificationRequest.php
+│       │   ├── Infrastructure
+│       │   │   ├── Eloquent
+│       │   │   │   └── UserModel.php
+│       │   │   ├── Repositories
+│       │   │   │   └── EloquentUserRepository.php
+│       │   │   └── Services
+│       │   │       └── LaravelEmailVerificationService.php
+│       │   ├── Livewire
+│       │   │   └── Actions
+│       │   │       └── Logout.php
+│       │   ├── Models
+│       │   │   └── User.php
+│       │   └── Providers
+│       │       ├── AppServiceProvider.php
+│       │       ├── RepositoryServiceProvider.php
+│       │       └── VoltServiceProvider.php
+│       ├── artisan
+│       ├── bootstrap
+│       │   ├── app.php
+│       │   ├── cache
+│       │   │   └── .gitignore
+│       │   └── providers.php
+│       ├── composer.json
+│       ├── composer.lock
+│       ├── config
+│       │   ├── app.php
+│       │   ├── auth.php
+│       │   ├── cache.php
+│       │   ├── database.php
+│       │   ├── filesystems.php
+│       │   ├── logging.php
+│       │   ├── mail.php
+│       │   ├── queue.php
+│       │   ├── services.php
+│       │   └── session.php
+│       ├── database
+│       │   ├── .gitignore
+│       │   ├── factories
+│       │   │   └── UserFactory.php
+│       │   ├── migrations
+│       │   │   ├── 0001_01_01_000000_create_users_table.php
+│       │   │   ├── 0001_01_01_000001_create_cache_table.php
+│       │   │   └── 0001_01_01_000002_create_jobs_table.php
+│       │   └── seeders
+│       │       └── DatabaseSeeder.php
+│       ├── docs
+│       │   └── Definition_of_Done.md
+│       ├── package-lock.json
+│       ├── package.json
+│       ├── phpstan.neon
+│       ├── phpunit.xml
+│       ├── README.md
+│       ├── rector.php
+│       ├── resources
+│       │   ├── css
+│       │   │   └── app.css
+│       │   ├── js
+│       │   │   └── app.js
+│       │   └── views
+│       │       ├── components
+│       │       │   ├── action-message.blade.php
+│       │       │   ├── app-logo-icon.blade.php
+│       │       │   ├── app-logo.blade.php
+│       │       │   ├── auth-header.blade.php
+│       │       │   ├── auth-session-status.blade.php
+│       │       │   ├── layouts
+│       │       │   │   ├── app
+│       │       │   │   │   ├── header.blade.php
+│       │       │   │   │   └── sidebar.blade.php
+│       │       │   │   ├── app.blade.php
+│       │       │   │   ├── auth
+│       │       │   │   │   ├── card.blade.php
+│       │       │   │   │   ├── simple.blade.php
+│       │       │   │   │   └── split.blade.php
+│       │       │   │   └── auth.blade.php
+│       │       │   ├── placeholder-pattern.blade.php
+│       │       │   └── settings
+│       │       │       └── layout.blade.php
+│       │       ├── dashboard.blade.php
+│       │       ├── flux
+│       │       │   ├── icon
+│       │       │   │   ├── book-open-text.blade.php
+│       │       │   │   ├── chevrons-up-down.blade.php
+│       │       │   │   ├── folder-git-2.blade.php
+│       │       │   │   └── layout-grid.blade.php
+│       │       │   └── navlist
+│       │       │       └── group.blade.php
+│       │       ├── livewire
+│       │       │   ├── auth
+│       │       │   │   ├── confirm-password.blade.php
+│       │       │   │   ├── forgot-password.blade.php
+│       │       │   │   ├── login.blade.php
+│       │       │   │   ├── register.blade.php
+│       │       │   │   ├── reset-password.blade.php
+│       │       │   │   └── verify-email.blade.php
+│       │       │   └── settings
+│       │       │       ├── appearance.blade.php
+│       │       │       ├── delete-user-form.blade.php
+│       │       │       ├── password.blade.php
+│       │       │       └── profile.blade.php
+│       │       ├── partials
+│       │       │   ├── head.blade.php
+│       │       │   └── settings-heading.blade.php
+│       │       └── welcome.blade.php
+│       ├── routes
+│       │   ├── auth.php
+│       │   ├── console.php
+│       │   └── web.php
+│       ├── storage
+│       │   ├── app
+│       │   │   ├── .gitignore
+│       │   │   └── private
+│       │   │       └── .gitignore
+│       │   ├── framework
+│       │   │   ├── .gitignore
+│       │   │   ├── cache
+│       │   │   │   ├── .gitignore
+│       │   │   │   └── data
+│       │   │   │       └── .gitignore
+│       │   │   ├── sessions
+│       │   │   │   └── .gitignore
+│       │   │   ├── testing
+│       │   │   │   └── .gitignore
+│       │   │   └── views
+│       │   │       └── .gitignore
+│       │   └── logs
+│       │       └── .gitignore
+│       ├── tests
+│       │   ├── Feature
+│       │   │   ├── Auth
+│       │   │   │   ├── AuthenticationTest.php
+│       │   │   │   ├── EmailVerificationTest.php
+│       │   │   │   ├── PasswordConfirmationTest.php
+│       │   │   │   ├── PasswordResetTest.php
+│       │   │   │   └── RegistrationTest.php
+│       │   │   ├── DashboardTest.php
+│       │   │   ├── ExampleTest.php
+│       │   │   └── Settings
+│       │   │       ├── PasswordUpdateTest.php
+│       │   │       └── ProfileUpdateTest.php
+│       │   ├── TestCase.php
+│       │   └── Unit
+│       │       └── ExampleTest.php
+│       ├── vite.config.js
+│       └── windsurf
+│           └── rules
+│               └── coding_instructions.md
+├── MiniVel
+│   └── audiotranscriber
+│       ├── .gitignore
+│       ├── .gitlab-ci.yml
+│       ├── audio_transcriber_optimized.py
+│       ├── audio_transcriber.py
+│       ├── com.audiotranscriber.monitor.plist
+│       ├── com.audiotranscriber.plist
+│       ├── config.yaml
+│       ├── daemon_monitor.sh
+│       ├── install_daemon.sh
+│       ├── performance_monitor.py
+│       ├── README.md
+│       ├── setup.sh
+│       └── uninstall_daemon.sh
+├── Monica-Companion-App
+│   └── README.md
+├── monica-local-dev
+│   └── docker-compose.yml
+├── MonicaMobileApp
+│   ├── .github
+│   │   ├── ISSUE_TEMPLATE
+│   │   │   ├── bug_report.md
+│   │   │   └── feature_request.md
+│   │   ├── PULL_REQUEST_TEMPLATE.md
+│   │   └── workflows
+│   │       ├── PR.yml
+│   │       ├── push.yml
+│   │       └── release.yml
+│   ├── .gitignore
+│   ├── aidd-generated
+│   │   └── .gitkeep
+│   ├── analysis_options.yaml
+│   ├── android
+│   │   ├── .gitignore
+│   │   ├── .kotlin
+│   │   │   └── sessions
+│   │   ├── app
+│   │   │   ├── build.gradle
+│   │   │   ├── proguard-rules.pro
+│   │   │   └── src
+│   │   │       ├── debug
+│   │   │       │   ├── AndroidManifest.xml
+│   │   │       │   └── res
+│   │   │       │       └── values
+│   │   │       ├── main
+│   │   │       │   ├── AndroidManifest.xml
+│   │   │       │   ├── java
+│   │   │       │   │   └── io
+│   │   │       │   │       └── flutter
+│   │   │       │   │           └── plugins
+│   │   │       │   ├── kotlin
+│   │   │       │   │   └── com
+│   │   │       │   │       └── monica
+│   │   │       │   │           └── app
+│   │   │       │   │               └── MainActivity.kt
+│   │   │       │   └── res
+│   │   │       │       ├── drawable
+│   │   │       │       │   ├── ic_launcher_foreground.xml
+│   │   │       │       │   └── launch_background.xml
+│   │   │       │       ├── drawable-v21
+│   │   │       │       │   └── launch_background.xml
+│   │   │       │       ├── mipmap-anydpi-v26
+│   │   │       │       │   ├── ic_launcher_round.xml
+│   │   │       │       │   └── ic_launcher.xml
+│   │   │       │       ├── mipmap-hdpi
+│   │   │       │       │   └── ic_launcher.xml
+│   │   │       │       ├── mipmap-mdpi
+│   │   │       │       │   └── ic_launcher.xml
+│   │   │       │       ├── mipmap-xhdpi
+│   │   │       │       │   └── ic_launcher.xml
+│   │   │       │       ├── mipmap-xxhdpi
+│   │   │       │       │   └── ic_launcher.xml
+│   │   │       │       ├── mipmap-xxxhdpi
+│   │   │       │       │   └── ic_launcher.xml
+│   │   │       │       ├── values
+│   │   │       │       │   ├── ic_launcher_background.xml
+│   │   │       │       │   ├── strings.xml
+│   │   │       │       │   └── styles.xml
+│   │   │       │       └── values-night
+│   │   │       │           └── styles.xml
+│   │   │       ├── profile
+│   │   │       │   ├── AndroidManifest.xml
+│   │   │       │   └── res
+│   │   │       │       └── values
+│   │   │       └── release
+│   │   │           └── res
+│   │   │               └── values
+│   │   ├── build.gradle
+│   │   ├── gradle
+│   │   │   └── wrapper
+│   │   │       └── gradle-wrapper.properties
+│   │   ├── gradle.properties
+│   │   └── settings.gradle
+│   ├── CODE_OF_CONDUCT.md
+│   ├── docs
+│   │   ├── FLAVORS.md
+│   │   └── LINTING.md
+│   ├── integration_test
+│   │   ├── app_test.dart
+│   │   ├── helpers
+│   │   │   └── integration_test_helpers.dart
+│   │   └── tests
+│   ├── lefthook-local.yml.template
+│   ├── lefthook.yml
+│   ├── lib
+│   │   ├── config
+│   │   │   └── feature_flags.dart
+│   │   ├── core
+│   │   │   ├── config
+│   │   │   │   ├── app_config.dart
+│   │   │   │   └── environment.dart
+│   │   │   ├── constants
+│   │   │   │   └── app_constants.dart
+│   │   │   ├── errors
+│   │   │   │   ├── exceptions.dart
+│   │   │   │   └── failures.dart
+│   │   │   └── utils
+│   │   │       ├── logger.dart
+│   │   │       └── validators.dart
+│   │   ├── db
+│   │   │   ├── database_config.dart
+│   │   │   ├── interfaces
+│   │   │   │   ├── database_interface.dart
+│   │   │   │   └── repository_interface.dart
+│   │   │   ├── models
+│   │   │   │   └── base_model.dart
+│   │   │   └── repositories
+│   │   │       └── base_repository.dart
+│   │   ├── features
+│   │   │   ├── calls
+│   │   │   ├── contacts
+│   │   │   ├── settings
+│   │   │   ├── shared
+│   │   │   │   ├── models
+│   │   │   │   │   └── feature_state.dart
+│   │   │   │   ├── utils
+│   │   │   │   │   └── feature_utils.dart
+│   │   │   │   └── widgets
+│   │   │   │       ├── empty_state_widget.dart
+│   │   │   │       ├── error_widget.dart
+│   │   │   │       └── loading_widget.dart
+│   │   │   └── sync
+│   │   ├── main.dart
+│   │   └── services
+│   │       ├── implementations
+│   │       │   └── base_service_impl.dart
+│   │       ├── interfaces
+│   │       │   ├── api_service.dart
+│   │       │   ├── base_service.dart
+│   │       │   └── storage_service.dart
+│   │       └── service_locator.dart
+│   ├── LICENSE
+│   ├── Makefile
+│   ├── PRIVACY.md
+│   ├── pubspec.yaml
+│   ├── README.md
+│   ├── scripts
+│   │   ├── setup-linting.sh
+│   │   └── verify_config.md
+│   ├── SECURITY.md
+│   ├── templates
+│   │   └── ide
+│   │       ├── android-studio-inspections.xml
+│   │       ├── android-studio-project.xml
+│   │       └── vscode-settings.json
+│   └── test
+│       ├── config
+│       │   └── environment_test.dart
+│       ├── core
+│       │   ├── config
+│       │   ├── constants
+│       │   ├── errors
+│       │   └── utils
+│       │       ├── logger_test.dart
+│       │       └── validators_test.dart
+│       ├── db
+│       │   ├── interfaces
+│       │   ├── models
+│       │   └── repositories
+│       ├── features
+│       │   └── shared
+│       │       ├── models
+│       │       ├── utils
+│       │       └── widgets
+│       ├── helpers
+│       │   └── test_helpers.dart
+│       ├── mocks
+│       │   └── mock_services.dart
+│       ├── services
+│       │   ├── implementations
+│       │   └── interfaces
+│       └── widget_test.dart
+└── tutoHyperskill
+    ├── .DS_Store
+    └── htmlCss
+        ├── .idea
+        │   ├── .gitignore
+        │   ├── htmlCss.iml
+        │   └── modules.xml
+        └── index.html
+
+438 directories, 1790 files

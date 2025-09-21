@@ -28,3 +28,13 @@ ios/.generated/
 *.tmp
 *.swp
 
+# <AIDD-PRIVACY>
+#
+# You might want to ignore the following files and directories:
+#
+.claude
+.mcp.json
+aidd
+aidd-generated
+
+# </AIDD-PRIVACY>

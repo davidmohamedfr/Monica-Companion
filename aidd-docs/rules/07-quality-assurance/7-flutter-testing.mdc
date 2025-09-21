@@ -1,0 +1,88 @@
+---
+description: Comprehensive testing strategies for Flutter applications including unit tests, widget tests, and integration tests following AAA pattern with high coverage targets
+globs: "test/**/*.dart"
+alwaysApply: false
+---
+
+## Testing Strategy
+
+- Write tests before fixing bugs
+- Follow Arrange-Act-Assert pattern
+- Aim for 80%+ coverage
+- Test edge cases thoroughly
+- Keep tests independent
+- Use descriptive test names
+- Group related tests together
+
+## Unit Testing
+
+- Test business logic isolation
+- Mock external dependencies
+- Test error scenarios
+- Verify state transitions
+- Test validators @lib/core/utils/validators.dart
+- Test data transformations
+- Use `package:test` for assertions
+
+```dart
+test('should validate email correctly', () {
+  // Arrange
+  const email = 'test@example.com';
+
+  // Act
+  final result = validateEmail(email);
+
+  // Assert
+  expect(result, isTrue);
+});
+```
+
+## Widget Testing
+
+- Test UI components isolation
+- Verify widget interactions
+- Test widget state changes
+- Mock dependencies with fakes
+- Use `pumpWidget` for rendering
+- Apply `pump` for animations
+- Test golden files for UI
+
+## Integration Testing
+
+- Test complete user flows
+- Verify end-to-end scenarios
+- Use `integration_test` package
+- Test on real devices
+- Cover critical paths first
+- Test navigation flows
+- Verify data persistence
+
+## Mocking Best Practices
+
+- Prefer fakes over mocks
+- Use `mocktail` when needed
+- Avoid over-mocking
+- Create test doubles
+- Mock at boundaries only
+- Keep mocks simple
+- Document mock behavior
+
+## Test Organization
+
+- Mirror source structure
+- One test file per source
+- Group by functionality
+- Use clear test descriptions
+- Separate unit/widget/integration
+- Share test utilities
+- Follow naming conventions
+
+## Testing Commands
+
+- Run all: `flutter test`
+- Coverage: `flutter test --coverage`
+- Single file: `flutter test path/to/test.dart`
+- Integration: `flutter test integration_test`
+- Watch mode for TDD
+- Use `checks` for assertions
+- Profile test performance

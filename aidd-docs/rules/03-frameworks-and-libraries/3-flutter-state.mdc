@@ -1,0 +1,68 @@
+---
+description: Flutter state management patterns using built-in solutions, proper separation of concerns, and data flow architecture for predictable and maintainable application state
+globs: "lib/**/*state*.dart"
+alwaysApply: false
+---
+
+## State Management Principles
+
+- Separate ephemeral from app state
+- Use built-in solutions first
+- Avoid unnecessary third-party packages
+- Keep state close to usage
+- Minimize state mutations
+- Make state predictable
+- Follow @lib/features/shared/models/feature_state.dart patterns
+
+## Built-in Solutions
+
+- Use `setState` for simple local state
+- Apply `ValueNotifier` for single values
+- Use `ChangeNotifier` for complex state
+- Implement `InheritedWidget` for deep sharing
+- Use `FutureBuilder` for async operations
+- Apply `StreamBuilder` for streams
+- Prefer `ListenableBuilder` over rebuilds
+
+## ValueNotifier Pattern
+
+```dart
+final ValueNotifier<int> counter = ValueNotifier<int>(0);
+
+ValueListenableBuilder<int>(
+  valueListenable: counter,
+  builder: (context, value, child) {
+    return Text('Count: $value');
+  },
+);
+```
+
+## State Organization
+
+- Group state by feature
+- Create state models
+- Use immutable state objects
+- Implement state factories
+- Define clear state transitions
+- Document state dependencies
+- Follow MVVM when complex
+
+## Data Flow Architecture
+
+- Implement repository pattern @lib/db/repositories/
+- Use service interfaces @lib/services/interfaces/
+- Abstract data sources
+- Handle errors at service level
+- Transform data in repositories
+- Keep UI layer thin
+- Apply dependency injection
+
+## State Best Practices
+
+- Initialize state in `initState()`
+- Dispose resources in `dispose()`
+- Avoid state in build methods
+- Prevent unnecessary rebuilds
+- Use `const` constructors
+- Profile state performance
+- Test state transitions

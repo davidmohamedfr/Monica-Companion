@@ -1,0 +1,82 @@
+---
+description: Flutter theming, visual design, and accessibility best practices for creating beautiful, responsive, and inclusive user interfaces with Material 3 design system
+globs: "lib/**/*theme*.dart"
+alwaysApply: false
+---
+
+## Material 3 Theming
+
+- Use `ColorScheme.fromSeed()` for palettes
+- Define light and dark themes
+- Apply `ThemeData` consistently
+- Customize component themes
+- Use `Theme.of(context)` for colors
+- Implement theme extensions
+- Support system theme mode
+
+## Color Scheme
+
+- Follow 60-30-10 color rule
+- Maintain WCAG contrast ratios
+- Use semantic color names
+- Define color tokens
+- Test in light/dark modes
+- Apply consistent color hierarchy
+- Avoid hardcoded colors
+
+```dart
+ColorScheme.fromSeed(
+  seedColor: Colors.deepPurple,
+  brightness: Brightness.light,
+)
+```
+
+## Typography
+
+- Define complete `TextTheme`
+- Use platform-appropriate fonts
+- Maintain readable line height (1.4-1.6x)
+- Keep line length 45-75 characters
+- Apply consistent font weights
+- Use `GoogleFonts` for custom fonts
+- Follow hierarchy patterns
+
+## Responsive Design
+
+- Use `LayoutBuilder` for responsive UI
+- Apply `MediaQuery` for screen info
+- Design mobile-first approach
+- Support multiple breakpoints
+- Use `Flexible` and `Expanded`
+- Implement adaptive layouts
+- Test on various devices
+
+## Layout Best Practices
+
+- Avoid overflow with `Flexible`
+- Use `SingleChildScrollView` when needed
+- Apply `ListView.builder` for lists
+- Use `Wrap` for flowing content
+- Implement `Stack` for overlays
+- Apply `FittedBox` for scaling
+- Use `ConstrainedBox` for limits
+
+## Accessibility (A11Y)
+
+- Ensure 4.5:1 contrast ratio
+- Support dynamic text scaling
+- Add semantic labels
+- Test with screen readers
+- Provide focus indicators
+- Support keyboard navigation
+- Include meaningful tooltips
+
+## Asset Management
+
+- Declare assets in `pubspec.yaml`
+- Use `Image.asset` for local images
+- Implement error handling for images
+- Provide loading indicators
+- Cache network images appropriately
+- Optimize image sizes
+- Support multiple resolutions

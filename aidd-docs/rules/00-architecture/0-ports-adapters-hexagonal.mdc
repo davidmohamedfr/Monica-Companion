@@ -1,0 +1,157 @@
+---
+description: Ports and Adapters (Hexagonal Architecture) pattern implementation for Flutter ensuring core business logic isolation through well-defined interfaces (ports) and their concrete implementations (adapters), enabling technology independence and improved testability
+globs: lib/**/*.dart
+alwaysApply: false
+---
+
+## Core Domain Isolation
+
+- Business logic in application core
+- Zero external dependencies in core
+- Core defines its own interfaces
+- External world adapts to core
+- Technology decisions are deferred
+
+```dart
+// core/ports/contact_port.dart
+abstract class ContactPort {
+  Future<Contact> findById(String id);
+}
+```
+
+## Port Definition Rules
+
+- Ports are abstract interfaces
+- Define contracts for external services
+- Located in @lib/services/interfaces
+- Repository ports in @lib/db/interfaces
+- One port per external boundary
+
+## Primary Ports (Driving)
+
+- UI adapters implement presentation ports
+- Controllers adapt user actions
+- REST API controllers as adapters
+- CLI adapters for commands
+- Event listeners as adapters
+
+```dart
+// presentation/adapters/contact_controller.dart
+class ContactController implements ContactPresenter {
+  final ContactUseCase useCase;
+}
+```
+
+## Secondary Ports (Driven)
+
+- Database adapters implement persistence
+- API adapters for external services
+- Storage adapters at @lib/services/interfaces/storage_service
+- Notification adapters for messaging
+- File system adapters for I/O
+
+## Adapter Implementation
+
+- Adapters in @lib/services/implementations
+- Implement port interfaces exactly
+- Handle technology-specific details
+- Convert between domain and external
+- Error translation in adapters
+
+```dart
+// adapters/api/monica_api_adapter.dart
+class MonicaApiAdapter implements ApiService {
+  final HttpClient httpClient;
+}
+```
+
+## Dependency Injection
+
+- Service locator at @lib/services/service_locator
+- Register ports with implementations
+- Inject ports, not adapters
+- Configure adapters at startup
+- Swap implementations easily
+
+## Interface Segregation
+
+- Small, focused interfaces
+- Single responsibility per port
+- Client-specific interfaces
+- No unused method dependencies
+- Compose interfaces when needed
+
+```dart
+abstract class ReadOnlyRepository<T> {
+  Future<T?> findById(String id);
+  Future<List<T>> findAll();
+}
+```
+
+## External Service Integration
+
+- API service at @lib/services/interfaces/api_service
+- Base service at @lib/services/interfaces/base_service
+- Wrap external libraries in adapters
+- Isolate third-party dependencies
+- Mock external services in tests
+
+## Database Abstraction
+
+- Database interface at @lib/db/interfaces/database_interface
+- Repository pattern for data access
+- Base repository at @lib/db/repositories/base_repository
+- Model mapping in adapters
+- Database-agnostic domain
+
+## Configuration Management
+
+- Environment config at @lib/core/config/environment
+- App config at @lib/core/config/app_config
+- Inject configuration through ports
+- Environment-specific adapters
+- Runtime configuration changes
+
+## Testing Strategy
+
+- Test core logic without adapters
+- Mock ports for unit tests
+- Integration tests with real adapters
+- Adapter tests verify contracts
+- Test adapter substitution
+
+```dart
+class MockContactPort extends Mock implements ContactPort {}
+```
+
+## Port Categories
+
+- Persistence ports for data storage
+- Messaging ports for communication
+- UI ports for presentation
+- Infrastructure ports for services
+- External API ports for integration
+
+## Adapter Categories
+
+- HTTP adapters for REST APIs
+- GraphQL adapters for queries
+- WebSocket adapters for real-time
+- Database adapters for persistence
+- Cache adapters for performance
+
+## Error Handling at Boundaries
+
+- Catch external errors in adapters
+- Transform to domain exceptions
+- Domain defines error types
+- Adapters handle retry logic
+- Circuit breakers in adapters
+
+## Technology Migration
+
+- Replace adapters, not core logic
+- Gradual migration support
+- Feature flags for adapter switching
+- A/B testing with different adapters
+- Zero-downtime adapter swaps

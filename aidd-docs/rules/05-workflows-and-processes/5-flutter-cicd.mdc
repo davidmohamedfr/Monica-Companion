@@ -1,0 +1,75 @@
+---
+description: CI/CD pipeline best practices for Flutter applications including automated testing, code quality checks, build optimization, and deployment strategies across multiple platforms
+globs: ".github/workflows/*.yml"
+alwaysApply: false
+---
+
+## Pipeline Structure
+
+- Run on push/PR to main branches
+- Use workflow dispatch for manual
+- Set appropriate timeouts
+- Cache dependencies properly
+- Use matrix builds for platforms
+- Fail fast on errors
+- Keep jobs focused
+
+## Code Quality Gates
+
+- Format check with `dart format`
+- Static analysis with `flutter analyze`
+- Check dependency updates
+- Run lint rules @.github/workflows/lint.yml
+- Verify code coverage thresholds
+- Check for security vulnerabilities
+- Validate commit messages
+
+## Testing Strategy
+
+- Run tests in parallel
+- Generate coverage reports
+- Upload coverage to service
+- Test on multiple Flutter versions
+- Run integration tests separately
+- Cache test results
+- Report test failures clearly
+
+## Build Optimization
+
+- Cache Flutter SDK
+- Cache pub dependencies
+- Use incremental builds
+- Optimize build flags
+- Separate debug/release builds
+- Sign release builds properly
+- Generate build artifacts
+
+## Environment Management
+
+- Use environment variables
+- Secure secrets properly
+- Version Flutter SDK consistently
+- Pin dependency versions
+- Use build flavors
+- Configure per environment
+- Document env requirements
+
+## Deployment Process
+
+- Build for target platforms
+- Sign Android APK/AAB
+- Sign iOS IPA properly
+- Upload to stores automatically
+- Create GitHub releases
+- Tag versions correctly
+- Generate changelogs
+
+## Workflow Best Practices
+
+- Keep workflows DRY
+- Use reusable workflows
+- Monitor workflow performance
+- Set up notifications
+- Document workflow triggers
+- Version control configs
+- Review workflow changes

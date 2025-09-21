@@ -1,0 +1,64 @@
+---
+description: Dart language best practices covering null safety, async patterns, code organization, naming conventions, error handling, and documentation standards for maintainable and idiomatic Dart code
+globs: "**/*.dart"
+alwaysApply: true
+---
+
+## Language Features
+
+- Use sound null safety
+- Avoid `!` unless guaranteed non-null
+- Prefer `async`/`await` over callbacks
+- Use `Future` for single async operations
+- Use `Stream` for async sequences
+- Apply pattern matching for simplification
+- Use records for multiple returns
+- Prefer exhaustive switch statements
+
+## Code Style
+
+- Use `PascalCase` for classes
+- Use `camelCase` for members/functions
+- Use `snake_case` for files
+- Keep functions under 20 lines
+- Single purpose per function
+- Use arrow syntax for one-liners
+- Group related classes in library
+- Organize libraries by feature
+
+## Naming Conventions
+
+- Avoid abbreviations in names
+- Use meaningful descriptive names
+- Be consistent across codebase
+- Follow @lib/core/constants/app_constants.dart patterns
+- Match existing service naming @lib/services/interfaces/
+
+## Error Handling
+
+- Use `try-catch` for exceptions
+- Create custom exceptions when needed
+- Never let code fail silently
+- Throw exceptions early
+- Handle errors at appropriate level
+- Follow @lib/core/errors/exceptions.dart patterns
+
+## Documentation
+
+- Use `///` for doc comments
+- Start with single-sentence summary
+- Document all public APIs
+- Explain why, not what
+- Avoid redundant documentation
+- Include code examples when helpful
+
+## Best Practices
+
+- Follow Effective Dart guidelines
+- Prefer composition over inheritance
+- Use immutable data structures
+- Apply SOLID principles
+- Write testable code
+- Use `logging` package over `print`
+- Define types explicitly
+- Avoid dynamic typing

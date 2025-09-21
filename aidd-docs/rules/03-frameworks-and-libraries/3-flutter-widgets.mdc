@@ -1,0 +1,78 @@
+---
+description: Flutter widget architecture patterns emphasizing composition, immutability, performance optimization, and proper widget tree structure for scalable and maintainable UI development
+globs: "lib/**/*widget*.dart"
+alwaysApply: false
+---
+
+## Widget Architecture
+
+- Prefer composition over inheritance
+- Keep widgets immutable
+- Use `StatelessWidget` when possible
+- Create small reusable widgets
+- Avoid deep widget nesting
+- Extract widgets to private classes
+- Never return widgets from methods
+- Follow @lib/features/shared/widgets/ patterns
+
+## Build Method Practices
+
+- Keep `build()` methods small
+- Avoid expensive operations in `build()`
+- No network calls in `build()`
+- Extract complex UI to widgets
+- Use `const` constructors everywhere
+- Cache expensive computations
+- Minimize widget rebuilds
+
+## Performance Optimization
+
+- Use `const` for static widgets
+- Apply `ListView.builder` for long lists
+- Implement `SliverList` for custom scrolling
+- Use `RepaintBoundary` for expensive widgets
+- Apply `AutomaticKeepAliveClientMixin` carefully
+- Run expensive ops with `compute()`
+- Profile with Flutter DevTools
+
+## Widget Organization
+
+- One widget per file
+- Group widgets by feature
+- Create widget libraries
+- Use barrel exports
+- Keep widgets focused
+- Separate logic from UI
+- Follow @lib/features/shared/widgets/ structure
+
+## Widget Composition
+
+```dart
+// Prefer small composed widgets
+class UserCard extends StatelessWidget {
+  const UserCard({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const Card(
+      child: Column(
+        children: [
+          _UserAvatar(),
+          _UserInfo(),
+        ],
+      ),
+    );
+  }
+}
+```
+
+## Common Widget Patterns
+
+- Use `Builder` for context access
+- Apply `LayoutBuilder` for responsive UI
+- Use `FutureBuilder` for async data
+- Apply `StreamBuilder` for streams
+- Use `ValueListenableBuilder` for simple state
+- Implement error boundaries
+- Add loading states @lib/features/shared/widgets/loading_widget.dart
+- Handle empty states @lib/features/shared/widgets/empty_state_widget.dart

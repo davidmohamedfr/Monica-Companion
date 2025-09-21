@@ -1,0 +1,87 @@
+---
+description: Flutter navigation and routing patterns using go_router for declarative navigation, deep linking support, and authentication flows with proper route organization
+globs: "lib/**/*route*.dart"
+alwaysApply: false
+---
+
+## Navigation Strategy
+
+- Use `go_router` for routing
+- Support deep linking
+- Implement declarative navigation
+- Handle authentication redirects
+- Organize routes hierarchically
+- Use typed route parameters
+- Support web URLs properly
+
+## GoRouter Setup
+
+```dart
+final GoRouter router = GoRouter(
+  routes: <RouteBase>[
+    GoRoute(
+      path: '/',
+      builder: (context, state) => const HomeScreen(),
+      routes: <RouteBase>[
+        GoRoute(
+          path: 'details/:id',
+          builder: (context, state) {
+            final id = state.pathParameters['id']!;
+            return DetailScreen(id: id);
+          },
+        ),
+      ],
+    ),
+  ],
+);
+```
+
+## Route Organization
+
+- Define routes centrally
+- Use nested routes
+- Group related routes
+- Keep routes immutable
+- Use route constants
+- Document route parameters
+- Version API routes
+
+## Navigation Patterns
+
+- Use `context.go()` for navigation
+- Apply `context.push()` for stack
+- Use `context.pop()` to return
+- Pass typed parameters
+- Handle query parameters
+- Implement route guards
+- Support back button properly
+
+## Authentication Flow
+
+- Configure redirect property
+- Check auth on navigation
+- Redirect to login when needed
+- Save intended destination
+- Restore route after login
+- Handle token expiration
+- Clear stack on logout
+
+## Deep Linking
+
+- Define URL patterns
+- Handle app links
+- Support universal links
+- Parse path parameters
+- Validate incoming links
+- Handle malformed URLs
+- Test on all platforms
+
+## Dialog Navigation
+
+- Use `Navigator` for dialogs
+- Keep dialogs stateless
+- Return dialog results
+- Handle dialog dismissal
+- Avoid deep-linked dialogs
+- Use bottom sheets appropriately
+- Implement modal barriers
