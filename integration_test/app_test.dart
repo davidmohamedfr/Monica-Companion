@@ -18,8 +18,8 @@ void main() {
       await IntegrationTestHelpers.waitForAppToLoad(tester);
 
       // Verify the app loaded correctly with actual UI elements
-      expect(find.text('Environment Configuration'), findsOneWidget);
-      expect(find.text('Feature Flags'), findsOneWidget);
+      expect(find.text('Monica Companion'), findsOneWidget);
+      expect(find.text('Development Build'), findsOneWidget);
 
       // Take screenshot for test documentation
       await IntegrationTestHelpers.takeScreenshot(binding, 'app_startup');
@@ -33,13 +33,16 @@ void main() {
 
       await IntegrationTestHelpers.waitForAppToLoad(tester);
 
-      // Verify configuration sections are displayed
-      expect(find.text('Environment Configuration'), findsOneWidget);
-      expect(find.text('Feature Flags'), findsOneWidget);
+      // Verify main UI elements are displayed
+      expect(find.text('Monica Companion'), findsOneWidget);
+      expect(find.text('Development Build'), findsOneWidget);
 
-      // Verify some configuration items exist
-      expect(find.text('Environment:'), findsOneWidget);
-      expect(find.text('App Name:'), findsOneWidget);
+      // Verify tagline and description exist
+      expect(
+        find.text('Personal relationships, perfectly managed'),
+        findsOneWidget,
+      );
+      expect(find.textContaining('Environment:'), findsOneWidget);
 
       await IntegrationTestHelpers.takeScreenshot(
         binding,

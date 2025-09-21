@@ -28,3 +28,7 @@ ios/.generated/
 *.tmp
 *.swp
 
+
+# Test coverage artifacts
+coverage/
+*.lcov
