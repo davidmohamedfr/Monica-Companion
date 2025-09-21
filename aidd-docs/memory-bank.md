@@ -570,6 +570,140 @@ In order to complete a feature at its best, always check at the end of the imple
 - [ ] Android minSdkVersion set to 24 (Android 7.0) minimum
 - [ ] Build artifacts generated and stored with appropriate retention
 
+### Deployment
+
+#### CI/CD Pipeline
+
+##### Flutter Mobile Deployment Flow
+
+- **Steps**:
+
+  1. **Preparation**: Cache Flutter SDK, dependencies, and analysis results
+  2. **Quality Gates**: Lint, format checks, security scans, and unit tests
+  3. **Integration Tests**: Android emulator tests with AVD caching
+  4. **Build**: Generate debug/release APK and AAB artifacts
+  5. **Release**: Create GitHub releases with downloadable binaries
+
+- **Test Automation**:
+
+  - Unit tests: Run on every push/PR with `flutter test --coverage`
+  - Integration tests: Android emulator on API level 30 for PRs
+  - E2E tests: Flutter integration tests in `@integration_test/`
+
+- **Deployment Triggers**:
+  - Manual deployments: Use `make build-release` locally
+  - Automated deployments: Git tags `v*.*.*` trigger release workflow
+
+#### Monitoring & Logging
+
+- **Monitoring Tools**: GitHub Actions workflow monitoring
+
+  - Application monitoring: Flutter test coverage reports
+  - Infrastructure monitoring: CI job success/failure tracking
+  - Performance monitoring: APK size verification (warns >100MB)
+
+- **Logging**:
+
+  - Log aggregation: GitHub Actions workflow logs
+  - Log levels: Debug prints prohibited in production builds
+  - Log retention: GitHub Actions logs kept for 90 days, artifacts 7 days
+
+- **Alert Configuration**:
+  - Critical alerts: Build failures, security scan issues
+  - Warning alerts: Test coverage below 60%, APK size warnings
+  - Alert channels: GitHub notifications and email
+
+#### Deployment Process
+
+- **Deployment Steps**:
+
+  - No database migrations (mobile app only)
+  - Release APK/AAB built automatically on tag push
+  - Manual sideloading via downloaded APK
+  - Future: F-Droid store distribution planned
+
+- **Rollback Procedure**:
+
+  1. **Identify**: Monitor GitHub release downloads and user reports
+  2. **Rollback**: Remove problematic release, direct users to previous version
+  3. **Verify**: Confirm previous APK still works, communicate via GitHub
+
+### Infrastructure
+
+#### Project Structure
+
+```plaintext
+MonicaMobileApp/
+├── android/                 # Android-specific configurations
+│   ├── app/build.gradle     # Build config, flavors (dev/staging/prod)
+│   └── gradle.properties    # Android build properties
+├── lib/                     # Flutter Dart source code
+├── test/                    # Unit tests
+├── integration_test/        # Integration tests
+├── .github/workflows/       # CI/CD pipeline definitions
+│   ├── release.yml         # Release builds on tags
+│   ├── PR.yml             # PR validation with Android builds
+│   └── push.yml           # Push validation (lint, test)
+└── pubspec.yaml            # Flutter dependencies and metadata
+```
+
+#### Environment Variables
+
+##### Environment Files
+
+- No `.env` files used (mobile app architecture)
+- Build-time configuration via `@android/app/build.gradle`
+- Flutter compile-time constants in build commands
+
+##### Required Environment Variables
+
+**GitHub Actions:**
+- `GITHUB_TOKEN`: For release creation and artifact uploads
+- `JAVA_VERSION`: "17" for Android builds
+- `FLUTTER_VERSION`: "3.35.4" for consistent builds
+- `PUB_CACHE`: Dependency caching optimization
+
+**Android Build Config:**
+- `API_BASE_URL`: API endpoints per flavor (dev/staging/prod)
+- `FLAVOR`: Build variant identifier
+- `MIN_SDK_VERSION`: 24 (Android 7.0+)
+
+#### URLs
+
+- **Development**:
+
+  - URL: Local device/emulator via `flutter run`
+  - Purpose: Local development and debugging
+
+- **Production**:
+  - URL: GitHub Releases for APK/AAB downloads
+  - SLA: Manual distribution, no uptime guarantees
+
+#### Containerization
+
+```mermaid
+graph TB
+    subgraph "GitHub Actions"
+        A[Ubuntu Runner] --> B[Flutter SDK 3.35.4]
+        B --> C[Android SDK + Emulator]
+        C --> D[APK/AAB Build]
+    end
+
+    subgraph "Android Device"
+        E[Sideloaded APK] --> F[Monica Mobile App]
+    end
+
+    D --> E
+
+    subgraph "Build Artifacts"
+        G[app-release.apk]
+        H[app-release.aab]
+    end
+
+    D --> G
+    D --> H
+```
+
 ### Infrastructure
 
 #### Project Structure
@@ -868,3 +1002,512 @@ graph TD
     G --> D
     D --> H[User access contact information offline]
 ```
+
+### Communication between backend and frontend
+
+This part describe how the frontend communicates with backend services, including the services used, types of requests, and main entities involved.
+
+#### Overview
+
+When frontend component communicates with the backend, it typically does so through a series of services and API endpoints. This section outlines the key components involved in this communication process.
+
+- **Services**:
+  • ApiService interface @ `lib/services/interfaces/api_service.dart` - HTTP operations wrapper
+  • BaseService abstract class @ `lib/services/interfaces/base_service.dart` - Service lifecycle management
+  • ServiceLocator @ `lib/services/service_locator.dart` - Dependency injection container
+
+- **Request Types**:
+  • GET, POST, PUT, DELETE, PATCH via ApiService interface
+  • ApiResponse<T> wrapper with statusCode and data
+  • Authentication token management (setAuthToken/clearAuthToken)
+
+- **Entities**:
+  • BaseModel @ `lib/db/models/base_model.dart` - Entity base class
+  • Repository pattern @ `lib/db/repositories/base_repository.dart` - Local data persistence
+  • RepositoryInterface @ `lib/db/interfaces/repository_interface.dart` - CRUD operations contract
+
+- **Data Flow**:
+  • Environment-based API URLs @ `lib/core/config/environment.dart` (dev/staging/prod Monica endpoints)
+  • Request timeout & retry configuration @ `lib/core/config/app_config.dart`
+  • Feature flags control API behavior @ `lib/config/feature_flags.dart`
+
+- **Error Handling**:
+  • Exception hierarchy @ `lib/core/errors/exceptions.dart` (NetworkException, ServerException, AuthenticationException)
+  • Failure classes @ `lib/core/errors/failures.dart` - Clean architecture error handling
+  • FeatureState classes @ `lib/features/shared/models/feature_state.dart` (LoadingState, SuccessState, ErrorState)
+
+- **Validation**:
+  • ValidationException for input validation
+  • Validators utility @ `lib/core/utils/validators.dart`
+  • Request body validation before API calls
+
+##### Data Flow
+
+When a new entity is created on the frontend, the following flow is typically followed to reach backend:
+
+```mermaid
+graph TD
+    A[UI Component] --> B[Service Locator]
+    B --> C[ApiService Instance]
+    C --> D[Environment Config]
+    D --> E[Monica API Endpoint]
+    E --> F[ApiResponse Wrapper]
+    F --> G[Success/Error State]
+    G --> H[Repository Layer]
+    H --> I[Local Database]
+
+    J[Feature Flags] --> C
+    K[Auth Token] --> C
+    L[Request Timeout] --> C
+
+    F --> M[Exception Handler]
+    M --> N[Failure Classes]
+    N --> O[Error State UI]
+```
+
+### DESIGN.md
+
+#### Design Implementation
+
+- **Design System Approach**: Material Design 3 (Material You) implementation via Flutter's built-in theming
+- **Styling Method**: Theme-based styling using ColorScheme.fromSeed with deep purple seed color
+
+#### Design System Files
+
+- **Theme Config**: lib/main.dart - Material 3 theme with ColorScheme.fromSeed
+- **Design Components**: lib/features/shared/widgets/ - Reusable state widgets
+- **Style Guidelines**: Following Material Design 3 specifications
+
+#### Design System
+
+- **Spacing Scale**: Standard Flutter spacing - 8px base unit (SizedBox(height: 8/16/24))
+- **Border Radius**: Material 3 default rounded corners
+- **Shadows**: Material 3 elevation system
+- **Breakpoints**: Flutter responsive defaults
+
+- **Color Palette**: Material 3 dynamic color system
+
+  - Primary: Deep Purple (seed) - App branding, primary actions
+  - Secondary: Generated from seed - Secondary actions, accents
+  - Accent: Inverse Primary - App bars, highlighted elements
+  - Gray: Outline/OnSurfaceVariant - Subdued text, borders, icons
+
+- **Typography**: Material 3 typography scale
+  - Primary Font: System default (Roboto on Android, SF Pro on iOS)
+  - Secondary Font: None specified
+  - Fallback: Platform defaults
+
+#### Component Standards and Variantes
+
+- **Button Variants**: FilledButton.icon - Primary actions with icons
+- **Input States**: Standard Material states - Focus/Error handled by theme
+- **Card Patterns**: Center-aligned content with 24px padding
+
+#### Layout System
+
+- **Grid System**: Column/Row flexbox layout - Responsive Flutter widgets
+- **Container Widths**: Full width with EdgeInsets.all(16/24) - Content padding
+- **Spacing Rules**: Consistent 8/16/24px spacing - SizedBox for vertical spacing
+
+#### Accessibility
+
+- **Color Contrast**: Material 3 contrast - Built-in WCAG compliance
+- **Focus Management**: Flutter semantics - Automatic keyboard navigation
+- **Screen Reader**: Material widgets - Built-in ARIA equivalent support
+
+### Forms
+
+This part describe how frontend forms are handled in the project, including libraries used, validation strategies, and state management.
+
+#### State Management
+
+- **Flutter built-in state management** - Using `StatefulWidget` and `setState()` for local form state
+- **Local form state** - Each form manages its own state using Flutter's standard approaches
+- **Form submissions handled via services** - Forms call service layer methods for API communication
+- **No persistence** - Form data is not persisted locally, cleared on navigation/reset
+
+#### Validation
+
+- **Custom validation utilities** - `lib/core/utils/validators.dart` provides validation functions
+- **Client-side validation strategies**:
+  - `Validators.isValidEmail()` - Email format validation with regex
+  - `Validators.isValidUrl()` - URL format validation for HTTP/HTTPS schemes
+  - `Validators.isValidPhoneNumber()` - Basic phone number format validation
+  - `Validators.isNotEmpty()` - Non-null and non-empty string validation
+  - `Validators.isValidApiToken()` - API token format validation (min 10 chars)
+
+#### Error handling
+
+- **Consistent error display** - Using `AppErrorWidget` for standardized error presentation
+- **State-based error handling** - `ErrorState` from `FeatureState` hierarchy manages error states
+- **Integration test support** - `IntegrationTestHelpers.fillTextField()` for automated form testing
+
+#### Form Flow
+
+Form submission follows this pattern: User input → Local validation → Service layer → API call → State update → UI response
+
+```mermaid
+graph TD
+    A[User fills form] --> B[Client-side validation]
+    B -->|Valid| C[Form submission]
+    B -->|Invalid| D[Display validation errors]
+    C --> E[Call service layer]
+    E --> F[API request]
+    F -->|Success| G[SuccessState]
+    F -->|Error| H[ErrorState]
+    G --> I[Update UI with success feedback]
+    H --> J[Display error via AppErrorWidget]
+    D --> A
+    J --> A
+```
+
+### Architecture
+
+- [Language/Framework](#languageframework)
+  - [Mobile](#mobile)
+- [Full project structure](#full-project-structure)
+  - [Naming Conventions](#naming-conventions)
+- [Services communication](#services-communication)
+  - [Dependency Injection Flow](#dependency-injection-flow)
+  - [State Management Flow](#state-management-flow)
+  - [External Services](#external-services)
+    - [Monica API](#monica-api)
+
+#### Language/Framework
+
+##### Mobile
+
+- **Framework**: Flutter → @pubspec.yaml
+- **State Management**: Custom state classes with Equatable - Clean architecture pattern
+- **Platform**: iOS/Android/Both - Material Design 3
+- **Dependency Injection**: Custom ServiceLocator pattern - Singleton and factory registration
+- **Error Handling**: Failure classes with typed errors - NetworkFailure, ServerFailure, DatabaseFailure
+- **Configuration**: Environment-based config with feature flags
+- **Database**: Abstract interface for local storage - Transaction support
+- **HTTP Client**: Generic ApiService interface - REST API with ApiResponse wrapper
+- **Testing**: flutter_test, integration_test, mocktail → @pubspec.yaml
+
+#### Full project structure
+
+Core Flutter project following clean architecture principles with feature-based organization.
+
+```text
+lib/
+├── main.dart                           # App entry point
+├── config/
+│   └── feature_flags.dart             # Environment-based feature toggles
+├── core/                              # Shared core functionality
+│   ├── config/
+│   │   ├── app_config.dart            # App-wide configuration
+│   │   └── environment.dart           # Environment settings
+│   ├── constants/
+│   │   └── app_constants.dart         # App constants
+│   ├── errors/
+│   │   ├── exceptions.dart            # Exception classes
+│   │   └── failures.dart              # Failure classes for error handling
+│   └── utils/
+│       ├── logger.dart                # Logging utility
+│       └── validators.dart            # Input validation
+├── features/                          # Feature modules
+│   ├── calls/                         # Call management feature
+│   ├── contacts/                      # Contact management feature
+│   ├── settings/                      # App settings feature
+│   ├── sync/                          # Data synchronization feature
+│   └── shared/                        # Shared feature components
+│       ├── models/
+│       │   └── feature_state.dart     # Base state classes
+│       ├── utils/
+│       │   └── feature_utils.dart     # Shared utilities
+│       └── widgets/                   # Reusable UI components
+│           ├── empty_state_widget.dart
+│           ├── error_widget.dart
+│           └── loading_widget.dart
+├── services/                          # Service layer
+│   ├── interfaces/
+│   │   ├── api_service.dart           # HTTP API interface
+│   │   ├── base_service.dart          # Base service interface
+│   │   └── storage_service.dart       # Local storage interface
+│   ├── implementations/
+│   │   └── base_service_impl.dart     # Base service implementation
+│   └── service_locator.dart           # Dependency injection
+└── db/                               # Database layer
+    ├── interfaces/
+    │   ├── database_interface.dart    # Database abstraction
+    │   └── repository_interface.dart  # Repository pattern
+    ├── models/
+    │   └── base_model.dart           # Base model class
+    └── repositories/
+        └── base_repository.dart      # Base repository implementation
+```
+
+##### Naming Conventions
+
+- **Files**: snake_case - following Dart conventions
+- **Classes**: PascalCase - MonicaApp, FeatureState
+- **Functions**: camelCase - build, buildConfigItem
+- **Variables**: camelCase - apiBaseUrl, currentEnvironment
+- **Constants**: camelCase/UPPER_CASE - AppConfig.appName, Environment.DEVELOPMENT
+- **Interfaces**: PascalCase with Interface suffix - DatabaseInterface, ApiService
+
+#### Services communication
+
+Internal communication follows clean architecture with dependency injection and state management patterns.
+
+##### Dependency Injection Flow
+
+```mermaid
+graph TD
+    A[ServiceLocator] --> B[registerSingleton]
+    A --> C[registerFactory]
+    A --> D[get<T>]
+
+    B --> E[Service Instance]
+    C --> F[Factory Function]
+    D --> G[Resolve Service]
+
+    G --> H[Check Singleton]
+    G --> I[Check Factory]
+    H --> E
+    I --> J[Create Instance]
+
+    K[Feature Module] --> D
+    L[Repository] --> D
+    M[API Service] --> D
+```
+
+##### State Management Flow
+
+```mermaid
+graph TD
+    A[User Interaction] --> B[Feature Widget]
+    B --> C[State Update]
+    C --> D{State Type}
+
+    D --> E[LoadingState]
+    D --> F[SuccessState<T>]
+    D --> G[ErrorState]
+    D --> H[EmptyState]
+
+    E --> I[LoadingWidget]
+    F --> J[Feature Content]
+    G --> K[ErrorWidget]
+    H --> L[EmptyStateWidget]
+
+    M[Repository] --> N[Service Layer]
+    N --> O[API Service]
+    O --> P[ApiResponse<T>]
+    P --> Q{Success?}
+
+    Q -->|Yes| F
+    Q -->|No| G
+
+    N --> R[Database]
+    R --> S{Data Found?}
+    S -->|Yes| F
+    S -->|No| H
+```
+
+##### External Services
+
+External service integration through abstract interfaces with environment-specific configuration.
+
+###### Monica API
+
+```mermaid
+graph TD
+    A[Feature Module] --> B[Repository]
+    B --> C[ApiService Interface]
+    C --> D[HTTP Client Implementation]
+
+    D --> E{Request Type}
+    E --> F[GET /api/contacts]
+    E --> G[POST /api/contacts]
+    E --> H[PUT /api/contacts/:id]
+    E --> I[DELETE /api/contacts/:id]
+
+    F --> J[Monica API Server]
+    G --> J
+    H --> J
+    I --> J
+
+    J --> K[ApiResponse<T>]
+    K --> L{Status Code}
+    L -->|2xx| M[SuccessState]
+    L -->|4xx/5xx| N[ErrorState]
+
+    O[AppConfig] --> P[Environment Config]
+    P --> Q[API Base URL]
+    Q --> D
+
+    R[FeatureFlags] --> S[API Timeout]
+    S --> D
+
+    T[Authentication] --> U[Auth Token]
+    U --> D
+```
+
+### Coding Guidelines
+
+> Those rules must be minimal because the MUST be checked after EVERY CODE GENERATION.
+
+#### Requirements to complete a feature
+
+**A feature is really completed if ALL of the above are satisfied: if not, iterate to fix all until all are green.**
+
+#### Steps to follow
+
+Here are all the commands that must be run after each feature implementation, in order:
+
+```markdown
+| Order | Command               | Description                  |
+|-------|-----------------------|------------------------------|
+| 1     | `dart format .`       | Format all Dart code        |
+| 2     | `dart analyze --fatal-warnings` | Analyze code for issues |
+| 3     | `flutter test`        | Run all unit tests           |
+| 4     | `flutter build apk --debug` | Build debug APK        |
+| 5     | `flutter clean`       | Clean build artifacts        |
+```
+
+#### Code Style Rules
+
+##### File Naming
+- Use `snake_case` for file names: `user_repository.dart`
+- Use `PascalCase` for class names: `UserRepository`
+- Private constructors use named constructor: `Logger._()`
+
+##### Type Safety
+- **ALWAYS** specify explicit types: `final String message = 'error';`
+- Use strict analyzer settings with `strict-casts: true`
+- No implicit casts or dynamic types allowed
+- Constructor parameters must specify types: `const AppException(this.message, [this.code]);`
+
+##### Error Handling
+- Use custom exception hierarchy extending `AppException`
+- Separate `Exception` classes for throwing and `Failure` classes for clean architecture
+- Always provide error codes: `const NetworkException('Connection failed', 'NET_001')`
+- Implement `Equatable` for failure classes with `props` getter
+
+##### Widget Development
+- All widgets must have `super.key` parameter: `const AppErrorWidget({super.key})`
+- Use `const` constructors wherever possible
+- Extract theme access: `final ThemeData theme = Theme.of(context);`
+- Use spread operator for conditional widgets: `if (onRetry != null) ...<Widget>[]`
+
+##### Code Organization
+- Utility classes must be private constructor: `Validators._()`
+- Static methods for utilities: `static bool isValidEmail(String email)`
+- Group related functionality in single files
+- Use absolute imports: `package:monica_mobile_app/core/config/app_config.dart`
+
+##### Documentation
+- Use `///` for public API documentation
+- Document class purpose at the top
+- Use descriptive variable names without redundant comments
+
+##### Testing Standards
+- Group tests logically: `group('Validators', () {})`
+- Descriptive test names: `'should return true for valid email addresses'`
+- Use `expect()` with clear matchers: `expect(result, isTrue)`
+- Test both positive and negative cases
+
+##### Linting Rules
+- Enforce trailing commas: `require_trailing_commas`
+- Single quotes for strings: `prefer_single_quotes`
+- Expression function bodies: `prefer_expression_function_bodies`
+- Const constructors: `prefer_const_constructors`
+- No print statements: `avoid_print` - use Logger instead
+
+##### Imports
+- Always use package imports, never relative: `avoid_relative_lib_imports`
+- Order imports: dart, flutter, packages, local
+- Exclude generated files from analysis: `**/*.g.dart`, `**/*.freezed.dart`
+
+##### Flutter-Specific
+- Use `useMaterial3: true` for Material 3 design
+- Access theme via `Theme.of(context)` not direct colors
+- Use `FilledButton.icon()` for modern button styles
+- Extract build methods for complex widgets: `Widget _buildConfigItem()`
+
+### Testing Guidelines
+
+This document outlines the testing strategies and guidelines for the Monica Mobile App Flutter project.
+
+#### Test Coverage
+
+- Target: 60% minimum coverage (enforced in CI)
+- Coverage reports: Generated via `flutter test --coverage`
+- CI uploads coverage artifacts for review
+
+#### Tools and Frameworks
+
+- **flutter_test**: Flutter's built-in testing framework for unit and widget tests
+- **integration_test**: Flutter's integration testing package for end-to-end tests
+- **mocktail**: Modern mocking framework for Dart
+- **Android Emulator**: API level 30 for integration tests in CI
+
+#### Testing Strategy
+
+- **Test-driven approach**: Tests run on every push and PR
+- **Automated CI/CD**: Full test suite execution in GitHub Actions
+- **Types of tests implemented:**
+  - **Unit Tests**: Core utilities, validators, services
+  - **Widget Tests**: UI components and app startup
+  - **Integration Tests**: Full app workflows with Android emulator
+  - **Mocking**: Services and external dependencies
+
+#### Test Execution Process
+
+##### Local Development
+```bash
+### Run unit tests
+flutter test
+
+### Run tests with coverage
+flutter test --coverage
+
+### Run integration tests
+flutter test integration_test/
+
+### Run specific test file
+flutter test test/core/utils/validators_test.dart
+```
+
+##### CI/CD Pipeline
+- **Push workflow**: Runs unit tests, linting, and coverage (@.github/workflows/push.yml)
+- **PR workflow**: Runs integration tests with Android emulator (@.github/workflows/PR.yml)
+- **Caching**: Flutter SDK, dependencies, and analysis cache optimized
+- **Parallel execution**: Tests run in separate jobs for faster feedback
+
+#### Test Structure
+
+```
+test/
+├── @test/widget_test.dart                 # Main app widget tests
+├── @test/core/utils/validators_test.dart  # Utility function tests
+├── @test/core/utils/logger_test.dart      # Logger functionality tests
+├── @test/config/environment_test.dart     # Environment config tests
+├── @test/helpers/test_helpers.dart        # Common test utilities
+├── @test/mocks/mock_services.dart         # Mock implementations
+└── @test/db/                              # Database layer tests
+
+integration_test/
+├── @integration_test/app_test.dart        # End-to-end app tests
+├── @integration_test/helpers/             # Integration test utilities
+└── @integration_test/tests/               # Additional integration tests
+```
+
+#### Mocking and Stubbing
+
+- **mocktail framework**: Used for creating mocks of services and interfaces
+- **Mock services**: @test/mocks/mock_services.dart contains MockApiService, MockDatabaseInterface, MockStorageService
+- **Fallback registration**: @test/helpers/test_helpers.dart handles mocktail setup
+- **Test data generation**: Helper methods for consistent test entity creation
+- **Mock responses**: Structured MockApiResponse class for API testing
+
+#### Key Testing Patterns
+
+- **Group-based organization**: Tests grouped by functionality
+- **Mock setup helpers**: Centralized mock configuration in TestHelpers
+- **Widget testing**: WidgetTester utilities for UI component testing
+- **Integration screenshots**: Automated screenshot capture during integration tests
+- **Async testing**: Proper pump and settle handling for async operations
