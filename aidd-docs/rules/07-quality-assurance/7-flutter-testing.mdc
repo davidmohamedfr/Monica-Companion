@@ -1,6 +1,6 @@
 ---
-description: Comprehensive testing strategies for Flutter applications including unit tests, widget tests, and integration tests following AAA pattern with high coverage targets
-globs: "test/**/*.dart"
+description: Comprehensive Flutter testing standards for unit, widget, and integration tests following Clean Architecture patterns with AAA methodology and high coverage targets
+globs: "test/**/*.dart,integration_test/**/*.dart"
 alwaysApply: false
 ---
 
@@ -8,23 +8,24 @@ alwaysApply: false
 
 - Write tests before fixing bugs
 - Follow Arrange-Act-Assert pattern
-- Aim for 80%+ coverage
+- Maintain 80%+ code coverage minimum
 - Test edge cases thoroughly
-- Keep tests independent
+- Keep tests independent and isolated
 - Use descriptive test names
-- Group related tests together
+- Group related tests with clarity
 
-## Unit Testing
+## Unit Testing Principles
 
-- Test business logic isolation
-- Mock external dependencies
-- Test error scenarios
-- Verify state transitions
+- Test business logic in isolation
+- Mock external dependencies completely
+- Test error scenarios comprehensively
+- Verify state transitions explicitly
 - Test validators @lib/core/utils/validators.dart
-- Test data transformations
-- Use `package:test` for assertions
+- Test data transformations accurately
+- Use test helpers @test/helpers/test_helpers.dart
 
 ```dart
+// Example from project structure
 test('should validate email correctly', () {
   // Arrange
   const email = 'test@example.com';
@@ -35,54 +36,127 @@ test('should validate email correctly', () {
   // Assert
   expect(result, isTrue);
 });
+
+// Clean Architecture layer testing
+test('should execute use case successfully', () {
+  // Arrange
+  final mockRepository = MockContactRepository();
+  final useCase = GetContactsUseCase(mockRepository);
+  when(() => mockRepository.findAll()).thenAnswer(
+    (_) async => Right(mockContactList),
+  );
+
+  // Act
+  final result = await useCase.execute();
+
+  // Assert
+  expect(result.isRight(), isTrue);
+  verify(() => mockRepository.findAll()).called(1);
+});
 ```
 
-## Widget Testing
+## Widget Testing Standards
 
-- Test UI components isolation
-- Verify widget interactions
+- Test UI components in isolation
+- Verify widget interactions accurately
 - Test widget state changes
-- Mock dependencies with fakes
-- Use `pumpWidget` for rendering
-- Apply `pump` for animations
-- Test golden files for UI
+- Mock dependencies with test doubles
+- Use `pumpWidget` for rendering setup
+- Apply `pump` for animation testing
+- Test golden files for regression
 
-## Integration Testing
+```dart
+testWidgets('should display loading state correctly', (tester) async {
+  // Arrange
+  await TestHelpers.setupMockFallbacks();
 
-- Test complete user flows
-- Verify end-to-end scenarios
-- Use `integration_test` package
-- Test on real devices
-- Cover critical paths first
-- Test navigation flows
-- Verify data persistence
+  // Act
+  await tester.pumpWidget(MaterialApp(
+    home: LoadingWidget(),
+  ));
 
-## Mocking Best Practices
+  // Assert
+  expect(find.byType(CircularProgressIndicator), findsOneWidget);
+});
+```
 
-- Prefer fakes over mocks
-- Use `mocktail` when needed
-- Avoid over-mocking
-- Create test doubles
-- Mock at boundaries only
-- Keep mocks simple
-- Document mock behavior
+## Clean Architecture Testing
 
-## Test Organization
+- Test domain entities independently
+- Mock repository interfaces @lib/db/interfaces/
+- Test use cases without dependencies
+- Verify data layer mappings
+- Test presentation layer controllers
+- Mock service interfaces @lib/services/interfaces/
+- Test adapter implementations separately
 
-- Mirror source structure
+## Mock Management
+
+- Use established mocks @test/mocks/mock_services.dart
+- Prefer fakes over complex mocks
+- Use `mocktail` for interface mocking
+- Register fallback values properly
+- Mock at architectural boundaries only
+- Keep mock behavior simple
+- Document mock expectations clearly
+
+```dart
+// Using project's mock setup
+class MockContactRepository extends Mock implements ContactRepository {}
+
+void main() {
+  setUpAll(() {
+    TestHelpers.setupMockFallbacks();
+  });
+}
+```
+
+## Test Organization Rules
+
+- Mirror lib/ structure in test/
 - One test file per source
-- Group by functionality
-- Use clear test descriptions
-- Separate unit/widget/integration
-- Share test utilities
-- Follow naming conventions
+- Group by feature modules
+- Use clear descriptive names
+- Separate unit/widget/integration clearly
+- Share utilities @test/helpers/test_helpers.dart
+- Follow consistent naming conventions
 
-## Testing Commands
+## Test Data Management
 
-- Run all: `flutter test`
-- Coverage: `flutter test --coverage`
-- Single file: `flutter test path/to/test.dart`
-- Integration: `flutter test integration_test`
-- Watch mode for TDD
-- Use `checks` for assertions
-- Profile test performance
+- Use TestHelpers.createTestEntityMap() for entities
+- Create mock DateTime consistently
+- Use createMockDateTime() for timestamps
+- Maintain test data factories
+- Isolate test data creation
+- Avoid hardcoded test values
+- Use meaningful test scenarios
+
+## Testing Commands Reference
+
+- Run all tests: `flutter test`
+- Generate coverage: `flutter test --coverage`
+- Run specific file: `flutter test path/to/test.dart`
+- Run integration tests: `flutter test integration_test`
+- Watch mode development: `flutter test --watch`
+- Verbose output: `flutter test --reporter=expanded`
+- Profile test performance: `flutter test --profile`
+
+## Coverage Requirements
+
+- Minimum 80% line coverage required
+- Include branch coverage validation
+- Exclude generated files appropriately
+- Monitor coverage trends continuously
+- Report coverage @coverage/lcov.info
+- Validate coverage in CI/CD
+- Track coverage per feature
+
+## Quality Gates Integration
+
+- Pre-push hook runs tests automatically
+- Coverage validation before push
+- Lefthook integration @lefthook.yml
+- Fail fast on test failures
+- Generate coverage reports consistently
+- Verify test dependency health
+- Enforce testing standards automatically

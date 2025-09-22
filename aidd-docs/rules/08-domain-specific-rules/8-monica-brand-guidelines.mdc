@@ -1,0 +1,95 @@
+---
+description: Monica brand and design guidelines for Personal Relationship Manager visual identity, color schemes, typography, and Material Design 3 integration maintaining consistent Monica branding
+globs: "lib/**/*{theme,color,brand,design}*.dart"
+alwaysApply: true
+---
+
+## Brand Identity
+
+- Use Monica indigo `#6366F1` primary color
+- Apply Monica brand patterns consistently
+- Maintain Personal Relationship Manager identity
+- Follow Monica HQ visual guidelines
+- Keep relationship-focused design language
+- Use warm, trustworthy color palette
+- Apply Monica brand typography
+
+## Color Scheme
+
+- Primary brand color `#6366F1` indigo
+- Generate Material 3 from seedColor
+- Support light and dark themes
+- Maintain high contrast ratios
+- Use semantic relationship colors
+- Apply Monica brand accent colors
+- Define @lib/core/theme/monica_colors.dart constants
+
+```dart
+// Monica brand color constants
+class MonicaColors {
+  static const Color primary = Color(0xFF6366F1);
+  static const Color relationship = Color(0xFFEC4899);
+  static const Color family = Color(0xFFF59E0B);
+  static const Color friends = Color(0xFF10B981);
+}
+```
+
+## Typography
+
+- Use Inter font family
+- Apply readable font sizes
+- Maintain Monica brand hierarchy
+- Support dynamic text scaling
+- Use relationship-focused terminology
+- Apply consistent font weights
+- Define @lib/core/theme/monica_typography.dart
+
+## Iconography
+
+- Use rounded relationship-focused icons
+- Apply Monica brand icon style
+- Support people and connections
+- Use outline icons primarily
+- Apply consistent icon sizing
+- Follow Material Design icon principles
+- Store icons in @assets/icons/
+
+## Visual Language
+
+- Apply warm, welcoming visual tone
+- Use relationship-centered imagery
+- Support personal connection themes
+- Apply consistent spacing patterns
+- Use Monica brand shadows
+- Apply relationship visual metaphors
+- Maintain approachable design language
+
+## Component Theming
+
+- Create Monica-specific Material components
+- Apply brand colors to widgets
+- Use relationship-focused component names
+- Support Monica interaction patterns
+- Apply brand-consistent animations
+- Use @lib/features/shared/widgets/monica_components/
+- Follow Monica design system
+
+## Layout Patterns
+
+- Apply Monica card-based layouts
+- Use relationship-focused navigation
+- Support contact-centric information architecture
+- Apply consistent Monica spacing
+- Use brand-appropriate borders
+- Apply Monica shadow patterns
+- Follow relationship data hierarchy
+
+## Animation Guidelines
+
+- Use warm, friendly animations
+- Apply relationship-focused transitions
+- Support meaningful motion design
+- Use Monica brand timing
+- Apply consistent easing curves
+- Support accessibility motion preferences
+- Keep animations purposeful and brief

@@ -1,0 +1,241 @@
+---
+description: Code quality standards and automated validation for Flutter applications ensuring consistent code style, static analysis compliance, and comprehensive quality gates
+globs: "**/*.dart,lefthook.yml,analysis_options.yaml"
+alwaysApply: true
+---
+
+## Code Quality Principles
+
+- Maintain consistent code formatting
+- Enforce static analysis rules
+- Prevent debugging statements in production
+- Validate dependencies regularly
+- Follow conventional commit standards
+- Automate quality checks completely
+- Fail fast on quality issues
+
+## Lefthook Quality Integration
+
+- Pre-commit quality gates @lefthook.yml
+- Automated formatting enforcement
+- Static analysis validation
+- Debug statement prevention
+- Dependency health checks
+- Conventional commit validation
+- Fast feedback on quality issues
+
+```yaml
+# Lefthook pre-commit configuration
+pre-commit:
+  parallel: true
+  commands:
+    dart-format:
+      tags: quality
+      glob: "**/*.dart"
+      run: flutter format {staged_files} && git add {staged_files}
+      stage_fixed: true
+
+    dart-analyze:
+      tags: quality
+      run: flutter analyze --fatal-infos --fatal-warnings
+```
+
+## Code Formatting Standards
+
+- Use `flutter format` exclusively
+- Auto-format on pre-commit
+- 80-character line length limit
+- Consistent indentation with spaces
+- Trailing comma for collections
+- Import organization automatically
+- No manual formatting overrides
+
+## Static Analysis Rules
+
+- Enable all lint rules @analysis_options.yaml
+- Treat warnings as errors
+- No analyzer suppressions allowed
+- Custom lint rules enabled
+- Performance lint rules active
+- Security lint rules enforced
+- Documentation lint rules required
+
+```yaml
+# analysis_options.yaml configuration
+include: package:flutter_lints/flutter.yaml
+
+analyzer:
+  errors:
+    invalid_annotation_target: ignore
+  exclude:
+    - "**/*.g.dart"
+    - "**/*.freezed.dart"
+
+linter:
+  rules:
+    prefer_const_constructors: true
+    prefer_const_declarations: true
+    avoid_print: true
+```
+
+## Debug Statement Prevention
+
+- No `print()` statements in lib/
+- No `debugPrint()` statements in lib/
+- Use proper logging framework
+- Remove console.log equivalents
+- Prevent debug imports
+- Use logging package instead
+- Catch debug statements pre-commit
+
+```bash
+# Debug statement detection
+if grep -r "print(" lib/ --include="*.dart" 2>/dev/null; then
+  echo "❌ Found print() statements in lib/"
+  echo "💡 Use logging framework instead"
+  exit 1
+fi
+```
+
+## Dependency Management Quality
+
+- Validate dependency health regularly
+- Check for security vulnerabilities
+- Verify dependency consistency
+- Monitor dependency updates
+- Track dependency licenses
+- Prevent conflicting dependencies
+- Maintain dependency documentation
+
+## Commit Quality Standards
+
+- Conventional commit format required
+- Descriptive commit messages mandatory
+- Feature/fix/docs/test categorization
+- Scope specification when applicable
+- Breaking change notation
+- Issue reference inclusion
+- Commit message length limits
+
+```bash
+# Conventional commit validation
+^(feat|fix|docs|style|refactor|test|chore)(\(.+\))?: .+
+```
+
+## Quality Gates Enforcement
+
+- Pre-commit: formatting and analysis
+- Pre-push: testing and coverage
+- CI/CD: comprehensive validation
+- Pull request: peer review
+- Merge: final quality validation
+- Deploy: production readiness check
+- Monitor: runtime quality metrics
+
+## Code Review Quality
+
+- Automated quality checks first
+- Focus on logic and architecture
+- Verify test coverage adequacy
+- Check documentation completeness
+- Validate security implications
+- Review performance impact
+- Ensure maintainability standards
+
+## Performance Quality Standards
+
+- No unnecessary widget rebuilds
+- Efficient list rendering patterns
+- Proper async/await usage
+- Memory leak prevention
+- Battery usage optimization
+- Network request optimization
+- Storage access efficiency
+
+## Security Quality Requirements
+
+- No hardcoded secrets
+- Proper input validation
+- Secure data storage
+- Safe network communication
+- Permission management compliance
+- Authentication implementation security
+- Data privacy protection
+
+## Documentation Quality Standards
+
+- Public API documentation required
+- Complex logic explanation mandatory
+- Architecture decision documentation
+- README.md maintenance
+- Code comment quality
+- API contract documentation
+- Testing documentation completeness
+
+## Quality Metrics Tracking
+
+- Code coverage percentages
+- Static analysis issue counts
+- Cyclomatic complexity metrics
+- Technical debt measurements
+- Performance benchmark results
+- Security scan findings
+- Documentation coverage tracking
+
+## Quality Tool Integration
+
+- IDE integration for real-time feedback
+- CI/CD pipeline quality validation
+- Automated quality reporting
+- Quality trend monitoring
+- Quality dashboard visualization
+- Quality alert notifications
+- Quality improvement recommendations
+
+```bash
+# Quality validation commands
+flutter analyze --fatal-infos --fatal-warnings
+flutter format --dry-run --set-exit-if-changed
+flutter test --coverage
+flutter pub deps --json
+```
+
+## Quality Issue Resolution
+
+- Fix quality issues immediately
+- No quality debt accumulation
+- Quality regression prevention
+- Continuous quality improvement
+- Quality training for team
+- Quality tool updates
+- Quality process refinement
+
+## IDE Quality Configuration
+
+- VS Code settings optimization
+- Android Studio configuration
+- Lint rule integration
+- Auto-formatting setup
+- Code completion enhancement
+- Error highlighting configuration
+- Quality plugin integration
+
+## Quality Automation Strategy
+
+- Automate all possible checks
+- Minimize manual quality tasks
+- Fast feedback loops
+- Quality check parallelization
+- Quality result caching
+- Quality check optimization
+- Quality automation monitoring
+
+## Quality Emergency Procedures
+
+- Emergency commit procedures
+- Quality check bypassing
+- Hotfix quality standards
+- Emergency rollback procedures
+- Quality incident response
+- Quality recovery planning
+- Emergency quality validation

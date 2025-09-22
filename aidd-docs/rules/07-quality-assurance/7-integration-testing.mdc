@@ -1,0 +1,262 @@
+---
+description: Integration testing patterns and strategies for Flutter applications ensuring end-to-end functionality validation with real device testing and comprehensive flow coverage
+globs: "integration_test/**/*.dart"
+alwaysApply: false
+---
+
+## Integration Testing Strategy
+
+- Test complete user flows
+- Verify end-to-end scenarios thoroughly
+- Use real device testing
+- Cover critical paths first
+- Test navigation flows completely
+- Verify data persistence accurately
+- Validate external service integration
+
+## Integration Test Structure
+
+- Use `integration_test` package exclusively
+- Test on real devices
+- Separate from unit tests
+- Focus on user journeys
+- Test critical business flows
+- Validate system integration points
+- Use test helpers @integration_test/helpers/
+
+```dart
+// Integration test example from project
+import 'package:flutter/services.dart';
+import 'package:flutter_test/flutter_test.dart';
+import 'package:integration_test/integration_test.dart';
+import 'package:monica_companion/main.dart' as app;
+
+void main() {
+  IntegrationTestWidgetsFlutterBinding.ensureInitialized();
+
+  group('App Integration Tests', () {
+    testWidgets('should complete full user flow', (tester) async {
+      // Arrange
+      app.main();
+      await tester.pumpAndSettle();
+
+      // Act & Assert - Complete user journey
+      await _navigateToContacts(tester);
+      await _createNewContact(tester);
+      await _verifyContactCreated(tester);
+    });
+  });
+}
+```
+
+## End-to-End Flow Testing
+
+- User authentication flows
+- Data creation and modification
+- Navigation between screens
+- Form submission workflows
+- Search and filtering operations
+- Error handling scenarios
+- Offline/online state transitions
+
+## Device Testing Requirements
+
+- Test on multiple devices
+- Validate different screen sizes
+- Test on various OS versions
+- Verify performance on devices
+- Test network connectivity scenarios
+- Validate platform-specific features
+- Test accessibility on devices
+
+```dart
+// Device-specific testing patterns
+testWidgets('should work on tablet devices', (tester) async {
+  // Simulate tablet screen size
+  await tester.binding.setSurfaceSize(Size(1024, 768));
+
+  app.main();
+  await tester.pumpAndSettle();
+
+  // Test tablet-specific layouts
+  expect(find.byType(NavigationRail), findsOneWidget);
+});
+```
+
+## Database Integration Testing
+
+- Test data persistence flows
+- Verify CRUD operations
+- Test database migrations
+- Validate data consistency
+- Test concurrent access scenarios
+- Verify backup and restore
+- Test database performance
+
+## API Integration Testing
+
+- Mock external API responses
+- Test network error scenarios
+- Verify data synchronization
+- Test authentication flows
+- Validate API contract compliance
+- Test timeout handling
+- Verify retry mechanisms
+
+```dart
+// API integration testing with mocks
+testWidgets('should handle API failures gracefully', (tester) async {
+  // Arrange - Setup mock API responses
+  when(() => mockApiService.getContacts())
+      .thenThrow(NetworkException('Connection failed'));
+
+  app.main();
+  await tester.pumpAndSettle();
+
+  // Act - Trigger API call
+  await tester.tap(find.byKey(Key('refresh_button')));
+  await tester.pumpAndSettle();
+
+  // Assert - Verify error handling
+  expect(find.text('Connection failed'), findsOneWidget);
+  expect(find.byType(RetryButton), findsOneWidget);
+});
+```
+
+## Navigation Flow Testing
+
+- Test deep linking functionality
+- Verify route parameter passing
+- Test navigation stack management
+- Validate back navigation behavior
+- Test authentication redirects
+- Verify route guards
+- Test navigation performance
+
+## State Management Integration
+
+- Test state persistence across screens
+- Verify state synchronization
+- Test state recovery scenarios
+- Validate state transitions
+- Test concurrent state updates
+- Verify state cleanup
+- Test state performance
+
+## Test Data Management
+
+- Use consistent test fixtures
+- Isolate test data creation
+- Clean up test data
+- Use realistic test scenarios
+- Manage test database state
+- Avoid data dependencies
+- Use test-specific configurations
+
+```dart
+// Test data management patterns
+class IntegrationTestHelpers {
+  static Future<void> setupTestData() async {
+    await DatabaseService.instance.clearAllTables();
+    await _seedTestContacts();
+    await _setupTestConfiguration();
+  }
+
+  static Future<void> cleanupTestData() async {
+    await DatabaseService.instance.clearAllTables();
+    await _resetConfiguration();
+  }
+}
+```
+
+## Performance Integration Testing
+
+- Test app startup time
+- Verify scroll performance
+- Test memory usage patterns
+- Validate network performance
+- Test battery usage impact
+- Verify storage performance
+- Test concurrent operations
+
+## Error Scenario Testing
+
+- Test network disconnection handling
+- Verify storage failure scenarios
+- Test memory pressure situations
+- Validate permission denial handling
+- Test concurrent access conflicts
+- Verify timeout scenarios
+- Test recovery mechanisms
+
+## Platform Integration Testing
+
+- Test iOS-specific features
+- Verify Android-specific functionality
+- Test platform permissions
+- Validate native bridge integration
+- Test platform-specific UI
+- Verify platform lifecycle events
+- Test platform notification handling
+
+## Test Environment Setup
+
+- Use separate test configurations
+- Configure test database instances
+- Setup mock external services
+- Use test-specific environment variables
+- Configure test logging levels
+- Setup test data generators
+- Use isolated test environments
+
+```dart
+// Test environment configuration
+void main() {
+  IntegrationTestWidgetsFlutterBinding.ensureInitialized();
+
+  setUpAll(() async {
+    await IntegrationTestHelpers.setupTestEnvironment();
+  });
+
+  tearDownAll(() async {
+    await IntegrationTestHelpers.cleanupTestEnvironment();
+  });
+}
+```
+
+## CI/CD Integration Testing
+
+- Run integration tests separately
+- Test on multiple devices
+- Generate test reports
+- Capture test screenshots
+- Record test videos
+- Monitor test performance
+- Track test reliability
+
+## Test Reporting and Analysis
+
+- Generate comprehensive test reports
+- Capture test execution videos
+- Take screenshots on failures
+- Log detailed test information
+- Monitor test execution time
+- Track test reliability metrics
+- Analyze test coverage gaps
+
+```bash
+# Integration test execution commands
+flutter test integration_test/
+flutter test integration_test/ --screenshot=failure
+flutter drive --driver=test_driver/integration_test.dart --target=integration_test/app_test.dart
+```
+
+## Test Maintenance Strategy
+
+- Keep tests independent
+- Update tests with feature changes
+- Remove obsolete tests
+- Refactor common test utilities
+- Maintain test documentation
+- Review test effectiveness regularly
+- Optimize test execution time

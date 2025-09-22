@@ -1,0 +1,192 @@
+---
+description: Release and deployment process with tag-based automation, artifact generation, GitHub release creation, and distribution management
+globs: ".github/workflows/release.yml"
+alwaysApply: true
+---
+
+## Release Trigger Strategy
+
+- Tag-based release activation (v*.*.*)
+- Semantic versioning enforcement
+- Manual workflow dispatch support
+- Production branch protection
+- Release candidate preparation
+- Emergency hotfix procedures
+
+```yaml
+# Tag-based release trigger
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+```
+
+## Pre-Release Validation
+
+- Flutter SDK setup verification
+- Dependency resolution confirmation
+- Complete test suite execution
+- Security vulnerability scanning
+- Code quality gate validation
+- Documentation completeness check
+
+## Build Artifact Generation
+
+- Release APK compilation
+- Release AAB bundle creation
+- Signed artifact preparation
+- Multi-platform build support
+- Asset optimization implementation
+- Build metadata collection
+
+```yaml
+# Release builds
+- name: Build release APK
+  run: flutter build apk --release
+
+- name: Build release AAB
+  run: flutter build appbundle --release
+```
+
+## Release Asset Management
+
+- GitHub release creation automation
+- APK/AAB asset upload
+- Version-specific asset naming
+- Download statistics tracking
+- Asset retention policy
+- Distribution channel preparation
+
+## Release Notes Generation
+
+- Automated changelog compilation
+- Commit history summarization
+- Feature highlights extraction
+- Bug fix documentation
+- Breaking change notifications
+- Installation instruction updates
+
+```yaml
+# Release creation
+- name: Create Release
+  uses: actions/create-release@v1
+  with:
+    tag_name: ${{ github.ref }}
+    release_name: Release ${{ github.ref }}
+    body: |
+      ## Changes in this Release
+      - Built from commit ${{ github.sha }}
+      - APK and AAB files available
+```
+
+## Version Management
+
+- Tag validation enforcement
+- Version increment verification
+- Changelog update requirements
+- Breaking change documentation
+- Migration guide preparation
+- API compatibility verification
+
+## Distribution Channels
+
+- GitHub Releases primary distribution
+- APK direct download support
+- F-Droid store preparation
+- Play Store internal testing
+- Beta testing group access
+- Public release coordination
+
+## Release Quality Gates
+
+- All tests pass completely
+- Build artifacts generate successfully
+- Security scans clear
+- Performance benchmarks acceptable
+- Documentation updated
+- Release notes prepared
+
+## Asset Naming Convention
+
+- Version-specific naming scheme
+- Platform identifier inclusion
+- Architecture specification
+- Debug/release distinction
+- Consistent naming pattern
+- Download link generation
+
+```yaml
+# Asset naming pattern
+asset_name: monica-mobile-app-${{ github.ref_name }}.apk
+asset_content_type: application/vnd.android.package-archive
+```
+
+## Rollback Procedures
+
+- Asset removal capability
+- Version rollback support
+- Emergency fix deployment
+- User communication plan
+- Issue tracking integration
+- Post-rollback analysis
+
+## Release Monitoring
+
+- Download metrics collection
+- User feedback aggregation
+- Crash report analysis
+- Performance metric tracking
+- Update adoption rate
+- Issue correlation analysis
+
+## Post-Release Actions
+
+- Team notification automation
+- Documentation deployment
+- Metrics dashboard update
+- User communication broadcast
+- Next version planning initiation
+- Retrospective scheduling
+
+## Security Considerations
+
+- Asset integrity verification
+- Distribution channel security
+- User privacy protection
+- Data migration safety
+- Vulnerability disclosure
+- Security patch procedures
+
+## Emergency Release Process
+
+- Hotfix tag creation
+- Expedited review process
+- Critical fix validation
+- Immediate distribution
+- User notification urgency
+- Post-emergency review
+
+## Release Coordination
+
+- Cross-team communication
+- Marketing alignment
+- Support team preparation
+- Documentation synchronization
+- Training material updates
+- Customer success coordination
+
+```yaml
+# Environment configuration
+env:
+  JAVA_VERSION: "17"
+  FLUTTER_VERSION: "3.35.4"
+```
+
+## Quality Metrics
+
+- Release frequency tracking
+- Time to production measurement
+- Rollback rate monitoring
+- User satisfaction scoring
+- Bug escape rate analysis
+- Process improvement identification

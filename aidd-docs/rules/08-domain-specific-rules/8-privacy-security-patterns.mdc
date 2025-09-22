@@ -1,0 +1,140 @@
+---
+description: Privacy and security patterns for Monica Mobile App focusing on SQLCipher encryption, Android Keystore, TLS communication, anonymized logging, GDPR compliance, and minimal permissions
+globs: "lib/**/*{security,privacy,crypto,keystore,encrypt}*.dart"
+alwaysApply: true
+---
+
+## Data Encryption
+
+- Use SQLCipher for local database
+- Encrypt all personal relationship data
+- Apply AES-256 encryption standards
+- Store encryption keys securely
+- Never store plaintext personal data
+- Use @lib/core/security/encryption_service.dart
+- Implement key rotation patterns
+
+```dart
+// SQLCipher database encryption
+class SecureDatabase {
+  static const String _encryptionKey = 'monica_secure_key';
+
+  Future<Database> openSecureDB() async {
+    return await openDatabase(
+      path,
+      password: _encryptionKey,
+      version: 1,
+    );
+  }
+}
+```
+
+## Secure Storage
+
+- Use Android Keystore for tokens
+- Store API credentials securely
+- Never log sensitive data
+- Apply secure key generation
+- Use @lib/core/security/secure_storage.dart
+- Implement token refresh patterns
+- Clear sensitive data on logout
+
+## Network Security
+
+- Use TLS 1.3 minimum
+- Implement certificate pinning
+- Validate all SSL certificates
+- Use secure HTTP headers
+- Apply proper timeout configurations
+- Log network errors anonymously
+- Follow @lib/services/implementations/secure_api_service.dart
+
+## Privacy Patterns
+
+- Anonymize all logging data
+- Never log personal information
+- Apply data minimization principles
+- Implement consent mechanisms
+- Support data export/deletion
+- Use @lib/core/privacy/anonymization.dart
+- Follow GDPR compliance patterns
+
+## Permission Management
+
+- Request minimal Android permissions
+- Explain permission necessity clearly
+- Implement graceful permission denials
+- Support permission revocation
+- Use runtime permission patterns
+- Apply @lib/core/permissions/permission_handler.dart
+- Follow least-privilege principle
+
+## Authentication Security
+
+- Secure Monica API token storage
+- Implement token expiration handling
+- Use secure authentication flows
+- Apply biometric authentication when available
+- Support secure session management
+- Use @lib/features/auth/services/auth_security.dart
+- Implement secure logout patterns
+
+## Data Protection
+
+- Protect against data leakage
+- Implement secure data deletion
+- Apply data retention policies
+- Use secure data transfer patterns
+- Protect against screenshot capture
+- Apply @lib/core/security/data_protection.dart
+- Implement secure backup patterns
+
+## Logging Security
+
+- Never log personal contact data
+- Anonymize all error messages
+- Use structured logging patterns
+- Apply log retention policies
+- Secure log file storage
+- Use @lib/core/logging/secure_logger.dart
+- Implement log sanitization
+
+## Threat Mitigation
+
+- Protect against SQL injection
+- Implement input validation patterns
+- Apply secure coding practices
+- Use secure random generation
+- Protect against timing attacks
+- Apply @lib/core/security/threat_mitigation.dart
+- Implement security headers
+
+## GDPR Compliance
+
+- Support right to access
+- Implement right to deletion
+- Apply data portability patterns
+- Use consent management
+- Support data rectification
+- Apply @lib/core/privacy/gdpr_compliance.dart
+- Implement privacy by design
+
+## Security Auditing
+
+- Log security-relevant events anonymously
+- Implement security monitoring patterns
+- Apply access control logging
+- Use security event correlation
+- Support security incident response
+- Apply @lib/core/security/audit_logger.dart
+- Implement security metrics
+
+## Secure Development
+
+- Apply security code review
+- Use secure dependency management
+- Implement security testing patterns
+- Apply static security analysis
+- Use secure build processes
+- Follow @lib/core/security/secure_patterns.dart
+- Implement security documentation

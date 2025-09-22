@@ -1,75 +1,135 @@
 ---
-description: CI/CD pipeline best practices for Flutter applications including automated testing, code quality checks, build optimization, and deployment strategies across multiple platforms
+description: Flutter CI/CD workflow patterns with comprehensive caching, quality gates, security scanning, and multi-platform build optimization for efficient development lifecycle
 globs: ".github/workflows/*.yml"
 alwaysApply: false
 ---
 
-## Pipeline Structure
+## Workflow Structure
 
-- Run on push/PR to main branches
-- Use workflow dispatch for manual
-- Set appropriate timeouts
-- Cache dependencies properly
-- Use matrix builds for platforms
-- Fail fast on errors
-- Keep jobs focused
+- Three-tier workflow strategy implemented
+- Push workflow @.github/workflows/push.yml triggers
+- PR workflow @.github/workflows/PR.yml gates
+- Release workflow @.github/workflows/release.yml deploys
+- Workflow dispatch for manual triggers
+- Comprehensive timeout management (15-30 minutes)
 
-## Code Quality Gates
+## Caching Strategy
 
-- Format check with `dart format`
-- Static analysis with `flutter analyze`
-- Check dependency updates
-- Run lint rules @.github/workflows/lint.yml
-- Verify code coverage thresholds
-- Check for security vulnerabilities
-- Validate commit messages
+- Multi-layer caching for performance optimization
+- Flutter SDK cache with version keys
+- Pub dependencies with lockfile hashing
+- Dart analysis cache for faster linting
+- Test results cache for efficiency
+- AVD cache for integration testing
 
-## Testing Strategy
+```yaml
+# Cache Flutter SDK
+- name: Cache Flutter SDK
+  uses: actions/cache@v4
+  with:
+    path: |
+      /opt/hostedtoolcache/flutter
+      ~/.flutter
+    key: flutter-${{ env.FLUTTER_VERSION }}-${{ runner.os }}
+```
 
-- Run tests in parallel
-- Generate coverage reports
-- Upload coverage to service
-- Test on multiple Flutter versions
-- Run integration tests separately
-- Cache test results
-- Report test failures clearly
+## Prepare Job Pattern
 
-## Build Optimization
+- Centralized cache warming strategy
+- Generate dynamic cache keys
+- Pre-warm analyzer and formatter
+- Output cache keys for jobs
+- Minimize redundant dependency resolution
+- 15-minute timeout for preparation
 
-- Cache Flutter SDK
-- Cache pub dependencies
-- Use incremental builds
-- Optimize build flags
-- Separate debug/release builds
-- Sign release builds properly
-- Generate build artifacts
+## Quality Gates Implementation
 
-## Environment Management
+- Dart formatting with `dart format --set-exit-if-changed`
+- Fatal analysis with `flutter analyze --fatal-infos --fatal-warnings`
+- Security scanning for hardcoded secrets
+- Dependency audit with `dart pub audit`
+- Documentation completeness validation
+- File structure verification
 
-- Use environment variables
-- Secure secrets properly
-- Version Flutter SDK consistently
-- Pin dependency versions
-- Use build flavors
-- Configure per environment
-- Document env requirements
+```yaml
+# Security scan example
+- name: Security scan
+  run: |
+    if grep -r "api_key\s*=\s*['\"][^'\"]\+['\"]" lib/; then
+      echo "Hardcoded API key found"
+      exit 1
+    fi
+```
 
-## Deployment Process
+## Testing Pipeline
 
-- Build for target platforms
-- Sign Android APK/AAB
-- Sign iOS IPA properly
-- Upload to stores automatically
-- Create GitHub releases
-- Tag versions correctly
-- Generate changelogs
+- Unit tests with coverage generation
+- Coverage threshold validation (60% minimum)
+- Test randomization for reliability
+- Integration tests on Android emulator
+- AVD caching for faster execution
+- Parallel test execution strategy
 
-## Workflow Best Practices
+## Android Integration Testing
 
-- Keep workflows DRY
-- Use reusable workflows
-- Monitor workflow performance
-- Set up notifications
-- Document workflow triggers
-- Version control configs
-- Review workflow changes
+- KVM group permissions setup
+- Android SDK automated configuration
+- API level 30 emulator caching
+- Snapshot generation for speed
+- Hardware acceleration with swiftshader
+- Headless emulator execution
+
+```yaml
+# AVD cache pattern
+- name: AVD cache
+  uses: actions/cache@v3
+  with:
+    path: |
+      ~/.android/avd/*
+      ~/.android/adb*
+    key: avd-api-level-30
+```
+
+## Build Artifacts
+
+- Debug APK for PR validation
+- Release APK/AAB for deployment
+- Build number from GitHub run
+- APK size verification (100MB limit)
+- Artifact retention management (7 days)
+- Upload to GitHub releases
+
+## Environment Configuration
+
+- Flutter version pinning (3.35.4)
+- Java version consistency (17)
+- Environment variable management
+- PUB_CACHE workspace optimization
+- Build flag standardization
+- Cross-platform compatibility
+
+## Release Automation
+
+- Tag-triggered releases (v*.*.*)
+- Automated APK and AAB builds
+- GitHub release creation
+- Asset upload automation
+- Release notes generation
+- Version artifact naming
+
+```yaml
+# Release trigger
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+```
+
+## Performance Optimization
+
+- Job dependency minimization
+- Parallel execution where safe
+- Cache hit optimization
+- Incremental analysis usage
+- Resource timeout management
+- Fail-fast error handling

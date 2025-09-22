@@ -1,0 +1,148 @@
+---
+description: Contact management domain patterns for Monica Mobile App covering bidirectional synchronization, conflict resolution, relationship data models, sync algorithms, exclusion lists, and Monica API integration
+globs: "lib/**/*{contact,sync,relationship,monica}*.dart"
+alwaysApply: true
+---
+
+## Contact Data Models
+
+- Use Monica contact entity structure
+- Apply relationship-centric data modeling
+- Support contact metadata synchronization
+- Implement contact linking patterns
+- Use @lib/features/contacts/domain/entities/
+- Apply immutable contact models
+- Support contact relationship hierarchies
+
+```dart
+// Monica contact entity pattern
+class MonicaContact extends Equatable {
+  final String id;
+  final String monicaId;
+  final String name;
+  final List<ContactMethod> methods;
+  final ContactRelationship relationship;
+  final DateTime lastSyncTime;
+  final SyncStatus syncStatus;
+}
+```
+
+## Bidirectional Synchronization
+
+- Sync Android contacts to Monica
+- Sync Monica contacts to Android
+- Apply conflict-free synchronization patterns
+- Implement incremental sync algorithms
+- Use @lib/features/sync/services/contact_sync_service.dart
+- Support selective synchronization
+- Apply sync state management
+
+## Conflict Resolution
+
+- Detect contact data conflicts
+- Apply user-defined resolution strategies
+- Implement automatic conflict resolution
+- Support manual conflict review
+- Use @lib/features/sync/services/conflict_resolver.dart
+- Apply timestamp-based resolution
+- Support merge conflict patterns
+
+## Sync State Management
+
+- Track contact synchronization status
+- Implement sync progress indicators
+- Apply sync queue management
+- Support sync retry mechanisms
+- Use @lib/features/sync/models/sync_state.dart
+- Apply sync error handling
+- Support sync cancellation
+
+## Exclusion Lists
+
+- Support contact exclusion patterns
+- Implement number exclusion lists
+- Apply group-based exclusions
+- Support temporary exclusions
+- Use @lib/features/contacts/services/exclusion_service.dart
+- Apply privacy-based exclusions
+- Support exclusion rule management
+
+## Monica API Integration
+
+- Use Monica API authentication
+- Implement Monica contact endpoints
+- Apply rate limiting patterns
+- Support API error handling
+- Use @lib/services/implementations/monica_api_service.dart
+- Apply API response caching
+- Support API versioning
+
+## Relationship Data
+
+- Model personal relationships accurately
+- Support relationship types from Monica
+- Apply relationship hierarchy patterns
+- Implement relationship metadata sync
+- Use @lib/features/relationships/domain/entities/
+- Support custom relationship types
+- Apply relationship change tracking
+
+## Contact Deduplication
+
+- Detect duplicate contact entries
+- Apply intelligent merging algorithms
+- Support manual duplicate resolution
+- Implement fuzzy matching patterns
+- Use @lib/features/contacts/services/deduplication_service.dart
+- Apply contact similarity scoring
+- Support duplicate prevention
+
+## Call Logging Integration
+
+- Link calls to Monica contacts
+- Apply automatic call logging
+- Support unknown contact handling
+- Implement call metadata sync
+- Use @lib/features/calls/services/call_sync_service.dart
+- Apply call privacy patterns
+- Support call exclusion rules
+
+## Contact Mapping
+
+- Map Android contact fields
+- Apply Monica field mapping
+- Support custom field mappings
+- Implement field transformation patterns
+- Use @lib/features/contacts/mappers/contact_mapper.dart
+- Apply data validation patterns
+- Support mapping configuration
+
+## Sync Performance
+
+- Optimize sync operations
+- Apply batch processing patterns
+- Implement sync prioritization
+- Support background synchronization
+- Use WorkManager for reliable sync
+- Apply sync throttling patterns
+- Support sync scheduling
+
+## Data Validation
+
+- Validate contact data integrity
+- Apply Monica API constraints
+- Implement field validation patterns
+- Support data sanitization
+- Use @lib/core/utils/contact_validators.dart
+- Apply business rule validation
+- Support validation error handling
+
+## Undo Operations
+
+- Support contact sync reversals
+- Implement operation history tracking
+- Apply granular undo patterns
+- Support bulk undo operations
+- Use @lib/features/sync/services/undo_service.dart
+- Apply undo state management
+- Support undo expiration

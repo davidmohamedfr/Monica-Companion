@@ -1,0 +1,172 @@
+---
+description: Testing workflow and process with Lefthook automation, multi-stage validation, and comprehensive coverage requirements for quality assurance
+globs: "lefthook.yml"
+alwaysApply: true
+---
+
+## Testing Strategy Overview
+
+- Three-stage testing approach implementation
+- Pre-commit quality gates enforcement
+- Pre-push unit test validation
+- CI integration test execution
+- Coverage threshold requirements (60% minimum)
+- Manual bypass for emergency situations
+
+## Pre-commit Hook Workflow
+
+- Format check with auto-fix
+- Comprehensive lint analysis execution
+- Debug statement detection and removal
+- Dependency validation checks
+- Parallel execution for speed optimization
+- Stage fixed files automatically
+
+```yaml
+# Pre-commit format with auto-fix
+dart-format:
+  tags: quality
+  glob: "**/*.dart"
+  run: flutter format {staged_files} && git add {staged_files}
+  stage_fixed: true
+```
+
+## Pre-push Testing Workflow
+
+- Ensure dependencies are current
+- Execute unit and widget tests
+- Generate coverage reports automatically
+- Verify test coverage thresholds
+- Sequential execution for reliability
+- Expanded test reporter output
+
+```yaml
+# Unit tests with coverage
+unit-tests:
+  tags: test
+  run: flutter test --coverage --reporter=expanded
+```
+
+## Quality Gate Rules
+
+- Fatal analysis with warnings enforcement
+- No print statements in lib/
+- No debugPrint statements in lib/
+- Dependency consistency verification
+- Conventional commit message format
+- Security pattern detection
+
+## Debug Statement Prevention
+
+- Scan lib/ directory for print()
+- Block debugPrint() in production code
+- Replace with proper logging mechanisms
+- Fail fast on detection
+- Guide developers to alternatives
+- Maintain clean production code
+
+```yaml
+# Debug print detection
+no-debug-prints:
+  run: |
+    if grep -r "print(" lib/ --include="*.dart"; then
+      echo "Remove print() statements before committing"
+      exit 1
+    fi
+```
+
+## Commit Message Standards
+
+- Conventional commit format enforcement
+- Support feat/fix/docs/style/refactor/test/chore types
+- Optional scope specification allowed
+- Clear descriptive commit messages
+- Automated validation on commit-msg
+- Team consistency maintenance
+
+## Coverage Requirements
+
+- Minimum 60% code coverage
+- LCOV report generation automatically
+- Coverage artifacts uploaded to CI
+- Threshold validation in pipeline
+- Coverage trend monitoring capability
+- Quality metric tracking
+
+```yaml
+# Coverage threshold check
+coverage-check:
+  run: |
+    if [ -f "coverage/lcov.info" ]; then
+      echo "Test coverage report generated"
+    fi
+```
+
+## Manual Testing Bypass
+
+- Emergency override with LEFTHOOK=0
+- Skip all hooks when needed
+- Individual hook skipping support
+- Team emergency procedures
+- Documentation for bypass usage
+- Restore normal workflow quickly
+
+```bash
+# Emergency bypass examples
+LEFTHOOK=0 git commit -m "emergency fix"
+LEFTHOOK=0 git push
+```
+
+## Integration Test Strategy
+
+- Android emulator for device testing
+- API level 30 standard configuration
+- AVD snapshot caching optimization
+- Hardware acceleration setup required
+- Headless execution for CI
+- Real device behavior simulation
+
+## Post-Hook Workflows
+
+- IDE configuration updates automatically
+- Flutter dependencies refresh on checkout
+- Branch switching dependency handling
+- Team onboarding automation support
+- Development environment consistency
+- Configuration deployment verification
+
+## Hook Management
+
+- Install with lefthook install
+- Manual execution via lefthook run
+- Output configuration for UX
+- Skip output for cleaner logs
+- Performance monitoring available
+- Team setup documentation
+
+## Testing Environment Setup
+
+- Flutter SDK availability verification
+- Dependency resolution automatic handling
+- Platform-specific configuration management
+- Development tool integration support
+- Cross-platform compatibility assurance
+- New team member onboarding
+
+```yaml
+# Post-checkout dependency handling
+flutter-deps:
+  run: |
+    if [ -f "pubspec.yaml" ]; then
+      flutter pub get || echo "Flutter unavailable"
+    fi
+```
+
+## Workflow Integration Points
+
+- Connect with CI/CD pipeline
+- Support GitHub Actions workflows
+- Coverage report artifact generation
+- Quality metric collection
+- Build artifact preparation
+- Release readiness validation

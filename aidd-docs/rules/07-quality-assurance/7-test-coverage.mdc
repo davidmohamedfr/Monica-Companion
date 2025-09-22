@@ -1,0 +1,187 @@
+---
+description: Test coverage requirements and validation standards for Flutter applications ensuring comprehensive code quality through automated coverage tracking and reporting
+globs: "test/**/*.dart,coverage/**/*,pubspec.yaml"
+alwaysApply: false
+---
+
+## Coverage Requirements
+
+- Maintain minimum 80% line coverage
+- Achieve 75%+ branch coverage minimum
+- Track coverage trends continuously
+- Generate reports automatically
+- Validate coverage in CI/CD
+- Exclude generated files appropriately
+- Monitor coverage per feature
+
+## Coverage Validation Process
+
+- Generate coverage with `flutter test --coverage`
+- Report output to @coverage/lcov.info
+- Validate thresholds before push
+- Track coverage regression prevention
+- Monitor coverage trends over time
+- Generate HTML reports for analysis
+- Integrate with CI/CD pipelines
+
+```bash
+# Coverage generation and validation
+flutter test --coverage --reporter=expanded
+genhtml coverage/lcov.info -o coverage/html
+open coverage/html/index.html
+```
+
+## Coverage Tracking Strategy
+
+- Line coverage for code execution
+- Branch coverage for logic paths
+- Function coverage for method calls
+- Integration coverage for flows
+- Feature coverage per module
+- Regression coverage monitoring
+- Historical coverage analysis
+
+## Exclusion Patterns
+
+- Generated files from build_runner
+- Auto-generated mock classes
+- Platform-specific bridge code
+- Third-party library wrappers
+- Configuration and constants files
+- Development-only utilities
+- Mock test data factories
+
+```dart
+// Coverage exclusions in test files
+// coverage:ignore-start
+class GeneratedMockClass extends Mock implements Interface {}
+// coverage:ignore-end
+
+// coverage:ignore-line
+void debugOnlyMethod() => print('Debug info');
+```
+
+## Coverage Report Generation
+
+- LCOV format @coverage/lcov.info
+- HTML reports for visualization
+- JSON reports for automation
+- Summary reports for teams
+- Trend reports over time
+- Feature-specific coverage metrics
+- Integration with development tools
+
+```yaml
+# pubspec.yaml coverage configuration
+dev_dependencies:
+  test: ^1.21.0
+  coverage: ^1.6.0
+
+flutter:
+  assets:
+    - test/fixtures/
+```
+
+## Quality Gates Integration
+
+- Pre-push coverage validation @lefthook.yml
+- Fail builds on coverage decrease
+- Generate coverage on test runs
+- Report coverage to external services
+- Track coverage in pull requests
+- Monitor coverage trend alerts
+- Enforce minimum coverage thresholds
+
+```bash
+# Lefthook coverage validation
+if [ -f "coverage/lcov.info" ]; then
+  echo "✅ Test coverage report generated"
+  # Add coverage threshold validation here
+else
+  echo "⚠️ No coverage report found"
+  exit 1
+fi
+```
+
+## Coverage Monitoring Tools
+
+- Use Flutter's built-in coverage
+- Generate LCOV reports automatically
+- HTML visualization for analysis
+- CI/CD integration for automation
+- Coverage badge generation
+- Trend analysis over commits
+- Feature coverage breakdown
+
+## Branch Coverage Requirements
+
+- Decision points must be tested
+- Conditional statements coverage required
+- Exception handling paths covered
+- Switch statement exhaustiveness
+- Ternary operator coverage
+- Null safety path testing
+- Early return statement coverage
+
+## Feature Coverage Strategy
+
+- Domain layer 90%+ coverage
+- Data layer 85%+ coverage
+- Presentation layer 75%+ coverage
+- Shared utilities 95%+ coverage
+- Core services 90%+ coverage
+- Infrastructure adapters 80%+ coverage
+- Configuration files excluded
+
+## Coverage Report Analysis
+
+- Identify uncovered critical paths
+- Prioritize high-impact missing coverage
+- Review coverage trend patterns
+- Analyze feature coverage gaps
+- Monitor regression prevention effectiveness
+- Validate test quality metrics
+- Generate coverage improvement plans
+
+## Automated Coverage Validation
+
+- Run coverage on every test execution
+- Validate minimum thresholds automatically
+- Generate reports in CI/CD
+- Fail builds on coverage drops
+- Track coverage metrics over time
+- Report coverage to teams
+- Integrate with quality dashboards
+
+```bash
+# Coverage threshold validation script
+COVERAGE_THRESHOLD=80
+ACTUAL_COVERAGE=$(grep -o "lines.*: [0-9.]*%" coverage/lcov.info | head -1 | grep -o "[0-9.]*")
+
+if (( $(echo "$ACTUAL_COVERAGE < $COVERAGE_THRESHOLD" | bc -l) )); then
+  echo "❌ Coverage $ACTUAL_COVERAGE% below threshold $COVERAGE_THRESHOLD%"
+  exit 1
+else
+  echo "✅ Coverage $ACTUAL_COVERAGE% meets threshold"
+fi
+```
+
+## Coverage Best Practices
+
+- Write tests for coverage gaps
+- Focus on critical path coverage
+- Test error handling scenarios
+- Cover edge cases thoroughly
+- Maintain coverage during refactoring
+- Review coverage reports regularly
+- Use coverage to guide testing
+
+## Coverage Reporting Integration
+
+- Generate reports in HTML format
+- Export metrics to JSON
+- Integrate with IDE plugins
+- Display coverage in PR reviews
+- Track coverage in project dashboards
+- Share coverage reports with teams
+- Archive coverage history for analysis

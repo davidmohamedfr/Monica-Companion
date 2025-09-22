@@ -1,0 +1,156 @@
+---
+description: Offline-first architecture patterns for Monica Mobile App covering SQLite local storage, background synchronization, WorkManager integration, conflict handling, data versioning, and sync state management
+globs: "lib/**/*{offline,sync,storage,database,worker}*.dart"
+alwaysApply: true
+---
+
+## Local-First Architecture
+
+- Store all data locally first
+- Use SQLite with SQLCipher encryption
+- Apply offline-capable design patterns
+- Support full offline functionality
+- Use @lib/db/repositories/local_repository.dart
+- Implement local-first state management
+- Support offline data operations
+
+```dart
+// Offline-first repository pattern
+abstract class OfflineFirstRepository<T> {
+  Future<List<T>> getAllLocal();
+  Future<T?> getByIdLocal(String id);
+  Future<void> saveLocal(T entity);
+  Future<void> deleteLocal(String id);
+  Future<void> syncToRemote();
+}
+```
+
+## Background Synchronization
+
+- Use WorkManager for reliable sync
+- Implement incremental sync patterns
+- Apply sync scheduling strategies
+- Support retry mechanisms
+- Use @lib/services/workers/sync_worker.dart
+- Apply background constraints
+- Support sync on connectivity
+
+## Data Versioning
+
+- Track local data versions
+- Implement conflict detection patterns
+- Apply last-write-wins strategies
+- Support custom conflict resolution
+- Use @lib/core/models/versioned_entity.dart
+- Apply vector clock patterns
+- Support merge algorithms
+
+## Sync State Management
+
+- Track synchronization status per entity
+- Implement sync queue management
+- Apply sync priority patterns
+- Support sync cancellation
+- Use @lib/features/sync/models/sync_status.dart
+- Apply sync progress tracking
+- Support sync error recovery
+
+## Offline Capabilities
+
+- Support full app functionality offline
+- Cache critical app data
+- Apply graceful degradation patterns
+- Implement offline indicators
+- Use @lib/core/connectivity/offline_detector.dart
+- Apply offline data validation
+- Support offline user feedback
+
+## Data Consistency
+
+- Maintain data integrity offline
+- Apply eventual consistency patterns
+- Implement conflict-free replicated data
+- Support optimistic concurrency
+- Use @lib/core/sync/consistency_manager.dart
+- Apply data validation rules
+- Support rollback mechanisms
+
+## Network Resilience
+
+- Handle network interruptions gracefully
+- Implement exponential backoff
+- Apply circuit breaker patterns
+- Support request queuing
+- Use @lib/services/implementations/resilient_api_service.dart
+- Apply timeout handling
+- Support connection recovery
+
+## Local Storage Optimization
+
+- Optimize SQLite performance
+- Apply efficient query patterns
+- Implement database indexing
+- Support pagination locally
+- Use @lib/db/database/monica_database.dart
+- Apply lazy loading patterns
+- Support database migrations
+
+## Sync Conflict Resolution
+
+- Detect data conflicts automatically
+- Apply user-defined resolution strategies
+- Implement three-way merge algorithms
+- Support manual conflict resolution
+- Use @lib/features/sync/services/conflict_resolver.dart
+- Apply timestamp-based resolution
+- Support field-level conflicts
+
+## Background Processing
+
+- Process sync operations in background
+- Apply WorkManager constraints
+- Implement progress notifications
+- Support long-running operations
+- Use @lib/services/workers/background_processor.dart
+- Apply battery optimization patterns
+- Support doze mode compatibility
+
+## Cache Management
+
+- Cache frequently accessed data
+- Apply cache invalidation strategies
+- Implement cache size limits
+- Support cache warming patterns
+- Use @lib/core/cache/local_cache_manager.dart
+- Apply LRU cache patterns
+- Support cache persistence
+
+## Data Migration
+
+- Support schema migrations offline
+- Apply backward compatibility patterns
+- Implement data transformation
+- Support migration rollback
+- Use @lib/db/migrations/migration_manager.dart
+- Apply migration validation
+- Support incremental migrations
+
+## Offline Security
+
+- Encrypt offline data storage
+- Apply secure local authentication
+- Implement offline key management
+- Support secure data deletion
+- Use @lib/core/security/offline_security.dart
+- Apply offline threat mitigation
+- Support secure offline operations
+
+## Performance Monitoring
+
+- Monitor offline performance metrics
+- Track sync operation durations
+- Apply performance optimization
+- Support performance debugging
+- Use @lib/core/monitoring/offline_metrics.dart
+- Apply battery usage monitoring
+- Support storage optimization

@@ -1,0 +1,164 @@
+---
+description: Pull request review process with automated quality gates, integration testing, build verification, and comprehensive validation pipeline
+globs: ".github/workflows/PR.yml"
+alwaysApply: true
+---
+
+## PR Trigger Configuration
+
+- Target main and dev branches
+- Workflow run completion triggers
+- Manual workflow dispatch support
+- Branch protection rule integration
+- Quality gate enforcement automatic
+- Review requirement coordination
+
+```yaml
+# PR workflow triggers
+on:
+  pull_request:
+    branches:
+      - main
+      - dev
+  workflow_dispatch:
+```
+
+## Pre-Review Automation
+
+- Cache preparation job execution
+- Flutter SDK caching implementation
+- Pub dependencies optimization
+- Dart analysis pre-warming
+- 15-minute timeout for preparation
+- Parallel job execution setup
+
+## Integration Testing Pipeline
+
+- Android emulator setup automation
+- KVM permissions configuration
+- AVD snapshot caching strategy
+- API level 30 standard
+- Hardware acceleration optimization
+- Headless execution for reliability
+
+```yaml
+# Android emulator setup
+- name: Enable KVM group perms
+  run: |
+    echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+    sudo udevadm control --reload-rules
+```
+
+## Build Verification Process
+
+- Android APK debug build
+- Java 17 environment setup
+- Gradle caching optimization
+- Build number from GitHub run
+- APK size verification (100MB limit)
+- Artifact retention management
+
+## Quality Gate Requirements
+
+- All pre-commit hooks must pass
+- Integration tests must succeed completely
+- Android build must complete successfully
+- No security vulnerabilities detected
+- Coverage thresholds must be met
+- Documentation completeness verified
+
+## Review Checklist Standards
+
+- Code follows established architecture patterns
+- Tests cover new functionality adequately
+- Security considerations addressed properly
+- Performance impact assessed
+- Documentation updated when required
+- Breaking changes documented clearly
+
+## Automated Validation Steps
+
+- Cache restoration from prepare job
+- Dependencies resolution verification
+- Integration test execution
+- APK build and verification
+- Artifact upload for review
+- Success status reporting
+
+```yaml
+# Build verification
+- name: Build Android APK
+  run: flutter build apk --debug --build-number=${{ github.run_number }}
+```
+
+## Reviewer Responsibilities
+
+- Architecture compliance verification
+- Code quality assessment
+- Test coverage evaluation
+- Security vulnerability review
+- Performance impact analysis
+- Documentation accuracy check
+
+## PR Approval Criteria
+
+- All automated checks pass
+- Code review approval received
+- Integration tests successful
+- Build artifacts generated successfully
+- No merge conflicts present
+- Branch up to date requirements
+
+## Merge Requirements
+
+- PR status checks successful
+- Required reviews obtained
+- No outstanding change requests
+- Branch protection rules satisfied
+- All conversations resolved
+- Final integration test pass
+
+## Post-Review Actions
+
+- Successful merge triggers deployment
+- Branch cleanup automation
+- Release preparation if applicable
+- Documentation updates deployment
+- Team notifications sent
+- Metrics collection for improvement
+
+## Emergency Procedures
+
+- Hotfix branch exception handling
+- Critical security fix fast-track
+- Production issue emergency response
+- Bypass procedures documentation
+- Post-emergency review requirements
+- Process improvement identification
+
+## Review Performance Metrics
+
+- Time from PR to approval
+- Integration test pass rate
+- Build success rate tracking
+- Review iteration count
+- Merge conflict frequency
+- Quality gate effectiveness
+
+## Collaboration Guidelines
+
+- Clear PR description requirements
+- Link to related issues
+- Demonstrate testing performed
+- Explain architectural decisions
+- Request specific reviewer attention
+- Respond to feedback promptly
+
+```yaml
+# PR integration success indicator
+- name: All checks passed
+  run: |
+    echo "✅ All CI checks passed successfully"
+    echo "- Integration Tests: Passed"
+    echo "- Android Build: Passed"
+```
