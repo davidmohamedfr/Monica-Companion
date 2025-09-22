@@ -1,0 +1,234 @@
+---
+applies_to:
+  - "@analysis_options.yaml"
+  - "@analysis_options.yml"
+  - ".analysis_options.yaml"
+  - ".analysis_options.yml"
+tags:
+  - dart-analysis
+  - linting
+  - code-quality
+  - static-analysis
+---
+
+# Dart Analysis Configuration Rules
+
+## Base Configuration
+
+• Include flutter_lints package rules
+• Enable strict language features
+• Exclude generated code files
+• Configure strong-mode settings
+• Disable implicit casts and dynamics
+
+```yaml
+include: package:flutter_lints/flutter.yaml
+
+analyzer:
+  language:
+    strict-casts: true
+    strict-inference: true
+    strict-raw-types: true
+```
+
+## File Exclusion Patterns
+
+• Exclude all generated Dart files
+• Skip Freezed generated files
+• Ignore build and tool directories
+• Exclude part files from analysis
+• Skip auto-generated configuration files
+
+```yaml
+analyzer:
+  exclude:
+    - "**/*.g.dart"
+    - "**/*.freezed.dart"
+    - "**/*.gr.dart"
+    - "**/*.config.dart"
+    - "**/*.part.dart"
+    - "build/**"
+    - ".dart_tool/**"
+```
+
+## Strong Mode Configuration
+
+• Disable implicit casts completely
+• Prevent implicit dynamic usage
+• Enforce explicit type declarations
+• Require strict type checking
+• Enable all strong-mode features
+
+```yaml
+strong-mode:
+  implicit-casts: false
+  implicit-dynamic: false
+```
+
+## Error Prevention Rules
+
+• Always use package imports
+• Avoid dynamic call patterns
+• Prevent empty else statements
+• Block relative lib imports
+• Catch unrelated type equality
+
+```yaml
+linter:
+  rules:
+    - always_use_package_imports
+    - avoid_dynamic_calls
+    - avoid_empty_else
+    - avoid_relative_lib_imports
+    - unrelated_type_equality_checks
+```
+
+## Flutter-Specific Rules
+
+• Use key in widget constructors
+• Build context synchronization check
+• Avoid web libraries in Flutter
+• Cancel subscriptions properly
+• Close sinks to prevent leaks
+
+```yaml
+    - use_key_in_widget_constructors
+    - use_build_context_synchronously
+    - avoid_web_libraries_in_flutter
+    - cancel_subscriptions
+    - close_sinks
+```
+
+## Code Style Enforcement
+
+• Always declare return types
+• Specify types explicitly everywhere
+• Annotate overrides consistently
+• Put required parameters first
+• Use single quotes for strings
+
+```yaml
+    - always_declare_return_types
+    - always_specify_types
+    - annotate_overrides
+    - always_put_required_named_parameters_first
+    - prefer_single_quotes
+```
+
+## Performance Optimization Rules
+
+• Prefer const constructors usage
+• Use const literals for immutables
+• Prefer final fields declaration
+• Avoid unnecessary containers
+• Use sized box for whitespace
+
+```yaml
+    - prefer_const_constructors
+    - prefer_const_literals_to_create_immutables
+    - prefer_final_fields
+    - avoid_unnecessary_containers
+    - sized_box_for_whitespace
+```
+
+## Code Quality Rules
+
+• Avoid print statements
+• Use proper error handling
+• Prefer expression function bodies
+• Require trailing commas
+• Sort child properties last
+
+```yaml
+    - avoid_print
+    - avoid_catches_without_on_clauses
+    - prefer_expression_function_bodies
+    - require_trailing_commas
+    - sort_child_properties_last
+```
+
+## Null Safety Rules
+
+• Prefer null-aware operators
+• Use null-aware method calls
+• Avoid unnecessary null checks
+• Cast nullable to non-nullable safely
+• Handle null check on parameters
+
+```yaml
+    - prefer_null_aware_operators
+    - prefer_null_aware_method_calls
+    - unnecessary_null_checks
+    - cast_nullable_to_non_nullable
+    - null_check_on_nullable_type_parameter
+```
+
+## Modern Dart Features
+
+• Use super parameters
+• Prefer late for private fields
+• Use enums over constants
+• Implement modern syntax patterns
+• Leverage new language features
+
+```yaml
+    - use_super_parameters
+    - use_late_for_private_fields_and_variables
+    - use_enums
+    - use_function_type_syntax_for_parameters
+```
+
+## File Organization Rules
+
+• Sort constructors first
+• Order unnamed constructors first
+• Organize directives properly
+• Use library prefixes correctly
+• Follow file naming conventions
+
+```yaml
+    - sort_constructors_first
+    - sort_unnamed_constructors_first
+    - directives_ordering
+    - library_prefixes
+    - file_names
+```
+
+## Documentation Rules
+
+• Use slash for doc comments
+• Provide deprecation messages
+• Follow Flutter TODO style
+• Document public APIs properly
+• Maintain comment references
+
+```yaml
+    - slash_for_doc_comments
+    - provide_deprecation_message
+    - flutter_style_todos
+    - type_annotate_public_apis
+    - comment_references
+```
+
+## Line Length and Formatting
+
+• Enforce 80 character line limit
+• End files with newlines
+• Handle multiline string newlines
+• Manage adjacent string whitespace
+• Use proper string interpolation
+
+```yaml
+    - lines_longer_than_80_chars
+    - eol_at_end_of_file
+    - leading_newlines_in_multiline_strings
+    - missing_whitespace_between_adjacent_strings
+```
+
+## Total Rule Count: 211+ Rules
+
+• Comprehensive coverage of Dart patterns
+• Flutter-specific best practices included
+• Modern language feature enforcement
+• Performance and memory optimization
+• Security and maintainability focus

@@ -1,87 +1,127 @@
 ---
-description: Flutter navigation and routing patterns using go_router for declarative navigation, deep linking support, and authentication flows with proper route organization
+description: Flutter 3.35+ navigation patterns using built-in Navigator 2.0, with future go_router preparation for declarative navigation, deep linking support, and authentication flows
 globs: "lib/**/*route*.dart"
 alwaysApply: false
 ---
 
 ## Navigation Strategy
 
-- Use `go_router` for routing
-- Support deep linking
-- Implement declarative navigation
+- Use built-in `Navigator` first
+- Prepare for `go_router` future adoption
+- Support deep linking when needed
+- Implement simple navigation patterns
 - Handle authentication redirects
-- Organize routes hierarchically
+- Organize routes by feature
 - Use typed route parameters
-- Support web URLs properly
+- Support web URLs when required
 
-## GoRouter Setup
+## Built-in Navigation Patterns
+
+- Use `Navigator.push()` for forward navigation
+- Apply `Navigator.pop()` to return
+- Use `Navigator.pushReplacement()` for replacement
+- Apply `Navigator.pushAndRemoveUntil()` for clearing
+- Pass typed parameters through constructors
+- Handle route results with `await`
+- Use `super.key` in route widgets
 
 ```dart
-final GoRouter router = GoRouter(
-  routes: <RouteBase>[
-    GoRoute(
-      path: '/',
-      builder: (context, state) => const HomeScreen(),
-      routes: <RouteBase>[
-        GoRoute(
-          path: 'details/:id',
-          builder: (context, state) {
-            final id = state.pathParameters['id']!;
-            return DetailScreen(id: id);
-          },
-        ),
-      ],
-    ),
-  ],
-);
+// Monica app navigation pattern
+class WelcomeScreen extends StatelessWidget {
+  const WelcomeScreen({super.key});
+
+  void _navigateToHome(BuildContext context) {
+    Navigator.push(
+      context,
+      MaterialPageRoute<void>(
+        builder: (context) => const HomeScreen(),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) => Scaffold(
+    // ... UI implementation
+  );
+}
 ```
 
 ## Route Organization
 
-- Define routes centrally
-- Use nested routes
-- Group related routes
-- Keep routes immutable
-- Use route constants
+- Group routes by feature area
+- Use route constants for paths
+- Keep route classes focused
+- Define clear route hierarchy
 - Document route parameters
-- Version API routes
+- Use meaningful route names
+- Apply consistent naming patterns
 
-## Navigation Patterns
+## MaterialPageRoute Patterns
 
-- Use `context.go()` for navigation
-- Apply `context.push()` for stack
-- Use `context.pop()` to return
-- Pass typed parameters
-- Handle query parameters
-- Implement route guards
-- Support back button properly
+- Use `MaterialPageRoute` for iOS/Android
+- Apply `CupertinoPageRoute` for iOS-specific
+- Pass data through widget constructors
+- Return results with `Navigator.pop(context, result)`
+- Handle route transitions appropriately
+- Use `RouteSettings` for named routes
+- Test route animations
 
-## Authentication Flow
+## Navigation Arguments
 
-- Configure redirect property
-- Check auth on navigation
+- Pass data through constructors
+- Use typed parameter classes
+- Validate required parameters
+- Provide default values
+- Handle nullable parameters
+- Document parameter types
+- Test parameter passing
+
+## Future GoRouter Preparation
+
+- Structure code for easy migration
+- Keep navigation logic centralized
+- Use consistent route naming
+- Prepare route constants
+- Plan authentication flow
+- Design for deep linking
+- Consider web URL structure
+
+## Authentication Navigation
+
+- Implement login flow guards
+- Check auth status before navigation
 - Redirect to login when needed
-- Save intended destination
-- Restore route after login
+- Clear navigation stack on logout
 - Handle token expiration
-- Clear stack on logout
+- Save intended destinations
+- Support automatic redirects
 
-## Deep Linking
-
-- Define URL patterns
-- Handle app links
-- Support universal links
-- Parse path parameters
-- Validate incoming links
-- Handle malformed URLs
-- Test on all platforms
-
-## Dialog Navigation
+## Dialog and Modal Navigation
 
 - Use `Navigator` for dialogs
 - Keep dialogs stateless
-- Return dialog results
+- Return dialog results properly
 - Handle dialog dismissal
-- Avoid deep-linked dialogs
-- Use bottom sheets appropriately
-- Implement modal barriers
+- Use `showDialog()` for alerts
+- Apply `showModalBottomSheet()` for sheets
+- Implement proper modal barriers
+
+## Navigation State Management
+
+- Keep navigation state simple
+- Use built-in Navigator state
+- Avoid complex navigation stacks
+- Handle back button properly
+- Support system navigation
+- Test navigation flows
+- Profile navigation performance
+
+## Testing Navigation
+
+- Test navigation flows thoroughly
+- Use `Navigator.pushNamed()` for testing
+- Mock navigation dependencies
+- Test back button behavior
+- Verify route parameters
+- Test authentication flows
+- Validate navigation state

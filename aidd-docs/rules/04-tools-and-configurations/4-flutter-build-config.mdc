@@ -1,0 +1,242 @@
+---
+applies_to:
+  - "@pubspec.yaml"
+  - "@pubspec.yml"
+  - "@android/app/build.gradle"
+  - "@ios/Runner.xcodeproj/**"
+  - "@flutter.yaml"
+tags:
+  - flutter-build
+  - android-config
+  - dependencies
+  - versioning
+  - deployment
+---
+
+# Flutter Build Configuration Rules
+
+## Pubspec.yaml Configuration
+
+• Pin Flutter version to 3.35.0+
+• Use Dart SDK 3.8.0 minimum
+• Set publish_to none for apps
+• Define clear app description
+• Use semantic versioning format
+
+```yaml
+environment:
+  sdk: '>=3.8.0 <4.0.0'
+  flutter: ">=3.35.0"
+
+name: monica_companion
+version: 0.0.1
+publish_to: 'none'
+```
+
+## Core Dependencies Management
+
+• Use Flutter SDK for core framework
+• Pin cupertino_icons for iOS styling
+• Include equatable for value objects
+• Add flutter_svg for vector graphics
+• Lock dependency versions precisely
+
+```yaml
+dependencies:
+  flutter:
+    sdk: flutter
+  cupertino_icons: ^1.0.2
+  equatable: ^2.0.5
+  flutter_svg: ^2.0.10+1
+```
+
+## Development Dependencies
+
+• Include flutter_test for unit testing
+• Add integration_test for e2e testing
+• Use flutter_lints version 6.0.0
+• Include build_runner for code generation
+• Add mocktail for test mocking
+
+```yaml
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  integration_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
+  build_runner: ^2.4.7
+  mocktail: ^1.0.0
+```
+
+## Code Generation Setup
+
+• Include json_annotation for serialization
+• Add json_serializable for generation
+• Configure build_runner properly
+• Support future code generation needs
+• Version code generation packages consistently
+
+```yaml
+  json_annotation: ^4.8.1
+  json_serializable: ^6.7.1
+```
+
+## Asset Configuration
+
+• Use Material Design components
+• Organize assets in subdirectories
+• Place logos in dedicated folder
+• Prepare font configuration structure
+• Use asset path prefixes correctly
+
+```yaml
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/images/logos/
+```
+
+## Android Build Configuration
+
+• Use Flutter Gradle Plugin
+• Set namespace to package structure
+• Configure compile SDK dynamically
+• Use Java 8 compatibility
+• Enable build config features
+
+```gradle
+plugins {
+    id "com.android.application"
+    id "kotlin-android"
+    id "dev.flutter.flutter-gradle-plugin"
+}
+
+android {
+    namespace = "fr.m0hdaCorp.monica_companion"
+    compileSdk = flutter.compileSdkVersion
+}
+```
+
+## Build Types Configuration
+
+• Configure debug with application suffix
+• Set debuggable flags appropriately
+• Enable minification for release
+• Use ProGuard for code obfuscation
+• Configure profile build properly
+
+```gradle
+buildTypes {
+    debug {
+        applicationIdSuffix '.debug'
+        debuggable true
+    }
+    release {
+        debuggable false
+        minifyEnabled true
+        proguardFiles getDefaultProguardFile('proguard-android-optimize.txt')
+    }
+}
+```
+
+## Application Identity
+
+• Use reverse domain notation
+• Set clear application ID
+• Configure version codes dynamically
+• Define readable app names
+• Prepare for flavor configurations
+
+```gradle
+defaultConfig {
+    applicationId = "fr.m0hdaCorp.monica_companion"
+    minSdkVersion = flutter.minSdkVersion
+    targetSdkVersion = flutter.targetSdkVersion
+    versionCode = flutter.versionCode
+    versionName = flutter.versionName
+}
+```
+
+## Build Configuration Fields
+
+• Define flavor-specific configurations
+• Set API base URL variables
+• Configure environment-specific settings
+• Use string resources for app names
+• Enable build config generation
+
+```gradle
+buildConfigField "String", "FLAVOR", '"development"'
+buildConfigField "String", "API_BASE_URL", '"https://dev-api.monica.com"'
+resValue "string", "app_name", "Monica Companion"
+```
+
+## Flavor Preparation
+
+• Prepare development flavor structure
+• Configure staging environment setup
+• Plan production flavor settings
+• Use dimension-based organization
+• Comment flavors during testing
+
+```gradle
+// Temporarily disabled for integration tests
+// flavorDimensions = ["environment"]
+/*
+productFlavors {
+    dev {
+        dimension "environment"
+        applicationIdSuffix ".dev"
+    }
+}
+*/
+```
+
+## Kotlin Configuration
+
+• Use Kotlin Android plugin
+• Target Java 8 compatibility
+• Configure JVM target properly
+• Include Kotlin standard library
+• Match Java source compatibility
+
+```gradle
+kotlinOptions {
+    jvmTarget = JavaVersion.VERSION_1_8
+}
+
+dependencies {
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+}
+```
+
+## Flutter Source Configuration
+
+• Point to correct Flutter source
+• Use relative path to project root
+• Configure Flutter build properly
+• Enable Flutter-specific features
+• Support hot reload and restart
+
+```gradle
+flutter {
+    source = "../.."
+}
+```
+
+## Version Management
+
+• Use semantic versioning consistently
+• Configure build numbers dynamically
+• Support CI/CD version injection
+• Prepare for automated releases
+• Track version history properly
+
+## Asset Organization
+
+• Structure assets by type
+• Use descriptive folder names
+• Plan for internationalization
+• Organize images by purpose
+• Prepare for future asset types

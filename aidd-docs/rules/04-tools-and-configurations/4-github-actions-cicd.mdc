@@ -1,0 +1,194 @@
+---
+applies_to:
+  - "@.github/workflows/*.yml"
+  - "@.github/workflows/*.yaml"
+  - ".github/actions/**"
+tags:
+  - ci-cd
+  - automation
+  - testing
+  - deployment
+  - github-actions
+---
+
+# GitHub Actions CI/CD Configuration
+
+## Workflow Trigger Rules
+
+• Trigger on pull requests to main/dev
+• Run on all branch pushes
+• Support manual workflow dispatch
+• Use workflow_run for dependencies
+• Enable branch-specific CI patterns
+
+```yaml
+on:
+  pull_request:
+    branches: [main, dev]
+  push:
+    branches: ["**"]
+  workflow_dispatch:
+```
+
+## Environment Configuration
+
+• Pin Flutter version to 3.35.4
+• Use Java 17 for Android builds
+• Configure pub cache workspace location
+• Set consistent timeout limits
+• Define global environment variables
+
+```yaml
+env:
+  JAVA_VERSION: "17"
+  FLUTTER_VERSION: "3.35.4"
+  PUB_CACHE: ${{ github.workspace }}/.pub-cache
+```
+
+## Caching Strategy Rules
+
+• Cache Flutter SDK with version key
+• Cache pub dependencies with hash key
+• Cache Dart analysis results
+• Use restore-keys for fallback
+• Pre-warm caches in prepare job
+
+```yaml
+- name: Cache Flutter SDK
+  uses: actions/cache@v4
+  with:
+    path: |
+      /opt/hostedtoolcache/flutter
+      ~/.flutter
+    key: flutter-${{ env.FLUTTER_VERSION }}-${{ runner.os }}
+```
+
+## Job Dependency Management
+
+• Use prepare job for cache warming
+• Define clear job dependencies with needs
+• Run lint and test in parallel
+• Require integration tests before builds
+• Use outputs for cache key sharing
+
+```yaml
+jobs:
+  prepare:
+    outputs:
+      flutter-cache-key: ${{ steps.cache-keys.outputs.flutter-key }}
+  lint:
+    needs: prepare
+  test:
+    needs: [prepare]
+```
+
+## Quality Assurance Rules
+
+• Run dart format with exit-if-changed
+• Execute flutter analyze with fatal warnings
+• Check for unused dependencies
+• Audit for security vulnerabilities
+• Validate project structure requirements
+
+```yaml
+- name: Verify formatting
+  run: dart format --output=none --set-exit-if-changed .
+- name: Analyze project source
+  run: flutter analyze --fatal-infos --fatal-warnings
+```
+
+## Testing Configuration
+
+• Run tests with coverage enabled
+• Use random test ordering
+• Upload coverage artifacts
+• Check coverage thresholds
+• Cache test results for efficiency
+
+```yaml
+- name: Run tests
+  run: flutter test --coverage --test-randomize-ordering-seed random
+```
+
+## Security Scanning Rules
+
+• Check for hardcoded API keys
+• Scan for password literals
+• Detect secret value patterns
+• Block debug prints in production
+• Validate token assignment patterns
+
+```yaml
+if grep -rE "(sk_|pk_|bearer\s+)[a-zA-Z0-9]{20,}" lib/ --include="*.dart"; then
+  echo "Potential API key pattern found"
+  exit 1
+fi
+```
+
+## Integration Testing Setup
+
+• Enable KVM for Android emulator
+• Cache Android Virtual Device images
+• Use API level 30 x86_64
+• Configure emulator options properly
+• Run integration tests on emulator
+
+```yaml
+- name: Enable KVM group perms
+  run: |
+    echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+```
+
+## Build Configuration Rules
+
+• Use Temurin Java distribution
+• Build debug APK with run number
+• Define minimum SDK version
+• Upload build artifacts
+• Verify APK size limits
+
+```yaml
+- name: Build Android APK
+  run: flutter build apk --debug --build-number=${{ github.run_number }} --dart-define=MIN_SDK_VERSION=24
+```
+
+## Documentation Validation
+
+• Require README.md file presence
+• Check for LICENSE file
+• Validate SECURITY.md exists
+• Ensure PRIVACY.md is present
+• Fail on missing documentation
+
+```yaml
+required_files=("README.md" "LICENSE" "SECURITY.md" "PRIVACY.md")
+for file in "${required_files[@]}"; do
+  if [ ! -f "$file" ]; then
+    exit 1
+  fi
+done
+```
+
+## Artifact Management
+
+• Upload coverage reports
+• Store APK artifacts temporarily
+• Set 7-day retention period
+• Name artifacts descriptively
+• Use versioned upload actions
+
+```yaml
+- name: Upload APK artifact
+  uses: actions/upload-artifact@v4
+  with:
+    name: android-apk-debug
+    retention-days: 7
+```
+
+## Timeout and Performance
+
+• Set 15-minute prepare timeout
+• Limit lint jobs to 10 minutes
+• Allow 30 minutes for builds
+• Use 15-minute test timeouts
+• Optimize with parallel execution

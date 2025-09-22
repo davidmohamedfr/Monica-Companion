@@ -1,5 +1,5 @@
 ---
-description: Flutter theming, visual design, and accessibility best practices for creating beautiful, responsive, and inclusive user interfaces with Material 3 design system
+description: Flutter 3.35+ theming with Material Design 3, visual design, and accessibility best practices for creating beautiful, responsive, and inclusive user interfaces using Monica brand colors
 globs: "lib/**/*theme*.dart"
 alwaysApply: false
 ---
@@ -7,6 +7,7 @@ alwaysApply: false
 ## Material 3 Theming
 
 - Use `ColorScheme.fromSeed()` for palettes
+- Enable `useMaterial3: true` in ThemeData
 - Define light and dark themes
 - Apply `ThemeData` consistently
 - Customize component themes
@@ -14,7 +15,47 @@ alwaysApply: false
 - Implement theme extensions
 - Support system theme mode
 
-## Color Scheme
+## Monica Brand Colors
+
+- Primary brand color: `#6366F1` (indigo)
+- Use `Color(0xFF6366F1)` for brand color
+- Apply `ColorScheme.fromSeed(seedColor: monicaBrandColor)`
+- Override primary color in theme
+- Maintain brand consistency across app
+- Test brand colors in light/dark modes
+- Define semantic color variations
+
+```dart
+// Monica brand color implementation
+class MonicaApp extends StatelessWidget {
+  const MonicaApp({super.key});
+
+  static const Color _monicaBrandColor = Color(0xFF6366F1);
+
+  @override
+  Widget build(BuildContext context) => MaterialApp(
+    theme: ThemeData(
+      colorScheme: ColorScheme.fromSeed(
+        seedColor: _monicaBrandColor,
+      ).copyWith(primary: _monicaBrandColor),
+      useMaterial3: true,
+    ),
+    // ...
+  );
+}
+```
+
+## Color API Updates
+
+- Use `withValues()` instead of deprecated APIs
+- Apply `Color.withValues(alpha: 0.5)` for opacity
+- Use `Colors.white.withValues(alpha: 0.9)` patterns
+- Extract opacity values to constants
+- Test transparency in light/dark themes
+- Maintain readability with opacity
+- Use semantic transparency values
+
+## Color Scheme Organization
 
 - Follow 60-30-10 color rule
 - Maintain WCAG contrast ratios
@@ -24,13 +65,6 @@ alwaysApply: false
 - Apply consistent color hierarchy
 - Avoid hardcoded colors
 
-```dart
-ColorScheme.fromSeed(
-  seedColor: Colors.deepPurple,
-  brightness: Brightness.light,
-)
-```
-
 ## Typography
 
 - Define complete `TextTheme`
@@ -39,7 +73,17 @@ ColorScheme.fromSeed(
 - Keep line length 45-75 characters
 - Apply consistent font weights
 - Use `GoogleFonts` for custom fonts
-- Follow hierarchy patterns
+- Follow Material 3 typography scale
+
+## Theme Extraction Patterns
+
+- Extract `Theme.of(context)` early
+- Store theme in local variables
+- Use `final ThemeData theme = Theme.of(context)`
+- Apply theme colors consistently
+- Access colorScheme through theme
+- Extract textTheme for typography
+- Cache theme values in build methods
 
 ## Responsive Design
 
@@ -61,6 +105,16 @@ ColorScheme.fromSeed(
 - Apply `FittedBox` for scaling
 - Use `ConstrainedBox` for limits
 
+## Material 3 Components
+
+- Use updated elevation system
+- Apply surface tints appropriately
+- Implement Material 3 buttons
+- Use new card designs
+- Apply proper corner radiuses
+- Follow Material 3 spacing
+- Test component theming
+
 ## Accessibility (A11Y)
 
 - Ensure 4.5:1 contrast ratio
@@ -75,6 +129,7 @@ ColorScheme.fromSeed(
 
 - Declare assets in `pubspec.yaml`
 - Use `Image.asset` for local images
+- Support SVG with `flutter_svg`
 - Implement error handling for images
 - Provide loading indicators
 - Cache network images appropriately

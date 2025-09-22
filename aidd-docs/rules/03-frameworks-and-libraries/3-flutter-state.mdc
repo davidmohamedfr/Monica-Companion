@@ -1,5 +1,5 @@
 ---
-description: Flutter state management patterns using built-in solutions, proper separation of concerns, and data flow architecture for predictable and maintainable application state
+description: Flutter 3.35+ state management patterns using built-in solutions, Equatable for state equality, and data flow architecture for predictable and maintainable application state
 globs: "lib/**/*state*.dart"
 alwaysApply: false
 ---
@@ -14,6 +14,48 @@ alwaysApply: false
 - Make state predictable
 - Follow @lib/features/shared/models/feature_state.dart patterns
 
+## Equatable State Pattern
+
+- Extend `Equatable` for all state classes
+- Override `props` getter for comparisons
+- Use `const` constructors for immutability
+- Include all relevant fields in `props`
+- Apply generic types for data states
+- Handle null values in props properly
+- Test state equality behavior
+
+## Monica State Architecture
+
+```dart
+// Base state class with Equatable
+abstract class FeatureState extends Equatable {
+  const FeatureState();
+
+  @override
+  List<Object?> get props => <Object?>[];
+}
+
+// Specific state implementations
+class LoadingState extends FeatureState {
+  const LoadingState([this.message]);
+
+  final String? message;
+
+  @override
+  List<Object?> get props => <Object?>[message];
+}
+
+class SuccessState<T> extends FeatureState {
+  const SuccessState(this.data, [this.message]);
+
+  final T data;
+  final String? message;
+
+  @override
+  List<Object?> get props => <Object?>[data, message];
+}
+```
+
 ## Built-in Solutions
 
 - Use `setState` for simple local state
@@ -23,6 +65,26 @@ alwaysApply: false
 - Use `FutureBuilder` for async operations
 - Apply `StreamBuilder` for streams
 - Prefer `ListenableBuilder` over rebuilds
+
+## State Organization
+
+- Group state by feature
+- Create immutable state models
+- Use Equatable for comparisons
+- Implement state factories
+- Define clear state transitions
+- Document state dependencies
+- Follow Monica state patterns
+
+## Common State Types
+
+- `InitialState` for component initialization
+- `LoadingState` with optional messages
+- `SuccessState<T>` with typed data
+- `ErrorState` with error details
+- `EmptyState` for no-data scenarios
+- Apply consistent naming conventions
+- Use generic types when appropriate
 
 ## ValueNotifier Pattern
 
@@ -36,16 +98,6 @@ ValueListenableBuilder<int>(
   },
 );
 ```
-
-## State Organization
-
-- Group state by feature
-- Create state models
-- Use immutable state objects
-- Implement state factories
-- Define clear state transitions
-- Document state dependencies
-- Follow MVVM when complex
 
 ## Data Flow Architecture
 
@@ -63,6 +115,7 @@ ValueListenableBuilder<int>(
 - Dispose resources in `dispose()`
 - Avoid state in build methods
 - Prevent unnecessary rebuilds
-- Use `const` constructors
+- Use `const` constructors everywhere
 - Profile state performance
-- Test state transitions
+- Test state transitions thoroughly
+- Use `super.key` in stateful widgets

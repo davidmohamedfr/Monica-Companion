@@ -1,5 +1,5 @@
 ---
-description: Flutter widget architecture patterns emphasizing composition, immutability, performance optimization, and proper widget tree structure for scalable and maintainable UI development
+description: Flutter 3.35+ widget architecture patterns emphasizing composition, immutability, performance optimization, and proper widget tree structure for scalable and maintainable UI development
 globs: "lib/**/*widget*.dart"
 alwaysApply: false
 ---
@@ -15,6 +15,16 @@ alwaysApply: false
 - Never return widgets from methods
 - Follow @lib/features/shared/widgets/ patterns
 
+## Constructor Patterns
+
+- Always use `super.key` constructors
+- Use `const` constructors everywhere
+- Pass keys through widget tree
+- Initialize final fields in constructor
+- Use named parameters for clarity
+- Apply factory constructors when needed
+- Keep constructors simple and focused
+
 ## Build Method Practices
 
 - Keep `build()` methods small
@@ -24,6 +34,16 @@ alwaysApply: false
 - Use `const` constructors everywhere
 - Cache expensive computations
 - Minimize widget rebuilds
+
+## Color and Opacity Patterns
+
+- Use `withValues()` instead of deprecated APIs
+- Apply `Color.withValues(alpha: 0.5)` for transparency
+- Extract colors to theme constants
+- Use `Theme.of(context).colorScheme` for colors
+- Define semantic color meanings
+- Test colors in light/dark modes
+- Maintain accessibility contrast ratios
 
 ## Performance Optimization
 
@@ -48,23 +68,53 @@ alwaysApply: false
 ## Widget Composition
 
 ```dart
-// Prefer small composed widgets
-class UserCard extends StatelessWidget {
-  const UserCard({super.key});
+// Monica app widget pattern with super.key
+class AppLoadingWidget extends StatelessWidget {
+  const AppLoadingWidget({this.message, this.size = 32, super.key});
+
+  final String? message;
+  final double size;
 
   @override
   Widget build(BuildContext context) {
-    return const Card(
+    final ThemeData theme = Theme.of(context);
+
+    return Center(
       child: Column(
-        children: [
-          _UserAvatar(),
-          _UserInfo(),
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          SizedBox(
+            width: size,
+            height: size,
+            child: CircularProgressIndicator(
+              strokeWidth: 3,
+              color: theme.colorScheme.primary,
+            ),
+          ),
+          if (message != null) ...<Widget>[
+            const SizedBox(height: 16),
+            Text(
+              message!,
+              style: theme.textTheme.bodyMedium,
+              textAlign: TextAlign.center,
+            ),
+          ],
         ],
       ),
     );
   }
 }
 ```
+
+## Modern Flutter Patterns
+
+- Use spread operators `...` for conditional widgets
+- Apply `if` statements inside widget lists
+- Use `Theme.of(context)` for theming
+- Extract theme data to variables
+- Use `ColorScheme.fromSeed()` for Material 3
+- Apply proper Material 3 elevation
+- Follow Monica brand color patterns
 
 ## Common Widget Patterns
 

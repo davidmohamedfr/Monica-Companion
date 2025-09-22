@@ -1,0 +1,148 @@
+---
+description: Material Design 3 specific rules for Flutter 3.35+ focusing on Monica brand integration, component theming, color systems, and modern Material 3 patterns
+globs: "lib/**/*.dart"
+alwaysApply: false
+---
+
+## Material 3 Core Principles
+
+- Enable `useMaterial3: true` in ThemeData
+- Use Material 3 color roles
+- Apply dynamic color when appropriate
+- Follow Material 3 typography scale
+- Implement proper elevation system
+- Use surface tints for elevation
+- Support light and dark themes
+
+## Monica Brand Integration
+
+- Primary brand color: `#6366F1` (indigo)
+- Use `Color(0xFF6366F1)` constant
+- Generate palette with `ColorScheme.fromSeed()`
+- Override primary to maintain brand
+- Test brand colors in all themes
+- Maintain accessibility standards
+- Apply brand consistently across components
+
+```dart
+// Monica Material 3 theme setup
+static const Color _monicaBrandColor = Color(0xFF6366F1);
+
+ThemeData(
+  colorScheme: ColorScheme.fromSeed(
+    seedColor: _monicaBrandColor,
+    brightness: Brightness.light,
+  ).copyWith(primary: _monicaBrandColor),
+  useMaterial3: true,
+)
+```
+
+## Color System
+
+- Use semantic color roles
+- Apply `surface`, `onSurface`, `surfaceVariant`
+- Use `primary`, `secondary`, `tertiary` roles
+- Apply error colors consistently
+- Implement outline and shadow colors
+- Support inverse color variants
+- Test color contrast ratios
+
+## Component Theming
+
+- Use updated button designs
+- Apply new card elevation system
+- Implement Material 3 text fields
+- Use updated app bar styles
+- Apply proper corner radiuses
+- Follow Material 3 spacing scale
+- Test component interactions
+
+## Typography Scale
+
+- Use Material 3 text styles
+- Apply `displayLarge`, `displayMedium`, `displaySmall`
+- Use `headlineLarge`, `headlineMedium`, `headlineSmall`
+- Apply `titleLarge`, `titleMedium`, `titleSmall`
+- Use `bodyLarge`, `bodyMedium`, `bodySmall`
+- Apply `labelLarge`, `labelMedium`, `labelSmall`
+- Maintain readable line heights
+
+## Elevation System
+
+- Use surface tint for elevation
+- Apply appropriate elevation levels
+- Avoid excessive shadows
+- Use Material 3 elevation tokens
+- Test elevation in light/dark themes
+- Apply consistent elevation hierarchy
+- Consider accessibility needs
+
+## Modern Component Patterns
+
+- Use `FilledButton` for primary actions
+- Apply `OutlinedButton` for secondary actions
+- Use `TextButton` for low-emphasis actions
+- Implement `SegmentedButton` for selections
+- Apply `NavigationBar` for bottom navigation
+- Use `NavigationRail` for wide screens
+- Implement proper component states
+
+## Animation and Motion
+
+- Use Material 3 motion tokens
+- Apply appropriate transition durations
+- Use easing curves consistently
+- Implement hero animations
+- Apply shared element transitions
+- Use appropriate motion patterns
+- Test animations on various devices
+
+## Accessibility Integration
+
+- Maintain WCAG AA standards
+- Support dynamic type scaling
+- Provide semantic labels
+- Test with screen readers
+- Implement focus indicators
+- Support keyboard navigation
+- Use sufficient color contrast
+
+## Monica-specific Patterns
+
+- Use brand color for primary actions
+- Apply gradient backgrounds sparingly
+- Maintain clean visual hierarchy
+- Use consistent spacing patterns
+- Apply Monica's visual language
+- Test with actual content
+- Ensure brand recognition
+
+## Theme Extensions
+
+- Create custom theme extensions
+- Define Monica-specific tokens
+- Extend Material 3 base themes
+- Use theme extensions for custom colors
+- Apply consistent extension patterns
+- Document custom theme properties
+- Test theme extension inheritance
+
+## Testing Material 3 Themes
+
+- Test in light and dark modes
+- Verify color accessibility
+- Test component interactions
+- Validate typography scales
+- Check elevation rendering
+- Test on various devices
+- Verify theme consistency
+
+## Migration Patterns
+
+- Update deprecated color APIs
+- Use `withValues()` for opacity
+- Replace old elevation patterns
+- Update component theming
+- Test migration thoroughly
+- Document breaking changes
+- Maintain backward compatibility when possible

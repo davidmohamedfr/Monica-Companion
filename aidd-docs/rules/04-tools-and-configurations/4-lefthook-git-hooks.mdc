@@ -1,0 +1,130 @@
+---
+applies_to:
+  - "@lefthook.yml"
+  - ".lefthook.yml"
+  - "lefthook.yaml"
+  - ".lefthook.yaml"
+tags:
+  - git-hooks
+  - quality
+  - testing
+  - automation
+---
+
+# Lefthook Git Hooks Configuration
+
+## Pre-commit Hook Rules
+
+• Enable parallel execution for speed
+• Format code automatically with staging
+• Run comprehensive lint analysis
+• Check for debugging statements removal
+• Verify dependency health before commit
+• Use conventional commit message format
+• Fail on any quality issues
+
+```yaml
+pre-commit:
+  parallel: true
+  commands:
+    dart-format:
+      tags: quality
+      glob: "**/*.dart"
+      run: flutter format {staged_files} && git add {staged_files}
+      stage_fixed: true
+```
+
+## Pre-push Hook Rules
+
+• Run all unit tests before push
+• Generate test coverage reports
+• Use sequential execution for tests
+• Update dependencies before testing
+• Use expanded test reporter
+• Verify coverage file generation
+
+```yaml
+pre-push:
+  parallel: false
+  commands:
+    unit-tests:
+      tags: test
+      run: flutter test --coverage --reporter=expanded
+```
+
+## Debug Statement Prevention
+
+• Block print() statements in lib/
+• Block debugPrint() statements in lib/
+• Allow debug statements in test files
+• Provide clear failure messages
+• Exit with error code one
+
+```yaml
+no-debug-prints:
+  run: |
+    if grep -r "print(" lib/ --include="*.dart" 2>/dev/null; then
+      echo "❌ Found print() statements in lib/ directory"
+      exit 1
+    fi
+```
+
+## Commit Message Validation
+
+• Enforce conventional commit format patterns
+• Support standard prefixes: feat, fix, docs
+• Allow optional scope in parentheses
+• Require descriptive commit messages
+• Block non-conforming commit attempts
+
+```yaml
+commit-msg:
+  commands:
+    conventional-commit:
+      run: |
+        if ! head -n1 {1} | grep -qE "^(feat|fix|docs|style|refactor|test|chore)(\(.+\))?: .+"; then
+          exit 1
+        fi
+```
+
+## Post-merge and Post-checkout
+
+• Update IDE configurations automatically
+• Run flutter pub get automatically
+• Check for Flutter dependencies
+• Ensure VS Code settings applied
+• Update Android Studio configurations
+
+```yaml
+post-merge:
+  commands:
+    update-ide-config:
+      run: |
+        if [ -f ".vscode/settings.json" ]; then
+          echo "VS Code settings updated"
+        fi
+```
+
+## Output Configuration
+
+• Include meta information in output
+• Show summary of hook execution
+• Display success messages clearly
+• Report failure details comprehensively
+• Skip meta output when silenced
+
+```yaml
+output:
+  - meta
+  - summary
+  - success
+  - failure
+```
+
+## Emergency Skip Options
+
+• Use LEFTHOOK=0 for emergency commits
+• Skip specific hooks when needed
+• Maintain emergency override capability
+• Document skip usage clearly
+• Preserve team workflow standards
