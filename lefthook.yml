@@ -1,14 +1,98 @@
+# Monica Companion - Comprehensive Testing Strategy
+# Ensures quality at every stage: commit → push → PR
+
+# Pre-commit: Quality checks before any commit
 pre-commit:
+  parallel: true
   commands:
-    # Dart/Flutter linting
+    # 1. Format check and auto-fix
     dart-format:
-      glob: "*.dart"
-      run: dart format {staged_files} && git add {staged_files}
+      tags: quality
+      glob: "**/*.dart"
+      run: flutter format {staged_files} && git add {staged_files}
       stage_fixed: true
-    
+      fail_text: |
+        ❌ Code formatting issues found!
+        💡 Files have been auto-formatted and staged
+
+    # 2. Comprehensive lint analysis
     dart-analyze:
-      glob: "*.dart"
-      run: dart analyze --fatal-warnings {staged_files}
+      tags: quality
+      run: flutter analyze --fatal-infos --fatal-warnings
+      fail_text: |
+        ❌ Lint analysis failed!
+        💡 Fix all lint issues before committing
+
+    # 3. Check for debugging statements
+    no-debug-prints:
+      tags: quality
+      glob: "lib/**/*.dart"
+      run: |
+        if grep -r "print(" lib/ --include="*.dart" 2>/dev/null; then
+          echo "❌ Found print() statements in lib/ directory"
+          echo "💡 Remove or replace with proper logging before committing"
+          exit 1
+        fi
+        if grep -r "debugPrint(" lib/ --include="*.dart" 2>/dev/null; then
+          echo "❌ Found debugPrint() statements in lib/ directory"
+          echo "💡 Remove or replace with proper logging before committing"
+          exit 1
+        fi
+        echo "✅ No debugging statements found"
+
+    # 4. Verify dependencies
+    deps-check:
+      tags: quality
+      run: flutter pub deps --json > /dev/null
+      fail_text: |
+        ❌ Dependency issues found!
+        💡 Run 'flutter pub get' to resolve dependencies
+
+# Pre-push: Unit tests before any push
+pre-push:
+  parallel: false
+  commands:
+    # 1. Ensure dependencies are up to date
+    pub-get:
+      tags: test
+      run: flutter pub get
+
+    # 2. Run all unit and widget tests
+    unit-tests:
+      tags: test
+      run: flutter test --coverage --reporter=expanded
+      fail_text: |
+        ❌ Unit tests failed!
+        💡 Fix failing tests before pushing
+
+    # 3. Verify test coverage
+    coverage-check:
+      tags: test
+      run: |
+        if [ -f "coverage/lcov.info" ]; then
+          echo "✅ Test coverage report generated at coverage/lcov.info"
+          # Optional: Add coverage threshold check here
+        else
+          echo "⚠️  No coverage report found - ensure tests are running properly"
+        fi
+
+# Commit message quality
+commit-msg:
+  commands:
+    conventional-commit:
+      run: |
+        # Check for conventional commit format
+        if ! head -n1 {1} | grep -qE "^(feat|fix|docs|style|refactor|test|chore)(\(.+\))?: .+"; then
+          echo "❌ Commit message should follow conventional commit format:"
+          echo "   feat: add new feature"
+          echo "   fix: resolve bug"
+          echo "   docs: update documentation"
+          echo "   test: add tests"
+          echo "   refactor: improve code structure"
+          echo "   style: format code"
+          echo "   chore: maintenance tasks"
+          exit 1
+        fi
 
 post-merge:
   commands:
@@ -35,3 +119,33 @@ post-checkout:
           echo "Getting Flutter dependencies..."
           flutter pub get || echo "Flutter not available, skipping pub get"
         fi
+
+# Output configuration for better UX
+output:
+  - meta
+  - summary
+  - success
+  - failure
+
+# Skip configuration for emergency situations
+skip_output:
+  - meta
+  - skips
+
+# Instructions for team members
+#
+# USAGE:
+# - Normal workflow: hooks run automatically
+# - Skip all hooks: LEFTHOOK=0 git commit -m "emergency fix"
+# - Skip specific hook: LEFTHOOK=0 git push
+# - Run manually: lefthook run pre-commit
+#
+# SETUP FOR NEW TEAM MEMBERS:
+# 1. Install lefthook: brew install lefthook (or appropriate package manager)
+# 2. Install hooks: lefthook install
+# 3. First time: flutter pub get
+#
+# TESTING STAGES:
+# 📝 pre-commit: Format, lint, debug checks, dependencies
+# 🧪 pre-push: Unit tests, coverage
+# 🚀 CI/PR: Integration tests, device tests, comprehensive validation

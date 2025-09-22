@@ -9,6 +9,37 @@
 │       ├── push.yml
 │       └── release.yml
 ├── .gitignore
+├── .opencode
+│   ├── agents -> /Users/davidmohamed/dev/src/perso/FakeProjectAidd/aidd-docs/agents
+│   └── command
+│       ├── 01_onboard_generate_command.md -> /Users/davidmohamed/dev/src/perso/FakeProjectAidd/aidd/prompts/ide/01_onboard/generate_command.md
+│       ├── 01_onboard_generate_rules.md -> /Users/davidmohamed/dev/src/perso/FakeProjectAidd/aidd/prompts/ide/01_onboard/generate_rules.md
+│       ├── 02_context_create_user_stories.md -> /Users/davidmohamed/dev/src/perso/FakeProjectAidd/aidd/prompts/ide/02_context/create_user_stories.md
+│       ├── 02_context_extract_flow.md -> /Users/davidmohamed/dev/src/perso/FakeProjectAidd/aidd/prompts/ide/02_context/extract_flow.md
+│       ├── 03_plan_elaborate.md -> /Users/davidmohamed/dev/src/perso/FakeProjectAidd/aidd/prompts/ide/03_plan/elaborate.md
+│       ├── 03_plan_plan.md -> /Users/davidmohamed/dev/src/perso/FakeProjectAidd/aidd/prompts/ide/03_plan/plan.md
+│       ├── 03_plan_README.md -> /Users/davidmohamed/dev/src/perso/FakeProjectAidd/aidd/prompts/ide/03_plan/README.md
+│       ├── 04_code_implement.md -> /Users/davidmohamed/dev/src/perso/FakeProjectAidd/aidd/prompts/ide/04_code/implement.md
+│       ├── 04_code_run_projection.md -> /Users/davidmohamed/dev/src/perso/FakeProjectAidd/aidd/prompts/ide/04_code/run_projection.md
+│       ├── 05_review_review_code.md -> /Users/davidmohamed/dev/src/perso/FakeProjectAidd/aidd/prompts/ide/05_review/review_code.md
+│       ├── 05_review_review_functional.md -> /Users/davidmohamed/dev/src/perso/FakeProjectAidd/aidd/prompts/ide/05_review/review_functional.md
+│       ├── 06_tests_list_untested.md -> /Users/davidmohamed/dev/src/perso/FakeProjectAidd/aidd/prompts/ide/06_tests/list_untested.md
+│       ├── 06_tests_tdd.md -> /Users/davidmohamed/dev/src/perso/FakeProjectAidd/aidd/prompts/ide/06_tests/tdd.md
+│       ├── 06_tests_write.md -> /Users/davidmohamed/dev/src/perso/FakeProjectAidd/aidd/prompts/ide/06_tests/write.md
+│       ├── 07_documentation_jira_info.md -> /Users/davidmohamed/dev/src/perso/FakeProjectAidd/aidd/prompts/ide/07_documentation/jira_info.md
+│       ├── 07_documentation_learn.md -> /Users/davidmohamed/dev/src/perso/FakeProjectAidd/aidd/prompts/ide/07_documentation/learn.md
+│       ├── 07_documentation_mermaid.md -> /Users/davidmohamed/dev/src/perso/FakeProjectAidd/aidd/prompts/ide/07_documentation/mermaid.md
+│       ├── 07_documentation_refresh_memory_bank.md -> /Users/davidmohamed/dev/src/perso/FakeProjectAidd/aidd/prompts/ide/07_documentation/refresh_memory_bank.md
+│       ├── 08_deploy_commit.md -> /Users/davidmohamed/dev/src/perso/FakeProjectAidd/aidd/prompts/ide/08_deploy/commit.md
+│       ├── 08_deploy_create_github_pull_request.md -> /Users/davidmohamed/dev/src/perso/FakeProjectAidd/aidd/prompts/ide/08_deploy/create_github_pull_request.md
+│       ├── 08_deploy_tag.md -> /Users/davidmohamed/dev/src/perso/FakeProjectAidd/aidd/prompts/ide/08_deploy/tag.md
+│       ├── 09_refactor_performance.md -> /Users/davidmohamed/dev/src/perso/FakeProjectAidd/aidd/prompts/ide/09_refactor/performance.md
+│       ├── 09_refactor_security.md -> /Users/davidmohamed/dev/src/perso/FakeProjectAidd/aidd/prompts/ide/09_refactor/security.md
+│       ├── 10_maintenance_assert.md -> /Users/davidmohamed/dev/src/perso/FakeProjectAidd/aidd/prompts/ide/10_maintenance/assert.md
+│       ├── 10_maintenance_audit.md -> /Users/davidmohamed/dev/src/perso/FakeProjectAidd/aidd/prompts/ide/10_maintenance/audit.md
+│       ├── 10_maintenance_debug.md -> /Users/davidmohamed/dev/src/perso/FakeProjectAidd/aidd/prompts/ide/10_maintenance/debug.md
+│       ├── 10_maintenance_new_issue.md -> /Users/davidmohamed/dev/src/perso/FakeProjectAidd/aidd/prompts/ide/10_maintenance/new_issue.md
+│       └── custom_example.md -> /Users/davidmohamed/dev/src/perso/FakeProjectAidd/aidd-docs/prompts/example.md
 ├── AGENTS.md
 ├── aidd-docs
 │   ├── agents
@@ -69,7 +100,11 @@
 │   │   ├── 2025_09_19_ci_pipeline_setup.review.md
 │   │   ├── 2025_09_19-ci_lint_investigation.md
 │   │   ├── 2025_09_20-fix_ci_flutter_version.md
-│   │   └── 2025_09_20-fix_linting_issues.md
+│   │   ├── 2025_09_20-fix_linting_issues.md
+│   │   ├── 2025_09_21_monica_companion_skeleton_code_review.review.md
+│   │   ├── 2025_09_21-10-build-squelette-sur-device-tdd_testing.md
+│   │   ├── 2025_09_21-code_quality_improvements.md
+│   │   └── 2025_09_21-monica_companion_skeleton_setup.md
 │   └── tree.txt
 ├── analysis_options.yaml
 ├── android
@@ -91,9 +126,9 @@
 │   │       │   │       └── flutter
 │   │       │   │           └── plugins
 │   │       │   ├── kotlin
-│   │       │   │   └── com
-│   │       │   │       └── monica
-│   │       │   │           └── app
+│   │       │   │   └── fr
+│   │       │   │       └── m0hdaCorp
+│   │       │   │           └── monica_companion
 │   │       │   │               └── MainActivity.kt
 │   │       │   └── res
 │   │       │       ├── drawable
@@ -133,6 +168,10 @@
 │   │       └── gradle-wrapper.properties
 │   ├── gradle.properties
 │   └── settings.gradle
+├── assets
+│   └── images
+│       └── logos
+│           └── monica_companion_logo.svg
 ├── CODE_OF_CONDUCT.md
 ├── docs
 │   ├── FLAVORS.md
@@ -193,6 +232,7 @@
 │       └── service_locator.dart
 ├── LICENSE
 ├── Makefile
+├── opencode.jsonc
 ├── PRIVACY.md
 ├── pubspec.yaml
 ├── README.md
@@ -205,32 +245,34 @@
 │       ├── android-studio-inspections.xml
 │       ├── android-studio-project.xml
 │       └── vscode-settings.json
-└── test
-    ├── config
-    │   └── environment_test.dart
-    ├── core
-    │   ├── config
-    │   ├── constants
-    │   ├── errors
-    │   └── utils
-    │       ├── logger_test.dart
-    │       └── validators_test.dart
-    ├── db
-    │   ├── interfaces
-    │   ├── models
-    │   └── repositories
-    ├── features
-    │   └── shared
-    │       ├── models
-    │       ├── utils
-    │       └── widgets
-    ├── helpers
-    │   └── test_helpers.dart
-    ├── mocks
-    │   └── mock_services.dart
-    ├── services
-    │   ├── implementations
-    │   └── interfaces
-    └── widget_test.dart
+├── test
+│   ├── app_test.dart
+│   ├── config
+│   │   └── environment_test.dart
+│   ├── core
+│   │   ├── config
+│   │   ├── constants
+│   │   ├── errors
+│   │   └── utils
+│   │       ├── logger_test.dart
+│   │       └── validators_test.dart
+│   ├── db
+│   │   ├── interfaces
+│   │   ├── models
+│   │   └── repositories
+│   ├── features
+│   │   └── shared
+│   │       ├── models
+│   │       ├── utils
+│   │       └── widgets
+│   ├── helpers
+│   │   └── test_helpers.dart
+│   ├── mocks
+│   │   └── mock_services.dart
+│   ├── services
+│   │   ├── implementations
+│   │   └── interfaces
+│   └── widget_test.dart
+└── TESTING_STRATEGY.md
 
-106 directories, 128 files
+112 directories, 164 files
