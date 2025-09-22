@@ -1,0 +1,229 @@
+---
+description: State management architectural patterns for Flutter applications using Equatable-based state classes with predefined states for loading, success, error, and empty scenarios, ensuring immutable state objects and predictable state transitions across features
+globs: lib/**/*.dart
+alwaysApply: false
+---
+
+## State Class Structure
+
+- Extend FeatureState base class
+- Use Equatable for value equality
+- Override props for state comparison
+- Immutable state objects only
+- Generic typing for data states
+
+```dart
+// Custom feature state
+class UserProfileState extends FeatureState {
+  const UserProfileState(this.user, this.isEditing);
+
+  final User user;
+  final bool isEditing;
+
+  @override
+  List<Object?> get props => [user, isEditing];
+}
+```
+
+## Predefined State Types
+
+- InitialState for feature startup
+- LoadingState with optional message
+- SuccessState with typed data
+- ErrorState with message and details
+- EmptyState for no data scenarios
+
+```dart
+// Using predefined states
+const LoadingState('Fetching user data');
+const SuccessState<User>(userData, 'Profile updated');
+const ErrorState('Network error', 'AUTH_001');
+const EmptyState('No contacts found');
+```
+
+## State Base Implementation
+
+- Abstract FeatureState class
+- Equatable mixin for comparison
+- Empty props list by default
+- Consistent state hierarchy
+- Type safety across features
+
+```dart
+// @lib/features/shared/models/feature_state.dart
+abstract class FeatureState extends Equatable {
+  const FeatureState();
+
+  @override
+  List<Object?> get props => [];
+}
+```
+
+## State Transitions
+
+- Clear state flow patterns
+- Single state at any time
+- Predictable state changes
+- Event-driven state updates
+- Immutable state transitions
+
+```dart
+// State transition example
+emit(const LoadingState());
+try {
+  final data = await repository.fetchData();
+  emit(SuccessState(data));
+} catch (error) {
+  emit(ErrorState(error.toString()));
+}
+```
+
+## State Management Pattern
+
+- Feature-based state organization
+- Controllers handle state logic
+- UI reacts to state changes
+- Separation of concerns maintained
+- Testable state transitions
+
+```dart
+// State controller pattern
+class UserController extends StateNotifier<FeatureState> {
+  UserController() : super(const InitialState());
+
+  Future<void> loadUser() async {
+    state = const LoadingState();
+    // Implementation
+  }
+}
+```
+
+## Error State Handling
+
+- Structured error information
+- Optional error codes
+- Additional error details
+- User-friendly error messages
+- Error state recovery patterns
+
+```dart
+// Comprehensive error state
+const ErrorState(
+  'Failed to save user profile',
+  'VALIDATION_ERROR',
+  {'field': 'email', 'reason': 'invalid_format'},
+);
+```
+
+## Success State Patterns
+
+- Typed data in success state
+- Optional success messages
+- Generic type parameters
+- Data transformation handling
+- Success state variations
+
+```dart
+// Different success state patterns
+const SuccessState<List<Contact>>(contacts);
+const SuccessState<User>(user, 'Profile saved successfully');
+const SuccessState<bool>(true, 'Operation completed');
+```
+
+## Loading State Variations
+
+- Simple loading state
+- Loading with progress message
+- Multiple loading states per feature
+- Loading state cancellation
+- Loading timeout handling
+
+```dart
+// Loading state variations
+const LoadingState();
+const LoadingState('Syncing contacts...');
+const LoadingState('Step 2 of 3: Processing data');
+```
+
+## Empty State Management
+
+- Distinguish between loading and empty
+- Contextual empty messages
+- Empty state actions
+- Data validation for empty
+- Empty state UI guidance
+
+```dart
+// Empty state with context
+const EmptyState('No messages in this conversation');
+const EmptyState('Search returned no results');
+```
+
+## State Composition
+
+- Combine multiple state aspects
+- Feature-specific state extensions
+- State composition patterns
+- Complex state scenarios
+- Nested state structures
+
+```dart
+// Complex state composition
+class ChatState extends FeatureState {
+  const ChatState({
+    required this.messages,
+    required this.connectionState,
+    required this.typingUsers,
+  });
+
+  final List<Message> messages;
+  final ConnectionState connectionState;
+  final Set<String> typingUsers;
+}
+```
+
+## State Testing
+
+- Test state equality
+- Verify state transitions
+- Mock state scenarios
+- State change assertions
+- Isolated state testing
+
+```dart
+// Testing state equality
+test('states with same data are equal', () {
+  const state1 = SuccessState<String>('data');
+  const state2 = SuccessState<String>('data');
+  expect(state1, equals(state2));
+});
+```
+
+## UI State Integration
+
+- Reactive UI updates
+- State-based widget building
+- Conditional rendering patterns
+- State change animations
+- Error state UI handling
+
+```dart
+// UI state integration
+Widget buildContent(FeatureState state) {
+  return switch (state) {
+    LoadingState() => const LoadingWidget(),
+    SuccessState<List<Contact>>() => ContactList(state.data),
+    ErrorState() => ErrorWidget(state.message),
+    EmptyState() => const EmptyStateWidget(),
+    _ => const SizedBox.shrink(),
+  };
+}
+```
+
+## State Performance
+
+- Minimize state object creation
+- Efficient props implementation
+- State caching strategies
+- Avoid unnecessary rebuilds
+- Memory-efficient state design

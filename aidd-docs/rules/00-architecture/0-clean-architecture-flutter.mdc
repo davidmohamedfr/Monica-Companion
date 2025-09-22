@@ -72,6 +72,7 @@ lib/features/contacts/
 - Domain has zero dependencies
 - Data depends only on domain
 - Presentation depends on domain
+- Service locator at @lib/services/service_locator
 - Service locator for dependency injection
 - Interfaces over concrete implementations
 
@@ -94,6 +95,7 @@ class GetContactsUseCase {
 - Abstract repositories in domain
 - Concrete implementations in data
 - Repository interfaces at @lib/db/interfaces
+- Base repository at @lib/db/repositories/base_repository
 - Generic CRUD operations in base
 - Feature-specific repositories extend base
 
@@ -107,9 +109,10 @@ class GetContactsUseCase {
 
 ## State Management
 
-- State classes in @lib/features/shared/models
-- Loading, error, success states
-- Immutable state objects
+- State classes extend FeatureState base
+- State classes in @lib/features/shared/models/feature_state
+- Loading, error, success, empty states
+- Immutable state objects with Equatable
 - State transitions in controllers
 - Reactive UI updates
 

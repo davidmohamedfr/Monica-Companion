@@ -1,19 +1,79 @@
 ---
-description: Dart language best practices covering null safety, async patterns, code organization, naming conventions, error handling, and documentation standards for maintainable and idiomatic Dart code
+description: Dart 3.8+ language best practices with strict type safety, pattern matching, records, null safety, async patterns, extension methods, code organization, and modern Dart features for maintainable and idiomatic code
 globs: "**/*.dart"
 alwaysApply: true
 ---
 
+## Type Safety (Dart 3.8+)
+
+- Always specify explicit types
+- Never use `dynamic` or `Object?`
+- Avoid implicit casts completely
+- Use strict type inference
+- Never use `!` without verification
+- Prefer `late` over `!` operators
+- Use nullable types explicitly
+
+```dart
+// Good: explicit types
+final List<String> names = <String>[];
+final Map<String, int> scores = <String, int>{};
+
+// Bad: implicit dynamic
+final names = [];
+final scores = {};
+```
+
 ## Language Features
 
 - Use sound null safety
-- Avoid `!` unless guaranteed non-null
 - Prefer `async`/`await` over callbacks
 - Use `Future` for single async operations
 - Use `Stream` for async sequences
-- Apply pattern matching for simplification
+- Apply sealed classes for enums
 - Use records for multiple returns
 - Prefer exhaustive switch statements
+- Use super parameters in constructors
+
+## Pattern Matching (Dart 3+)
+
+- Use pattern matching in switches
+- Apply destructuring with records
+- Prefer exhaustive case coverage
+- Use when guards for conditions
+- Apply object patterns for classes
+
+```dart
+// Switch expressions with patterns
+String processState(FeatureState state) => switch (state) {
+  InitialState() => 'Starting...',
+  LoadingState(message: final msg?) => 'Loading: $msg',
+  SuccessState<String>(data: final data) => 'Success: $data',
+  ErrorState(message: final error) => 'Error: $error',
+  _ => 'Unknown state'
+};
+
+// Record destructuring
+final (String name, int age) = getUserInfo();
+```
+
+## Extension Methods
+
+- Create extensions for utility functions
+- Avoid global utility classes
+- Group related functionality together
+- Use descriptive extension names
+- Follow @lib/core/utils/ patterns
+
+```dart
+extension StringValidation on String {
+  bool get isValidEmail => Validators.isValidEmail(this);
+  bool get isNotEmpty => Validators.isNotEmpty(this);
+}
+
+// Usage
+if (email.isValidEmail) { /* handle */ }
+```
 
 ## Code Style
 
@@ -25,6 +85,8 @@ alwaysApply: true
 - Use arrow syntax for one-liners
 - Group related classes in library
 - Organize libraries by feature
+- Prefer `final` for all variables
+- Use `const` constructors when possible
 
 ## Naming Conventions
 
@@ -60,5 +122,31 @@ alwaysApply: true
 - Apply SOLID principles
 - Write testable code
 - Use `logging` package over `print`
-- Define types explicitly
-- Avoid dynamic typing
+- Define types explicitly everywhere
+- Never use dynamic typing
+- Prefer sealed classes over enums
+- Use records for data transfer
+- Apply extension methods over utilities
+- Use super parameters in constructors
+
+```dart
+// Good: sealed class hierarchy
+sealed class ApiResult<T> {
+  const ApiResult();
+}
+
+final class Success<T> extends ApiResult<T> {
+  const Success(this.data);
+  final T data;
+}
+
+final class Failure<T> extends ApiResult<T> {
+  const Failure(this.error);
+  final String error;
+}
+
+// Good: super parameters
+class ServerException extends AppException {
+  const ServerException(super.message, [super.code]);
+}
+```

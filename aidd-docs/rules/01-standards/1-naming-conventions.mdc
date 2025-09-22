@@ -1,0 +1,166 @@
+---
+description: Naming conventions for Monica Companion app covering file names, class names, variables, constants, methods, and test files. Enforces consistent snake_case files, PascalCase classes, camelCase variables, and proper private member prefixing to ensure readable maintainable code across the entire Flutter project.
+globs: ["**/*.dart", "**/*.yaml", "**/*.md"]
+alwaysApply: true
+---
+
+## File Naming Conventions
+
+- Use snake_case for files
+- Include descriptive functionality names
+- Add _test suffix for tests
+- Match file to primary class
+- Keep names concise but clear
+
+```
+// Good - snake_case files
+app_config.dart              # @lib/core/config/app_config.dart
+feature_state.dart           # @lib/features/shared/models/feature_state.dart
+validators_test.dart         # @test/core/utils/validators_test.dart
+environment.dart             # @lib/core/config/environment.dart
+
+// Bad - other cases
+AppConfig.dart
+featureState.dart
+ValidatorsTest.dart
+```
+
+## Class and Type Naming
+
+- Use PascalCase for classes
+- Use PascalCase for enums
+- Include descriptive purpose suffixes
+- Avoid abbreviations unless common
+- Make purpose immediately clear
+
+```dart
+// Good - PascalCase classes
+class MonicaApp extends StatelessWidget {}    # @lib/main.dart
+class WelcomeScreen extends StatelessWidget {} # @lib/main.dart
+class AppConfig {}                            # @lib/core/config/app_config.dart
+class FeatureState extends Equatable {}       # @lib/features/shared/models/feature_state.dart
+class LoadingState extends FeatureState {}
+class ErrorState extends FeatureState {}
+
+// Bad - other cases
+class monicaApp {}
+class welcome_screen {}
+class appconfig {}
+```
+
+## Variable and Method Naming
+
+- Use camelCase for variables
+- Use camelCase for methods
+- Make purpose descriptive and clear
+- Avoid single letter names
+- Include type context when helpful
+
+```dart
+// Good - camelCase variables and methods
+final String appName = 'Monica Companion';           # @lib/core/config/app_config.dart
+static Duration get defaultTimeout => Duration();    # @lib/core/config/app_config.dart
+final int maxRetryAttempts = 3;                     # @lib/core/config/app_config.dart
+static String get packageName => packageNameBase;   # @lib/core/config/app_config.dart
+
+// Bad - other cases
+final String app_name;
+final String AppName;
+static Duration get default_timeout;
+```
+
+## Constant Naming Conventions
+
+- Use camelCase for class constants
+- Use SCREAMING_SNAKE_CASE for globals
+- Include descriptive context clearly
+- Group related constants together
+- Make purpose immediately obvious
+
+```dart
+// Good - constant naming
+static const String version = '1.0.0';              # @lib/core/config/app_config.dart
+static const int maxRetryAttempts = 3;               # @lib/core/config/app_config.dart
+static const Duration defaultSyncInterval = Duration(hours: 4); # @lib/core/config/app_config.dart
+static const String packageNameBase = 'fr.m0hdaCorp.monica_companion'; # @lib/core/config/app_config.dart
+
+// For widget-specific constants
+static const Color _monicaBrandColor = Color(0xFF6366F1);  # @lib/main.dart
+static const double _mainPadding = 24;                     # @lib/main.dart
+static const double _sectionSpacing = 40;                  # @lib/main.dart
+```
+
+## Private Member Naming
+
+- Prefix with underscore always
+- Use camelCase after underscore
+- Apply to private fields
+- Apply to private methods
+- Keep scope minimal and clear
+
+```dart
+// Good - private member naming
+static const Color _monicaBrandColor = Color(0xFF6366F1);  # @lib/main.dart
+static const double _mainPadding = 24;                     # @lib/main.dart
+static const double _sectionSpacing = 40;                  # @lib/main.dart
+
+class AppConfig {
+  AppConfig._();  // Private constructor
+}
+```
+
+## Test File Naming
+
+- Add _test suffix always
+- Mirror source file structure
+- Use same base name
+- Include descriptive test purpose
+- Group tests by functionality
+
+```
+// Good - test file naming
+validators_test.dart         # @test/core/utils/validators_test.dart
+logger_test.dart            # @test/core/utils/logger_test.dart
+environment_test.dart       # @test/config/environment_test.dart
+app_test.dart              # @test/app_test.dart
+widget_test.dart           # @test/widget_test.dart
+
+// Test groups and descriptions
+group('Validators', () {         # @test/core/utils/validators_test.dart
+  group('isValidEmail', () {
+    test('should return true for valid email addresses', () {
+```
+
+## Package and Import Naming
+
+- Use snake_case package names
+- Include organization prefix consistently
+- Keep import aliases short
+- Use meaningful package names
+- Follow Dart conventions exactly
+
+```dart
+// Good - package naming
+name: monica_companion                    # @pubspec.yaml
+package:monica_companion/core/config/     # Import structure
+
+// Import examples
+import 'package:monica_companion/core/config/app_config.dart';           # @lib/main.dart
+import 'package:monica_companion/features/shared/models/feature_state.dart';
+```
+
+## Boolean and State Naming
+
+- Use descriptive boolean prefixes
+- Start with is/has/can/should
+- Make state purpose clear
+- Avoid negative boolean names
+- Include context when needed
+
+```dart
+// Good - boolean naming
+static bool get isDebug => EnvironmentConfig.isDevelopment;  # @lib/core/config/app_config.dart
+bool get isValidEmail => Validators.isValidEmail(email);
+bool get hasData => data != null;
+bool get canSubmit => isValid && isNotEmpty;
+```

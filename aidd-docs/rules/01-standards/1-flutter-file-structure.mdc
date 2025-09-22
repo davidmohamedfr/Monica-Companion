@@ -1,0 +1,141 @@
+---
+description: Flutter project file organization standards for Monica Companion app defining feature-first architecture, directory structure conventions, and file placement rules. Ensures consistent project organization with clear separation between core utilities, features, services, and test mirroring for maintainable scalable codebase.
+globs: ["lib/**", "test/**", "integration_test/**"]
+alwaysApply: true
+---
+
+## Root Directory Structure
+
+- Keep lib/ as main source
+- Mirror test/ structure exactly
+- Place core utilities in core/
+- Group features under features/
+- Isolate services in services/
+
+```
+lib/
+├── core/           # Shared utilities and configurations
+├── features/       # Feature-specific modules
+├── services/       # Application services
+├── config/         # App-wide configuration
+├── db/            # Database related code
+└── main.dart      # Application entry point
+```
+
+## Core Directory Organization
+
+- Place configs in core/config/
+- Put utilities in core/utils/
+- Store errors in core/errors/
+- Keep constants in core/constants/
+- Organize by functional purpose
+
+```
+core/
+├── config/
+│   ├── app_config.dart      # @lib/core/config/app_config.dart
+│   └── environment.dart     # @lib/core/config/environment.dart
+├── utils/
+│   ├── logger.dart          # @lib/core/utils/logger.dart
+│   └── validators.dart      # @lib/core/utils/validators.dart
+├── errors/
+│   ├── exceptions.dart      # @lib/core/errors/exceptions.dart
+│   └── failures.dart        # @lib/core/errors/failures.dart
+└── constants/
+    └── app_constants.dart   # @lib/core/constants/app_constants.dart
+```
+
+## Feature Directory Structure
+
+- Use feature-first architecture pattern
+- Create shared/ for common components
+- Each feature contains complete module
+- Group by business domain
+- Include models, widgets, utils
+
+```
+features/
+├── shared/                  # Shared across features
+│   ├── models/
+│   │   └── feature_state.dart    # @lib/features/shared/models/feature_state.dart
+│   ├── widgets/
+│   │   ├── error_widget.dart     # @lib/features/shared/widgets/error_widget.dart
+│   │   ├── loading_widget.dart   # @lib/features/shared/widgets/loading_widget.dart
+│   │   └── empty_state_widget.dart
+│   └── utils/
+│       └── feature_utils.dart    # @lib/features/shared/utils/feature_utils.dart
+└── [feature_name]/         # Individual feature modules
+    ├── models/
+    ├── widgets/
+    ├── screens/
+    └── utils/
+```
+
+## Services and Configuration
+
+- Place service locator in services/
+- Keep database code in db/
+- Store feature flags in config/
+- Separate interface definitions clearly
+- Group related functionality together
+
+```
+services/
+└── service_locator.dart     # @lib/services/service_locator.dart
+
+db/
+├── models/
+│   └── base_model.dart      # @lib/db/models/base_model.dart
+├── repositories/
+│   └── base_repository.dart # @lib/db/repositories/base_repository.dart
+├── interfaces/
+│   ├── repository_interface.dart  # @lib/db/interfaces/repository_interface.dart
+│   └── database_interface.dart    # @lib/db/interfaces/database_interface.dart
+└── database_config.dart     # @lib/db/database_config.dart
+```
+
+## Test Directory Mirroring
+
+- Mirror lib/ structure exactly
+- Use same directory names
+- Include helper utilities in helpers/
+- Group mocks in mocks/
+- Follow naming convention consistently
+
+```
+test/
+├── mocks/
+│   └── mock_services.dart   # @test/mocks/mock_services.dart
+├── helpers/
+│   └── test_helpers.dart    # @test/helpers/test_helpers.dart
+├── core/
+│   └── utils/
+│       ├── validators_test.dart  # @test/core/utils/validators_test.dart
+│       └── logger_test.dart      # @test/core/utils/logger_test.dart
+├── config/
+│   └── environment_test.dart     # @test/config/environment_test.dart
+├── app_test.dart            # @test/app_test.dart
+└── widget_test.dart         # @test/widget_test.dart
+```
+
+## File Placement Rules
+
+- One class per file
+- Match filename to class name
+- Use appropriate subdirectories always
+- Avoid deep nesting beyond 3
+- Group related files logically
+
+## Asset Organization
+
+- Place images in assets/images/
+- Group by type and purpose
+- Use descriptive folder names
+- Reference from pubspec.yaml correctly
+- Maintain consistent structure
+
+```
+assets/
+└── images/
+    └── logos/              # As defined in pubspec.yaml
+```

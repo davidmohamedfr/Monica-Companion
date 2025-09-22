@@ -1,0 +1,133 @@
+---
+description: Dart coding standards for Monica Companion app enforcing strict type safety, code quality, and consistent formatting following analysis_options.yaml rules. Applies to all Dart files across the project to ensure maintainable and error-free code with explicit types, proper error handling, and Flutter best practices.
+globs: ["**/*.dart"]
+alwaysApply: true
+---
+
+## Type Safety and Declarations
+
+- Always specify types explicitly
+- Declare return types on methods
+- Use strict casting rules
+- Avoid dynamic types completely
+- Prefer final for immutable variables
+
+```dart
+// Good - explicit types
+final String appName = 'Monica Companion';
+List<String> getContactNames() => <String>[];
+final int maxRetryAttempts = 3;
+
+// Bad - implicit types
+final appName = 'Monica Companion';
+getContactNames() => [];
+var maxRetryAttempts = 3;
+```
+
+## Constructor and Widget Standards
+
+- Use const constructors everywhere
+- Always include super.key parameter
+- Put required parameters first
+- Use trailing commas consistently
+- Sort constructors before methods
+
+```dart
+// Good - const constructor with key
+class WelcomeScreen extends StatelessWidget {
+  const WelcomeScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) => Scaffold(
+    body: const SafeArea(
+      child: Column(
+        children: <Widget>[
+          // Widget content
+        ],
+      ),
+    ),
+  );
+}
+```
+
+## Import Organization and Package Structure
+
+- Use package imports only
+- Sort imports alphabetically
+- Group Flutter, package, relative imports
+- Avoid relative lib imports
+- Include package prefix correctly
+
+```dart
+// Good - package imports
+import 'package:flutter/material.dart';
+import 'package:monica_companion/core/config/app_config.dart';
+import 'package:monica_companion/features/shared/models/feature_state.dart';
+
+// Bad - relative imports
+import '../../../core/config/app_config.dart';
+import 'models/feature_state.dart';
+```
+
+## Code Style and Formatting
+
+- Use single quotes for strings
+- Require trailing commas on lists
+- Keep lines under 80 characters
+- Use expression function bodies
+- Prefer null-aware operators consistently
+
+```dart
+// Good - single quotes and trailing commas
+final List<String> validEmails = <String>[
+  'test@example.com',
+  'user@domain.org',
+];
+
+String getMessage() => 'Welcome to Monica';
+String? getUserName() => user?.name;
+```
+
+## Error Handling and State Management
+
+- Extend Equatable for state classes
+- Use proper error state patterns
+- Include meaningful error messages
+- Override props for equality
+- Handle null safety properly
+
+```dart
+// Good - proper state class @lib/features/shared/models/feature_state.dart
+class ErrorState extends FeatureState {
+  const ErrorState(this.message, [this.code, this.details]);
+
+  final String message;
+  final String? code;
+  final dynamic details;
+
+  @override
+  List<Object?> get props => <Object?>[message, code, details];
+}
+```
+
+## Documentation and Comments
+
+- Use triple-slash doc comments
+- Include meaningful class documentation
+- Avoid obvious inline comments
+- Document public API methods
+- Follow dartdoc conventions precisely
+
+```dart
+/// Application configuration constants and settings
+class AppConfig {
+  AppConfig._();
+
+  /// Application name based on environment
+  static String get appName => EnvironmentConfig.appDisplayName;
+
+  /// HTTP request timeout based on environment
+  static Duration get defaultTimeout =>
+      Duration(seconds: FeatureFlags.apiTimeoutSeconds);
+}
+```

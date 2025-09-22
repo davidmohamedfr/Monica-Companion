@@ -1,0 +1,145 @@
+---
+description: Service locator dependency injection pattern for Flutter applications providing centralized service management with singleton and factory registration, enabling loose coupling and testable architecture while maintaining simple dependency resolution
+globs: lib/**/*.dart
+alwaysApply: false
+---
+
+## Service Registration
+
+- Register singletons for shared instances
+- Register factories for per-request instances
+- Use generic types for type safety
+- Log service registration events
+- Check registration before usage
+
+```dart
+// Register singleton service
+ServiceLocator.instance.registerSingleton<ApiService>(
+  ApiServiceImpl(),
+);
+
+// Register factory for new instances
+ServiceLocator.instance.registerFactory<UserRepository>(
+  () => UserRepositoryImpl(),
+);
+```
+
+## Service Retrieval
+
+- Use generic get method
+- Handle unregistered service exceptions
+- Check registration with isRegistered
+- Avoid direct constructor dependencies
+- Retrieve services at usage point
+
+```dart
+// Get service instance
+final ApiService apiService = ServiceLocator.instance.get<ApiService>();
+
+// Check if registered
+if (ServiceLocator.instance.isRegistered<DatabaseService>()) {
+  // Use service
+}
+```
+
+## Service Locator Implementation
+
+- Singleton pattern for locator instance
+- Type-safe service storage maps
+- Separate singleton and factory storage
+- Clear debugging with Logger
+- Exception for unregistered services
+
+```dart
+// @lib/services/service_locator.dart
+class ServiceLocator {
+  static final ServiceLocator _instance = ServiceLocator._();
+  static ServiceLocator get instance => _instance;
+
+  final Map<Type, dynamic> _services = {};
+  final Map<Type, dynamic Function()> _factories = {};
+}
+```
+
+## Lifecycle Management
+
+- Initialize services in main function
+- Register core services first
+- Register feature services after
+- Clear services for testing
+- Unregister when not needed
+
+```dart
+// Initialize in main.dart
+Future<void> setupServices() async {
+  ServiceLocator.instance
+    ..registerSingleton<Logger>(LoggerImpl())
+    ..registerSingleton<DatabaseService>(DatabaseServiceImpl())
+    ..registerFactory<ApiService>(() => ApiServiceImpl());
+}
+```
+
+## Interface Registration
+
+- Register interfaces not implementations
+- Use abstract base classes
+- Enable dependency inversion principle
+- Support multiple implementations
+- Facilitate testing with mocks
+
+```dart
+// Register interface
+ServiceLocator.instance.registerSingleton<BaseService>(
+  ConcreteServiceImpl(),
+);
+
+// Get through interface
+final BaseService service = ServiceLocator.instance.get<BaseService>();
+```
+
+## Testing Support
+
+- Clear all services before tests
+- Register mock services for testing
+- Use factories for test doubles
+- Isolate service dependencies
+- Reset state between tests
+
+```dart
+// In test setup
+setUp(() {
+  ServiceLocator.instance.clear();
+  ServiceLocator.instance.registerSingleton<ApiService>(
+    MockApiService(),
+  );
+});
+```
+
+## Service Organization
+
+- Core services in @lib/services/implementations
+- Service interfaces in @lib/services/interfaces
+- Feature services within feature modules
+- Base service interface for lifecycle
+- Consistent naming conventions
+
+## Error Handling
+
+- Throw exceptions for unregistered services
+- Log registration and retrieval events
+- Validate service types at registration
+- Handle circular dependencies gracefully
+- Provide clear error messages
+
+```dart
+// Service not found exception
+throw Exception('Service of type ${T.toString()} is not registered');
+```
+
+## Best Practices
+
+- Keep service locator lightweight
+- Avoid service locator in domain layer
+- Use dependency injection over service locator
+- Register services at application startup
+- Document service dependencies clearly
