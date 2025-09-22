@@ -37,4 +37,5 @@ ios/.generated/
 aidd
 aidd-generated
 
-# </AIDD-PRIVACY>
+# </AIDD-PRIVACY>coverage/
+*.lcov
