@@ -15,14 +15,16 @@
 ### Mobile
 
 - **Framework**: Flutter → @pubspec.yaml
-- **State Management**: Custom state classes with Equatable - Clean architecture pattern
+- **State Management**: Custom state classes with `Equatable` - Clean architecture pattern
 - **Platform**: iOS/Android/Both - Material Design 3
-- **Dependency Injection**: Custom ServiceLocator pattern - Singleton and factory registration
-- **Error Handling**: Failure classes with typed errors - NetworkFailure, ServerFailure, DatabaseFailure
-- **Configuration**: Environment-based config with feature flags
-- **Database**: Abstract interface for local storage - Transaction support
-- **HTTP Client**: Generic ApiService interface - REST API with ApiResponse wrapper
-- **Testing**: flutter_test, integration_test, mocktail → @pubspec.yaml
+- **Dependency Injection**: Custom `ServiceLocator` pattern - Singleton and factory registration
+- **Error Handling**: Failure classes with typed errors - `NetworkFailure`, `ServerFailure`, `DatabaseFailure`
+- **Configuration**: Environment-based config with feature flags - `EnvironmentConfig`, `AppConfig`
+- **Database**: SQLite with abstract interfaces - `DatabaseConfig` with schema management
+- **HTTP Client**: Prepared `ApiService` interface architecture - Not yet implemented
+- **UI Components**: `flutter_svg` for vector graphics - Custom gradient theming
+- **Testing**: `flutter_test`, `integration_test`, `mocktail` → @pubspec.yaml
+- **Development Status**: Early phase - Welcome screen and core architecture only
 
 ## Full project structure
 
@@ -30,7 +32,7 @@ Core Flutter project following clean architecture principles with feature-based 
 
 ```text
 lib/
-├── main.dart                           # App entry point
+├── main.dart                           # App entry point with MonicaApp and WelcomeScreen
 ├── config/
 │   └── feature_flags.dart             # Environment-based feature toggles
 ├── core/                              # Shared core functionality
@@ -45,14 +47,10 @@ lib/
 │   └── utils/
 │       ├── logger.dart                # Logging utility
 │       └── validators.dart            # Input validation
-├── features/                          # Feature modules
-│   ├── calls/                         # Call management feature
-│   ├── contacts/                      # Contact management feature
-│   ├── settings/                      # App settings feature
-│   ├── sync/                          # Data synchronization feature
+├── features/                          # Feature modules (planned)
 │   └── shared/                        # Shared feature components
 │       ├── models/
-│       │   └── feature_state.dart     # Base state classes
+│       │   └── feature_state.dart     # Base state classes with Equatable
 │       ├── utils/
 │       │   └── feature_utils.dart     # Shared utilities
 │       └── widgets/                   # Reusable UI components
@@ -61,13 +59,14 @@ lib/
 │           └── loading_widget.dart
 ├── services/                          # Service layer
 │   ├── interfaces/
-│   │   ├── api_service.dart           # HTTP API interface
+│   │   ├── api_service.dart           # HTTP API interface (planned)
 │   │   ├── base_service.dart          # Base service interface
 │   │   └── storage_service.dart       # Local storage interface
 │   ├── implementations/
 │   │   └── base_service_impl.dart     # Base service implementation
-│   └── service_locator.dart           # Dependency injection
+│   └── service_locator.dart           # Custom dependency injection
 └── db/                               # Database layer
+    ├── database_config.dart           # SQLite schema and configuration
     ├── interfaces/
     │   ├── database_interface.dart    # Database abstraction
     │   └── repository_interface.dart  # Repository pattern
@@ -80,11 +79,11 @@ lib/
 ### Naming Conventions
 
 - **Files**: snake_case - following Dart conventions
-- **Classes**: PascalCase - MonicaApp, FeatureState
-- **Functions**: camelCase - build, buildConfigItem
-- **Variables**: camelCase - apiBaseUrl, currentEnvironment
-- **Constants**: camelCase/UPPER_CASE - AppConfig.appName, Environment.DEVELOPMENT
-- **Interfaces**: PascalCase with Interface suffix - DatabaseInterface, ApiService
+- **Classes**: PascalCase - `MonicaApp`, `FeatureState`, `ServiceLocator`
+- **Functions**: camelCase - `build`, `registerSingleton`, `get<T>`
+- **Variables**: camelCase - `currentEnvironment`, `_monicaBrandColor`
+- **Constants**: camelCase/UPPER_CASE - `AppConfig.appName`, `Environment.DEVELOPMENT`
+- **Interfaces**: PascalCase with Interface suffix - `DatabaseInterface`, `ApiService`
 
 ## Services communication
 

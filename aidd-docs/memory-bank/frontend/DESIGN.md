@@ -2,48 +2,123 @@
 
 ## Design Implementation
 
-- **Design System Approach**: Material Design 3 (Material You) implementation via Flutter's built-in theming
-- **Styling Method**: Theme-based styling using ColorScheme.fromSeed with deep purple seed color
+- **Design System Approach**: Material Design 3 (Material You) with Monica brand identity
+- **Styling Method**: Theme-based styling using `ColorScheme.fromSeed` with Monica brand color `#6366F1`
 
 ## Design System Files
 
-- **Theme Config**: lib/main.dart - Material 3 theme with ColorScheme.fromSeed
-- **Design Components**: lib/features/shared/widgets/ - Reusable state widgets
-- **Style Guidelines**: Following Material Design 3 specifications
+- **Theme Config**: `lib/main.dart` - Material 3 theme with Monica brand color seed
+- **Design Components**: `lib/features/shared/widgets/` - Reusable UI widgets (error, loading, empty states)
+- **Style Guidelines**: Material Design 3 specifications with custom Monica branding
 
 ## Design System
 
-- **Spacing Scale**: Standard Flutter spacing - 8px base unit (SizedBox(height: 8/16/24))
-- **Border Radius**: Material 3 default rounded corners
-- **Shadows**: Material 3 elevation system
-- **Breakpoints**: Flutter responsive defaults
+- **Spacing Scale**: Standardized Flutter spacing with consistent patterns
+  - Base unit: 8px increments (8, 16, 24, 32, 40px)
+  - Main padding: 24px for primary content areas
+  - Section spacing: 40px between major sections
+  - Card padding: 16-24px internal spacing
 
-- **Color Palette**: Material 3 dynamic color system
+- **Border Radius**: Consistent rounded corner system
+  - Small radius: 12px for info containers
+  - Medium radius: 16px for description cards
+  - Large radius: 20px for hero elements (logo container)
 
-  - Primary: Deep Purple (seed) - App branding, primary actions
+- **Shadows**: Material 3 elevation system with glassmorphism effects
+  - Subtle transparency overlays (`Colors.white.withValues(alpha: 0.1)`)
+  - Gradient backgrounds from primary to primaryContainer
+
+- **Breakpoints**: Flutter responsive defaults with mobile-first approach
+
+- **Color Palette**: Monica brand-based Material 3 dynamic colors
+
+  - Primary: Monica Indigo `#6366F1` - Brand color, primary actions, gradient backgrounds
   - Secondary: Generated from seed - Secondary actions, accents
-  - Accent: Inverse Primary - App bars, highlighted elements
-  - Gray: Outline/OnSurfaceVariant - Subdued text, borders, icons
+  - Error: Theme error color - Error states, validation messages
+  - Outline: Subdued elements - Icons in empty/error states, borders
+  - OnSurfaceVariant: Secondary text content
+  - Surface variants: Background containers with transparency
 
-- **Typography**: Material 3 typography scale
-  - Primary Font: System default (Roboto on Android, SF Pro on iOS)
-  - Secondary Font: None specified
-  - Fallback: Platform defaults
+- **Typography**: Material 3 typography scale with brand personality
+  - Primary Font: System defaults (Roboto on Android, San Francisco on iOS)
+  - Hierarchy: `headlineLarge` for app title, `titleMedium` for taglines, `bodyLarge` for descriptions
+  - Color treatment: White text on brand backgrounds, theme colors on surfaces
+  - Text effects: Semi-transparent overlays for depth (`alpha: 0.6-0.9`)
 
-## Component Standards and Variantes
+## Component Standards and Variants
 
-- **Button Variants**: FilledButton.icon - Primary actions with icons
-- **Input States**: Standard Material states - Focus/Error handled by theme
-- **Card Patterns**: Center-aligned content with 24px padding
+- **Button Variants**: Modern Material 3 button system
+  - Primary: `FilledButton.icon` with icons for main actions
+  - Retry actions: `FilledButton.icon` with refresh icon
+  - Consistent icon-label pairing pattern
+
+- **State Components**: Standardized feedback widgets
+  - Loading: `CircularProgressIndicator` with optional message, configurable size
+  - Error: Consistent error display with icon, message, optional retry button
+  - Empty: Clean empty states with outline icons and descriptive messaging
+
+- **Card Patterns**: Glassmorphism and container design
+  - Transparent overlays with subtle background colors
+  - Consistent internal padding (16-24px)
+  - Rounded corners following radius system
+  - Content center-alignment for visual balance
 
 ## Layout System
 
-- **Grid System**: Column/Row flexbox layout - Responsive Flutter widgets
-- **Container Widths**: Full width with EdgeInsets.all(16/24) - Content padding
-- **Spacing Rules**: Consistent 8/16/24px spacing - SizedBox for vertical spacing
+- **Grid System**: Flutter's flexible Column/Row system
+  - Single-column mobile layouts with `SingleChildScrollView`
+  - Center-aligned content with `MainAxisAlignment.center`
+  - Responsive widget sizing with `MainAxisSize.min`
+
+- **Container Widths**: Full-width responsive design
+  - Edge padding: `EdgeInsets.all(24)` for main content
+  - Internal spacing: 16-24px for nested containers
+  - `SafeArea` integration for proper device handling
+
+- **Spacing Rules**: Hierarchical spacing system
+  - Major sections: 40px vertical spacing
+  - Related elements: 16px spacing
+  - Micro-spacing: 8px for tight groupings
+  - Consistent `SizedBox` usage for vertical spacing
+
+## Navigation Patterns
+
+- **Screen Structure**: Single-screen welcome approach
+  - Gradient background spanning full viewport
+  - ScrollView for content overflow handling
+  - Brand-focused hero section with logo and messaging
+
+- **Visual Hierarchy**: Clear content progression
+  - Logo and branding at top
+  - Primary messaging in center
+  - Supporting information at bottom
+  - Development info clearly separated
+
+## Animation and Transitions
+
+- **Visual Effects**: Subtle material animations
+  - Gradient transitions from primary to primaryContainer
+  - Standard Material 3 button press animations
+  - Smooth loading spinner rotations
+
+- **Motion Design**: Platform-consistent animations
+  - Material motion specifications
+  - Flutter's built-in widget animations
+  - Respectful of user accessibility preferences
 
 ## Accessibility
 
-- **Color Contrast**: Material 3 contrast - Built-in WCAG compliance
-- **Focus Management**: Flutter semantics - Automatic keyboard navigation
-- **Screen Reader**: Material widgets - Built-in ARIA equivalent support
+- **Color Contrast**: WCAG-compliant Material 3 system
+  - High contrast on brand gradient backgrounds
+  - Proper text color ratios maintained
+  - Error states with distinct visual indicators
+
+- **Focus Management**: Native Flutter accessibility
+  - Automatic keyboard navigation support
+  - Screen reader optimizations through Material widgets
+  - Semantic labels for interactive elements
+
+- **Screen Reader**: Built-in accessibility support
+  - Material widgets provide semantic information
+  - Text content properly structured for screen readers
+  - Interactive elements clearly identified
