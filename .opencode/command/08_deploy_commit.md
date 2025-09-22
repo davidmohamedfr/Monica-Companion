@@ -1,1 +1,1 @@
-/Users/davidmohamed/dev/src/perso/FakeProjectAidd/aidd/prompts/ide/08_deploy/commit.md
+/Users/davidmohamed/dev/src/perso/MonicaMobileApp/aidd/prompts/ide/08_deploy/commit.md

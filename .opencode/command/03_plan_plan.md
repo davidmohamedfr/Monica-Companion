@@ -1,1 +1,1 @@
-/Users/davidmohamed/dev/src/perso/FakeProjectAidd/aidd/prompts/ide/03_plan/plan.md
+/Users/davidmohamed/dev/src/perso/MonicaMobileApp/aidd/prompts/ide/03_plan/plan.md

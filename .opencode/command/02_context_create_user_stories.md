@@ -1,1 +1,1 @@
-/Users/davidmohamed/dev/src/perso/FakeProjectAidd/aidd/prompts/ide/02_context/create_user_stories.md
+/Users/davidmohamed/dev/src/perso/MonicaMobileApp/aidd/prompts/ide/02_context/create_user_stories.md

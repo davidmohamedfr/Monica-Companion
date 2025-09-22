@@ -1,1 +1,1 @@
-/Users/davidmohamed/dev/src/perso/FakeProjectAidd/aidd-docs/prompts/example.md
+/Users/davidmohamed/dev/src/perso/MonicaMobileApp/aidd-docs/prompts/example.md

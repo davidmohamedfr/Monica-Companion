@@ -1,1 +1,1 @@
-/Users/davidmohamed/dev/src/perso/FakeProjectAidd/aidd/prompts/ide/01_onboard/generate_rules.md
+/Users/davidmohamed/dev/src/perso/MonicaMobileApp/aidd/prompts/ide/01_onboard/generate_rules.md

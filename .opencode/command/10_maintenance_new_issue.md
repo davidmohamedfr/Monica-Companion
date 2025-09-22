@@ -1,1 +1,1 @@
-/Users/davidmohamed/dev/src/perso/FakeProjectAidd/aidd/prompts/ide/10_maintenance/new_issue.md
+/Users/davidmohamed/dev/src/perso/MonicaMobileApp/aidd/prompts/ide/10_maintenance/new_issue.md

@@ -1,1 +1,1 @@
-/Users/davidmohamed/dev/src/perso/FakeProjectAidd/aidd/prompts/ide/07_documentation/refresh_memory_bank.md
+/Users/davidmohamed/dev/src/perso/MonicaMobileApp/aidd/prompts/ide/07_documentation/refresh_memory_bank.md

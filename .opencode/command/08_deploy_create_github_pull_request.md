@@ -1,1 +1,1 @@
-/Users/davidmohamed/dev/src/perso/FakeProjectAidd/aidd/prompts/ide/08_deploy/create_github_pull_request.md
+/Users/davidmohamed/dev/src/perso/MonicaMobileApp/aidd/prompts/ide/08_deploy/create_github_pull_request.md
