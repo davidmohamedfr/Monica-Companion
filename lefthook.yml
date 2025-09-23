@@ -5,6 +5,13 @@
 pre-commit:
   parallel: true
   commands:
+    # 0. AIDD/Public separation validation
+    aidd-validation:
+      tags: quality
+      run: ./scripts/validate-commit.sh --pre-commit
+      fail_text: |
+        ❌ AIDD/Public separation validation failed!
+        💡 Fix file categorization and commit message format
     # 1. Format check and auto-fix
     dart-format:
       tags: quality
@@ -82,7 +89,7 @@ commit-msg:
     conventional-commit:
       run: |
         # Check for conventional commit format
-        if ! head -n1 {1} | grep -qE "^(feat|fix|docs|style|refactor|test|chore)(\(.+\))?: .+"; then
+        if ! head -n1 {1} | grep -qE "^(feat|fix|docs|style|refactor|test|chore|aidd)(\(.+\))?: .+"; then
           echo "❌ Commit message should follow conventional commit format:"
           echo "   feat: add new feature"
           echo "   fix: resolve bug"
@@ -91,6 +98,7 @@ commit-msg:
           echo "   refactor: improve code structure"
           echo "   style: format code"
           echo "   chore: maintenance tasks"
+          echo "   aidd: AIDD tooling and documentation"
           exit 1
         fi
 
