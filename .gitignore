@@ -12,8 +12,6 @@ build/
 *.ipr
 *.iws
 .vscode/
-
-# AIDD-specific configuration (temporarily removed for AIDD commits)
 lefthook-local.yml
 
 # Platform-specific build artifacts
