@@ -1,0 +1,32 @@
+# AIDD-specific git hooks configuration
+# This file extends the public lefthook.yml with AIDD validation
+
+# Pre-commit: Add AIDD validation to existing hooks
+pre-commit:
+  commands:
+    # AIDD/Public separation validation
+    aidd-validation:
+      tags: quality
+      run: ./scripts/validate-commit.sh --pre-commit
+      fail_text: |
+        ❌ AIDD/Public separation validation failed!
+        💡 Fix file categorization and commit message format
+
+# Commit message: Support aidd: prefix
+commit-msg:
+  commands:
+    aidd-conventional-commit:
+      run: |
+        # Check for AIDD-extended conventional commit format
+        if ! head -n1 {1} | grep -qE "^(feat|fix|docs|style|refactor|test|chore|aidd)(\(.+\))?: .+"; then
+          echo "❌ Commit message should follow conventional commit format:"
+          echo "   feat: add new feature"
+          echo "   fix: resolve bug"
+          echo "   docs: update documentation"
+          echo "   test: add tests"
+          echo "   refactor: improve code structure"
+          echo "   style: format code"
+          echo "   chore: maintenance tasks"
+          echo "   aidd: AIDD tooling and documentation"
+          exit 1
+        fi
