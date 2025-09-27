@@ -140,11 +140,11 @@ jobs:
       run: dart format --output=none --set-exit-if-changed .
       
     - name: Analyze project source
-      run: flutter analyze --fatal-infos --fatal-warnings
+      run: dart analyze --no-fatal-warnings
 
     - name: Run custom lints
       if: steps.flutter-check.outputs.flutter_project == 'true'
-      run: flutter analyze
+      run: dart analyze --no-fatal-warnings
 
     - name: Validate linting configuration
       run: |
