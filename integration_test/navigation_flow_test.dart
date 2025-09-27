@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
+import 'package:monica_companion/core/services/app_initialization_service.dart';
 import 'package:monica_companion/features/calls/screens/calls_screen.dart';
 import 'package:monica_companion/features/contacts/screens/contacts_screen.dart';
 import 'package:monica_companion/features/navigation/screens/main_shell.dart';
@@ -12,6 +13,11 @@ import 'package:monica_companion/main.dart';
 
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
+
+  setUpAll(() async {
+    // Initialize app services before running tests
+    await AppInitializationService.instance.initialize();
+  });
 
   group('Navigation Flow Integration Tests', () {
     testWidgets('should navigate between all main tabs', (
