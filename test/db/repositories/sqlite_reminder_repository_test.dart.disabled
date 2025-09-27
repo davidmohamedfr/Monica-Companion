@@ -1,0 +1,1120 @@
+import 'package:flutter_test/flutter_test.dart';
+import 'package:mocktail/mocktail.dart';
+import 'package:monica_companion/core/errors/exceptions.dart';
+import 'package:monica_companion/core/errors/failures.dart';
+import 'package:monica_companion/db/interfaces/database_interface.dart';
+import 'package:monica_companion/db/models/reminder.dart';
+import 'package:monica_companion/db/repositories/sqlite_reminder_repository.dart';
+
+// Mock classes
+class MockDatabaseInterface extends Mock implements DatabaseInterface {}
+
+void main() {
+  late SqliteReminderRepository repository;
+  late MockDatabaseInterface mockDatabase;
+
+  // Test constants
+  const int testContactId = 123;
+  final DateTime testDate = DateTime(2024, 1, 15, 10, 30);
+  final DateTime futureDate = DateTime(2024, 2, 1, 14, 0);
+  final DateTime overdueDate = DateTime(2024, 1, 1, 9, 0);
+
+  final List<Map<String, dynamic>> mockRemindersResponse = <Map<String, dynamic>>[
+    <String, dynamic>{
+      'id': 1,
+      'contact_id': 123,
+      'title': 'Call John for birthday',
+      'description': 'Remember to wish happy birthday',
+      'due_date': futureDate.toIso8601String(),
+      'frequency': 'yearly',
+      'active': 1,
+      'created_at': testDate.toIso8601String(),
+      'updated_at': testDate.toIso8601String(),
+    },
+    <String, dynamic>{
+      'id': 2,
+      'contact_id': 456,
+      'title': 'Weekly check-in with team',
+      'description': null,
+      'due_date': testDate.toIso8601String(),
+      'frequency': 'weekly',
+      'active': 1,
+      'created_at': testDate.toIso8601String(),
+      'updated_at': null,
+    },
+    <String, dynamic>{
+      'id': 3,
+      'contact_id': 123,
+      'title': 'Send holiday card',
+      'description': 'Annual holiday greeting',
+      'due_date': overdueDate.toIso8601String(),
+      'frequency': 'yearly',
+      'active': 0,
+      'created_at': testDate.toIso8601String(),
+      'updated_at': testDate.toIso8601String(),
+    },
+    <String, dynamic>{
+      'id': 4,
+      'contact_id': 789,
+      'title': 'Project deadline reminder',
+      'description': 'Complete quarterly report',
+      'due_date': overdueDate.toIso8601String(),
+      'frequency': 'once',
+      'active': 1,
+      'created_at': testDate.toIso8601String(),
+      'updated_at': testDate.toIso8601String(),
+    },
+    <String, dynamic>{
+      'id': 5,
+      'contact_id': 456,
+      'title': 'Daily standup meeting',
+      'description': 'Team sync at 9 AM',
+      'due_date': testDate.add(const Duration(days: 1)).toIso8601String(),
+      'frequency': 'daily',
+      'active': 1,
+      'created_at': testDate.toIso8601String(),
+      'updated_at': testDate.toIso8601String(),
+    },
+  ];
+
+  setUpAll(() {
+    // Register fallback values for mocktail
+    registerFallbackValue(MockDatabaseInterface());
+  });
+
+  setUp(() {
+    mockDatabase = MockDatabaseInterface();
+    repository = SqliteReminderRepository(mockDatabase);
+
+    // Setup default mock behaviors
+    when(() => mockDatabase.rawQuery(any(), any())).thenAnswer((_) async => <Map<String, dynamic>>[]);
+    when(() => mockDatabase.rawQuery(any())).thenAnswer((_) async => <Map<String, dynamic>>[]);
+  });
+
+  tearDown(() {
+    reset(mockDatabase);
+  });
+
+  group('SqliteReminderRepository - findByContactId', () {
+    testWidgets('should find reminders by contact ID ordered by due_date ASC, created_at DESC', (WidgetTester tester) async {
+      final List<Map<String, dynamic>> contactReminders = mockRemindersResponse
+          .where((reminder) => reminder['contact_id'] == testContactId)
+          .toList();
+
+      when(() => mockDatabase.rawQuery(any(), any())).thenAnswer((_) async => contactReminders);
+
+      final List<Reminder> result = await repository.findByContactId(testContactId);
+
+      expect(result, hasLength(2)); // contact_id 123 has 2 reminders
+      expect(result.every((reminder) => reminder.contactId == testContactId), isTrue);
+      verify(() => mockDatabase.rawQuery(
+        '''
+        SELECT * FROM reminders
+        WHERE contact_id = ?
+        ORDER BY due_date ASC, created_at DESC
+      ''',
+        <dynamic>[testContactId],
+      )).called(1);
+    });
+
+    testWidgets('should return empty list when no reminders found for contact', (WidgetTester tester) async {
+      const int nonExistentContactId = 999;
+      when(() => mockDatabase.rawQuery(any(), any())).thenAnswer((_) async => <Map<String, dynamic>>[]);
+
+      final List<Reminder> result = await repository.findByContactId(nonExistentContactId);
+
+      expect(result, isEmpty);
+      verify(() => mockDatabase.rawQuery(any(), <dynamic>[nonExistentContactId])).called(1);
+    });
+
+    testWidgets('should handle zero contact ID', (WidgetTester tester) async {
+      const int zeroContactId = 0;
+      when(() => mockDatabase.rawQuery(any(), any())).thenAnswer((_) async => <Map<String, dynamic>>[]);
+
+      final List<Reminder> result = await repository.findByContactId(zeroContactId);
+
+      expect(result, isEmpty);
+      verify(() => mockDatabase.rawQuery(any(), <dynamic>[zeroContactId])).called(1);
+    });
+
+    testWidgets('should order results by due_date ASC then created_at DESC', (WidgetTester tester) async {
+      final List<Map<String, dynamic>> orderedReminders = <Map<String, dynamic>>[
+        <String, dynamic>{...mockRemindersResponse[0], 'due_date': '2024-01-10T09:00:00.000Z', 'created_at': '2024-01-15T12:00:00.000Z'}, // Earlier due date, later created
+        <String, dynamic>{...mockRemindersResponse[2], 'due_date': '2024-01-10T09:00:00.000Z', 'created_at': '2024-01-15T10:00:00.000Z'}, // Same due date, earlier created
+      ];
+
+      when(() => mockDatabase.rawQuery(any(), any())).thenAnswer((_) async => orderedReminders);
+
+      final List<Reminder> result = await repository.findByContactId(testContactId);
+
+      expect(result, hasLength(2));
+      expect(result[0].dueDate, equals('2024-01-10T09:00:00.000Z')); // Due date takes priority
+      expect(result[1].dueDate, equals('2024-01-10T09:00:00.000Z')); // Same due date, ordered by created_at
+      verify(() => mockDatabase.rawQuery(
+        any(),
+        any(),
+      )).called(1);
+    });
+
+    testWidgets('should throw DatabaseException on query error', (WidgetTester tester) async {
+      final Exception queryError = Exception('SQL syntax error');
+      when(() => mockDatabase.rawQuery(any(), any())).thenThrow(queryError);
+
+      expect(
+        () => repository.findByContactId(testContactId),
+        throwsA(isA<DatabaseException>().having(
+          (e) => e.message,
+          'message',
+          contains('An unexpected error occurred'),
+        )),
+      );
+
+      verify(() => mockDatabase.rawQuery(any(), <dynamic>[testContactId])).called(1);
+    });
+  });
+
+  group('SqliteReminderRepository - findActive', () {
+    testWidgets('should find all active reminders ordered by due_date ASC', (WidgetTester tester) async {
+      final List<Map<String, dynamic>> activeReminders = mockRemindersResponse
+          .where((reminder) => reminder['active'] == 1)
+          .toList();
+
+      when(() => mockDatabase.rawQuery(any())).thenAnswer((_) async => activeReminders);
+
+      final List<Reminder> result = await repository.findActive();
+
+      expect(result, hasLength(4)); // 4 active reminders in mock data
+      expect(result.every((reminder) => reminder.active), isTrue);
+      verify(() => mockDatabase.rawQuery(
+        '''
+        SELECT * FROM reminders
+        WHERE active = 1
+        ORDER BY due_date ASC
+      ''',
+      )).called(1);
+    });
+
+    testWidgets('should return empty list when no active reminders', (WidgetTester tester) async {
+      when(() => mockDatabase.rawQuery(any())).thenAnswer((_) async => <Map<String, dynamic>>[]);
+
+      final List<Reminder> result = await repository.findActive();
+
+      expect(result, isEmpty);
+      verify(() => mockDatabase.rawQuery(any())).called(1);
+    });
+
+    testWidgets('should order results by due_date ASC', (WidgetTester tester) async {
+      final List<Map<String, dynamic>> orderedActiveReminders = <Map<String, dynamic>>[
+        <String, dynamic>{...mockRemindersResponse[0], 'due_date': '2024-01-10T09:00:00.000Z'}, // Earlier
+        <String, dynamic>{...mockRemindersResponse[1], 'due_date': '2024-01-20T09:00:00.000Z'}, // Later
+      ];
+
+      when(() => mockDatabase.rawQuery(any())).thenAnswer((_) async => orderedActiveReminders);
+
+      final List<Reminder> result = await repository.findActive();
+
+      expect(result, hasLength(2));
+      expect(result[0].dueDate, equals('2024-01-10T09:00:00.000Z')); // Earlier due date first
+      expect(result[1].dueDate, equals('2024-01-20T09:00:00.000Z')); // Later due date second
+      verify(() => mockDatabase.rawQuery(any())).called(1);
+    });
+
+    testWidgets('should throw DatabaseException on query error', (WidgetTester tester) async {
+      final Exception queryError = Exception('SQL syntax error');
+      when(() => mockDatabase.rawQuery(any())).thenThrow(queryError);
+
+      expect(
+        () => repository.findActive(),
+        throwsA(isA<DatabaseException>().having(
+          (e) => e.message,
+          'message',
+          contains('An unexpected error occurred'),
+        )),
+      );
+
+      verify(() => mockDatabase.rawQuery(any())).called(1);
+    });
+  });
+
+  group('SqliteReminderRepository - findInactive', () {
+    testWidgets('should find all inactive reminders ordered by due_date ASC', (WidgetTester tester) async {
+      final List<Map<String, dynamic>> inactiveReminders = mockRemindersResponse
+          .where((reminder) => reminder['active'] == 0)
+          .toList();
+
+      when(() => mockDatabase.rawQuery(any())).thenAnswer((_) async => inactiveReminders);
+
+      final List<Reminder> result = await repository.findInactive();
+
+      expect(result, hasLength(1)); // 1 inactive reminder in mock data
+      expect(result.every((reminder) => !reminder.active), isTrue);
+      verify(() => mockDatabase.rawQuery(
+        '''
+        SELECT * FROM reminders
+        WHERE active = 0
+        ORDER BY due_date ASC
+      ''',
+      )).called(1);
+    });
+
+    testWidgets('should return empty list when no inactive reminders', (WidgetTester tester) async {
+      when(() => mockDatabase.rawQuery(any())).thenAnswer((_) async => <Map<String, dynamic>>[]);
+
+      final List<Reminder> result = await repository.findInactive();
+
+      expect(result, isEmpty);
+      verify(() => mockDatabase.rawQuery(any())).called(1);
+    });
+
+    testWidgets('should order results by due_date ASC', (WidgetTester tester) async {
+      final List<Map<String, dynamic>> orderedInactiveReminders = <Map<String, dynamic>>[
+        <String, dynamic>{...mockRemindersResponse[2], 'due_date': '2024-01-05T09:00:00.000Z', 'active': 0}, // Earlier
+        <String, dynamic>{...mockRemindersResponse[0], 'due_date': '2024-01-15T09:00:00.000Z', 'active': 0}, // Later
+      ];
+
+      when(() => mockDatabase.rawQuery(any())).thenAnswer((_) async => orderedInactiveReminders);
+
+      final List<Reminder> result = await repository.findInactive();
+
+      expect(result, hasLength(2));
+      expect(result[0].dueDate, equals('2024-01-05T09:00:00.000Z')); // Earlier due date first
+      expect(result[1].dueDate, equals('2024-01-15T09:00:00.000Z')); // Later due date second
+      verify(() => mockDatabase.rawQuery(any())).called(1);
+    });
+
+    testWidgets('should throw DatabaseException on query error', (WidgetTester tester) async {
+      final Exception queryError = Exception('SQL syntax error');
+      when(() => mockDatabase.rawQuery(any())).thenThrow(queryError);
+
+      expect(
+        () => repository.findInactive(),
+        throwsA(isA<DatabaseException>().having(
+          (e) => e.message,
+          'message',
+          contains('An unexpected error occurred'),
+        )),
+      );
+
+      verify(() => mockDatabase.rawQuery(any())).called(1);
+    });
+  });
+
+  group('SqliteReminderRepository - findByFrequency', () {
+    testWidgets('should find reminders by frequency yearly ordered by due_date ASC', (WidgetTester tester) async {
+      final List<Map<String, dynamic>> yearlyReminders = mockRemindersResponse
+          .where((reminder) => reminder['frequency'] == 'yearly')
+          .toList();
+
+      when(() => mockDatabase.rawQuery(any(), any())).thenAnswer((_) async => yearlyReminders);
+
+      final List<Reminder> result = await repository.findByFrequency(ReminderFrequency.yearly);
+
+      expect(result, hasLength(2)); // 2 yearly reminders in mock data
+      expect(result.every((reminder) => reminder.frequency == ReminderFrequency.yearly), isTrue);
+      verify(() => mockDatabase.rawQuery(
+        '''
+        SELECT * FROM reminders
+        WHERE frequency = ?
+        ORDER BY due_date ASC
+      ''',
+        <dynamic>['yearly'],
+      )).called(1);
+    });
+
+    testWidgets('should find reminders by frequency daily', (WidgetTester tester) async {
+      final List<Map<String, dynamic>> dailyReminders = mockRemindersResponse
+          .where((reminder) => reminder['frequency'] == 'daily')
+          .toList();
+
+      when(() => mockDatabase.rawQuery(any(), any())).thenAnswer((_) async => dailyReminders);
+
+      final List<Reminder> result = await repository.findByFrequency(ReminderFrequency.daily);
+
+      expect(result, hasLength(1)); // 1 daily reminder in mock data
+      expect(result.every((reminder) => reminder.frequency == ReminderFrequency.daily), isTrue);
+      verify(() => mockDatabase.rawQuery(
+        any(),
+        <dynamic>['daily'],
+      )).called(1);
+    });
+
+    testWidgets('should return empty list when no reminders of specified frequency', (WidgetTester tester) async {
+      when(() => mockDatabase.rawQuery(any(), any())).thenAnswer((_) async => <Map<String, dynamic>>[]);
+
+      final List<Reminder> result = await repository.findByFrequency(ReminderFrequency.monthly);
+
+      expect(result, isEmpty);
+      verify(() => mockDatabase.rawQuery(any(), <dynamic>['monthly'])).called(1);
+    });
+
+    testWidgets('should order results by due_date ASC', (WidgetTester tester) async {
+      final List<Map<String, dynamic>> orderedFrequencyReminders = <Map<String, dynamic>>[
+        <String, dynamic>{...mockRemindersResponse[0], 'due_date': '2024-01-10T09:00:00.000Z', 'frequency': 'weekly'}, // Earlier
+        <String, dynamic>{...mockRemindersResponse[1], 'due_date': '2024-01-20T09:00:00.000Z', 'frequency': 'weekly'}, // Later
+      ];
+
+      when(() => mockDatabase.rawQuery(any(), any())).thenAnswer((_) async => orderedFrequencyReminders);
+
+      final List<Reminder> result = await repository.findByFrequency(ReminderFrequency.weekly);
+
+      expect(result, hasLength(2));
+      expect(result[0].dueDate, equals('2024-01-10T09:00:00.000Z')); // Earlier due date first
+      expect(result[1].dueDate, equals('2024-01-20T09:00:00.000Z')); // Later due date second
+      verify(() => mockDatabase.rawQuery(any(), any())).called(1);
+    });
+
+    testWidgets('should throw DatabaseException on query error', (WidgetTester tester) async {
+      final Exception queryError = Exception('SQL syntax error');
+      when(() => mockDatabase.rawQuery(any(), any())).thenThrow(queryError);
+
+      expect(
+        () => repository.findByFrequency(ReminderFrequency.once),
+        throwsA(isA<DatabaseException>().having(
+          (e) => e.message,
+          'message',
+          contains('An unexpected error occurred'),
+        )),
+      );
+
+      verify(() => mockDatabase.rawQuery(any(), any())).called(1);
+    });
+  });
+
+  group('SqliteReminderRepository - findOverdue', () {
+    testWidgets('should find overdue active reminders ordered by due_date ASC', (WidgetTester tester) async {
+      // Only return the overdue active reminder (id: 4)
+      final List<Map<String, dynamic>> overdueReminders = <Map<String, dynamic>>[
+        <String, dynamic>{
+          'id': 4,
+          'contact_id': 789,
+          'title': 'Project deadline reminder',
+          'description': 'Complete quarterly report',
+          'due_date': overdueDate.toIso8601String(),
+          'frequency': 'once',
+          'active': 1,
+          'created_at': testDate.toIso8601String(),
+          'updated_at': testDate.toIso8601String(),
+        },
+      ];
+
+      when(() => mockDatabase.rawQuery(any(), any())).thenAnswer((_) async => overdueReminders);
+
+      final List<Reminder> result = await repository.findOverdue();
+
+      expect(result, hasLength(1)); // 1 overdue active reminder (id: 4)
+      expect(result.every((reminder) => reminder.active), isTrue);
+      verify(() => mockDatabase.rawQuery(any(), any())).called(1);
+    });
+
+    testWidgets('should return empty list when no overdue reminders', (WidgetTester tester) async {
+      when(() => mockDatabase.rawQuery(any(), any())).thenAnswer((_) async => <Map<String, dynamic>>[]);
+
+      final List<Reminder> result = await repository.findOverdue();
+
+      expect(result, isEmpty);
+      verify(() => mockDatabase.rawQuery(any(), any())).called(1);
+    });
+
+    testWidgets('should only include active reminders in overdue search', (WidgetTester tester) async {
+      final List<Map<String, dynamic>> activeOverdueOnly = <Map<String, dynamic>>[
+        <String, dynamic>{...mockRemindersResponse[3], 'active': 1, 'due_date': '2024-01-01T09:00:00.000Z'}, // Active overdue
+        // Note: inactive overdue should not be included
+      ];
+
+      when(() => mockDatabase.rawQuery(any(), any())).thenAnswer((_) async => activeOverdueOnly);
+
+      final List<Reminder> result = await repository.findOverdue();
+
+      expect(result, hasLength(1));
+      expect(result.first.active, isTrue);
+      verify(() => mockDatabase.rawQuery(any(), any())).called(1);
+    });
+
+    testWidgets('should use current DateTime for overdue comparison', (WidgetTester tester) async {
+      when(() => mockDatabase.rawQuery(any(), any())).thenAnswer((_) async => <Map<String, dynamic>>[]);
+
+      await repository.findOverdue();
+
+      verify(() => mockDatabase.rawQuery(any(), any())).called(1);
+    });
+
+    testWidgets('should order results by due_date ASC', (WidgetTester tester) async {
+      final List<Map<String, dynamic>> orderedOverdueReminders = <Map<String, dynamic>>[
+        <String, dynamic>{...mockRemindersResponse[3], 'due_date': '2024-01-01T09:00:00.000Z'}, // Earlier overdue
+        <String, dynamic>{...mockRemindersResponse[0], 'due_date': '2024-01-05T09:00:00.000Z'}, // Later overdue
+      ];
+
+      when(() => mockDatabase.rawQuery(any(), any())).thenAnswer((_) async => orderedOverdueReminders);
+
+      final List<Reminder> result = await repository.findOverdue();
+
+      expect(result, hasLength(2));
+      expect(result[0].dueDate, equals('2024-01-01T09:00:00.000Z')); // Earlier overdue first
+      expect(result[1].dueDate, equals('2024-01-05T09:00:00.000Z')); // Later overdue second
+      verify(() => mockDatabase.rawQuery(any(), any())).called(1);
+    });
+
+    testWidgets('should throw DatabaseException on query error', (WidgetTester tester) async {
+      final Exception queryError = Exception('SQL syntax error');
+      when(() => mockDatabase.rawQuery(any(), any())).thenThrow(queryError);
+
+      expect(
+        () => repository.findOverdue(),
+        throwsA(isA<DatabaseException>().having(
+          (e) => e.message,
+          'message',
+          contains('An unexpected error occurred'),
+        )),
+      );
+
+      verify(() => mockDatabase.rawQuery(any(), any())).called(1);
+    });
+  });
+
+  group('SqliteReminderRepository - findUpcoming', () {
+    testWidgets('should find upcoming active reminders within days ahead', (WidgetTester tester) async {
+      const int daysAhead = 7;
+      final DateTime mockNow = DateTime(2024, 1, 15, 12, 0);
+      final DateTime futureDate = mockNow.add(const Duration(days: daysAhead));
+
+      final List<Map<String, dynamic>> upcomingReminders = mockRemindersResponse
+          .where((reminder) =>
+              reminder['active'] == 1 &&
+              DateTime.parse(reminder['due_date'] as String).isAfter(mockNow) &&
+              DateTime.parse(reminder['due_date'] as String).isBefore(futureDate))
+          .toList();
+
+      when(() => mockDatabase.rawQuery(any(), any())).thenAnswer((_) async => upcomingReminders);
+
+      final List<Reminder> result = await repository.findUpcoming(daysAhead);
+
+      expect(result.every((reminder) => reminder.active), isTrue);
+      verify(() => mockDatabase.rawQuery(any(), any())).called(1);
+    });
+
+    testWidgets('should return empty list when no upcoming reminders', (WidgetTester tester) async {
+      const int daysAhead = 7;
+      when(() => mockDatabase.rawQuery(any(), any())).thenAnswer((_) async => <Map<String, dynamic>>[]);
+
+      final List<Reminder> result = await repository.findUpcoming(daysAhead);
+
+      expect(result, isEmpty);
+      verify(() => mockDatabase.rawQuery(any(), any())).called(1);
+    });
+
+    testWidgets('should handle zero days ahead', (WidgetTester tester) async {
+      const int daysAhead = 0;
+      when(() => mockDatabase.rawQuery(any(), any())).thenAnswer((_) async => <Map<String, dynamic>>[]);
+
+      final List<Reminder> result = await repository.findUpcoming(daysAhead);
+
+      expect(result, isEmpty);
+      verify(() => mockDatabase.rawQuery(any(), any())).called(1);
+    });
+
+    testWidgets('should handle large days ahead value', (WidgetTester tester) async {
+      const int daysAhead = 365;
+      when(() => mockDatabase.rawQuery(any(), any())).thenAnswer((_) async => mockRemindersResponse.take(2).toList());
+
+      final List<Reminder> result = await repository.findUpcoming(daysAhead);
+
+      expect(result, hasLength(2));
+      verify(() => mockDatabase.rawQuery(any(), any())).called(1);
+    });
+
+    testWidgets('should only include active reminders in upcoming search', (WidgetTester tester) async {
+      const int daysAhead = 30;
+      final List<Map<String, dynamic>> activeUpcomingOnly = <Map<String, dynamic>>[
+        <String, dynamic>{...mockRemindersResponse[0], 'active': 1, 'due_date': '2024-01-20T09:00:00.000Z'}, // Active upcoming
+      ];
+
+      when(() => mockDatabase.rawQuery(any(), any())).thenAnswer((_) async => activeUpcomingOnly);
+
+      final List<Reminder> result = await repository.findUpcoming(daysAhead);
+
+      expect(result, hasLength(1));
+      expect(result.first.active, isTrue);
+      verify(() => mockDatabase.rawQuery(any(), any())).called(1);
+    });
+
+    testWidgets('should order results by due_date ASC', (WidgetTester tester) async {
+      const int daysAhead = 30;
+      final List<Map<String, dynamic>> orderedUpcomingReminders = <Map<String, dynamic>>[
+        <String, dynamic>{...mockRemindersResponse[0], 'due_date': '2024-01-20T09:00:00.000Z'}, // Earlier upcoming
+        <String, dynamic>{...mockRemindersResponse[1], 'due_date': '2024-01-25T09:00:00.000Z'}, // Later upcoming
+      ];
+
+      when(() => mockDatabase.rawQuery(any(), any())).thenAnswer((_) async => orderedUpcomingReminders);
+
+      final List<Reminder> result = await repository.findUpcoming(daysAhead);
+
+      expect(result, hasLength(2));
+      expect(result[0].dueDate, equals('2024-01-20T09:00:00.000Z')); // Earlier upcoming first
+      expect(result[1].dueDate, equals('2024-01-25T09:00:00.000Z')); // Later upcoming second
+      verify(() => mockDatabase.rawQuery(any(), any())).called(1);
+    });
+
+    testWidgets('should throw DatabaseException on query error', (WidgetTester tester) async {
+      final Exception queryError = Exception('SQL syntax error');
+      when(() => mockDatabase.rawQuery(any(), any())).thenThrow(queryError);
+
+      expect(
+        () => repository.findUpcoming(7),
+        throwsA(isA<DatabaseException>().having(
+          (e) => e.message,
+          'message',
+          contains('An unexpected error occurred'),
+        )),
+      );
+
+      verify(() => mockDatabase.rawQuery(any(), any())).called(1);
+    });
+  });
+
+  group('SqliteReminderRepository - findByDateRange', () {
+    testWidgets('should find reminders within date range ordered by due_date ASC', (WidgetTester tester) async {
+      final DateTime startDate = DateTime(2024, 1, 10);
+      final DateTime endDate = DateTime(2024, 1, 20);
+
+      final List<Map<String, dynamic>> dateRangeReminders = mockRemindersResponse
+          .where((reminder) {
+            final DateTime reminderDate = DateTime.parse(reminder['due_date'] as String);
+            return reminderDate.isAfter(startDate.subtract(const Duration(days: 1))) &&
+                   reminderDate.isBefore(endDate.add(const Duration(days: 1)));
+          })
+          .toList();
+
+      when(() => mockDatabase.rawQuery(any(), any())).thenAnswer((_) async => dateRangeReminders);
+
+      final List<Reminder> result = await repository.findByDateRange(startDate, endDate);
+
+      verify(() => mockDatabase.rawQuery(
+        '''
+        SELECT * FROM reminders
+        WHERE due_date BETWEEN ? AND ?
+        ORDER BY due_date ASC
+      ''',
+        <dynamic>[startDate.toIso8601String(), endDate.toIso8601String()],
+      )).called(1);
+    });
+
+    testWidgets('should return empty list when no reminders in date range', (WidgetTester tester) async {
+      final DateTime startDate = DateTime(2025, 1, 1);
+      final DateTime endDate = DateTime(2025, 1, 31);
+      when(() => mockDatabase.rawQuery(any(), any())).thenAnswer((_) async => <Map<String, dynamic>>[]);
+
+      final List<Reminder> result = await repository.findByDateRange(startDate, endDate);
+
+      expect(result, isEmpty);
+      verify(() => mockDatabase.rawQuery(any(), any())).called(1);
+    });
+
+    testWidgets('should handle same start and end date', (WidgetTester tester) async {
+      final DateTime singleDate = DateTime(2024, 1, 15);
+      final List<Map<String, dynamic>> singleDateReminders = mockRemindersResponse
+          .where((reminder) => reminder['due_date'].toString().startsWith('2024-01-15'))
+          .toList();
+
+      when(() => mockDatabase.rawQuery(any(), any())).thenAnswer((_) async => singleDateReminders);
+
+      final List<Reminder> result = await repository.findByDateRange(singleDate, singleDate);
+
+      expect(result, hasLength(1));
+      verify(() => mockDatabase.rawQuery(any(), any())).called(1);
+    });
+
+    testWidgets('should handle reversed date range (end before start)', (WidgetTester tester) async {
+      final DateTime startDate = DateTime(2024, 1, 20);
+      final DateTime endDate = DateTime(2024, 1, 10); // End before start
+      when(() => mockDatabase.rawQuery(any(), any())).thenAnswer((_) async => <Map<String, dynamic>>[]);
+
+      final List<Reminder> result = await repository.findByDateRange(startDate, endDate);
+
+      expect(result, isEmpty); // SQL BETWEEN should return no results
+      verify(() => mockDatabase.rawQuery(any(), any())).called(1);
+    });
+
+    testWidgets('should order results by due_date ASC', (WidgetTester tester) async {
+      final List<Map<String, dynamic>> orderedDateReminders = <Map<String, dynamic>>[
+        <String, dynamic>{...mockRemindersResponse[0], 'due_date': '2024-01-15T09:00:00.000Z'}, // Earlier
+        <String, dynamic>{...mockRemindersResponse[1], 'due_date': '2024-01-18T09:00:00.000Z'}, // Later
+      ];
+
+      when(() => mockDatabase.rawQuery(any(), any())).thenAnswer((_) async => orderedDateReminders);
+
+      final List<Reminder> result = await repository.findByDateRange(
+        DateTime(2024, 1, 10),
+        DateTime(2024, 1, 20),
+      );
+
+      expect(result, hasLength(2));
+      expect(result[0].dueDate, equals('2024-01-15T09:00:00.000Z')); // Earlier due date first
+      expect(result[1].dueDate, equals('2024-01-18T09:00:00.000Z')); // Later due date second
+      verify(() => mockDatabase.rawQuery(any(), any())).called(1);
+    });
+
+    testWidgets('should format dates correctly for SQL query', (WidgetTester tester) async {
+      final DateTime startDate = DateTime(2024, 1, 15, 14, 30, 45); // With time
+      final DateTime endDate = DateTime(2024, 1, 20, 9, 15, 30); // With time
+      when(() => mockDatabase.rawQuery(any(), any())).thenAnswer((_) async => <Map<String, dynamic>>[]);
+
+      await repository.findByDateRange(startDate, endDate);
+
+      // Should use full ISO8601 format (includes time)
+      verify(() => mockDatabase.rawQuery(
+        any(),
+        <dynamic>[startDate.toIso8601String(), endDate.toIso8601String()],
+      )).called(1);
+    });
+
+    testWidgets('should throw DatabaseException on query error', (WidgetTester tester) async {
+      final Exception queryError = Exception('SQL syntax error');
+      when(() => mockDatabase.rawQuery(any(), any())).thenThrow(queryError);
+
+      expect(
+        () => repository.findByDateRange(DateTime(2024, 1, 1), DateTime(2024, 12, 31)),
+        throwsA(isA<DatabaseException>().having(
+          (e) => e.message,
+          'message',
+          contains('An unexpected error occurred'),
+        )),
+      );
+
+      verify(() => mockDatabase.rawQuery(any(), any())).called(1);
+    });
+  });
+
+  group('SqliteReminderRepository - findByTitle', () {
+    testWidgets('should find reminders by title with LIKE search ordered by due_date ASC', (WidgetTester tester) async {
+      const String searchTitle = 'Call';
+      final List<Map<String, dynamic>> titleMatches = mockRemindersResponse
+          .where((reminder) => (reminder['title'] as String).contains(searchTitle))
+          .toList();
+
+      when(() => mockDatabase.rawQuery(any(), any())).thenAnswer((_) async => titleMatches);
+
+      final List<Reminder> result = await repository.findByTitle(searchTitle);
+
+      expect(result, hasLength(1)); // 'Call John for birthday' matches
+      expect(result.first.title.contains(searchTitle), isTrue);
+      verify(() => mockDatabase.rawQuery(
+        '''
+        SELECT * FROM reminders
+        WHERE title LIKE ?
+        ORDER BY due_date ASC
+      ''',
+        <dynamic>['%$searchTitle%'],
+      )).called(1);
+    });
+
+    testWidgets('should return empty list when no titles match search', (WidgetTester tester) async {
+      const String searchTitle = 'NonExistentTitle';
+      when(() => mockDatabase.rawQuery(any(), any())).thenAnswer((_) async => <Map<String, dynamic>>[]);
+
+      final List<Reminder> result = await repository.findByTitle(searchTitle);
+
+      expect(result, isEmpty);
+      verify(() => mockDatabase.rawQuery(any(), <dynamic>['%$searchTitle%'])).called(1);
+    });
+
+    testWidgets('should handle empty search string', (WidgetTester tester) async {
+      const String searchTitle = '';
+      when(() => mockDatabase.rawQuery(any(), any())).thenAnswer((_) async => mockRemindersResponse);
+
+      final List<Reminder> result = await repository.findByTitle(searchTitle);
+
+      expect(result, hasLength(5)); // Should match all reminders with empty pattern
+      verify(() => mockDatabase.rawQuery(any(), <dynamic>['%%'])).called(1);
+    });
+
+    testWidgets('should handle special characters in search pattern', (WidgetTester tester) async {
+      const String searchTitle = "John's";
+      when(() => mockDatabase.rawQuery(any(), any())).thenAnswer((_) async => <Map<String, dynamic>>[]);
+
+      final List<Reminder> result = await repository.findByTitle(searchTitle);
+
+      expect(result, isEmpty);
+      verify(() => mockDatabase.rawQuery(any(), <dynamic>['%$searchTitle%'])).called(1);
+    });
+
+    testWidgets('should be case sensitive in search', (WidgetTester tester) async {
+      const String searchTitle = 'CALL';
+      when(() => mockDatabase.rawQuery(any(), any())).thenAnswer((_) async => <Map<String, dynamic>>[]);
+
+      final List<Reminder> result = await repository.findByTitle(searchTitle);
+
+      expect(result, isEmpty); // 'CALL' != 'Call'
+      verify(() => mockDatabase.rawQuery(any(), <dynamic>['%$searchTitle%'])).called(1);
+    });
+
+    testWidgets('should order results by due_date ASC', (WidgetTester tester) async {
+      const String searchTitle = 'reminder';
+      final List<Map<String, dynamic>> orderedTitleMatches = <Map<String, dynamic>>[
+        <String, dynamic>{...mockRemindersResponse[3], 'due_date': '2024-01-10T09:00:00.000Z', 'title': 'Project deadline reminder'}, // Earlier
+        <String, dynamic>{...mockRemindersResponse[0], 'due_date': '2024-01-20T09:00:00.000Z', 'title': 'Monthly reminder'}, // Later
+      ];
+
+      when(() => mockDatabase.rawQuery(any(), any())).thenAnswer((_) async => orderedTitleMatches);
+
+      final List<Reminder> result = await repository.findByTitle(searchTitle);
+
+      expect(result, hasLength(2));
+      expect(result[0].dueDate, equals('2024-01-10T09:00:00.000Z')); // Earlier due date first
+      expect(result[1].dueDate, equals('2024-01-20T09:00:00.000Z')); // Later due date second
+      verify(() => mockDatabase.rawQuery(any(), any())).called(1);
+    });
+
+    testWidgets('should throw DatabaseException on query error', (WidgetTester tester) async {
+      final Exception queryError = Exception('SQL syntax error');
+      when(() => mockDatabase.rawQuery(any(), any())).thenThrow(queryError);
+
+      expect(
+        () => repository.findByTitle('test'),
+        throwsA(isA<DatabaseException>().having(
+          (e) => e.message,
+          'message',
+          contains('An unexpected error occurred'),
+        )),
+      );
+
+      verify(() => mockDatabase.rawQuery(any(), any())).called(1);
+    });
+  });
+
+  group('SqliteReminderRepository - countByContactId', () {
+    testWidgets('should count reminders by contact ID', (WidgetTester tester) async {
+      const int expectedCount = 3;
+      when(() => mockDatabase.rawQuery(any(), any())).thenAnswer((_) async => <Map<String, dynamic>>[
+        <String, dynamic>{'count': expectedCount},
+      ]);
+
+      final int result = await repository.countByContactId(testContactId);
+
+      expect(result, equals(expectedCount));
+      verify(() => mockDatabase.rawQuery(
+        '''
+        SELECT COUNT(*) as count FROM reminders
+        WHERE contact_id = ?
+      ''',
+        <dynamic>[testContactId],
+      )).called(1);
+    });
+
+    testWidgets('should return zero when no reminders for contact', (WidgetTester tester) async {
+      const int expectedCount = 0;
+      when(() => mockDatabase.rawQuery(any(), any())).thenAnswer((_) async => <Map<String, dynamic>>[
+        <String, dynamic>{'count': expectedCount},
+      ]);
+
+      final int result = await repository.countByContactId(999);
+
+      expect(result, equals(expectedCount));
+      verify(() => mockDatabase.rawQuery(any(), any())).called(1);
+    });
+
+    testWidgets('should handle large contact ID values', (WidgetTester tester) async {
+      const int largeContactId = 2147483647; // Max int32
+      const int expectedCount = 1;
+      when(() => mockDatabase.rawQuery(any(), any())).thenAnswer((_) async => <Map<String, dynamic>>[
+        <String, dynamic>{'count': expectedCount},
+      ]);
+
+      final int result = await repository.countByContactId(largeContactId);
+
+      expect(result, equals(expectedCount));
+      verify(() => mockDatabase.rawQuery(any(), <dynamic>[largeContactId])).called(1);
+    });
+
+    testWidgets('should throw DatabaseException on query error', (WidgetTester tester) async {
+      final Exception queryError = Exception('SQL syntax error');
+      when(() => mockDatabase.rawQuery(any(), any())).thenThrow(queryError);
+
+      expect(
+        () => repository.countByContactId(testContactId),
+        throwsA(isA<DatabaseException>().having(
+          (e) => e.message,
+          'message',
+          contains('An unexpected error occurred'),
+        )),
+      );
+
+      verify(() => mockDatabase.rawQuery(any(), any())).called(1);
+    });
+  });
+
+  group('SqliteReminderRepository - countActiveByContactId', () {
+    testWidgets('should count active reminders by contact ID', (WidgetTester tester) async {
+      const int expectedCount = 2;
+      when(() => mockDatabase.rawQuery(any(), any())).thenAnswer((_) async => <Map<String, dynamic>>[
+        <String, dynamic>{'count': expectedCount},
+      ]);
+
+      final int result = await repository.countActiveByContactId(testContactId);
+
+      expect(result, equals(expectedCount));
+      verify(() => mockDatabase.rawQuery(
+        '''
+        SELECT COUNT(*) as count FROM reminders
+        WHERE contact_id = ? AND active = 1
+      ''',
+        <dynamic>[testContactId],
+      )).called(1);
+    });
+
+    testWidgets('should return zero when no active reminders for contact', (WidgetTester tester) async {
+      const int expectedCount = 0;
+      when(() => mockDatabase.rawQuery(any(), any())).thenAnswer((_) async => <Map<String, dynamic>>[
+        <String, dynamic>{'count': expectedCount},
+      ]);
+
+      final int result = await repository.countActiveByContactId(999);
+
+      expect(result, equals(expectedCount));
+      verify(() => mockDatabase.rawQuery(any(), any())).called(1);
+    });
+
+    testWidgets('should only count active reminders', (WidgetTester tester) async {
+      const int expectedCount = 1; // Only active reminders counted
+      when(() => mockDatabase.rawQuery(any(), any())).thenAnswer((_) async => <Map<String, dynamic>>[
+        <String, dynamic>{'count': expectedCount},
+      ]);
+
+      final int result = await repository.countActiveByContactId(testContactId);
+
+      expect(result, equals(expectedCount));
+      verify(() => mockDatabase.rawQuery(
+        any(),
+        any(),
+      )).called(1);
+    });
+
+    testWidgets('should throw DatabaseException on query error', (WidgetTester tester) async {
+      final Exception queryError = Exception('SQL syntax error');
+      when(() => mockDatabase.rawQuery(any(), any())).thenThrow(queryError);
+
+      expect(
+        () => repository.countActiveByContactId(testContactId),
+        throwsA(isA<DatabaseException>().having(
+          (e) => e.message,
+          'message',
+          contains('An unexpected error occurred'),
+        )),
+      );
+
+      verify(() => mockDatabase.rawQuery(any(), any())).called(1);
+    });
+  });
+
+  group('SqliteReminderRepository - findNextDueByContactId', () {
+    testWidgets('should find next due active reminder for contact ordered by due_date ASC', (WidgetTester tester) async {
+      final Map<String, dynamic> nextDueReminder = mockRemindersResponse[0]; // Future reminder
+      when(() => mockDatabase.rawQuery(any(), any())).thenAnswer((_) async => <Map<String, dynamic>>[
+        nextDueReminder,
+      ]);
+
+      final Reminder? result = await repository.findNextDueByContactId(testContactId);
+
+      expect(result, isNotNull);
+      expect(result!.contactId, equals(testContactId));
+      expect(result.active, isTrue);
+      verify(() => mockDatabase.rawQuery(
+        '''
+        SELECT * FROM reminders
+        WHERE contact_id = ? AND active = 1 AND due_date >= ?
+        ORDER BY due_date ASC
+        LIMIT 1
+      ''',
+        <dynamic>[testContactId, any()], // DateTime.now() value will vary
+      )).called(1);
+    });
+
+    testWidgets('should return null when no next due reminder for contact', (WidgetTester tester) async {
+      when(() => mockDatabase.rawQuery(any(), any())).thenAnswer((_) async => <Map<String, dynamic>>[]);
+
+      final Reminder? result = await repository.findNextDueByContactId(999);
+
+      expect(result, isNull);
+      verify(() => mockDatabase.rawQuery(any(), any())).called(1);
+    });
+
+    testWidgets('should only find active reminders in future', (WidgetTester tester) async {
+      final Map<String, dynamic> futureActiveReminder = <String, dynamic>{
+        ...mockRemindersResponse[0],
+        'active': 1,
+        'due_date': DateTime.now().add(const Duration(days: 1)).toIso8601String(),
+      };
+      when(() => mockDatabase.rawQuery(any(), any())).thenAnswer((_) async => <Map<String, dynamic>>[
+        futureActiveReminder,
+      ]);
+
+      final Reminder? result = await repository.findNextDueByContactId(testContactId);
+
+      expect(result, isNotNull);
+      expect(result!.active, isTrue);
+      verify(() => mockDatabase.rawQuery(
+        any(),
+        any(),
+      )).called(1);
+    });
+
+    testWidgets('should use current DateTime for future comparison', (WidgetTester tester) async {
+      when(() => mockDatabase.rawQuery(any(), any())).thenAnswer((_) async => <Map<String, dynamic>>[]);
+
+      await repository.findNextDueByContactId(testContactId);
+
+      verify(() => mockDatabase.rawQuery(
+        any(),
+        <dynamic>[testContactId, any()], // Should pass current DateTime.now().toIso8601String()
+      )).called(1);
+    });
+
+    testWidgets('should limit results to 1 reminder', (WidgetTester tester) async {
+      final Map<String, dynamic> nextDueReminder = mockRemindersResponse[0];
+      when(() => mockDatabase.rawQuery(any(), any())).thenAnswer((_) async => <Map<String, dynamic>>[
+        nextDueReminder,
+      ]);
+
+      final Reminder? result = await repository.findNextDueByContactId(testContactId);
+
+      expect(result, isNotNull);
+      verify(() => mockDatabase.rawQuery(
+        any(),
+        any(),
+      )).called(1);
+    });
+
+    testWidgets('should handle zero contact ID', (WidgetTester tester) async {
+      const int zeroContactId = 0;
+      when(() => mockDatabase.rawQuery(any(), any())).thenAnswer((_) async => <Map<String, dynamic>>[]);
+
+      final Reminder? result = await repository.findNextDueByContactId(zeroContactId);
+
+      expect(result, isNull);
+      verify(() => mockDatabase.rawQuery(any(), any())).called(1);
+    });
+
+    testWidgets('should throw DatabaseException on query error', (WidgetTester tester) async {
+      final Exception queryError = Exception('SQL syntax error');
+      when(() => mockDatabase.rawQuery(any(), any())).thenThrow(queryError);
+
+      expect(
+        () => repository.findNextDueByContactId(testContactId),
+        throwsA(isA<DatabaseException>().having(
+          (e) => e.message,
+          'message',
+          contains('An unexpected error occurred'),
+        )),
+      );
+
+      verify(() => mockDatabase.rawQuery(any(), any())).called(1);
+    });
+  });
+
+  group('SqliteReminderRepository - fromMap', () {
+    testWidgets('should correctly convert database map to Reminder model with all fields', (WidgetTester tester) async {
+      final Map<String, dynamic> completeReminderMap = mockRemindersResponse[0];
+
+      final Reminder result = repository.fromMap(completeReminderMap);
+
+      expect(result.id, equals(1));
+      expect(result.contactId, equals(123));
+      expect(result.title, equals('Call John for birthday'));
+      expect(result.description, equals('Remember to wish happy birthday'));
+      expect(result.dueDate, equals(futureDate.toIso8601String()));
+      expect(result.frequency, equals(ReminderFrequency.yearly));
+      expect(result.active, isTrue);
+      expect(result.createdAt, isA<DateTime>());
+    });
+
+    testWidgets('should handle null values correctly when converting from map', (WidgetTester tester) async {
+      final Map<String, dynamic> reminderWithNulls = mockRemindersResponse[1];
+
+      final Reminder result = repository.fromMap(reminderWithNulls);
+
+      expect(result.id, equals(2));
+      expect(result.contactId, equals(456));
+      expect(result.title, equals('Weekly check-in with team'));
+      expect(result.description, isNull);
+      expect(result.frequency, equals(ReminderFrequency.weekly));
+      expect(result.active, isTrue);
+    });
+
+    testWidgets('should handle active status conversion correctly', (WidgetTester tester) async {
+      final Map<String, dynamic> inactiveReminderMap = mockRemindersResponse[2]; // active: 0
+
+      final Reminder result = repository.fromMap(inactiveReminderMap);
+
+      expect(result.active, isFalse); // active: 0 -> false
+      expect(result.frequency, equals(ReminderFrequency.yearly));
+    });
+  });
+
+  group('SqliteReminderRepository - Edge Cases', () {
+    testWidgets('should handle very long reminder titles', (WidgetTester tester) async {
+      final String longTitle = 'A' * 1000; // Very long title
+      when(() => mockDatabase.rawQuery(any(), any())).thenAnswer((_) async => <Map<String, dynamic>>[]);
+
+      final List<Reminder> result = await repository.findByTitle(longTitle);
+
+      expect(result, isEmpty);
+      verify(() => mockDatabase.rawQuery(any(), <dynamic>['%$longTitle%'])).called(1);
+    });
+
+    testWidgets('should handle unicode characters in search', (WidgetTester tester) async {
+      const String unicodeTitle = '🎉 Birthday 📅';
+      when(() => mockDatabase.rawQuery(any(), any())).thenAnswer((_) async => <Map<String, dynamic>>[]);
+
+      final List<Reminder> result = await repository.findByTitle(unicodeTitle);
+
+      expect(result, isEmpty);
+      verify(() => mockDatabase.rawQuery(any(), <dynamic>['%$unicodeTitle%'])).called(1);
+    });
+
+    testWidgets('should handle very large contact IDs', (WidgetTester tester) async {
+      const int largeContactId = 2147483647; // Max int32
+      when(() => mockDatabase.rawQuery(any(), any())).thenAnswer((_) async => <Map<String, dynamic>>[]);
+
+      final List<Reminder> result = await repository.findByContactId(largeContactId);
+
+      expect(result, isEmpty);
+      verify(() => mockDatabase.rawQuery(any(), <dynamic>[largeContactId])).called(1);
+    });
+
+    testWidgets('should handle very old dates', (WidgetTester tester) async {
+      final DateTime veryOldDate = DateTime(1900, 1, 1);
+      final DateTime recentDate = DateTime(2024, 12, 31);
+      when(() => mockDatabase.rawQuery(any(), any())).thenAnswer((_) async => <Map<String, dynamic>>[]);
+
+      final List<Reminder> result = await repository.findByDateRange(veryOldDate, recentDate);
+
+      expect(result, isEmpty);
+      verify(() => mockDatabase.rawQuery(any(), any())).called(1);
+    });
+
+    testWidgets('should handle simultaneous frequency queries', (WidgetTester tester) async {
+      // Test that different frequency types can be queried without interference
+      when(() => mockDatabase.rawQuery(any(), any())).thenAnswer((_) async => <Map<String, dynamic>>[]);
+
+      final List<Reminder> dailyResults = await repository.findByFrequency(ReminderFrequency.daily);
+      final List<Reminder> weeklyResults = await repository.findByFrequency(ReminderFrequency.weekly);
+      final List<Reminder> monthlyResults = await repository.findByFrequency(ReminderFrequency.monthly);
+
+      expect(dailyResults, isEmpty);
+      expect(weeklyResults, isEmpty);
+      expect(monthlyResults, isEmpty);
+      verify(() => mockDatabase.rawQuery(any(), <dynamic>['daily'])).called(1);
+      verify(() => mockDatabase.rawQuery(any(), <dynamic>['weekly'])).called(1);
+      verify(() => mockDatabase.rawQuery(any(), <dynamic>['monthly'])).called(1);
+    });
+
+    testWidgets('should handle extreme days ahead values for upcoming reminders', (WidgetTester tester) async {
+      const int extremeDaysAhead = 999999;
+      when(() => mockDatabase.rawQuery(any(), any())).thenAnswer((_) async => <Map<String, dynamic>>[]);
+
+      final List<Reminder> result = await repository.findUpcoming(extremeDaysAhead);
+
+      expect(result, isEmpty);
+      verify(() => mockDatabase.rawQuery(any(), any())).called(1);
+    });
+  });
+}

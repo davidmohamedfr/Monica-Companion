@@ -1,0 +1,755 @@
+import 'package:flutter_test/flutter_test.dart';
+import 'package:mocktail/mocktail.dart';
+import 'package:monica_companion/core/errors/exceptions.dart';
+import 'package:monica_companion/core/errors/failures.dart';
+import 'package:monica_companion/db/interfaces/database_interface.dart';
+import 'package:monica_companion/db/models/debt.dart';
+import 'package:monica_companion/db/repositories/sqlite_debt_repository.dart';
+
+// Mock classes
+class MockDatabaseInterface extends Mock implements DatabaseInterface {}
+
+void main() {
+  late SqliteDebtRepository repository;
+  late MockDatabaseInterface mockDatabase;
+
+  // Test constants
+  const int testContactId = 123;
+  final DateTime testDate = DateTime(2024, 1, 15, 10, 30);
+
+  final List<Map<String, dynamic>> mockDebtsResponse = <Map<String, dynamic>>[
+    <String, dynamic>{
+      'id': 1,
+      'contact_id': 123,
+      'amount': 100.50,
+      'currency': 'USD',
+      'type': 'owed_to_me',
+      'date': '2024-01-15',
+      'description': 'Loan for lunch',
+      'paid': 0,
+      'created_at': testDate.toIso8601String(),
+      'updated_at': testDate.toIso8601String(),
+    },
+    <String, dynamic>{
+      'id': 2,
+      'contact_id': 456,
+      'amount': 250.00,
+      'currency': 'EUR',
+      'type': 'i_owe',
+      'date': '2024-01-10',
+      'description': 'Concert tickets',
+      'paid': 1,
+      'created_at': testDate.toIso8601String(),
+      'updated_at': testDate.toIso8601String(),
+    },
+    <String, dynamic>{
+      'id': 3,
+      'contact_id': 123,
+      'amount': 75.25,
+      'currency': 'USD',
+      'type': 'i_owe',
+      'date': '2024-01-20',
+      'description': null,
+      'paid': 0,
+      'created_at': testDate.toIso8601String(),
+      'updated_at': null,
+    },
+    <String, dynamic>{
+      'id': 4,
+      'contact_id': 789,
+      'amount': 500.00,
+      'currency': 'USD',
+      'type': 'owed_to_me',
+      'date': '2024-01-05',
+      'description': 'Equipment rental',
+      'paid': 0,
+      'created_at': testDate.toIso8601String(),
+      'updated_at': testDate.toIso8601String(),
+    },
+  ];
+
+  setUpAll(() {
+    // Register fallback values for mocktail
+    registerFallbackValue(MockDatabaseInterface());
+  });
+
+  setUp(() {
+    mockDatabase = MockDatabaseInterface();
+    repository = SqliteDebtRepository(mockDatabase);
+
+    // Setup default mock behaviors
+    when(() => mockDatabase.rawQuery(any(), any())).thenAnswer((_) async => <Map<String, dynamic>>[]);
+    when(() => mockDatabase.rawQuery(any())).thenAnswer((_) async => <Map<String, dynamic>>[]);
+  });
+
+  group('SqliteDebtRepository - findByContactId', () {
+    testWidgets('should find debts by contact ID ordered by date DESC', (WidgetTester tester) async {
+      final List<Map<String, dynamic>> contactDebts = mockDebtsResponse
+          .where((debt) => debt['contact_id'] == testContactId)
+          .toList();
+
+      when(() => mockDatabase.rawQuery(any(), any())).thenAnswer((_) async => contactDebts);
+
+      final List<Debt> result = await repository.findByContactId(testContactId);
+
+      expect(result, hasLength(2)); // contact_id 123 has 2 debts
+      expect(result.every((debt) => debt.contactId == testContactId), isTrue);
+      verify(() => mockDatabase.rawQuery(
+        '''
+        SELECT * FROM debts
+        WHERE contact_id = ?
+        ORDER BY date DESC
+      ''',
+        <dynamic>[testContactId],
+      )).called(1);
+    });
+
+    testWidgets('should return empty list when no debts found for contact', (WidgetTester tester) async {
+      const int nonExistentContactId = 999;
+      when(() => mockDatabase.rawQuery(any(), any())).thenAnswer((_) async => <Map<String, dynamic>>[]);
+
+      final List<Debt> result = await repository.findByContactId(nonExistentContactId);
+
+      expect(result, isEmpty);
+      verify(() => mockDatabase.rawQuery(any(), <dynamic>[nonExistentContactId])).called(1);
+    });
+
+    testWidgets('should handle zero contact ID', (WidgetTester tester) async {
+      const int zeroContactId = 0;
+      when(() => mockDatabase.rawQuery(any(), any())).thenAnswer((_) async => <Map<String, dynamic>>[]);
+
+      final List<Debt> result = await repository.findByContactId(zeroContactId);
+
+      expect(result, isEmpty);
+      verify(() => mockDatabase.rawQuery(any(), <dynamic>[zeroContactId])).called(1);
+    });
+
+    testWidgets('should handle negative contact ID', (WidgetTester tester) async {
+      const int negativeContactId = -1;
+      when(() => mockDatabase.rawQuery(any(), any())).thenAnswer((_) async => <Map<String, dynamic>>[]);
+
+      final List<Debt> result = await repository.findByContactId(negativeContactId);
+
+      expect(result, isEmpty);
+      verify(() => mockDatabase.rawQuery(any(), <dynamic>[negativeContactId])).called(1);
+    });
+
+    testWidgets('should order results by date DESC', (WidgetTester tester) async {
+      final List<Map<String, dynamic>> orderedDebts = <Map<String, dynamic>>[
+        <String, dynamic>{...mockDebtsResponse[2], 'date': '2024-01-20'}, // Latest
+        <String, dynamic>{...mockDebtsResponse[0], 'date': '2024-01-15'}, // Earlier
+      ];
+
+      when(() => mockDatabase.rawQuery(any(), any())).thenAnswer((_) async => orderedDebts);
+
+      final List<Debt> result = await repository.findByContactId(testContactId);
+
+      expect(result, hasLength(2));
+      expect(result[0].date, equals('2024-01-20')); // Most recent first
+      expect(result[1].date, equals('2024-01-15')); // Older second
+      verify(() => mockDatabase.rawQuery(
+        any(),
+        any(),
+      )).called(1);
+    });
+
+    testWidgets('should throw DatabaseException on query error', (WidgetTester tester) async {
+      final Exception queryError = Exception('SQL syntax error');
+      when(() => mockDatabase.rawQuery(any(), any())).thenThrow(queryError);
+
+      expect(
+        () => repository.findByContactId(testContactId),
+        throwsA(isA<DatabaseException>().having(
+          (e) => e.message,
+          'message',
+          contains('An unexpected error occurred'),
+        )),
+      );
+
+      verify(() => mockDatabase.rawQuery(any(), <dynamic>[testContactId])).called(1);
+    });
+  });
+
+  group('SqliteDebtRepository - findByType', () {
+    testWidgets('should find debts by type owedToMe ordered by date DESC', (WidgetTester tester) async {
+      final List<Map<String, dynamic>> owedToMeDebts = mockDebtsResponse
+          .where((debt) => debt['type'] == 'owed_to_me')
+          .toList();
+
+      when(() => mockDatabase.rawQuery(any(), any())).thenAnswer((_) async => owedToMeDebts);
+
+      final List<Debt> result = await repository.findByType(DebtType.owedToMe);
+
+      expect(result, hasLength(2)); // 2 'owed_to_me' debts in mock data
+      expect(result.every((debt) => debt.type == DebtType.owedToMe), isTrue);
+      verify(() => mockDatabase.rawQuery(
+        '''
+        SELECT * FROM debts
+        WHERE type = ?
+        ORDER BY date DESC
+      ''',
+        <dynamic>['owed_to_me'],
+      )).called(1);
+    });
+
+    testWidgets('should find debts by type iOwe ordered by date DESC', (WidgetTester tester) async {
+      final List<Map<String, dynamic>> iOweDebts = mockDebtsResponse
+          .where((debt) => debt['type'] == 'i_owe')
+          .toList();
+
+      when(() => mockDatabase.rawQuery(any(), any())).thenAnswer((_) async => iOweDebts);
+
+      final List<Debt> result = await repository.findByType(DebtType.iOwe);
+
+      expect(result, hasLength(2)); // 2 'i_owe' debts in mock data
+      expect(result.every((debt) => debt.type == DebtType.iOwe), isTrue);
+      verify(() => mockDatabase.rawQuery(
+        any(),
+        <dynamic>['i_owe'],
+      )).called(1);
+    });
+
+    testWidgets('should return empty list when no debts of specified type', (WidgetTester tester) async {
+      when(() => mockDatabase.rawQuery(any(), any())).thenAnswer((_) async => <Map<String, dynamic>>[]);
+
+      final List<Debt> result = await repository.findByType(DebtType.owedToMe);
+
+      expect(result, isEmpty);
+      verify(() => mockDatabase.rawQuery(any(), any())).called(1);
+    });
+
+    testWidgets('should order results by date DESC', (WidgetTester tester) async {
+      final List<Map<String, dynamic>> orderedDebts = <Map<String, dynamic>>[
+        <String, dynamic>{...mockDebtsResponse[0], 'date': '2024-01-20'}, // Latest
+        <String, dynamic>{...mockDebtsResponse[3], 'date': '2024-01-05'}, // Earlier
+      ];
+
+      when(() => mockDatabase.rawQuery(any(), any())).thenAnswer((_) async => orderedDebts);
+
+      final List<Debt> result = await repository.findByType(DebtType.owedToMe);
+
+      expect(result, hasLength(2));
+      expect(result[0].date, equals('2024-01-20')); // Most recent first
+      expect(result[1].date, equals('2024-01-05')); // Older second
+      verify(() => mockDatabase.rawQuery(
+        any(),
+        any(),
+      )).called(1);
+    });
+
+    testWidgets('should throw DatabaseException on query error', (WidgetTester tester) async {
+      final Exception queryError = Exception('SQL syntax error');
+      when(() => mockDatabase.rawQuery(any(), any())).thenThrow(queryError);
+
+      expect(
+        () => repository.findByType(DebtType.owedToMe),
+        throwsA(isA<DatabaseException>().having(
+          (e) => e.message,
+          'message',
+          contains('An unexpected error occurred'),
+        )),
+      );
+
+      verify(() => mockDatabase.rawQuery(any(), any())).called(1);
+    });
+  });
+
+  group('SqliteDebtRepository - findUnpaid', () {
+    testWidgets('should find all unpaid debts ordered by date DESC', (WidgetTester tester) async {
+      final List<Map<String, dynamic>> unpaidDebts = mockDebtsResponse
+          .where((debt) => debt['paid'] == 0)
+          .toList();
+
+      when(() => mockDatabase.rawQuery(any())).thenAnswer((_) async => unpaidDebts);
+
+      final List<Debt> result = await repository.findUnpaid();
+
+      expect(result, hasLength(3)); // 3 unpaid debts in mock data
+      expect(result.every((debt) => !debt.paid), isTrue);
+      verify(() => mockDatabase.rawQuery(
+        '''
+        SELECT * FROM debts
+        WHERE paid = 0
+        ORDER BY date DESC
+      ''',
+      )).called(1);
+    });
+
+    testWidgets('should return empty list when all debts are paid', (WidgetTester tester) async {
+      when(() => mockDatabase.rawQuery(any())).thenAnswer((_) async => <Map<String, dynamic>>[]);
+
+      final List<Debt> result = await repository.findUnpaid();
+
+      expect(result, isEmpty);
+      verify(() => mockDatabase.rawQuery(any())).called(1);
+    });
+
+    testWidgets('should order results by date DESC', (WidgetTester tester) async {
+      final List<Map<String, dynamic>> orderedDebts = <Map<String, dynamic>>[
+        <String, dynamic>{...mockDebtsResponse[2], 'date': '2024-01-20'}, // Latest unpaid
+        <String, dynamic>{...mockDebtsResponse[0], 'date': '2024-01-15'}, // Earlier unpaid
+      ];
+
+      when(() => mockDatabase.rawQuery(any())).thenAnswer((_) async => orderedDebts);
+
+      final List<Debt> result = await repository.findUnpaid();
+
+      expect(result, hasLength(2));
+      expect(result[0].date, equals('2024-01-20')); // Most recent first
+      expect(result[1].date, equals('2024-01-15')); // Older second
+      verify(() => mockDatabase.rawQuery(
+        any(),
+      )).called(1);
+    });
+
+    testWidgets('should include both debt types in unpaid search', (WidgetTester tester) async {
+      final List<Map<String, dynamic>> mixedUnpaidDebts = <Map<String, dynamic>>[
+        <String, dynamic>{...mockDebtsResponse[0], 'type': 'owed_to_me', 'paid': 0},
+        <String, dynamic>{...mockDebtsResponse[2], 'type': 'i_owe', 'paid': 0},
+      ];
+
+      when(() => mockDatabase.rawQuery(any())).thenAnswer((_) async => mixedUnpaidDebts);
+
+      final List<Debt> result = await repository.findUnpaid();
+
+      expect(result, hasLength(2));
+      expect(result.any((debt) => debt.type == DebtType.owedToMe), isTrue);
+      expect(result.any((debt) => debt.type == DebtType.iOwe), isTrue);
+      verify(() => mockDatabase.rawQuery(any())).called(1);
+    });
+
+    testWidgets('should throw DatabaseException on query error', (WidgetTester tester) async {
+      final Exception queryError = Exception('SQL syntax error');
+      when(() => mockDatabase.rawQuery(any())).thenThrow(queryError);
+
+      expect(
+        () => repository.findUnpaid(),
+        throwsA(isA<DatabaseException>().having(
+          (e) => e.message,
+          'message',
+          contains('An unexpected error occurred'),
+        )),
+      );
+
+      verify(() => mockDatabase.rawQuery(any())).called(1);
+    });
+  });
+
+  group('SqliteDebtRepository - findPaid', () {
+    testWidgets('should find all paid debts ordered by date DESC', (WidgetTester tester) async {
+      final List<Map<String, dynamic>> paidDebts = mockDebtsResponse
+          .where((debt) => debt['paid'] == 1)
+          .toList();
+
+      when(() => mockDatabase.rawQuery(any())).thenAnswer((_) async => paidDebts);
+
+      final List<Debt> result = await repository.findPaid();
+
+      expect(result, hasLength(1)); // 1 paid debt in mock data
+      expect(result.every((debt) => debt.paid), isTrue);
+      verify(() => mockDatabase.rawQuery(
+        '''
+        SELECT * FROM debts
+        WHERE paid = 1
+        ORDER BY date DESC
+      ''',
+      )).called(1);
+    });
+
+    testWidgets('should return empty list when no debts are paid', (WidgetTester tester) async {
+      when(() => mockDatabase.rawQuery(any())).thenAnswer((_) async => <Map<String, dynamic>>[]);
+
+      final List<Debt> result = await repository.findPaid();
+
+      expect(result, isEmpty);
+      verify(() => mockDatabase.rawQuery(any())).called(1);
+    });
+
+    testWidgets('should order results by date DESC', (WidgetTester tester) async {
+      final List<Map<String, dynamic>> orderedPaidDebts = <Map<String, dynamic>>[
+        <String, dynamic>{...mockDebtsResponse[1], 'date': '2024-01-15', 'paid': 1}, // Latest paid
+        <String, dynamic>{...mockDebtsResponse[0], 'date': '2024-01-10', 'paid': 1}, // Earlier paid
+      ];
+
+      when(() => mockDatabase.rawQuery(any())).thenAnswer((_) async => orderedPaidDebts);
+
+      final List<Debt> result = await repository.findPaid();
+
+      expect(result, hasLength(2));
+      expect(result[0].date, equals('2024-01-15')); // Most recent first
+      expect(result[1].date, equals('2024-01-10')); // Older second
+      verify(() => mockDatabase.rawQuery(
+        any(),
+      )).called(1);
+    });
+
+    testWidgets('should include both debt types in paid search', (WidgetTester tester) async {
+      final List<Map<String, dynamic>> mixedPaidDebts = <Map<String, dynamic>>[
+        <String, dynamic>{...mockDebtsResponse[0], 'type': 'owed_to_me', 'paid': 1},
+        <String, dynamic>{...mockDebtsResponse[2], 'type': 'i_owe', 'paid': 1},
+      ];
+
+      when(() => mockDatabase.rawQuery(any())).thenAnswer((_) async => mixedPaidDebts);
+
+      final List<Debt> result = await repository.findPaid();
+
+      expect(result, hasLength(2));
+      expect(result.any((debt) => debt.type == DebtType.owedToMe), isTrue);
+      expect(result.any((debt) => debt.type == DebtType.iOwe), isTrue);
+      verify(() => mockDatabase.rawQuery(any())).called(1);
+    });
+
+    testWidgets('should throw DatabaseException on query error', (WidgetTester tester) async {
+      final Exception queryError = Exception('SQL syntax error');
+      when(() => mockDatabase.rawQuery(any())).thenThrow(queryError);
+
+      expect(
+        () => repository.findPaid(),
+        throwsA(isA<DatabaseException>().having(
+          (e) => e.message,
+          'message',
+          contains('An unexpected error occurred'),
+        )),
+      );
+
+      verify(() => mockDatabase.rawQuery(any())).called(1);
+    });
+  });
+
+  group('SqliteDebtRepository - findByAmountRange', () {
+    testWidgets('should find debts within amount range ordered by amount DESC then date DESC', (WidgetTester tester) async {
+      const double minAmount = 50.0;
+      const double maxAmount = 300.0;
+      final List<Map<String, dynamic>> rangeDebts = mockDebtsResponse
+          .where((debt) => (debt['amount'] as double) >= minAmount && (debt['amount'] as double) <= maxAmount)
+          .toList();
+
+      when(() => mockDatabase.rawQuery(any(), any())).thenAnswer((_) async => rangeDebts);
+
+      final List<Debt> result = await repository.findByAmountRange(minAmount, maxAmount);
+
+      expect(result, hasLength(3)); // amounts 100.50, 250.00, 75.25 are in range 50-300
+      expect(result.every((debt) => debt.amount >= minAmount && debt.amount <= maxAmount), isTrue);
+      verify(() => mockDatabase.rawQuery(
+        '''
+        SELECT * FROM debts
+        WHERE amount BETWEEN ? AND ?
+        ORDER BY amount DESC, date DESC
+      ''',
+        <dynamic>[minAmount, maxAmount],
+      )).called(1);
+    });
+
+    testWidgets('should return empty list when no debts in range', (WidgetTester tester) async {
+      const double minAmount = 1000.0;
+      const double maxAmount = 2000.0;
+      when(() => mockDatabase.rawQuery(any(), any())).thenAnswer((_) async => <Map<String, dynamic>>[]);
+
+      final List<Debt> result = await repository.findByAmountRange(minAmount, maxAmount);
+
+      expect(result, isEmpty);
+      verify(() => mockDatabase.rawQuery(any(), <dynamic>[minAmount, maxAmount])).called(1);
+    });
+
+    testWidgets('should handle zero amount range', (WidgetTester tester) async {
+      const double minAmount = 0.0;
+      const double maxAmount = 0.0;
+      when(() => mockDatabase.rawQuery(any(), any())).thenAnswer((_) async => <Map<String, dynamic>>[]);
+
+      final List<Debt> result = await repository.findByAmountRange(minAmount, maxAmount);
+
+      expect(result, isEmpty);
+      verify(() => mockDatabase.rawQuery(any(), <dynamic>[minAmount, maxAmount])).called(1);
+    });
+
+    testWidgets('should handle reversed range (max < min)', (WidgetTester tester) async {
+      const double minAmount = 100.0;
+      const double maxAmount = 50.0; // Reversed range
+      when(() => mockDatabase.rawQuery(any(), any())).thenAnswer((_) async => <Map<String, dynamic>>[]);
+
+      final List<Debt> result = await repository.findByAmountRange(minAmount, maxAmount);
+
+      expect(result, isEmpty); // SQL BETWEEN should return no results
+      verify(() => mockDatabase.rawQuery(any(), <dynamic>[minAmount, maxAmount])).called(1);
+    });
+
+    testWidgets('should order results by amount DESC then date DESC', (WidgetTester tester) async {
+      final List<Map<String, dynamic>> orderedDebts = <Map<String, dynamic>>[
+        <String, dynamic>{...mockDebtsResponse[1], 'amount': 250.0, 'date': '2024-01-15'}, // Highest amount
+        <String, dynamic>{...mockDebtsResponse[0], 'amount': 100.5, 'date': '2024-01-20'}, // Lower amount, recent date
+        <String, dynamic>{...mockDebtsResponse[2], 'amount': 100.5, 'date': '2024-01-10'}, // Same amount, older date
+      ];
+
+      when(() => mockDatabase.rawQuery(any(), any())).thenAnswer((_) async => orderedDebts);
+
+      final List<Debt> result = await repository.findByAmountRange(50.0, 300.0);
+
+      expect(result, hasLength(3));
+      expect(result[0].amount, equals(250.0)); // Highest amount first
+      expect(result[1].amount, equals(100.5)); // Same amounts sorted by date
+      expect(result[2].amount, equals(100.5));
+      expect(result[1].date, equals('2024-01-20')); // More recent date first
+      expect(result[2].date, equals('2024-01-10'));
+      verify(() => mockDatabase.rawQuery(
+        any(),
+        any(),
+      )).called(1);
+    });
+
+    testWidgets('should handle decimal precision in amounts', (WidgetTester tester) async {
+      const double minAmount = 75.25;
+      const double maxAmount = 75.25; // Exact match
+      final List<Map<String, dynamic>> exactMatch = <Map<String, dynamic>>[mockDebtsResponse[2]];
+
+      when(() => mockDatabase.rawQuery(any(), any())).thenAnswer((_) async => exactMatch);
+
+      final List<Debt> result = await repository.findByAmountRange(minAmount, maxAmount);
+
+      expect(result, hasLength(1));
+      expect(result.first.amount, equals(75.25));
+      verify(() => mockDatabase.rawQuery(any(), <dynamic>[minAmount, maxAmount])).called(1);
+    });
+
+    testWidgets('should throw DatabaseException on query error', (WidgetTester tester) async {
+      final Exception queryError = Exception('SQL syntax error');
+      when(() => mockDatabase.rawQuery(any(), any())).thenThrow(queryError);
+
+      expect(
+        () => repository.findByAmountRange(50.0, 300.0),
+        throwsA(isA<DatabaseException>().having(
+          (e) => e.message,
+          'message',
+          contains('An unexpected error occurred'),
+        )),
+      );
+
+      verify(() => mockDatabase.rawQuery(any(), any())).called(1);
+    });
+  });
+
+  group('SqliteDebtRepository - findByDateRange', () {
+    testWidgets('should find debts within date range ordered by date DESC', (WidgetTester tester) async {
+      final DateTime startDate = DateTime(2024, 1, 10);
+      final DateTime endDate = DateTime(2024, 1, 20);
+      final List<Map<String, dynamic>> dateRangeDebts = mockDebtsResponse
+          .where((debt) {
+            final DateTime debtDate = DateTime.parse(debt['date'] as String);
+            return debtDate.isAfter(startDate.subtract(const Duration(days: 1))) &&
+                   debtDate.isBefore(endDate.add(const Duration(days: 1)));
+          })
+          .toList();
+
+      when(() => mockDatabase.rawQuery(any(), any())).thenAnswer((_) async => dateRangeDebts);
+
+      final List<Debt> result = await repository.findByDateRange(startDate, endDate);
+
+      expect(result, hasLength(3)); // 3 debts in date range 2024-01-10 to 2024-01-20
+      verify(() => mockDatabase.rawQuery(
+        '''
+        SELECT * FROM debts
+        WHERE date BETWEEN ? AND ?
+        ORDER BY date DESC
+      ''',
+        <dynamic>[startDate.toIso8601String().split('T')[0], endDate.toIso8601String().split('T')[0]],
+      )).called(1);
+    });
+
+    testWidgets('should return empty list when no debts in date range', (WidgetTester tester) async {
+      final DateTime startDate = DateTime(2025, 1, 1);
+      final DateTime endDate = DateTime(2025, 1, 31);
+      when(() => mockDatabase.rawQuery(any(), any())).thenAnswer((_) async => <Map<String, dynamic>>[]);
+
+      final List<Debt> result = await repository.findByDateRange(startDate, endDate);
+
+      expect(result, isEmpty);
+      verify(() => mockDatabase.rawQuery(any(), any())).called(1);
+    });
+
+    testWidgets('should handle same start and end date', (WidgetTester tester) async {
+      final DateTime singleDate = DateTime(2024, 1, 15);
+      final List<Map<String, dynamic>> singleDateDebts = mockDebtsResponse
+          .where((debt) => debt['date'] == '2024-01-15')
+          .toList();
+
+      when(() => mockDatabase.rawQuery(any(), any())).thenAnswer((_) async => singleDateDebts);
+
+      final List<Debt> result = await repository.findByDateRange(singleDate, singleDate);
+
+      expect(result, hasLength(1)); // Only debt with exact date match
+      expect(result.first.date, equals('2024-01-15'));
+      verify(() => mockDatabase.rawQuery(any(), any())).called(1);
+    });
+
+    testWidgets('should handle reversed date range (end before start)', (WidgetTester tester) async {
+      final DateTime startDate = DateTime(2024, 1, 20);
+      final DateTime endDate = DateTime(2024, 1, 10); // End before start
+      when(() => mockDatabase.rawQuery(any(), any())).thenAnswer((_) async => <Map<String, dynamic>>[]);
+
+      final List<Debt> result = await repository.findByDateRange(startDate, endDate);
+
+      expect(result, isEmpty); // SQL BETWEEN should return no results
+      verify(() => mockDatabase.rawQuery(any(), any())).called(1);
+    });
+
+    testWidgets('should order results by date DESC', (WidgetTester tester) async {
+      final List<Map<String, dynamic>> orderedDateDebts = <Map<String, dynamic>>[
+        <String, dynamic>{...mockDebtsResponse[2], 'date': '2024-01-20'}, // Latest
+        <String, dynamic>{...mockDebtsResponse[0], 'date': '2024-01-15'}, // Middle
+        <String, dynamic>{...mockDebtsResponse[1], 'date': '2024-01-10'}, // Earliest
+      ];
+
+      when(() => mockDatabase.rawQuery(any(), any())).thenAnswer((_) async => orderedDateDebts);
+
+      final List<Debt> result = await repository.findByDateRange(
+        DateTime(2024, 1, 10),
+        DateTime(2024, 1, 20),
+      );
+
+      expect(result, hasLength(3));
+      expect(result[0].date, equals('2024-01-20')); // Most recent first
+      expect(result[1].date, equals('2024-01-15'));
+      expect(result[2].date, equals('2024-01-10')); // Oldest last
+      verify(() => mockDatabase.rawQuery(
+        any(),
+        any(),
+      )).called(1);
+    });
+
+    testWidgets('should format dates correctly for SQL query', (WidgetTester tester) async {
+      final DateTime startDate = DateTime(2024, 1, 15, 14, 30, 45); // With time
+      final DateTime endDate = DateTime(2024, 1, 20, 9, 15, 30); // With time
+      when(() => mockDatabase.rawQuery(any(), any())).thenAnswer((_) async => <Map<String, dynamic>>[]);
+
+      await repository.findByDateRange(startDate, endDate);
+
+      // Should use full ISO8601 format (includes time)
+      verify(() => mockDatabase.rawQuery(
+        any(),
+        <dynamic>[startDate.toIso8601String(), endDate.toIso8601String()],
+      )).called(1);
+    });
+
+    testWidgets('should handle future dates', (WidgetTester tester) async {
+      final DateTime futureStart = DateTime(2030, 1, 1);
+      final DateTime futureEnd = DateTime(2030, 12, 31);
+      when(() => mockDatabase.rawQuery(any(), any())).thenAnswer((_) async => <Map<String, dynamic>>[]);
+
+      final List<Debt> result = await repository.findByDateRange(futureStart, futureEnd);
+
+      expect(result, isEmpty);
+      verify(() => mockDatabase.rawQuery(any(), any())).called(1);
+    });
+
+    testWidgets('should throw DatabaseException on query error', (WidgetTester tester) async {
+      final Exception queryError = Exception('SQL syntax error');
+      when(() => mockDatabase.rawQuery(any(), any())).thenThrow(queryError);
+
+      expect(
+        () => repository.findByDateRange(DateTime(2024, 1, 1), DateTime(2024, 12, 31)),
+        throwsA(isA<DatabaseException>().having(
+          (e) => e.message,
+          'message',
+          contains('An unexpected error occurred'),
+        )),
+      );
+
+      verify(() => mockDatabase.rawQuery(any(), any())).called(1);
+    });
+  });
+
+  group('SqliteDebtRepository - fromMap', () {
+    testWidgets('should correctly convert database map to Debt model with all fields', (WidgetTester tester) async {
+      final Map<String, dynamic> completeDebtMap = mockDebtsResponse[0];
+
+      final Debt result = repository.fromMap(completeDebtMap);
+
+      expect(result.id, equals(1));
+      expect(result.contactId, equals(123));
+      expect(result.amount, equals(100.50));
+      expect(result.currency, equals('USD'));
+      expect(result.type, equals(DebtType.owedToMe));
+      expect(result.date, equals('2024-01-15'));
+      expect(result.description, equals('Loan for lunch'));
+      expect(result.paid, isFalse);
+      expect(result.createdAt, isA<DateTime>());
+    });
+
+    testWidgets('should handle null values correctly when converting from map', (WidgetTester tester) async {
+      final Map<String, dynamic> debtWithNulls = mockDebtsResponse[2];
+
+      final Debt result = repository.fromMap(debtWithNulls);
+
+      expect(result.id, equals(3));
+      expect(result.contactId, equals(123));
+      expect(result.amount, equals(75.25));
+      expect(result.description, isNull);
+      expect(result.paid, isFalse);
+    });
+
+    testWidgets('should handle paid status conversion correctly', (WidgetTester tester) async {
+      final Map<String, dynamic> paidDebtMap = mockDebtsResponse[1]; // paid: 1
+
+      final Debt result = repository.fromMap(paidDebtMap);
+
+      expect(result.paid, isTrue); // paid: 1 -> true
+      expect(result.type, equals(DebtType.iOwe));
+    });
+  });
+
+  group('SqliteDebtRepository - Edge Cases', () {
+    testWidgets('should handle very large amounts', (WidgetTester tester) async {
+      const double largeAmount = 999999999.99;
+      when(() => mockDatabase.rawQuery(any(), any())).thenAnswer((_) async => <Map<String, dynamic>>[]);
+
+      final List<Debt> result = await repository.findByAmountRange(largeAmount, largeAmount);
+
+      expect(result, isEmpty);
+      verify(() => mockDatabase.rawQuery(any(), <dynamic>[largeAmount, largeAmount])).called(1);
+    });
+
+    testWidgets('should handle very old dates', (WidgetTester tester) async {
+      final DateTime veryOldDate = DateTime(1900, 1, 1);
+      final DateTime recentDate = DateTime(2024, 12, 31);
+      when(() => mockDatabase.rawQuery(any(), any())).thenAnswer((_) async => <Map<String, dynamic>>[]);
+
+      final List<Debt> result = await repository.findByDateRange(veryOldDate, recentDate);
+
+      expect(result, isEmpty);
+      verify(() => mockDatabase.rawQuery(any(), any())).called(1);
+    });
+
+    testWidgets('should handle very large contact IDs', (WidgetTester tester) async {
+      const int largeContactId = 2147483647; // Max int32
+      when(() => mockDatabase.rawQuery(any(), any())).thenAnswer((_) async => <Map<String, dynamic>>[]);
+
+      final List<Debt> result = await repository.findByContactId(largeContactId);
+
+      expect(result, isEmpty);
+      verify(() => mockDatabase.rawQuery(any(), <dynamic>[largeContactId])).called(1);
+    });
+
+    testWidgets('should handle decimal precision edge cases', (WidgetTester tester) async {
+      const double preciseAmount1 = 100.001;
+      const double preciseAmount2 = 100.009;
+      when(() => mockDatabase.rawQuery(any(), any())).thenAnswer((_) async => <Map<String, dynamic>>[]);
+
+      final List<Debt> result = await repository.findByAmountRange(preciseAmount1, preciseAmount2);
+
+      expect(result, isEmpty);
+      verify(() => mockDatabase.rawQuery(any(), <dynamic>[preciseAmount1, preciseAmount2])).called(1);
+    });
+
+    testWidgets('should handle simultaneous debt type queries', (WidgetTester tester) async {
+      // Test that both debt types can be queried without interference
+      when(() => mockDatabase.rawQuery(any(), any())).thenAnswer((_) async => <Map<String, dynamic>>[]);
+
+      final List<Debt> owedResults = await repository.findByType(DebtType.owedToMe);
+      final List<Debt> iOweResults = await repository.findByType(DebtType.iOwe);
+
+      expect(owedResults, isEmpty);
+      expect(iOweResults, isEmpty);
+      verify(() => mockDatabase.rawQuery(any(), <dynamic>['owed_to_me'])).called(1);
+      verify(() => mockDatabase.rawQuery(any(), <dynamic>['i_owe'])).called(1);
+    });
+  });
+}

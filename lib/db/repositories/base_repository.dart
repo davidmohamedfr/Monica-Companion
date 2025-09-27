@@ -3,6 +3,7 @@ import 'package:monica_companion/core/utils/logger.dart';
 import 'package:monica_companion/db/interfaces/database_interface.dart';
 import 'package:monica_companion/db/interfaces/repository_interface.dart';
 import 'package:monica_companion/db/models/base_model.dart';
+import 'package:sqflite/sqflite.dart' as sqflite;
 
 /// Base repository implementation with common CRUD operations
 abstract class BaseRepository<T extends BaseModel, ID>
@@ -38,14 +39,33 @@ abstract class BaseRepository<T extends BaseModel, ID>
   Future<List<ID>> insertAll(List<T> entities) async {
     final List<ID> ids = <ID>[];
 
-    await database.transaction(() async {
+    await database.transaction((sqflite.Transaction txn) async {
       for (final T entity in entities) {
-        final ID id = await insert(entity);
+        final ID id = await _insertWithTransaction(entity, txn);
         ids.add(id);
       }
     });
 
     return ids;
+  }
+
+  /// Insert entity using provided transaction
+  Future<ID> _insertWithTransaction(T entity, sqflite.Transaction txn) async {
+    try {
+      final Map<String, dynamic> map = entity.toMap()
+        ..remove('id'); // Remove ID for insert
+
+      final String columns = map.keys.join(', ');
+      final String placeholders = map.keys.map((_) => '?').join(', ');
+      final String sql =
+          'INSERT INTO $tableName ($columns) VALUES ($placeholders)';
+
+      final int id = await txn.rawInsert(sql, map.values.toList());
+      return id as ID;
+    } catch (e) {
+      Logger.error('Failed to insert entity in $tableName', error: e);
+      throw DatabaseException('Failed to insert entity: $e');
+    }
   }
 
   @override

@@ -1,0 +1,669 @@
+import 'package:flutter_test/flutter_test.dart';
+import 'package:mocktail/mocktail.dart';
+import 'package:monica_companion/core/errors/exceptions.dart';
+import 'package:monica_companion/db/interfaces/database_interface.dart';
+import 'package:monica_companion/db/interfaces/note_repository.dart';
+import 'package:monica_companion/db/models/note.dart';
+import 'package:monica_companion/db/repositories/sqlite_note_repository.dart';
+
+class MockDatabaseInterface extends Mock implements DatabaseInterface {}
+
+void main() {
+  late MockDatabaseInterface mockDatabase;
+  late NoteRepository repository;
+
+  setUp(() {
+    mockDatabase = MockDatabaseInterface();
+    repository = SqliteNoteRepository(mockDatabase);
+  });
+
+  group('SqliteNoteRepository', () {
+    group('findByContactId', () {
+      const int testContactId = 123;
+      final DateTime testDate = DateTime(2024, 1, 15, 14, 30);
+
+      final List<Note> expectedNotes = <Note>[
+        Note(
+          id: 1,
+          contactId: testContactId,
+          content: 'First note about the contact',
+          category: 'personal',
+          isPrivate: false,
+          createdAt: testDate,
+          updatedAt: testDate.add(const Duration(hours: 1)),
+        ),
+        Note(
+          id: 2,
+          contactId: testContactId,
+          content: 'Second note about the contact',
+          category: 'work',
+          isPrivate: true,
+          createdAt: testDate.subtract(const Duration(days: 1)),
+        ),
+      ];
+
+      final List<Map<String, dynamic>> mockDatabaseResponse = expectedNotes
+          .map((Note note) => note.toMap())
+          .toList();
+
+      testWidgets('should return notes for valid contact ID ordered by date descending', (WidgetTester tester) async {
+        // Arrange
+        when(() => mockDatabase.rawQuery(
+          any(),
+          any(),
+        )).thenAnswer((_) async => mockDatabaseResponse);
+
+        // Act
+        final List<Note> result = await repository.findByContactId(testContactId);
+
+        // Assert
+        expect(result, hasLength(2));
+        expect(result, equals(expectedNotes));
+
+        // Verify correct SQL query was executed
+        verify(() => mockDatabase.rawQuery(
+          '''
+        SELECT * FROM notes
+        WHERE contact_id = ?
+        ORDER BY updated_at DESC, created_at DESC
+      ''',
+          <dynamic>[testContactId],
+        )).called(1);
+      });
+
+      testWidgets('should return empty list when no notes found for contact', (WidgetTester tester) async {
+        // Arrange
+        const int nonExistentContactId = 999;
+        when(() => mockDatabase.rawQuery(
+          any(),
+          any(),
+        )).thenAnswer((_) async => <Map<String, dynamic>>[]);
+
+        // Act
+        final List<Note> result = await repository.findByContactId(nonExistentContactId);
+
+        // Assert
+        expect(result, isEmpty);
+        verify(() => mockDatabase.rawQuery(
+          any(),
+          <dynamic>[nonExistentContactId],
+        )).called(1);
+      });
+
+      testWidgets('should throw DatabaseException when database query fails', (WidgetTester tester) async {
+        // Arrange
+        const String errorMessage = 'Database connection lost';
+        when(() => mockDatabase.rawQuery(
+          any(),
+          any(),
+        )).thenThrow(Exception(errorMessage));
+
+        // Act & Assert
+        expect(
+          () => repository.findByContactId(testContactId),
+          throwsA(isA<DatabaseException>()
+              .having((DatabaseException e) => e.message, 'message', 'An unexpected error occurred. Please try again.')
+              .having((DatabaseException e) => e.code, 'code', 'UNKNOWN_ERROR')),
+        );
+
+        verify(() => mockDatabase.rawQuery(
+          any(),
+          <dynamic>[testContactId],
+        )).called(1);
+      });
+
+      testWidgets('should handle notes with null optional fields', (WidgetTester tester) async {
+        // Arrange
+        final List<Map<String, dynamic>> dataWithNulls = <Map<String, dynamic>>[
+          <String, dynamic>{
+            'id': 1,
+            'contact_id': testContactId,
+            'content': 'Note with nulls',
+            'category': null,
+            'is_private': 0,
+            'created_at': testDate.toIso8601String(),
+            'updated_at': null,
+          },
+        ];
+
+        when(() => mockDatabase.rawQuery(
+          any(),
+          any(),
+        )).thenAnswer((_) async => dataWithNulls);
+
+        // Act
+        final List<Note> result = await repository.findByContactId(testContactId);
+
+        // Assert
+        expect(result, hasLength(1));
+        expect(result.first.id, 1);
+        expect(result.first.contactId, testContactId);
+        expect(result.first.content, 'Note with nulls');
+        expect(result.first.category, isNull);
+        expect(result.first.isPrivate, isFalse);
+        expect(result.first.updatedAt, isNull);
+      });
+    });
+
+    group('findByCategory', () {
+      final DateTime testDate = DateTime(2024, 1, 15, 14, 30);
+      const String testCategory = 'work';
+
+      final List<Note> expectedNotes = <Note>[
+        Note(
+          id: 1,
+          contactId: 123,
+          content: 'Work note 1',
+          category: testCategory,
+          isPrivate: false,
+          createdAt: testDate,
+        ),
+        Note(
+          id: 2,
+          contactId: 456,
+          content: 'Work note 2',
+          category: testCategory,
+          isPrivate: true,
+          createdAt: testDate.subtract(const Duration(hours: 1)),
+        ),
+      ];
+
+      testWidgets('should return notes for valid category', (WidgetTester tester) async {
+        // Arrange
+        when(() => mockDatabase.rawQuery(
+          any(),
+          any(),
+        )).thenAnswer((_) async => expectedNotes.map((Note n) => n.toMap()).toList());
+
+        // Act
+        final List<Note> result = await repository.findByCategory(testCategory);
+
+        // Assert
+        expect(result, hasLength(2));
+        expect(result.every((Note n) => n.category == testCategory), isTrue);
+
+        verify(() => mockDatabase.rawQuery(
+          '''
+        SELECT * FROM notes
+        WHERE category = ?
+        ORDER BY updated_at DESC, created_at DESC
+      ''',
+          <dynamic>[testCategory],
+        )).called(1);
+      });
+
+      testWidgets('should return empty list for non-existent category', (WidgetTester tester) async {
+        // Arrange
+        when(() => mockDatabase.rawQuery(
+          any(),
+          any(),
+        )).thenAnswer((_) async => <Map<String, dynamic>>[]);
+
+        // Act
+        final List<Note> result = await repository.findByCategory('non_existent');
+
+        // Assert
+        expect(result, isEmpty);
+      });
+    });
+
+    group('findPrivate and findPublic', () {
+      final DateTime testDate = DateTime(2024, 1, 15, 14, 30);
+
+      final List<Note> privateNotes = <Note>[
+        Note(
+          id: 1,
+          contactId: 123,
+          content: 'Private note 1',
+          isPrivate: true,
+          createdAt: testDate,
+        ),
+        Note(
+          id: 2,
+          contactId: 456,
+          content: 'Private note 2',
+          isPrivate: true,
+          createdAt: testDate.subtract(const Duration(hours: 1)),
+        ),
+      ];
+
+      final List<Note> publicNotes = <Note>[
+        Note(
+          id: 3,
+          contactId: 789,
+          content: 'Public note 1',
+          isPrivate: false,
+          createdAt: testDate,
+        ),
+      ];
+
+      testWidgets('should return private notes only', (WidgetTester tester) async {
+        // Arrange
+        when(() => mockDatabase.rawQuery(
+          '''
+        SELECT * FROM notes
+        WHERE is_private = 1
+        ORDER BY updated_at DESC, created_at DESC
+      ''',
+        )).thenAnswer((_) async => privateNotes.map((Note n) => n.toMap()).toList());
+
+        // Act
+        final List<Note> result = await repository.findPrivate();
+
+        // Assert
+        expect(result, hasLength(2));
+        expect(result.every((Note n) => n.isPrivate == true), isTrue);
+      });
+
+      testWidgets('should return public notes only', (WidgetTester tester) async {
+        // Arrange
+        when(() => mockDatabase.rawQuery(
+          '''
+        SELECT * FROM notes
+        WHERE is_private = 0
+        ORDER BY updated_at DESC, created_at DESC
+      ''',
+        )).thenAnswer((_) async => publicNotes.map((Note n) => n.toMap()).toList());
+
+        // Act
+        final List<Note> result = await repository.findPublic();
+
+        // Assert
+        expect(result, hasLength(1));
+        expect(result.every((Note n) => n.isPrivate == false), isTrue);
+      });
+    });
+
+    group('findByContent', () {
+      final DateTime testDate = DateTime(2024, 1, 15, 14, 30);
+
+      final List<Note> matchingNotes = <Note>[
+        Note(
+          id: 1,
+          contactId: 123,
+          content: 'This note contains the search term project',
+          createdAt: testDate,
+        ),
+        Note(
+          id: 2,
+          contactId: 456,
+          content: 'Another note about our project plan',
+          createdAt: testDate.subtract(const Duration(hours: 1)),
+        ),
+      ];
+
+      testWidgets('should return notes matching content search', (WidgetTester tester) async {
+        // Arrange
+        const String searchQuery = 'project';
+        when(() => mockDatabase.rawQuery(
+          any(),
+          any(),
+        )).thenAnswer((_) async => matchingNotes.map((Note n) => n.toMap()).toList());
+
+        // Act
+        final List<Note> result = await repository.findByContent(searchQuery);
+
+        // Assert
+        expect(result, hasLength(2));
+
+        verify(() => mockDatabase.rawQuery(
+          '''
+        SELECT * FROM notes
+        WHERE content LIKE ?
+        ORDER BY updated_at DESC, created_at DESC
+      ''',
+          <dynamic>['%$searchQuery%'],
+        )).called(1);
+      });
+
+      testWidgets('should handle special characters in search query', (WidgetTester tester) async {
+        // Arrange
+        const String searchQuery = "John's project";
+        when(() => mockDatabase.rawQuery(
+          any(),
+          any(),
+        )).thenAnswer((_) async => <Map<String, dynamic>>[]);
+
+        // Act
+        final List<Note> result = await repository.findByContent(searchQuery);
+
+        // Assert
+        expect(result, isEmpty);
+
+        verify(() => mockDatabase.rawQuery(
+          any(),
+          <dynamic>['%$searchQuery%'],
+        )).called(1);
+      });
+    });
+
+    group('findRecent', () {
+      final DateTime now = DateTime.now();
+      final DateTime twoDaysAgo = now.subtract(const Duration(days: 2));
+      final DateTime fiveDaysAgo = now.subtract(const Duration(days: 5));
+
+      final List<Note> recentNotes = <Note>[
+        Note(
+          id: 1,
+          contactId: 123,
+          content: 'Recent note',
+          createdAt: twoDaysAgo,
+          updatedAt: now.subtract(const Duration(hours: 1)),
+        ),
+        Note(
+          id: 2,
+          contactId: 456,
+          content: 'Another recent note',
+          createdAt: twoDaysAgo,
+        ),
+      ];
+
+      testWidgets('should return notes from specified number of days', (WidgetTester tester) async {
+        // Arrange
+        const int days = 3;
+        when(() => mockDatabase.rawQuery(
+          any(),
+          any(),
+        )).thenAnswer((_) async => recentNotes.map((Note n) => n.toMap()).toList());
+
+        // Act
+        final List<Note> result = await repository.findRecent(days);
+
+        // Assert
+        expect(result, hasLength(2));
+
+        verify(() => mockDatabase.rawQuery(
+          '''
+        SELECT * FROM notes
+        WHERE updated_at >= ? OR (updated_at IS NULL AND created_at >= ?)
+        ORDER BY updated_at DESC, created_at DESC
+      ''',
+          any(),
+        )).called(1);
+      });
+
+      testWidgets('should handle notes with null updated_at', (WidgetTester tester) async {
+        // Arrange
+        final List<Note> notesWithNullUpdated = <Note>[
+          Note(
+            id: 1,
+            contactId: 123,
+            content: 'Note with null updated_at',
+            createdAt: now.subtract(const Duration(hours: 12)),
+            updatedAt: null,
+          ),
+        ];
+
+        when(() => mockDatabase.rawQuery(
+          any(),
+          any(),
+        )).thenAnswer((_) async => notesWithNullUpdated.map((Note n) => n.toMap()).toList());
+
+        // Act
+        final List<Note> result = await repository.findRecent(1);
+
+        // Assert
+        expect(result, hasLength(1));
+        expect(result.first.updatedAt, isNull);
+      });
+    });
+
+    group('findByDateRange', () {
+      final DateTime start = DateTime(2024, 1, 1);
+      final DateTime end = DateTime(2024, 1, 31);
+      final DateTime testDate = DateTime(2024, 1, 15, 14, 30);
+
+      final List<Note> rangeNotes = <Note>[
+        Note(
+          id: 1,
+          contactId: 123,
+          content: 'Note in range',
+          createdAt: testDate,
+          updatedAt: testDate.add(const Duration(hours: 1)),
+        ),
+      ];
+
+      testWidgets('should return notes within date range', (WidgetTester tester) async {
+        // Arrange
+        when(() => mockDatabase.rawQuery(
+          any(),
+          any(),
+        )).thenAnswer((_) async => rangeNotes.map((Note n) => n.toMap()).toList());
+
+        // Act
+        final List<Note> result = await repository.findByDateRange(start, end);
+
+        // Assert
+        expect(result, hasLength(1));
+
+        verify(() => mockDatabase.rawQuery(
+          '''
+        SELECT * FROM notes
+        WHERE (updated_at BETWEEN ? AND ?) OR (updated_at IS NULL AND created_at BETWEEN ? AND ?)
+        ORDER BY updated_at DESC, created_at DESC
+      ''',
+          <dynamic>[
+            start.toIso8601String(),
+            end.toIso8601String(),
+            start.toIso8601String(),
+            end.toIso8601String(),
+          ],
+        )).called(1);
+      });
+    });
+
+    group('countByContactId', () {
+      testWidgets('should return count of notes for contact', (WidgetTester tester) async {
+        // Arrange
+        const int contactId = 123;
+        const int expectedCount = 5;
+
+        when(() => mockDatabase.rawQuery(
+          any(),
+          any(),
+        )).thenAnswer((_) async => <Map<String, dynamic>>[
+          <String, dynamic>{'count': expectedCount},
+        ]);
+
+        // Act
+        final int result = await repository.countByContactId(contactId);
+
+        // Assert
+        expect(result, expectedCount);
+
+        verify(() => mockDatabase.rawQuery(
+          '''
+        SELECT COUNT(*) as count FROM notes
+        WHERE contact_id = ?
+      ''',
+          <dynamic>[contactId],
+        )).called(1);
+      });
+
+      testWidgets('should return 0 for contact with no notes', (WidgetTester tester) async {
+        // Arrange
+        const int contactId = 999;
+
+        when(() => mockDatabase.rawQuery(
+          any(),
+          any(),
+        )).thenAnswer((_) async => <Map<String, dynamic>>[
+          <String, dynamic>{'count': 0},
+        ]);
+
+        // Act
+        final int result = await repository.countByContactId(contactId);
+
+        // Assert
+        expect(result, 0);
+      });
+    });
+
+    group('findMostRecentByContactId', () {
+      final DateTime testDate = DateTime(2024, 1, 15, 14, 30);
+      const int contactId = 123;
+
+      final Note mostRecentNote = Note(
+        id: 1,
+        contactId: contactId,
+        content: 'Most recent note',
+        createdAt: testDate,
+        updatedAt: testDate.add(const Duration(hours: 2)),
+      );
+
+      testWidgets('should return most recent note for contact', (WidgetTester tester) async {
+        // Arrange
+        when(() => mockDatabase.rawQuery(
+          any(),
+          any(),
+        )).thenAnswer((_) async => <Map<String, dynamic>>[mostRecentNote.toMap()]);
+
+        // Act
+        final Note? result = await repository.findMostRecentByContactId(contactId);
+
+        // Assert
+        expect(result, isNotNull);
+        expect(result!.id, mostRecentNote.id);
+        expect(result.content, mostRecentNote.content);
+
+        verify(() => mockDatabase.rawQuery(
+          '''
+        SELECT * FROM notes
+        WHERE contact_id = ?
+        ORDER BY updated_at DESC, created_at DESC
+        LIMIT 1
+      ''',
+          <dynamic>[contactId],
+        )).called(1);
+      });
+
+      testWidgets('should return null when no notes found for contact', (WidgetTester tester) async {
+        // Arrange
+        when(() => mockDatabase.rawQuery(
+          any(),
+          any(),
+        )).thenAnswer((_) async => <Map<String, dynamic>>[]);
+
+        // Act
+        final Note? result = await repository.findMostRecentByContactId(contactId);
+
+        // Assert
+        expect(result, isNull);
+      });
+
+      testWidgets('should throw DatabaseException when query fails', (WidgetTester tester) async {
+        // Arrange
+        when(() => mockDatabase.rawQuery(
+          any(),
+          any(),
+        )).thenThrow(Exception('Database error'));
+
+        // Act & Assert
+        expect(
+          () => repository.findMostRecentByContactId(contactId),
+          throwsA(isA<DatabaseException>()
+              .having((DatabaseException e) => e.message, 'message', 'An unexpected error occurred. Please try again.')
+              .having((DatabaseException e) => e.code, 'code', 'UNKNOWN_ERROR')),
+        );
+      });
+    });
+
+    group('Error Handling', () {
+      testWidgets('should handle various database errors consistently', (WidgetTester tester) async {
+        // Arrange
+        final List<Future<dynamic> Function()> operations = <Future<dynamic> Function()>[
+          () => repository.findByContactId(123),
+          () => repository.findByCategory('test'),
+          () => repository.findPrivate(),
+          () => repository.findPublic(),
+          () => repository.findByContent('test'),
+          () => repository.findRecent(7),
+          () => repository.findByDateRange(DateTime.now(), DateTime.now()),
+          () => repository.countByContactId(123),
+          () => repository.findMostRecentByContactId(123),
+        ];
+
+        // Act & Assert - All operations should handle database errors consistently
+        for (final operation in operations) {
+          when(() => mockDatabase.rawQuery(any(), any()))
+              .thenThrow(Exception('Database connection failed'));
+
+          await expectLater(
+            operation(),
+            throwsA(isA<DatabaseException>()
+                .having((DatabaseException e) => e.message, 'message', 'An unexpected error occurred. Please try again.')
+                .having((DatabaseException e) => e.code, 'code', 'UNKNOWN_ERROR')),
+          );
+
+          reset(mockDatabase);
+        }
+      });
+    });
+
+    group('Data Integrity', () {
+      testWidgets('should properly deserialize Note objects from database', (WidgetTester tester) async {
+        // Arrange
+        final DateTime testDate = DateTime(2024, 1, 15, 14, 30);
+        final Note expectedNote = Note(
+          id: 1,
+          contactId: 123,
+          content: 'Complete note with all fields',
+          category: 'important',
+          isPrivate: true,
+          createdAt: testDate,
+          updatedAt: testDate.add(const Duration(hours: 1)),
+        );
+
+        when(() => mockDatabase.rawQuery(
+          any(),
+          any(),
+        )).thenAnswer((_) async => <Map<String, dynamic>>[expectedNote.toMap()]);
+
+        // Act
+        final List<Note> result = await repository.findByContactId(123);
+
+        // Assert
+        expect(result, hasLength(1));
+        final Note actualNote = result.first;
+        expect(actualNote.id, expectedNote.id);
+        expect(actualNote.contactId, expectedNote.contactId);
+        expect(actualNote.content, expectedNote.content);
+        expect(actualNote.category, expectedNote.category);
+        expect(actualNote.isPrivate, expectedNote.isPrivate);
+        expect(actualNote.createdAt, expectedNote.createdAt);
+        expect(actualNote.updatedAt, expectedNote.updatedAt);
+      });
+
+      testWidgets('should handle large result sets efficiently', (WidgetTester tester) async {
+        // Arrange
+        final List<Map<String, dynamic>> largeDataset = List<Map<String, dynamic>>.generate(
+          100,
+          (int index) => Note(
+            id: index + 1,
+            contactId: 123,
+            content: 'Note ${index + 1}',
+            createdAt: DateTime.now().subtract(Duration(days: index)),
+          ).toMap(),
+        );
+
+        when(() => mockDatabase.rawQuery(
+          any(),
+          any(),
+        )).thenAnswer((_) async => largeDataset);
+
+        // Act
+        final List<Note> result = await repository.findByContactId(123);
+
+        // Assert
+        expect(result, hasLength(100));
+        expect(result.first.id, 1);
+        expect(result.last.id, 100);
+
+        // Verify all notes belong to the correct contact
+        for (final Note note in result) {
+          expect(note.contactId, 123);
+        }
+      });
+    });
+  });
+}

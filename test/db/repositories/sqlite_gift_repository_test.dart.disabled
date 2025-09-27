@@ -1,0 +1,465 @@
+import 'package:flutter_test/flutter_test.dart';
+import 'package:mocktail/mocktail.dart';
+import 'package:monica_companion/core/errors/exceptions.dart';
+import 'package:monica_companion/db/interfaces/database_interface.dart';
+import 'package:monica_companion/db/models/gift.dart';
+import 'package:monica_companion/db/repositories/sqlite_gift_repository.dart';
+
+class MockDatabaseInterface extends Mock implements DatabaseInterface {}
+
+void main() {
+  late SqliteGiftRepository repository;
+  late MockDatabaseInterface mockDatabase;
+
+  const int testContactId = 123;
+  const int testGiftId = 456;
+  final DateTime testDate = DateTime(2024, 1, 15, 10, 30);
+  final DateTime futureDate = DateTime(2024, 1, 20, 10, 30);
+
+  final List<Map<String, dynamic>> mockDatabaseResponse = <Map<String, dynamic>>[
+    <String, dynamic>{
+      'id': 1,
+      'contact_id': testContactId,
+      'name': 'Birthday Watch',
+      'description': 'Beautiful silver watch for 30th birthday',
+      'date_given': testDate.toIso8601String(),
+      'occasion': 'birthday',
+      'value': 299.99,
+      'created_at': testDate.subtract(const Duration(days: 1)).toIso8601String(),
+    },
+    <String, dynamic>{
+      'id': 2,
+      'contact_id': testContactId,
+      'name': 'Christmas Book',
+      'description': 'Latest bestselling novel',
+      'date_given': futureDate.toIso8601String(),
+      'occasion': 'christmas',
+      'value': 25.50,
+      'created_at': testDate.toIso8601String(),
+    },
+  ];
+
+  final List<Gift> expectedGifts = <Gift>[
+    Gift(
+      id: 1,
+      contactId: testContactId,
+      name: 'Birthday Watch',
+      description: 'Beautiful silver watch for 30th birthday',
+      dateGiven: testDate.toIso8601String(),
+      occasion: 'birthday',
+      value: 299.99,
+      createdAt: testDate.subtract(const Duration(days: 1)),
+    ),
+    Gift(
+      id: 2,
+      contactId: testContactId,
+      name: 'Christmas Book',
+      description: 'Latest bestselling novel',
+      dateGiven: futureDate.toIso8601String(),
+      occasion: 'christmas',
+      value: 25.50,
+      createdAt: testDate,
+    ),
+  ];
+
+  setUp(() {
+    mockDatabase = MockDatabaseInterface();
+    repository = SqliteGiftRepository(mockDatabase);
+  });
+
+  group('SqliteGiftRepository - findByContactId', () {
+    testWidgets('should return gifts for valid contact ID ordered by date given and created', (WidgetTester tester) async {
+      when(() => mockDatabase.rawQuery(any(), any())).thenAnswer((_) async => mockDatabaseResponse);
+
+      final List<Gift> result = await repository.findByContactId(testContactId);
+
+      expect(result, hasLength(2));
+      expect(result, equals(expectedGifts));
+      verify(() => mockDatabase.rawQuery('''
+        SELECT * FROM gifts
+        WHERE contact_id = ?
+        ORDER BY date_given DESC, created_at DESC
+      ''', <dynamic>[testContactId])).called(1);
+    });
+
+    testWidgets('should return empty list when no gifts found for contact', (WidgetTester tester) async {
+      when(() => mockDatabase.rawQuery(any(), any())).thenAnswer((_) async => <Map<String, dynamic>>[]);
+
+      final List<Gift> result = await repository.findByContactId(testContactId);
+
+      expect(result, isEmpty);
+    });
+
+    testWidgets('should throw DatabaseException when database query fails', (WidgetTester tester) async {
+      when(() => mockDatabase.rawQuery(any(), any())).thenThrow(Exception('Database connection failed'));
+
+      expect(
+        () => repository.findByContactId(testContactId),
+        throwsA(isA<DatabaseException>().having((e) => e.message, 'message', contains('An unexpected error occurred'))),
+      );
+    });
+  });
+
+  group('SqliteGiftRepository - findByOccasion', () {
+    testWidgets('should return gifts with specific occasion ordered by date given and created', (WidgetTester tester) async {
+      const String occasion = 'birthday';
+      final List<Map<String, dynamic>> birthdayGifts = mockDatabaseResponse
+          .where((gift) => gift['occasion'] == occasion)
+          .toList();
+      when(() => mockDatabase.rawQuery(any(), any())).thenAnswer((_) async => birthdayGifts);
+
+      final List<Gift> result = await repository.findByOccasion(occasion);
+
+      expect(result, hasLength(1));
+      expect(result.first.occasion, equals(occasion));
+      verify(() => mockDatabase.rawQuery('''
+        SELECT * FROM gifts
+        WHERE occasion = ?
+        ORDER BY date_given DESC, created_at DESC
+      ''', <dynamic>[occasion])).called(1);
+    });
+
+    testWidgets('should return empty list when no gifts found for occasion', (WidgetTester tester) async {
+      when(() => mockDatabase.rawQuery(any(), any())).thenAnswer((_) async => <Map<String, dynamic>>[]);
+
+      final List<Gift> result = await repository.findByOccasion('graduation');
+
+      expect(result, isEmpty);
+    });
+
+    testWidgets('should throw DatabaseException when query fails', (WidgetTester tester) async {
+      when(() => mockDatabase.rawQuery(any(), any())).thenThrow(Exception('Occasion query failed'));
+
+      expect(
+        () => repository.findByOccasion('birthday'),
+        throwsA(isA<DatabaseException>().having((e) => e.message, 'message', contains('An unexpected error occurred'))),
+      );
+    });
+  });
+
+  group('SqliteGiftRepository - findByDateRange', () {
+    testWidgets('should return gifts within date range ordered by date given descending', (WidgetTester tester) async {
+      final DateTime startDate = DateTime(2024, 1, 10);
+      final DateTime endDate = DateTime(2024, 1, 25);
+      when(() => mockDatabase.rawQuery(any(), any())).thenAnswer((_) async => mockDatabaseResponse);
+
+      final List<Gift> result = await repository.findByDateRange(startDate, endDate);
+
+      expect(result, hasLength(2));
+      verify(() => mockDatabase.rawQuery(
+        '''
+        SELECT * FROM gifts
+        WHERE date_given BETWEEN ? AND ?
+        ORDER BY date_given DESC
+      ''',
+        <dynamic>[startDate.toIso8601String(), endDate.toIso8601String()],
+      )).called(1);
+    });
+
+    testWidgets('should return empty list when no gifts found in date range', (WidgetTester tester) async {
+      when(() => mockDatabase.rawQuery(any(), any())).thenAnswer((_) async => <Map<String, dynamic>>[]);
+
+      final List<Gift> result = await repository.findByDateRange(
+        DateTime(2025, 1, 1),
+        DateTime(2025, 1, 31),
+      );
+
+      expect(result, isEmpty);
+    });
+
+    testWidgets('should throw DatabaseException when query fails', (WidgetTester tester) async {
+      when(() => mockDatabase.rawQuery(any(), any())).thenThrow(Exception('Date range query failed'));
+
+      expect(
+        () => repository.findByDateRange(DateTime.now(), DateTime.now().add(const Duration(days: 7))),
+        throwsA(isA<DatabaseException>().having((e) => e.message, 'message', contains('An unexpected error occurred'))),
+      );
+    });
+  });
+
+  group('SqliteGiftRepository - findByValueRange', () {
+    testWidgets('should return gifts within value range ordered by value and date descending', (WidgetTester tester) async {
+      const double minValue = 20.0;
+      const double maxValue = 300.0;
+      when(() => mockDatabase.rawQuery(any(), any())).thenAnswer((_) async => mockDatabaseResponse);
+
+      final List<Gift> result = await repository.findByValueRange(minValue, maxValue);
+
+      expect(result, hasLength(2));
+      verify(() => mockDatabase.rawQuery(
+        '''
+        SELECT * FROM gifts
+        WHERE value BETWEEN ? AND ?
+        ORDER BY value DESC, date_given DESC
+      ''',
+        <dynamic>[minValue, maxValue],
+      )).called(1);
+    });
+
+    testWidgets('should return empty list when no gifts found in value range', (WidgetTester tester) async {
+      when(() => mockDatabase.rawQuery(any(), any())).thenAnswer((_) async => <Map<String, dynamic>>[]);
+
+      final List<Gift> result = await repository.findByValueRange(1000.0, 2000.0);
+
+      expect(result, isEmpty);
+    });
+
+    testWidgets('should throw DatabaseException when query fails', (WidgetTester tester) async {
+      when(() => mockDatabase.rawQuery(any(), any())).thenThrow(Exception('Value range query failed'));
+
+      expect(
+        () => repository.findByValueRange(10.0, 100.0),
+        throwsA(isA<DatabaseException>().having((e) => e.message, 'message', contains('An unexpected error occurred'))),
+      );
+    });
+  });
+
+  group('SqliteGiftRepository - findByName', () {
+    testWidgets('should return gifts matching name pattern ordered by date', (WidgetTester tester) async {
+      const String searchName = 'Watch';
+      final List<Map<String, dynamic>> watchGifts = mockDatabaseResponse
+          .where((gift) => (gift['name'] as String).contains(searchName))
+          .toList();
+      when(() => mockDatabase.rawQuery(any(), any())).thenAnswer((_) async => watchGifts);
+
+      final List<Gift> result = await repository.findByName(searchName);
+
+      expect(result, hasLength(1));
+      expect(result.first.name, contains(searchName));
+      verify(() => mockDatabase.rawQuery('''
+        SELECT * FROM gifts
+        WHERE name LIKE ?
+        ORDER BY date_given DESC, created_at DESC
+      ''', <dynamic>['%$searchName%'])).called(1);
+    });
+
+    testWidgets('should return empty list when no gifts found matching name', (WidgetTester tester) async {
+      when(() => mockDatabase.rawQuery(any(), any())).thenAnswer((_) async => <Map<String, dynamic>>[]);
+
+      final List<Gift> result = await repository.findByName('NonExistentGift');
+
+      expect(result, isEmpty);
+    });
+
+    testWidgets('should throw DatabaseException when query fails', (WidgetTester tester) async {
+      when(() => mockDatabase.rawQuery(any(), any())).thenThrow(Exception('Name search query failed'));
+
+      expect(
+        () => repository.findByName('Watch'),
+        throwsA(isA<DatabaseException>().having((e) => e.message, 'message', contains('An unexpected error occurred'))),
+      );
+    });
+  });
+
+  group('SqliteGiftRepository - findRecent', () {
+    testWidgets('should return recent gifts within specified days ordered by date descending', (WidgetTester tester) async {
+      const int days = 30;
+      final List<Map<String, dynamic>> recentGifts = <Map<String, dynamic>>[
+        <String, dynamic>{
+          'id': 3,
+          'contact_id': testContactId,
+          'name': 'Recent Gift',
+          'description': 'A gift given recently',
+          'date_given': DateTime.now().subtract(const Duration(days: 5)).toIso8601String(),
+          'occasion': 'just because',
+          'value': 50.0,
+          'created_at': DateTime.now().toIso8601String(),
+        },
+      ];
+      when(() => mockDatabase.rawQuery(any(), any())).thenAnswer((_) async => recentGifts);
+
+      final List<Gift> result = await repository.findRecent(days);
+
+      expect(result, hasLength(1));
+      expect(result.first.name, equals('Recent Gift'));
+      verify(() => mockDatabase.rawQuery(
+        '''
+        SELECT * FROM gifts
+        WHERE date_given >= ?
+        ORDER BY date_given DESC
+      ''',
+        any(),
+      )).called(1);
+    });
+
+    testWidgets('should return empty list when no recent gifts found', (WidgetTester tester) async {
+      when(() => mockDatabase.rawQuery(any(), any())).thenAnswer((_) async => <Map<String, dynamic>>[]);
+
+      final List<Gift> result = await repository.findRecent(7);
+
+      expect(result, isEmpty);
+    });
+
+    testWidgets('should throw DatabaseException when query fails', (WidgetTester tester) async {
+      when(() => mockDatabase.rawQuery(any(), any())).thenThrow(Exception('Recent gifts query failed'));
+
+      expect(
+        () => repository.findRecent(30),
+        throwsA(isA<DatabaseException>().having((e) => e.message, 'message', contains('An unexpected error occurred'))),
+      );
+    });
+  });
+
+  group('SqliteGiftRepository - findByMinValue', () {
+    testWidgets('should return gifts with minimum value ordered by value and date descending', (WidgetTester tester) async {
+      const double minValue = 100.0;
+      final List<Map<String, dynamic>> expensiveGifts = mockDatabaseResponse
+          .where((gift) => (gift['value'] as double?) != null && (gift['value'] as double) >= minValue)
+          .toList();
+      when(() => mockDatabase.rawQuery(any(), any())).thenAnswer((_) async => expensiveGifts);
+
+      final List<Gift> result = await repository.findByMinValue(minValue);
+
+      expect(result, hasLength(1));
+      expect(result.first.value! >= minValue, isTrue);
+      verify(() => mockDatabase.rawQuery('''
+        SELECT * FROM gifts
+        WHERE value >= ?
+        ORDER BY value DESC, date_given DESC
+      ''', <dynamic>[minValue])).called(1);
+    });
+
+    testWidgets('should return empty list when no gifts found above minimum value', (WidgetTester tester) async {
+      when(() => mockDatabase.rawQuery(any(), any())).thenAnswer((_) async => <Map<String, dynamic>>[]);
+
+      final List<Gift> result = await repository.findByMinValue(1000.0);
+
+      expect(result, isEmpty);
+    });
+
+    testWidgets('should throw DatabaseException when query fails', (WidgetTester tester) async {
+      when(() => mockDatabase.rawQuery(any(), any())).thenThrow(Exception('Minimum value query failed'));
+
+      expect(
+        () => repository.findByMinValue(50.0),
+        throwsA(isA<DatabaseException>().having((e) => e.message, 'message', contains('An unexpected error occurred'))),
+      );
+    });
+  });
+
+  group('SqliteGiftRepository - countByContactId', () {
+    testWidgets('should return correct count of gifts for contact', (WidgetTester tester) async {
+      when(() => mockDatabase.rawQuery(any(), any())).thenAnswer((_) async => <Map<String, dynamic>>[
+        <String, dynamic>{'count': 8},
+      ]);
+
+      final int result = await repository.countByContactId(testContactId);
+
+      expect(result, equals(8));
+      verify(() => mockDatabase.rawQuery(
+        '''
+        SELECT COUNT(*) as count FROM gifts
+        WHERE contact_id = ?
+      ''',
+        <dynamic>[testContactId],
+      )).called(1);
+    });
+
+    testWidgets('should return zero when no gifts found for contact', (WidgetTester tester) async {
+      when(() => mockDatabase.rawQuery(any(), any())).thenAnswer((_) async => <Map<String, dynamic>>[
+        <String, dynamic>{'count': 0},
+      ]);
+
+      final int result = await repository.countByContactId(testContactId);
+
+      expect(result, equals(0));
+    });
+
+    testWidgets('should throw DatabaseException when count query fails', (WidgetTester tester) async {
+      when(() => mockDatabase.rawQuery(any(), any())).thenThrow(Exception('Count query failed'));
+
+      expect(
+        () => repository.countByContactId(testContactId),
+        throwsA(isA<DatabaseException>().having((e) => e.message, 'message', contains('An unexpected error occurred'))),
+      );
+    });
+  });
+
+  group('SqliteGiftRepository - getTotalValueByContactId', () {
+    testWidgets('should return correct total value of gifts for contact', (WidgetTester tester) async {
+      when(() => mockDatabase.rawQuery(any(), any())).thenAnswer((_) async => <Map<String, dynamic>>[
+        <String, dynamic>{'total': 325.49},
+      ]);
+
+      final double result = await repository.getTotalValueByContactId(testContactId);
+
+      expect(result, equals(325.49));
+      verify(() => mockDatabase.rawQuery(
+        '''
+        SELECT COALESCE(SUM(value), 0.0) as total FROM gifts
+        WHERE contact_id = ? AND value IS NOT NULL
+      ''',
+        <dynamic>[testContactId],
+      )).called(1);
+    });
+
+    testWidgets('should return zero when no gifts with values found for contact', (WidgetTester tester) async {
+      when(() => mockDatabase.rawQuery(any(), any())).thenAnswer((_) async => <Map<String, dynamic>>[
+        <String, dynamic>{'total': 0.0},
+      ]);
+
+      final double result = await repository.getTotalValueByContactId(testContactId);
+
+      expect(result, equals(0.0));
+    });
+
+    testWidgets('should throw DatabaseException when calculation query fails', (WidgetTester tester) async {
+      when(() => mockDatabase.rawQuery(any(), any())).thenThrow(Exception('Total value calculation failed'));
+
+      expect(
+        () => repository.getTotalValueByContactId(testContactId),
+        throwsA(isA<DatabaseException>().having((e) => e.message, 'message', contains('An unexpected error occurred'))),
+      );
+    });
+  });
+
+  group('SqliteGiftRepository - fromMap', () {
+    testWidgets('should correctly convert database map to Gift model', (WidgetTester tester) async {
+      final Map<String, dynamic> giftMap = <String, dynamic>{
+        'id': testGiftId,
+        'contact_id': testContactId,
+        'name': 'Anniversary Jewelry',
+        'description': 'Beautiful necklace for anniversary',
+        'date_given': testDate.toIso8601String(),
+        'occasion': 'anniversary',
+        'value': 549.99,
+        'created_at': testDate.toIso8601String(),
+      };
+
+      final Gift result = repository.fromMap(giftMap);
+
+      expect(result.id, equals(testGiftId));
+      expect(result.contactId, equals(testContactId));
+      expect(result.name, equals('Anniversary Jewelry'));
+      expect(result.description, equals('Beautiful necklace for anniversary'));
+      expect(result.dateGiven, equals(testDate.toIso8601String()));
+      expect(result.occasion, equals('anniversary'));
+      expect(result.value, equals(549.99));
+      expect(result.createdAt, equals(testDate));
+    });
+
+    testWidgets('should handle null values correctly when converting from map', (WidgetTester tester) async {
+      final Map<String, dynamic> giftMap = <String, dynamic>{
+        'id': null,
+        'contact_id': testContactId,
+        'name': 'Simple Gift',
+        'description': null,
+        'date_given': null,
+        'occasion': null,
+        'value': null,
+        'created_at': null,
+      };
+
+      final Gift result = repository.fromMap(giftMap);
+
+      expect(result.id, isNull);
+      expect(result.contactId, equals(testContactId));
+      expect(result.name, equals('Simple Gift'));
+      expect(result.description, isNull);
+      expect(result.dateGiven, isNull);
+      expect(result.occasion, isNull);
+      expect(result.value, isNull);
+      expect(result.createdAt, isNull);
+    });
+  });
+}

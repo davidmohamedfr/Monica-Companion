@@ -1,5 +1,11 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
+import 'package:monica_companion/db/interfaces/database_interface.dart';
+import 'package:monica_companion/db/models/contact.dart';
+import 'package:monica_companion/db/repositories/repository_registry.dart';
+import 'package:monica_companion/services/service_locator.dart';
+
+import '../mocks/mock_services.dart';
 
 /// Test helper utilities and common setup functions
 class TestHelpers {
@@ -12,6 +18,33 @@ class TestHelpers {
     registerFallbackValue(<String>[]);
     registerFallbackValue(DateTime.now());
     registerFallbackValue(Duration.zero);
+  }
+
+  /// Setup service locator with mock services for widget tests
+  static Future<void> setupServiceLocatorForTests() async {
+    final ServiceLocator locator = ServiceLocator.instance;
+
+    // Clear any existing services
+    locator.clear();
+
+    // Create mock database interface
+    final MockDatabaseInterface mockDatabase = MockDatabaseInterface();
+    when(mockDatabase.initialize).thenAnswer((_) async {});
+    when(mockDatabase.close).thenAnswer((_) async {});
+
+    // Create mock contact repository
+    final MockContactRepository mockContactRepository = MockContactRepository();
+    when(mockContactRepository.findAll).thenAnswer((_) async => <Contact>[]);
+
+    // Create mock repository registry
+    final MockRepositoryRegistry mockRegistry = MockRepositoryRegistry();
+    when(mockRegistry.initialize).thenAnswer((_) async {});
+    when(mockRegistry.dispose).thenAnswer((_) async {});
+    when(() => mockRegistry.contactRepository).thenReturn(mockContactRepository);
+
+    // Register services
+    locator.registerSingleton<DatabaseInterface>(mockDatabase);
+    locator.registerSingleton<RepositoryRegistry>(mockRegistry);
   }
 
   /// Create a mock DateTime for consistent testing
