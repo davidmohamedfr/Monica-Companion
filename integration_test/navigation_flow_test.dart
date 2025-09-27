@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
+import 'package:monica_companion/features/calls/screens/calls_screen.dart';
+import 'package:monica_companion/features/contacts/screens/contacts_screen.dart';
 import 'package:monica_companion/features/navigation/screens/main_shell.dart';
 import 'package:monica_companion/features/navigation/widgets/bottom_navigation_bar.dart';
-import 'package:monica_companion/features/contacts/screens/contacts_screen.dart';
-import 'package:monica_companion/features/calls/screens/calls_screen.dart';
 import 'package:monica_companion/features/settings/screens/settings_screen.dart';
 import 'package:monica_companion/features/sync/screens/sync_screen.dart';
 import 'package:monica_companion/features/sync/widgets/sync_status_card.dart';
@@ -14,7 +14,9 @@ void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
   group('Navigation Flow Integration Tests', () {
-    testWidgets('should navigate between all main tabs', (WidgetTester tester) async {
+    testWidgets('should navigate between all main tabs', (
+      WidgetTester tester,
+    ) async {
       // Start the app
       await tester.pumpWidget(const MonicaApp());
       await tester.pumpAndSettle();
@@ -25,7 +27,13 @@ void main() {
 
       // Initially should be on Contacts tab with proper screen content
       expect(find.byType(ContactsScreen), findsOneWidget);
-      expect(find.descendant(of: find.byType(AppBar), matching: find.text('Contacts')), findsOneWidget);
+      expect(
+        find.descendant(
+          of: find.byType(AppBar),
+          matching: find.text('Contacts'),
+        ),
+        findsOneWidget,
+      );
       // Check for contacts screen elements
       expect(find.byIcon(Icons.search), findsOneWidget);
       expect(find.byIcon(Icons.add), findsOneWidget);
@@ -35,7 +43,10 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.byType(CallsScreen), findsOneWidget);
-      expect(find.descendant(of: find.byType(AppBar), matching: find.text('Calls')), findsOneWidget);
+      expect(
+        find.descendant(of: find.byType(AppBar), matching: find.text('Calls')),
+        findsOneWidget,
+      );
       expect(find.text('Calls Screen - Coming Soon'), findsOneWidget);
       expect(find.byIcon(Icons.filter_list), findsOneWidget);
 
@@ -44,7 +55,13 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.byType(SettingsScreen), findsOneWidget);
-      expect(find.descendant(of: find.byType(AppBar), matching: find.text('Settings')), findsOneWidget);
+      expect(
+        find.descendant(
+          of: find.byType(AppBar),
+          matching: find.text('Settings'),
+        ),
+        findsOneWidget,
+      );
       expect(find.byType(ListView), findsOneWidget); // Settings has a ListView
       expect(find.text('Account'), findsOneWidget);
       expect(find.text('Data & Sync'), findsOneWidget);
@@ -55,7 +72,10 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.byType(SyncScreen), findsOneWidget);
-      expect(find.descendant(of: find.byType(AppBar), matching: find.text('Sync')), findsOneWidget);
+      expect(
+        find.descendant(of: find.byType(AppBar), matching: find.text('Sync')),
+        findsOneWidget,
+      );
       expect(find.byType(SyncStatusCard), findsOneWidget);
       expect(find.byIcon(Icons.refresh), findsOneWidget);
       expect(find.text('Sync Screen - Coming Soon'), findsOneWidget);
@@ -65,10 +85,18 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.byType(ContactsScreen), findsOneWidget);
-      expect(find.descendant(of: find.byType(AppBar), matching: find.text('Contacts')), findsOneWidget);
+      expect(
+        find.descendant(
+          of: find.byType(AppBar),
+          matching: find.text('Contacts'),
+        ),
+        findsOneWidget,
+      );
     });
 
-    testWidgets('should maintain navigation state across interactions', (WidgetTester tester) async {
+    testWidgets('should maintain navigation state across interactions', (
+      WidgetTester tester,
+    ) async {
       await tester.pumpWidget(const MonicaApp());
       await tester.pumpAndSettle();
 
@@ -95,7 +123,9 @@ void main() {
       expect(find.text('Data & Sync'), findsOneWidget);
     });
 
-    testWidgets('should handle rapid navigation changes', (WidgetTester tester) async {
+    testWidgets('should handle rapid navigation changes', (
+      WidgetTester tester,
+    ) async {
       await tester.pumpWidget(const MonicaApp());
       await tester.pumpAndSettle();
 
@@ -108,10 +138,18 @@ void main() {
 
       // Should end up on Contacts tab
       expect(find.byType(ContactsScreen), findsOneWidget);
-      expect(find.descendant(of: find.byType(AppBar), matching: find.text('Contacts')), findsOneWidget);
+      expect(
+        find.descendant(
+          of: find.byType(AppBar),
+          matching: find.text('Contacts'),
+        ),
+        findsOneWidget,
+      );
     });
 
-    testWidgets('should display proper app bar for each screen', (WidgetTester tester) async {
+    testWidgets('should display proper app bar for each screen', (
+      WidgetTester tester,
+    ) async {
       await tester.pumpWidget(const MonicaApp());
       await tester.pumpAndSettle();
 
@@ -132,7 +170,10 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.text('Settings'), findsOneWidget);
-      expect(find.byIcon(Icons.search), findsNothing); // Settings doesn't have search
+      expect(
+        find.byIcon(Icons.search),
+        findsNothing,
+      ); // Settings doesn't have search
 
       // Navigate to Sync
       await tester.tap(find.text('Sync'));
@@ -142,7 +183,9 @@ void main() {
       expect(find.byIcon(Icons.refresh), findsOneWidget);
     });
 
-    testWidgets('should handle screen orientation changes', (WidgetTester tester) async {
+    testWidgets('should handle screen orientation changes', (
+      WidgetTester tester,
+    ) async {
       await tester.pumpWidget(const MonicaApp());
       await tester.pumpAndSettle();
 
@@ -170,7 +213,9 @@ void main() {
       expect(find.byType(MainShell), findsOneWidget);
     });
 
-    testWidgets('should handle navigation errors gracefully', (WidgetTester tester) async {
+    testWidgets('should handle navigation errors gracefully', (
+      WidgetTester tester,
+    ) async {
       await tester.pumpWidget(const MonicaApp());
       await tester.pumpAndSettle();
 
@@ -189,7 +234,9 @@ void main() {
       expect(find.byType(ErrorWidget), findsNothing);
     });
 
-    testWidgets('should maintain state during screen rebuilds', (WidgetTester tester) async {
+    testWidgets('should maintain state during screen rebuilds', (
+      WidgetTester tester,
+    ) async {
       await tester.pumpWidget(const MonicaApp());
       await tester.pumpAndSettle();
 
@@ -208,7 +255,9 @@ void main() {
       expect(find.byType(MonicaBottomNavigationBar), findsOneWidget);
     });
 
-    testWidgets('should handle accessibility navigation', (WidgetTester tester) async {
+    testWidgets('should handle accessibility navigation', (
+      WidgetTester tester,
+    ) async {
       await tester.pumpWidget(const MonicaApp());
       await tester.pumpAndSettle();
 
@@ -229,7 +278,9 @@ void main() {
       expect(find.byType(SettingsScreen), findsOneWidget);
     });
 
-    testWidgets('should handle memory pressure during navigation', (WidgetTester tester) async {
+    testWidgets('should handle memory pressure during navigation', (
+      WidgetTester tester,
+    ) async {
       await tester.pumpWidget(const MonicaApp());
       await tester.pumpAndSettle();
 
@@ -259,7 +310,9 @@ void main() {
       expect(find.byType(ErrorWidget), findsNothing);
     });
 
-    testWidgets('should validate app bar actions work correctly', (WidgetTester tester) async {
+    testWidgets('should validate app bar actions work correctly', (
+      WidgetTester tester,
+    ) async {
       await tester.pumpWidget(const MonicaApp());
       await tester.pumpAndSettle();
 

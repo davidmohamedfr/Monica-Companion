@@ -5,7 +5,8 @@ void main() {
   group('Reminder Model', () {
     const int testContactId = 1;
     const String testTitle = 'Call for birthday wishes';
-    const String testDescription = 'Remember to call John for his birthday celebration';
+    const String testDescription =
+        'Remember to call John for his birthday celebration';
     const String testDueDate = '2024-01-15T09:00:00.000Z';
     const ReminderFrequency testFrequency = ReminderFrequency.yearly;
     const bool testActive = false;
@@ -131,7 +132,6 @@ void main() {
         title: testTitle,
         dueDate: testDueDate,
         frequency: ReminderFrequency.once,
-        active: true,
       );
 
       final Reminder updated = original.copyWith(
@@ -149,7 +149,10 @@ void main() {
       expect(updated.frequency, testFrequency);
       expect(updated.active, testActive);
       expect(original.title, testTitle); // Original should be unchanged
-      expect(original.frequency, ReminderFrequency.once); // Original should be unchanged
+      expect(
+        original.frequency,
+        ReminderFrequency.once,
+      ); // Original should be unchanged
       expect(original.active, true); // Original should be unchanged
     });
 
@@ -184,15 +187,17 @@ void main() {
     });
 
     test('should handle ReminderFrequency enum correctly', () {
-      const Map<ReminderFrequency, String> frequencyMap = {
-        ReminderFrequency.once: 'once',
-        ReminderFrequency.daily: 'daily',
-        ReminderFrequency.weekly: 'weekly',
-        ReminderFrequency.monthly: 'monthly',
-        ReminderFrequency.yearly: 'yearly',
-      };
+      const Map<ReminderFrequency, String> frequencyMap =
+          <ReminderFrequency, String>{
+            ReminderFrequency.once: 'once',
+            ReminderFrequency.daily: 'daily',
+            ReminderFrequency.weekly: 'weekly',
+            ReminderFrequency.monthly: 'monthly',
+            ReminderFrequency.yearly: 'yearly',
+          };
 
-      for (final MapEntry<ReminderFrequency, String> entry in frequencyMap.entries) {
+      for (final MapEntry<ReminderFrequency, String> entry
+          in frequencyMap.entries) {
         final Reminder reminder = Reminder(
           contactId: testContactId,
           title: testTitle,
@@ -214,7 +219,6 @@ void main() {
         contactId: testContactId,
         title: testTitle,
         dueDate: testDueDate,
-        active: true,
       );
 
       final Map<String, dynamic> activeMap = activeReminder.toMap();
@@ -243,7 +247,6 @@ void main() {
         contactId: testContactId,
         title: testTitle,
         dueDate: testDueDate,
-        frequency: null,
       );
 
       final Map<String, dynamic> map = reminder.toMap();
@@ -270,9 +273,15 @@ void main() {
       expect(ReminderFrequency.fromString('once'), ReminderFrequency.once);
       expect(ReminderFrequency.fromString('daily'), ReminderFrequency.daily);
       expect(ReminderFrequency.fromString('weekly'), ReminderFrequency.weekly);
-      expect(ReminderFrequency.fromString('monthly'), ReminderFrequency.monthly);
+      expect(
+        ReminderFrequency.fromString('monthly'),
+        ReminderFrequency.monthly,
+      );
       expect(ReminderFrequency.fromString('yearly'), ReminderFrequency.yearly);
-      expect(ReminderFrequency.fromString('invalid'), ReminderFrequency.once); // Default fallback
+      expect(
+        ReminderFrequency.fromString('invalid'),
+        ReminderFrequency.once,
+      ); // Default fallback
     });
 
     test('should handle active conversion from different int values', () {
@@ -303,7 +312,7 @@ void main() {
     });
 
     test('should handle different due date formats', () {
-      const List<String> dueDates = [
+      const List<String> dueDates = <String>[
         '2024-01-15T09:00:00.000Z',
         '2024-12-25T00:00:00.000Z',
         '2025-06-30T18:30:00.000Z',
@@ -326,7 +335,7 @@ void main() {
     });
 
     test('should handle various reminder titles', () {
-      const List<String> titles = [
+      const List<String> titles = <String>[
         'Birthday reminder',
         'Anniversary call',
         'Check in with friend',
@@ -351,11 +360,12 @@ void main() {
     });
 
     test('should handle long descriptions', () {
-      const String longDescription = 'This is a comprehensive reminder description that provides detailed information '
+      const String longDescription =
+          'This is a comprehensive reminder description that provides detailed information '
           'about what needs to be done, when it should be done, and any special considerations that might be '
           'relevant for completing the task successfully.';
 
-      final Reminder reminder = Reminder(
+      const Reminder reminder = Reminder(
         contactId: testContactId,
         title: testTitle,
         dueDate: testDueDate,
@@ -368,24 +378,27 @@ void main() {
       expect(fromMap.description, longDescription);
     });
 
-    test('should handle edge case where active is 0 in database but should default to true', () {
-      // This tests the specific logic where active defaults to true unless explicitly set to 0
-      final Map<String, dynamic> map = <String, dynamic>{
-        'id': 1,
-        'contact_id': testContactId,
-        'title': testTitle,
-        'due_date': testDueDate,
-        'active': 0, // Explicitly false
-        'created_at': null,
-      };
+    test(
+      'should handle edge case where active is 0 in database but should default to true',
+      () {
+        // This tests the specific logic where active defaults to true unless explicitly set to 0
+        final Map<String, dynamic> map = <String, dynamic>{
+          'id': 1,
+          'contact_id': testContactId,
+          'title': testTitle,
+          'due_date': testDueDate,
+          'active': 0, // Explicitly false
+          'created_at': null,
+        };
 
-      final Reminder reminder = Reminder.fromMap(map);
-      expect(reminder.active, false);
+        final Reminder reminder = Reminder.fromMap(map);
+        expect(reminder.active, false);
 
-      // Test that null defaults to true
-      map['active'] = null;
-      final Reminder reminderNull = Reminder.fromMap(map);
-      expect(reminderNull.active, true);
-    });
+        // Test that null defaults to true
+        map['active'] = null;
+        final Reminder reminderNull = Reminder.fromMap(map);
+        expect(reminderNull.active, true);
+      },
+    );
   });
 }

@@ -9,10 +9,7 @@ void main() {
     const bool testIsPrivate = true;
 
     test('should create Note with required fields', () {
-      const Note note = Note(
-        contactId: testContactId,
-        content: testContent,
-      );
+      const Note note = Note(contactId: testContactId, content: testContent);
 
       expect(note.contactId, testContactId);
       expect(note.content, testContent);
@@ -121,7 +118,6 @@ void main() {
         id: 1,
         contactId: testContactId,
         content: testContent,
-        isPrivate: false,
       );
 
       final Note updated = original.copyWith(
@@ -189,7 +185,6 @@ void main() {
       const Note publicNote = Note(
         contactId: testContactId,
         content: testContent,
-        isPrivate: false,
       );
 
       final Map<String, dynamic> publicMap = publicNote.toMap();
@@ -200,7 +195,13 @@ void main() {
     });
 
     test('should handle different categories', () {
-      const List<String> categories = ['personal', 'work', 'family', 'health', 'hobbies'];
+      const List<String> categories = <String>[
+        'personal',
+        'work',
+        'family',
+        'health',
+        'hobbies',
+      ];
 
       for (final String category in categories) {
         final Note note = Note(
@@ -246,10 +247,7 @@ void main() {
     });
 
     test('should use default isPrivate when not specified', () {
-      const Note note = Note(
-        contactId: testContactId,
-        content: testContent,
-      );
+      const Note note = Note(contactId: testContactId, content: testContent);
 
       expect(note.isPrivate, false);
 

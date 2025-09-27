@@ -8,11 +8,10 @@ enum DebtType {
   const DebtType(this.value);
   final String value;
 
-  static DebtType fromString(String value) =>
-      DebtType.values.firstWhere(
-        (DebtType type) => type.value == value,
-        orElse: () => DebtType.owedToMe,
-      );
+  static DebtType fromString(String value) => DebtType.values.firstWhere(
+    (DebtType type) => type.value == value,
+    orElse: () => DebtType.owedToMe,
+  );
 }
 
 class Debt extends BaseModel {
@@ -51,31 +50,31 @@ class Debt extends BaseModel {
 
   @override
   Map<String, dynamic> toMap() => <String, dynamic>{
-      'id': id,
-      'contact_id': contactId,
-      'amount': amount,
-      'currency': currency,
-      'type': type.value,
-      'date': date,
-      'description': description,
-      'paid': paid ? 1 : 0,
-      'created_at': createdAt?.toIso8601String(),
-    };
+    'id': id,
+    'contact_id': contactId,
+    'amount': amount,
+    'currency': currency,
+    'type': type.value,
+    'date': date,
+    'description': description,
+    'paid': paid ? 1 : 0,
+    'created_at': createdAt?.toIso8601String(),
+  };
 
   /// Create Debt from database map
   static Debt fromMap(Map<String, dynamic> map) => Debt(
-      id: map['id'] as int?,
-      contactId: map['contact_id'] as int,
-      amount: map['amount'] as double,
-      currency: map['currency'] as String? ?? 'USD',
-      type: DebtType.fromString(map['type'] as String),
-      date: map['date'] as String,
-      description: map['description'] as String?,
-      paid: (map['paid'] as int?) == 1,
-      createdAt: map['created_at'] != null
-          ? DateTime.parse(map['created_at'] as String)
-          : null,
-    );
+    id: map['id'] as int?,
+    contactId: map['contact_id'] as int,
+    amount: map['amount'] as double,
+    currency: map['currency'] as String? ?? 'USD',
+    type: DebtType.fromString(map['type'] as String),
+    date: map['date'] as String,
+    description: map['description'] as String?,
+    paid: (map['paid'] as int?) == 1,
+    createdAt: map['created_at'] != null
+        ? DateTime.parse(map['created_at'] as String)
+        : null,
+  );
 
   @override
   Debt copyWith({
@@ -89,27 +88,27 @@ class Debt extends BaseModel {
     String? description,
     bool? paid,
   }) => Debt(
-      id: id ?? this.id,
-      createdAt: createdAt ?? this.createdAt,
-      contactId: contactId ?? this.contactId,
-      amount: amount ?? this.amount,
-      currency: currency ?? this.currency,
-      type: type ?? this.type,
-      date: date ?? this.date,
-      description: description ?? this.description,
-      paid: paid ?? this.paid,
-    );
+    id: id ?? this.id,
+    createdAt: createdAt ?? this.createdAt,
+    contactId: contactId ?? this.contactId,
+    amount: amount ?? this.amount,
+    currency: currency ?? this.currency,
+    type: type ?? this.type,
+    date: date ?? this.date,
+    description: description ?? this.description,
+    paid: paid ?? this.paid,
+  );
 
   @override
   List<Object?> get props => <Object?>[
-        id,
-        createdAt,
-        contactId,
-        amount,
-        currency,
-        type,
-        date,
-        description,
-        paid,
-      ];
+    id,
+    createdAt,
+    contactId,
+    amount,
+    currency,
+    type,
+    date,
+    description,
+    paid,
+  ];
 }

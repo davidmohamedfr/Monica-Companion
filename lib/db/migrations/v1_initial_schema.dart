@@ -8,16 +8,16 @@ class V1InitialSchema implements Migration {
 
   @override
   List<String> get upStatements => <String>[
-        // Schema version tracking table
-        '''
+    // Schema version tracking table
+    '''
         CREATE TABLE schema_version (
           version INTEGER PRIMARY KEY,
           migrated_at TEXT NOT NULL
         )
         ''',
 
-        // Contacts table
-        '''
+    // Contacts table
+    '''
         CREATE TABLE contacts (
           id INTEGER PRIMARY KEY AUTOINCREMENT,
           name TEXT NOT NULL,
@@ -32,8 +32,8 @@ class V1InitialSchema implements Migration {
         )
         ''',
 
-        // Interactions table
-        '''
+    // Interactions table
+    '''
         CREATE TABLE interactions (
           id INTEGER PRIMARY KEY AUTOINCREMENT,
           contact_id INTEGER NOT NULL,
@@ -47,8 +47,8 @@ class V1InitialSchema implements Migration {
         )
         ''',
 
-        // Life Events table
-        '''
+    // Life Events table
+    '''
         CREATE TABLE life_events (
           id INTEGER PRIMARY KEY AUTOINCREMENT,
           contact_id INTEGER NOT NULL,
@@ -61,8 +61,8 @@ class V1InitialSchema implements Migration {
         )
         ''',
 
-        // Notes table
-        '''
+    // Notes table
+    '''
         CREATE TABLE notes (
           id INTEGER PRIMARY KEY AUTOINCREMENT,
           contact_id INTEGER NOT NULL,
@@ -75,8 +75,8 @@ class V1InitialSchema implements Migration {
         )
         ''',
 
-        // Tasks table
-        '''
+    // Tasks table
+    '''
         CREATE TABLE tasks (
           id INTEGER PRIMARY KEY AUTOINCREMENT,
           contact_id INTEGER NOT NULL,
@@ -90,8 +90,8 @@ class V1InitialSchema implements Migration {
         )
         ''',
 
-        // Gifts table
-        '''
+    // Gifts table
+    '''
         CREATE TABLE gifts (
           id INTEGER PRIMARY KEY AUTOINCREMENT,
           contact_id INTEGER NOT NULL,
@@ -105,8 +105,8 @@ class V1InitialSchema implements Migration {
         )
         ''',
 
-        // Activities table
-        '''
+    // Activities table
+    '''
         CREATE TABLE activities (
           id INTEGER PRIMARY KEY AUTOINCREMENT,
           title TEXT NOT NULL,
@@ -118,8 +118,8 @@ class V1InitialSchema implements Migration {
         )
         ''',
 
-        // Activity participants junction table
-        '''
+    // Activity participants junction table
+    '''
         CREATE TABLE activity_participants (
           activity_id INTEGER NOT NULL,
           contact_id INTEGER NOT NULL,
@@ -129,8 +129,8 @@ class V1InitialSchema implements Migration {
         )
         ''',
 
-        // Debts table
-        '''
+    // Debts table
+    '''
         CREATE TABLE debts (
           id INTEGER PRIMARY KEY AUTOINCREMENT,
           contact_id INTEGER NOT NULL,
@@ -145,8 +145,8 @@ class V1InitialSchema implements Migration {
         )
         ''',
 
-        // Reminders table
-        '''
+    // Reminders table
+    '''
         CREATE TABLE reminders (
           id INTEGER PRIMARY KEY AUTOINCREMENT,
           contact_id INTEGER NOT NULL,
@@ -160,8 +160,8 @@ class V1InitialSchema implements Migration {
         )
         ''',
 
-        // Relationships table
-        '''
+    // Relationships table
+    '''
         CREATE TABLE relationships (
           id INTEGER PRIMARY KEY AUTOINCREMENT,
           contact_id INTEGER NOT NULL,
@@ -173,24 +173,24 @@ class V1InitialSchema implements Migration {
         )
         ''',
 
-        // Indexes for performance
-        'CREATE INDEX idx_contacts_name ON contacts(name)',
-        'CREATE INDEX idx_contacts_email ON contacts(email)',
-        'CREATE INDEX idx_interactions_contact_id ON interactions(contact_id)',
-        'CREATE INDEX idx_interactions_date ON interactions(date)',
-        'CREATE INDEX idx_life_events_contact_id ON life_events(contact_id)',
-        'CREATE INDEX idx_notes_contact_id ON notes(contact_id)',
-        'CREATE INDEX idx_tasks_contact_id ON tasks(contact_id)',
-        'CREATE INDEX idx_tasks_due_date ON tasks(due_date)',
-        'CREATE INDEX idx_gifts_contact_id ON gifts(contact_id)',
-        'CREATE INDEX idx_activities_date ON activities(date)',
-        'CREATE INDEX idx_debts_contact_id ON debts(contact_id)',
-        'CREATE INDEX idx_reminders_contact_id ON reminders(contact_id)',
-        'CREATE INDEX idx_reminders_due_date ON reminders(due_date)',
-        'CREATE INDEX idx_relationships_contact_id ON relationships(contact_id)',
+    // Indexes for performance
+    'CREATE INDEX idx_contacts_name ON contacts(name)',
+    'CREATE INDEX idx_contacts_email ON contacts(email)',
+    'CREATE INDEX idx_interactions_contact_id ON interactions(contact_id)',
+    'CREATE INDEX idx_interactions_date ON interactions(date)',
+    'CREATE INDEX idx_life_events_contact_id ON life_events(contact_id)',
+    'CREATE INDEX idx_notes_contact_id ON notes(contact_id)',
+    'CREATE INDEX idx_tasks_contact_id ON tasks(contact_id)',
+    'CREATE INDEX idx_tasks_due_date ON tasks(due_date)',
+    'CREATE INDEX idx_gifts_contact_id ON gifts(contact_id)',
+    'CREATE INDEX idx_activities_date ON activities(date)',
+    'CREATE INDEX idx_debts_contact_id ON debts(contact_id)',
+    'CREATE INDEX idx_reminders_contact_id ON reminders(contact_id)',
+    'CREATE INDEX idx_reminders_due_date ON reminders(due_date)',
+    'CREATE INDEX idx_relationships_contact_id ON relationships(contact_id)',
 
-        // Triggers for updated_at columns
-        '''
+    // Triggers for updated_at columns
+    '''
         CREATE TRIGGER update_contacts_updated_at
         AFTER UPDATE ON contacts
         FOR EACH ROW
@@ -199,7 +199,7 @@ class V1InitialSchema implements Migration {
         END
         ''',
 
-        '''
+    '''
         CREATE TRIGGER update_notes_updated_at
         AFTER UPDATE ON notes
         FOR EACH ROW
@@ -207,39 +207,39 @@ class V1InitialSchema implements Migration {
           UPDATE notes SET updated_at = CURRENT_TIMESTAMP WHERE id = NEW.id;
         END
         ''',
-      ];
+  ];
 
   @override
   List<String> get downStatements => <String>[
-        'DROP TRIGGER IF EXISTS update_notes_updated_at',
-        'DROP TRIGGER IF EXISTS update_contacts_updated_at',
-        'DROP INDEX IF EXISTS idx_relationships_contact_id',
-        'DROP INDEX IF EXISTS idx_reminders_due_date',
-        'DROP INDEX IF EXISTS idx_reminders_contact_id',
-        'DROP INDEX IF EXISTS idx_debts_contact_id',
-        'DROP INDEX IF EXISTS idx_activities_date',
-        'DROP INDEX IF EXISTS idx_gifts_contact_id',
-        'DROP INDEX IF EXISTS idx_tasks_due_date',
-        'DROP INDEX IF EXISTS idx_tasks_contact_id',
-        'DROP INDEX IF EXISTS idx_notes_contact_id',
-        'DROP INDEX IF EXISTS idx_life_events_contact_id',
-        'DROP INDEX IF EXISTS idx_interactions_date',
-        'DROP INDEX IF EXISTS idx_interactions_contact_id',
-        'DROP INDEX IF EXISTS idx_contacts_email',
-        'DROP INDEX IF EXISTS idx_contacts_name',
-        'DROP TABLE IF EXISTS relationships',
-        'DROP TABLE IF EXISTS reminders',
-        'DROP TABLE IF EXISTS debts',
-        'DROP TABLE IF EXISTS activity_participants',
-        'DROP TABLE IF EXISTS activities',
-        'DROP TABLE IF EXISTS gifts',
-        'DROP TABLE IF EXISTS tasks',
-        'DROP TABLE IF EXISTS notes',
-        'DROP TABLE IF EXISTS life_events',
-        'DROP TABLE IF EXISTS interactions',
-        'DROP TABLE IF EXISTS contacts',
-        'DROP TABLE IF EXISTS schema_version',
-      ];
+    'DROP TRIGGER IF EXISTS update_notes_updated_at',
+    'DROP TRIGGER IF EXISTS update_contacts_updated_at',
+    'DROP INDEX IF EXISTS idx_relationships_contact_id',
+    'DROP INDEX IF EXISTS idx_reminders_due_date',
+    'DROP INDEX IF EXISTS idx_reminders_contact_id',
+    'DROP INDEX IF EXISTS idx_debts_contact_id',
+    'DROP INDEX IF EXISTS idx_activities_date',
+    'DROP INDEX IF EXISTS idx_gifts_contact_id',
+    'DROP INDEX IF EXISTS idx_tasks_due_date',
+    'DROP INDEX IF EXISTS idx_tasks_contact_id',
+    'DROP INDEX IF EXISTS idx_notes_contact_id',
+    'DROP INDEX IF EXISTS idx_life_events_contact_id',
+    'DROP INDEX IF EXISTS idx_interactions_date',
+    'DROP INDEX IF EXISTS idx_interactions_contact_id',
+    'DROP INDEX IF EXISTS idx_contacts_email',
+    'DROP INDEX IF EXISTS idx_contacts_name',
+    'DROP TABLE IF EXISTS relationships',
+    'DROP TABLE IF EXISTS reminders',
+    'DROP TABLE IF EXISTS debts',
+    'DROP TABLE IF EXISTS activity_participants',
+    'DROP TABLE IF EXISTS activities',
+    'DROP TABLE IF EXISTS gifts',
+    'DROP TABLE IF EXISTS tasks',
+    'DROP TABLE IF EXISTS notes',
+    'DROP TABLE IF EXISTS life_events',
+    'DROP TABLE IF EXISTS interactions',
+    'DROP TABLE IF EXISTS contacts',
+    'DROP TABLE IF EXISTS schema_version',
+  ];
 
   @override
   Future<void> onUp(DatabaseInterface database) async {

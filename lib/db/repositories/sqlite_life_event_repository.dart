@@ -1,7 +1,6 @@
 import 'package:monica_companion/core/errors/exceptions.dart';
 import 'package:monica_companion/core/errors/failures.dart';
 import 'package:monica_companion/core/utils/error_transformer.dart';
-import 'package:monica_companion/core/utils/logger.dart';
 import 'package:monica_companion/db/interfaces/database_interface.dart';
 import 'package:monica_companion/db/interfaces/life_event_repository.dart';
 import 'package:monica_companion/db/models/life_event.dart';
@@ -11,7 +10,7 @@ import 'package:monica_companion/db/repositories/base_repository.dart';
 class SqliteLifeEventRepository extends BaseRepository<LifeEvent, int>
     implements LifeEventRepository {
   SqliteLifeEventRepository(DatabaseInterface database)
-      : super(database, 'life_events');
+    : super(database, 'life_events');
 
   @override
   LifeEvent fromMap(Map<String, dynamic> map) => LifeEvent.fromMap(map);
@@ -30,10 +29,16 @@ class SqliteLifeEventRepository extends BaseRepository<LifeEvent, int>
       );
       return results.map(fromMap).toList();
     } catch (e) {
-      final failure = ErrorTransformer.transformException(e, 'finding life events by contact ID');
+      final Failure failure = ErrorTransformer.transformException(
+        e,
+        'finding life events by contact ID',
+      );
       throw failure is DatabaseFailure
           ? DatabaseException(failure.message, failure.code)
-          : DatabaseException('Failed to find life events by contact ID', 'SEARCH_ERROR');
+          : const DatabaseException(
+              'Failed to find life events by contact ID',
+              'SEARCH_ERROR',
+            );
     }
   }
 
@@ -51,10 +56,16 @@ class SqliteLifeEventRepository extends BaseRepository<LifeEvent, int>
       );
       return results.map(fromMap).toList();
     } catch (e) {
-      final failure = ErrorTransformer.transformException(e, 'finding life events by event type');
+      final Failure failure = ErrorTransformer.transformException(
+        e,
+        'finding life events by event type',
+      );
       throw failure is DatabaseFailure
           ? DatabaseException(failure.message, failure.code)
-          : DatabaseException('Failed to find life events by event type', 'SEARCH_ERROR');
+          : const DatabaseException(
+              'Failed to find life events by event type',
+              'SEARCH_ERROR',
+            );
     }
   }
 
@@ -72,10 +83,16 @@ class SqliteLifeEventRepository extends BaseRepository<LifeEvent, int>
       );
       return results.map(fromMap).toList();
     } catch (e) {
-      final failure = ErrorTransformer.transformException(e, 'finding life events by date range');
+      final Failure failure = ErrorTransformer.transformException(
+        e,
+        'finding life events by date range',
+      );
       throw failure is DatabaseFailure
           ? DatabaseException(failure.message, failure.code)
-          : DatabaseException('Failed to find life events by date range', 'SEARCH_ERROR');
+          : const DatabaseException(
+              'Failed to find life events by date range',
+              'SEARCH_ERROR',
+            );
     }
   }
 
@@ -93,10 +110,16 @@ class SqliteLifeEventRepository extends BaseRepository<LifeEvent, int>
       );
       return results.map(fromMap).toList();
     } catch (e) {
-      final failure = ErrorTransformer.transformException(e, 'finding life events by importance');
+      final Failure failure = ErrorTransformer.transformException(
+        e,
+        'finding life events by importance',
+      );
       throw failure is DatabaseFailure
           ? DatabaseException(failure.message, failure.code)
-          : DatabaseException('Failed to find life events by importance', 'SEARCH_ERROR');
+          : const DatabaseException(
+              'Failed to find life events by importance',
+              'SEARCH_ERROR',
+            );
     }
   }
 
@@ -118,15 +141,24 @@ class SqliteLifeEventRepository extends BaseRepository<LifeEvent, int>
       );
       return results.map(fromMap).toList();
     } catch (e) {
-      final failure = ErrorTransformer.transformException(e, 'finding upcoming life events');
+      final Failure failure = ErrorTransformer.transformException(
+        e,
+        'finding upcoming life events',
+      );
       throw failure is DatabaseFailure
           ? DatabaseException(failure.message, failure.code)
-          : DatabaseException('Failed to find upcoming life events', 'SEARCH_ERROR');
+          : const DatabaseException(
+              'Failed to find upcoming life events',
+              'SEARCH_ERROR',
+            );
     }
   }
 
   @override
-  Future<List<LifeEvent>> findByImportanceRange(int minImportance, int maxImportance) async {
+  Future<List<LifeEvent>> findByImportanceRange(
+    int minImportance,
+    int maxImportance,
+  ) async {
     try {
       const String sql = '''
         SELECT * FROM life_events
@@ -139,10 +171,16 @@ class SqliteLifeEventRepository extends BaseRepository<LifeEvent, int>
       );
       return results.map(fromMap).toList();
     } catch (e) {
-      final failure = ErrorTransformer.transformException(e, 'finding life events by importance range');
+      final Failure failure = ErrorTransformer.transformException(
+        e,
+        'finding life events by importance range',
+      );
       throw failure is DatabaseFailure
           ? DatabaseException(failure.message, failure.code)
-          : DatabaseException('Failed to find life events by importance range', 'SEARCH_ERROR');
+          : const DatabaseException(
+              'Failed to find life events by importance range',
+              'SEARCH_ERROR',
+            );
     }
   }
 
@@ -159,10 +197,16 @@ class SqliteLifeEventRepository extends BaseRepository<LifeEvent, int>
       );
       return results.first['count'] as int;
     } catch (e) {
-      final failure = ErrorTransformer.transformException(e, 'counting life events by contact ID');
+      final Failure failure = ErrorTransformer.transformException(
+        e,
+        'counting life events by contact ID',
+      );
       throw failure is DatabaseFailure
           ? DatabaseException(failure.message, failure.code)
-          : DatabaseException('Failed to count life events by contact ID', 'COUNT_ERROR');
+          : const DatabaseException(
+              'Failed to count life events by contact ID',
+              'COUNT_ERROR',
+            );
     }
   }
 }

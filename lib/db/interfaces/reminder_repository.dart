@@ -2,7 +2,8 @@ import 'package:monica_companion/db/interfaces/repository_interface.dart';
 import 'package:monica_companion/db/models/reminder.dart';
 
 /// Repository interface for Reminder entities
-abstract class ReminderRepository implements RepositoryInterface<Reminder, int> {
+abstract class ReminderRepository
+    implements RepositoryInterface<Reminder, int> {
   /// Find reminders for a specific contact
   Future<List<Reminder>> findByContactId(int contactId);
 

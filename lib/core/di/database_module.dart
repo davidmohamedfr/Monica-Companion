@@ -15,8 +15,9 @@ class DatabaseModule {
     locator.registerSingleton<DatabaseInterface>(databaseService);
 
     // Register repository registry as singleton
-    final RepositoryRegistry repositoryRegistry =
-        RepositoryRegistry(databaseService);
+    final RepositoryRegistry repositoryRegistry = RepositoryRegistry(
+      databaseService,
+    );
     await repositoryRegistry.initialize();
     locator.registerSingleton<RepositoryRegistry>(repositoryRegistry);
   }
@@ -26,8 +27,7 @@ class DatabaseModule {
     final ServiceLocator locator = ServiceLocator.instance;
 
     // Dispose repository registry
-    final RepositoryRegistry registry = locator.get<RepositoryRegistry>();
-    registry.dispose();
+    locator.get<RepositoryRegistry>().dispose();
 
     // Unregister services
     locator

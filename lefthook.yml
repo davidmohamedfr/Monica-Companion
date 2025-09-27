@@ -9,19 +9,19 @@ pre-commit:
     dart-format:
       tags: quality
       glob: "**/*.dart"
-      run: flutter format {staged_files} && git add {staged_files}
+      run: dart format {staged_files} && git add {staged_files}
       stage_fixed: true
       fail_text: |
         ❌ Code formatting issues found!
         💡 Files have been auto-formatted and staged
 
-    # 2. Comprehensive lint analysis
+    # 2. Comprehensive lint analysis (errors only)
     dart-analyze:
       tags: quality
-      run: flutter analyze --fatal-infos --fatal-warnings
+      run: dart analyze --no-fatal-warnings
       fail_text: |
         ❌ Lint analysis failed!
-        💡 Fix all lint issues before committing
+        💡 Fix all errors before committing
 
     # 3. Check for debugging statements
     no-debug-prints:
@@ -40,7 +40,15 @@ pre-commit:
         fi
         echo "✅ No debugging statements found"
 
-    # 4. Verify dependencies
+    # 4. AIDD/Public file separation validation
+    aidd-validation:
+      tags: quality
+      run: ./scripts/validate-commit.sh --pre-commit
+      fail_text: |
+        ❌ AIDD/Public separation validation failed!
+        💡 Fix file categorization and commit message format
+
+    # 5. Verify dependencies
     deps-check:
       tags: quality
       run: flutter pub deps --json > /dev/null

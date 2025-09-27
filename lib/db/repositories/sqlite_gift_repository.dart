@@ -1,7 +1,6 @@
 import 'package:monica_companion/core/errors/exceptions.dart';
 import 'package:monica_companion/core/errors/failures.dart';
 import 'package:monica_companion/core/utils/error_transformer.dart';
-import 'package:monica_companion/core/utils/logger.dart';
 import 'package:monica_companion/db/interfaces/database_interface.dart';
 import 'package:monica_companion/db/interfaces/gift_repository.dart';
 import 'package:monica_companion/db/models/gift.dart';
@@ -10,8 +9,7 @@ import 'package:monica_companion/db/repositories/base_repository.dart';
 /// SQLite implementation of GiftRepository
 class SqliteGiftRepository extends BaseRepository<Gift, int>
     implements GiftRepository {
-  SqliteGiftRepository(DatabaseInterface database)
-      : super(database, 'gifts');
+  SqliteGiftRepository(DatabaseInterface database) : super(database, 'gifts');
 
   @override
   Gift fromMap(Map<String, dynamic> map) => Gift.fromMap(map);
@@ -30,10 +28,16 @@ class SqliteGiftRepository extends BaseRepository<Gift, int>
       );
       return results.map(fromMap).toList();
     } catch (e) {
-      final failure = ErrorTransformer.transformException(e, 'finding gifts by contact ID');
+      final Failure failure = ErrorTransformer.transformException(
+        e,
+        'finding gifts by contact ID',
+      );
       throw failure is DatabaseFailure
           ? DatabaseException(failure.message, failure.code)
-          : DatabaseException('Failed to find gifts by contact ID', 'SEARCH_ERROR');
+          : const DatabaseException(
+              'Failed to find gifts by contact ID',
+              'SEARCH_ERROR',
+            );
     }
   }
 
@@ -51,10 +55,16 @@ class SqliteGiftRepository extends BaseRepository<Gift, int>
       );
       return results.map(fromMap).toList();
     } catch (e) {
-      final failure = ErrorTransformer.transformException(e, 'finding gifts by occasion');
+      final Failure failure = ErrorTransformer.transformException(
+        e,
+        'finding gifts by occasion',
+      );
       throw failure is DatabaseFailure
           ? DatabaseException(failure.message, failure.code)
-          : DatabaseException('Failed to find gifts by occasion', 'SEARCH_ERROR');
+          : const DatabaseException(
+              'Failed to find gifts by occasion',
+              'SEARCH_ERROR',
+            );
     }
   }
 
@@ -72,10 +82,16 @@ class SqliteGiftRepository extends BaseRepository<Gift, int>
       );
       return results.map(fromMap).toList();
     } catch (e) {
-      final failure = ErrorTransformer.transformException(e, 'finding gifts by date range');
+      final Failure failure = ErrorTransformer.transformException(
+        e,
+        'finding gifts by date range',
+      );
       throw failure is DatabaseFailure
           ? DatabaseException(failure.message, failure.code)
-          : DatabaseException('Failed to find gifts by date range', 'SEARCH_ERROR');
+          : const DatabaseException(
+              'Failed to find gifts by date range',
+              'SEARCH_ERROR',
+            );
     }
   }
 
@@ -93,10 +109,16 @@ class SqliteGiftRepository extends BaseRepository<Gift, int>
       );
       return results.map(fromMap).toList();
     } catch (e) {
-      final failure = ErrorTransformer.transformException(e, 'finding gifts by value range');
+      final Failure failure = ErrorTransformer.transformException(
+        e,
+        'finding gifts by value range',
+      );
       throw failure is DatabaseFailure
           ? DatabaseException(failure.message, failure.code)
-          : DatabaseException('Failed to find gifts by value range', 'SEARCH_ERROR');
+          : const DatabaseException(
+              'Failed to find gifts by value range',
+              'SEARCH_ERROR',
+            );
     }
   }
 
@@ -115,10 +137,16 @@ class SqliteGiftRepository extends BaseRepository<Gift, int>
       );
       return results.map(fromMap).toList();
     } catch (e) {
-      final failure = ErrorTransformer.transformException(e, 'finding gifts by name');
+      final Failure failure = ErrorTransformer.transformException(
+        e,
+        'finding gifts by name',
+      );
       throw failure is DatabaseFailure
           ? DatabaseException(failure.message, failure.code)
-          : DatabaseException('Failed to find gifts by name', 'SEARCH_ERROR');
+          : const DatabaseException(
+              'Failed to find gifts by name',
+              'SEARCH_ERROR',
+            );
     }
   }
 
@@ -137,10 +165,16 @@ class SqliteGiftRepository extends BaseRepository<Gift, int>
       );
       return results.map(fromMap).toList();
     } catch (e) {
-      final failure = ErrorTransformer.transformException(e, 'finding recent gifts');
+      final Failure failure = ErrorTransformer.transformException(
+        e,
+        'finding recent gifts',
+      );
       throw failure is DatabaseFailure
           ? DatabaseException(failure.message, failure.code)
-          : DatabaseException('Failed to find recent gifts', 'SEARCH_ERROR');
+          : const DatabaseException(
+              'Failed to find recent gifts',
+              'SEARCH_ERROR',
+            );
     }
   }
 
@@ -158,10 +192,16 @@ class SqliteGiftRepository extends BaseRepository<Gift, int>
       );
       return results.map(fromMap).toList();
     } catch (e) {
-      final failure = ErrorTransformer.transformException(e, 'finding gifts by minimum value');
+      final Failure failure = ErrorTransformer.transformException(
+        e,
+        'finding gifts by minimum value',
+      );
       throw failure is DatabaseFailure
           ? DatabaseException(failure.message, failure.code)
-          : DatabaseException('Failed to find gifts by minimum value', 'SEARCH_ERROR');
+          : const DatabaseException(
+              'Failed to find gifts by minimum value',
+              'SEARCH_ERROR',
+            );
     }
   }
 
@@ -178,10 +218,16 @@ class SqliteGiftRepository extends BaseRepository<Gift, int>
       );
       return results.first['count'] as int;
     } catch (e) {
-      final failure = ErrorTransformer.transformException(e, 'counting gifts by contact ID');
+      final Failure failure = ErrorTransformer.transformException(
+        e,
+        'counting gifts by contact ID',
+      );
       throw failure is DatabaseFailure
           ? DatabaseException(failure.message, failure.code)
-          : DatabaseException('Failed to count gifts by contact ID', 'COUNT_ERROR');
+          : const DatabaseException(
+              'Failed to count gifts by contact ID',
+              'COUNT_ERROR',
+            );
     }
   }
 
@@ -198,10 +244,16 @@ class SqliteGiftRepository extends BaseRepository<Gift, int>
       );
       return (results.first['total'] as num).toDouble();
     } catch (e) {
-      final failure = ErrorTransformer.transformException(e, 'getting total gift value by contact ID');
+      final Failure failure = ErrorTransformer.transformException(
+        e,
+        'getting total gift value by contact ID',
+      );
       throw failure is DatabaseFailure
           ? DatabaseException(failure.message, failure.code)
-          : DatabaseException('Failed to get total gift value by contact ID', 'CALCULATION_ERROR');
+          : const DatabaseException(
+              'Failed to get total gift value by contact ID',
+              'CALCULATION_ERROR',
+            );
     }
   }
 }

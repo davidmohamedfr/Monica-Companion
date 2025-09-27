@@ -11,10 +11,7 @@ void main() {
     const double testValue = 299.99;
 
     test('should create Gift with required fields', () {
-      const Gift gift = Gift(
-        contactId: testContactId,
-        name: testName,
-      );
+      const Gift gift = Gift(contactId: testContactId, name: testName);
 
       expect(gift.contactId, testContactId);
       expect(gift.name, testName);
@@ -128,7 +125,7 @@ void main() {
         id: 1,
         contactId: testContactId,
         name: testName,
-        value: 100.0,
+        value: 100,
       );
 
       final Gift updated = original.copyWith(
@@ -176,7 +173,13 @@ void main() {
     });
 
     test('should handle different occasions', () {
-      const List<String> occasions = ['birthday', 'christmas', 'anniversary', 'graduation', 'wedding'];
+      const List<String> occasions = <String>[
+        'birthday',
+        'christmas',
+        'anniversary',
+        'graduation',
+        'wedding',
+      ];
 
       for (final String occasion in occasions) {
         final Gift gift = Gift(
@@ -196,7 +199,7 @@ void main() {
     });
 
     test('should handle various gift values', () {
-      const List<double> values = [0.0, 1.50, 25.99, 100.0, 999.99, 1500.00];
+      const List<double> values = <double>[0, 1.50, 25.99, 100, 999.99, 1500];
 
       for (final double value in values) {
         final Gift gift = Gift(
@@ -215,9 +218,9 @@ void main() {
     });
 
     test('should handle negative gift values', () {
-      const double negativeValue = -50.0;
+      const double negativeValue = -50;
 
-      final Gift gift = Gift(
+      const Gift gift = Gift(
         contactId: testContactId,
         name: testName,
         value: negativeValue,
@@ -232,7 +235,7 @@ void main() {
     });
 
     test('should handle precise decimal values', () {
-      const List<double> preciseValues = [
+      const List<double> preciseValues = <double>[
         19.99,
         123.456,
         0.01,
@@ -254,7 +257,7 @@ void main() {
     });
 
     test('should handle different date formats', () {
-      const List<String> dateFormats = [
+      const List<String> dateFormats = <String>[
         '2024-01-15T10:00:00.000Z',
         '2024-12-25T00:00:00.000Z',
         '2025-06-30T18:30:00.000Z',
@@ -278,7 +281,7 @@ void main() {
     });
 
     test('should handle gift name variations', () {
-      const List<String> giftNames = [
+      const List<String> giftNames = <String>[
         'Book',
         'iPhone 15 Pro',
         'Handmade Scarf',
@@ -287,10 +290,7 @@ void main() {
       ];
 
       for (final String name in giftNames) {
-        final Gift gift = Gift(
-          contactId: testContactId,
-          name: name,
-        );
+        final Gift gift = Gift(contactId: testContactId, name: name);
 
         expect(gift.name, name);
 
@@ -302,12 +302,13 @@ void main() {
     });
 
     test('should handle long descriptions', () {
-      const String longDescription = 'This is a very long description of a gift that someone gave to another person. '
+      const String longDescription =
+          'This is a very long description of a gift that someone gave to another person. '
           'It contains multiple sentences and explains in detail what the gift was, when it was given, '
           'why it was given, and how the recipient felt about receiving it. This tests that the model '
           'can handle longer text content without issues during serialization and deserialization.';
 
-      final Gift gift = Gift(
+      const Gift gift = Gift(
         contactId: testContactId,
         name: testName,
         description: longDescription,

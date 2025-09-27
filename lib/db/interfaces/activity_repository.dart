@@ -2,7 +2,8 @@ import 'package:monica_companion/db/interfaces/repository_interface.dart';
 import 'package:monica_companion/db/models/activity.dart';
 
 /// Repository interface for Activity entities
-abstract class ActivityRepository implements RepositoryInterface<Activity, int> {
+abstract class ActivityRepository
+    implements RepositoryInterface<Activity, int> {
   /// Find activities for a specific participant (contact)
   Future<List<Activity>> findByParticipant(int contactId);
 

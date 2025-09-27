@@ -48,11 +48,7 @@ class AppInitializationService {
       _isInitialized = false;
       Logger.info('App disposal completed successfully');
     } catch (e, stackTrace) {
-      Logger.error(
-        'Failed to dispose app',
-        error: e,
-        stackTrace: stackTrace,
-      );
+      Logger.error('Failed to dispose app', error: e, stackTrace: stackTrace);
       rethrow;
     }
   }
