@@ -3,7 +3,9 @@ import 'package:monica_companion/db/models/base_model.dart';
 /// Task entity representing relationship-related follow-ups
 class Task extends BaseModel {
   const Task({
-    required this.contactId, required this.title, super.id,
+    required this.contactId,
+    required this.title,
+    super.id,
     super.createdAt,
     this.description,
     this.dueDate,
@@ -31,29 +33,29 @@ class Task extends BaseModel {
 
   @override
   Map<String, dynamic> toMap() => <String, dynamic>{
-      'id': id,
-      'contact_id': contactId,
-      'title': title,
-      'description': description,
-      'due_date': dueDate,
-      'completed': completed ? 1 : 0,
-      'priority': priority,
-      'created_at': createdAt?.toIso8601String(),
-    };
+    'id': id,
+    'contact_id': contactId,
+    'title': title,
+    'description': description,
+    'due_date': dueDate,
+    'completed': completed ? 1 : 0,
+    'priority': priority,
+    'created_at': createdAt?.toIso8601String(),
+  };
 
   /// Create Task from database map
   static Task fromMap(Map<String, dynamic> map) => Task(
-      id: map['id'] as int?,
-      contactId: map['contact_id'] as int,
-      title: map['title'] as String,
-      description: map['description'] as String?,
-      dueDate: map['due_date'] as String?,
-      completed: (map['completed'] as int?) == 1,
-      priority: map['priority'] as int? ?? 1,
-      createdAt: map['created_at'] != null
-          ? DateTime.parse(map['created_at'] as String)
-          : null,
-    );
+    id: map['id'] as int?,
+    contactId: map['contact_id'] as int,
+    title: map['title'] as String,
+    description: map['description'] as String?,
+    dueDate: map['due_date'] as String?,
+    completed: (map['completed'] as int?) == 1,
+    priority: map['priority'] as int? ?? 1,
+    createdAt: map['created_at'] != null
+        ? DateTime.parse(map['created_at'] as String)
+        : null,
+  );
 
   @override
   Task copyWith({
@@ -66,25 +68,25 @@ class Task extends BaseModel {
     bool? completed,
     int? priority,
   }) => Task(
-      id: id ?? this.id,
-      createdAt: createdAt ?? this.createdAt,
-      contactId: contactId ?? this.contactId,
-      title: title ?? this.title,
-      description: description ?? this.description,
-      dueDate: dueDate ?? this.dueDate,
-      completed: completed ?? this.completed,
-      priority: priority ?? this.priority,
-    );
+    id: id ?? this.id,
+    createdAt: createdAt ?? this.createdAt,
+    contactId: contactId ?? this.contactId,
+    title: title ?? this.title,
+    description: description ?? this.description,
+    dueDate: dueDate ?? this.dueDate,
+    completed: completed ?? this.completed,
+    priority: priority ?? this.priority,
+  );
 
   @override
   List<Object?> get props => <Object?>[
-        id,
-        createdAt,
-        contactId,
-        title,
-        description,
-        dueDate,
-        completed,
-        priority,
-      ];
+    id,
+    createdAt,
+    contactId,
+    title,
+    description,
+    dueDate,
+    completed,
+    priority,
+  ];
 }

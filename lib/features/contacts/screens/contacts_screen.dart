@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:monica_companion/core/errors/exceptions.dart';
+import 'package:monica_companion/core/errors/failures.dart';
 import 'package:monica_companion/core/utils/error_transformer.dart';
 import 'package:monica_companion/db/interfaces/contact_repository.dart';
 import 'package:monica_companion/db/models/contact.dart';
@@ -37,7 +38,8 @@ class _ContactsScreenState extends State<ContactsScreen> {
   }
 
   void _initializeRepository() {
-    final RepositoryRegistry registry = ServiceLocator.instance.get<RepositoryRegistry>();
+    final RepositoryRegistry registry = ServiceLocator.instance
+        .get<RepositoryRegistry>();
     _contactRepository = registry.contactRepository;
   }
 
@@ -70,10 +72,16 @@ class _ContactsScreenState extends State<ContactsScreen> {
     String userMessage;
 
     if (error is DatabaseException) {
-      final failure = ErrorTransformer.transformException(error, 'loading contacts');
+      final Failure failure = ErrorTransformer.transformException(
+        error,
+        'loading contacts',
+      );
       userMessage = ErrorTransformer.getUserFriendlyMessage(failure);
     } else {
-      final failure = ErrorTransformer.transformException(error, 'loading contacts');
+      final Failure failure = ErrorTransformer.transformException(
+        error,
+        'loading contacts',
+      );
       userMessage = ErrorTransformer.getUserFriendlyMessage(failure);
     }
 
@@ -87,10 +95,7 @@ class _ContactsScreenState extends State<ContactsScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(userMessage),
-            action: SnackBarAction(
-              label: 'Retry',
-              onPressed: _loadContacts,
-            ),
+            action: SnackBarAction(label: 'Retry', onPressed: _loadContacts),
             duration: const Duration(seconds: 6),
           ),
         );
@@ -99,120 +104,114 @@ class _ContactsScreenState extends State<ContactsScreen> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Contacts'),
-        actions: <Widget>[
-          IconButton(
-            icon: const Icon(Icons.search),
-            onPressed: () {
-              // TODO: Implement search functionality
+  Widget build(BuildContext context) => Scaffold(
+    appBar: AppBar(
+      title: const Text('Contacts'),
+      actions: <Widget>[
+        IconButton(
+          icon: const Icon(Icons.search),
+          onPressed: () {
+            // TODO: Implement search functionality
+          },
+        ),
+        IconButton(
+          icon: const Icon(Icons.add),
+          onPressed: () {
+            // TODO: Implement add contact functionality
+          },
+        ),
+      ],
+    ),
+    body: _isLoading
+        ? const Center(child: CircularProgressIndicator())
+        : _hasError
+        ? _buildErrorState()
+        : _contacts.isEmpty
+        ? _buildEmptyState()
+        : ListView.builder(
+            itemCount: _contacts.length,
+            itemBuilder: (BuildContext context, int index) {
+              final Contact contact = _contacts[index];
+              return ContactListItem(
+                name: contact.name,
+                email: contact.email,
+                phone: contact.phone,
+                avatarUrl: contact.avatar,
+                onTap: () {
+                  // TODO: Navigate to contact details
+                },
+              );
             },
           ),
-          IconButton(
-            icon: const Icon(Icons.add),
-            onPressed: () {
-              // TODO: Implement add contact functionality
-            },
+  );
+
+  Widget _buildErrorState() => Center(
+    child: Padding(
+      padding: const EdgeInsets.all(24),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          Icon(
+            Icons.error_outline,
+            size: 64,
+            color: Theme.of(context).colorScheme.error,
+          ),
+          const SizedBox(height: 16),
+          Text(
+            'Unable to load contacts',
+            style: Theme.of(context).textTheme.headlineSmall,
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 8),
+          Text(
+            _errorMessage ?? 'An unexpected error occurred',
+            style: Theme.of(context).textTheme.bodyMedium,
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 24),
+          ElevatedButton.icon(
+            onPressed: _loadContacts,
+            icon: const Icon(Icons.refresh),
+            label: const Text('Try Again'),
           ),
         ],
       ),
-      body: _isLoading
-          ? const Center(child: CircularProgressIndicator())
-          : _hasError
-              ? _buildErrorState()
-              : _contacts.isEmpty
-                  ? _buildEmptyState()
-                  : ListView.builder(
-                      itemCount: _contacts.length,
-                      itemBuilder: (BuildContext context, int index) {
-                        final Contact contact = _contacts[index];
-                        return ContactListItem(
-                          name: contact.name,
-                          email: contact.email,
-                          phone: contact.phone,
-                          avatarUrl: contact.avatar,
-                          onTap: () {
-                            // TODO: Navigate to contact details
-                          },
-                        );
-                      },
-                    ),
-    );
-  }
+    ),
+  );
 
-  Widget _buildErrorState() {
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(24.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Icon(
-              Icons.error_outline,
-              size: 64,
-              color: Theme.of(context).colorScheme.error,
-            ),
-            const SizedBox(height: 16),
-            Text(
-              'Unable to load contacts',
-              style: Theme.of(context).textTheme.headlineSmall,
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 8),
-            Text(
-              _errorMessage ?? 'An unexpected error occurred',
-              style: Theme.of(context).textTheme.bodyMedium,
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 24),
-            ElevatedButton.icon(
-              onPressed: _loadContacts,
-              icon: const Icon(Icons.refresh),
-              label: const Text('Try Again'),
-            ),
-          ],
-        ),
+  Widget _buildEmptyState() => Center(
+    child: Padding(
+      padding: const EdgeInsets.all(24),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          Icon(
+            Icons.people_outline,
+            size: 64,
+            color: Theme.of(context).colorScheme.onSurfaceVariant,
+          ),
+          const SizedBox(height: 16),
+          Text(
+            'No contacts yet',
+            style: Theme.of(context).textTheme.headlineSmall,
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 8),
+          Text(
+            'Add your first contact to get started',
+            style: Theme.of(context).textTheme.bodyMedium,
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 24),
+          ElevatedButton.icon(
+            onPressed: () {
+              // TODO: Implement add contact functionality
+            },
+            icon: const Icon(Icons.add),
+            label: const Text('Add Contact'),
+          ),
+        ],
       ),
-    );
-  }
-
-  Widget _buildEmptyState() {
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(24.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Icon(
-              Icons.people_outline,
-              size: 64,
-              color: Theme.of(context).colorScheme.onSurfaceVariant,
-            ),
-            const SizedBox(height: 16),
-            Text(
-              'No contacts yet',
-              style: Theme.of(context).textTheme.headlineSmall,
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 8),
-            Text(
-              'Add your first contact to get started',
-              style: Theme.of(context).textTheme.bodyMedium,
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 24),
-            ElevatedButton.icon(
-              onPressed: () {
-                // TODO: Implement add contact functionality
-              },
-              icon: const Icon(Icons.add),
-              label: const Text('Add Contact'),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
+    ),
+  );
 }

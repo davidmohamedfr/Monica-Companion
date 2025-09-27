@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:monica_companion/core/constants/app_constants.dart';
 import 'package:monica_companion/db/interfaces/database_interface.dart';
-import 'package:monica_companion/db/migrations/migration_runner.dart';
 import 'package:path/path.dart' as path;
 import 'package:sqflite/sqflite.dart';
 
@@ -71,7 +70,7 @@ class DatabaseService implements DatabaseInterface {
     ''');
 
     // Insert version record
-    await db.insert('schema_version', {
+    await db.insert('schema_version', <String, Object?>{
       'version': 1,
       'migrated_at': DateTime.now().toIso8601String(),
     });

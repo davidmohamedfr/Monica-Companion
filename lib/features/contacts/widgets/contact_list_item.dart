@@ -3,7 +3,8 @@ import 'package:flutter/material.dart';
 /// Contact list item widget
 class ContactListItem extends StatelessWidget {
   const ContactListItem({
-    required this.name, super.key,
+    required this.name,
+    super.key,
     this.email,
     this.phone,
     this.avatarUrl,
@@ -18,25 +19,28 @@ class ContactListItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => ListTile(
-      leading: CircleAvatar(
-        backgroundColor: Theme.of(context).colorScheme.primary,
-        backgroundImage: avatarUrl != null ? NetworkImage(avatarUrl!) : null,
-        child: avatarUrl == null
-            ? Text(
-                name.isNotEmpty ? name[0].toUpperCase() : '?',
-                style: TextStyle(
-                  color: Theme.of(context).colorScheme.onPrimary,
-                  fontWeight: FontWeight.bold,
-                ),
-              )
-            : null,
-      ),
-      title: Text(name),
-      subtitle: email != null || phone != null
+    leading: CircleAvatar(
+      backgroundColor: Theme.of(context).colorScheme.primary,
+      backgroundImage: avatarUrl != null ? NetworkImage(avatarUrl!) : null,
+      child: avatarUrl == null
           ? Text(
-              <String?>[email, phone].where((String? s) => s != null && s.isNotEmpty).join(' • '),
+              name.isNotEmpty ? name[0].toUpperCase() : '?',
+              style: TextStyle(
+                color: Theme.of(context).colorScheme.onPrimary,
+                fontWeight: FontWeight.bold,
+              ),
             )
           : null,
-      onTap: onTap,
-    );
+    ),
+    title: Text(name),
+    subtitle: email != null || phone != null
+        ? Text(
+            <String?>[
+              email,
+              phone,
+            ].where((String? s) => s != null && s.isNotEmpty).join(' • '),
+          )
+        : null,
+    onTap: onTap,
+  );
 }

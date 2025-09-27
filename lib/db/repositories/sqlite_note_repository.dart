@@ -1,7 +1,6 @@
 import 'package:monica_companion/core/errors/exceptions.dart';
 import 'package:monica_companion/core/errors/failures.dart';
 import 'package:monica_companion/core/utils/error_transformer.dart';
-import 'package:monica_companion/core/utils/logger.dart';
 import 'package:monica_companion/db/interfaces/database_interface.dart';
 import 'package:monica_companion/db/interfaces/note_repository.dart';
 import 'package:monica_companion/db/models/note.dart';
@@ -10,8 +9,7 @@ import 'package:monica_companion/db/repositories/base_repository.dart';
 /// SQLite implementation of NoteRepository
 class SqliteNoteRepository extends BaseRepository<Note, int>
     implements NoteRepository {
-  SqliteNoteRepository(DatabaseInterface database)
-      : super(database, 'notes');
+  SqliteNoteRepository(DatabaseInterface database) : super(database, 'notes');
 
   @override
   Note fromMap(Map<String, dynamic> map) => Note.fromMap(map);
@@ -30,10 +28,16 @@ class SqliteNoteRepository extends BaseRepository<Note, int>
       );
       return results.map(fromMap).toList();
     } catch (e) {
-      final failure = ErrorTransformer.transformException(e, 'finding notes by contact ID');
+      final Failure failure = ErrorTransformer.transformException(
+        e,
+        'finding notes by contact ID',
+      );
       throw failure is DatabaseFailure
           ? DatabaseException(failure.message, failure.code)
-          : DatabaseException('Failed to find notes by contact ID', 'SEARCH_ERROR');
+          : const DatabaseException(
+              'Failed to find notes by contact ID',
+              'SEARCH_ERROR',
+            );
     }
   }
 
@@ -51,10 +55,16 @@ class SqliteNoteRepository extends BaseRepository<Note, int>
       );
       return results.map(fromMap).toList();
     } catch (e) {
-      final failure = ErrorTransformer.transformException(e, 'finding notes by category');
+      final Failure failure = ErrorTransformer.transformException(
+        e,
+        'finding notes by category',
+      );
       throw failure is DatabaseFailure
           ? DatabaseException(failure.message, failure.code)
-          : DatabaseException('Failed to find notes by category', 'SEARCH_ERROR');
+          : const DatabaseException(
+              'Failed to find notes by category',
+              'SEARCH_ERROR',
+            );
     }
   }
 
@@ -69,10 +79,16 @@ class SqliteNoteRepository extends BaseRepository<Note, int>
       final List<Map<String, dynamic>> results = await database.rawQuery(sql);
       return results.map(fromMap).toList();
     } catch (e) {
-      final failure = ErrorTransformer.transformException(e, 'finding private notes');
+      final Failure failure = ErrorTransformer.transformException(
+        e,
+        'finding private notes',
+      );
       throw failure is DatabaseFailure
           ? DatabaseException(failure.message, failure.code)
-          : DatabaseException('Failed to find private notes', 'SEARCH_ERROR');
+          : const DatabaseException(
+              'Failed to find private notes',
+              'SEARCH_ERROR',
+            );
     }
   }
 
@@ -87,10 +103,16 @@ class SqliteNoteRepository extends BaseRepository<Note, int>
       final List<Map<String, dynamic>> results = await database.rawQuery(sql);
       return results.map(fromMap).toList();
     } catch (e) {
-      final failure = ErrorTransformer.transformException(e, 'finding public notes');
+      final Failure failure = ErrorTransformer.transformException(
+        e,
+        'finding public notes',
+      );
       throw failure is DatabaseFailure
           ? DatabaseException(failure.message, failure.code)
-          : DatabaseException('Failed to find public notes', 'SEARCH_ERROR');
+          : const DatabaseException(
+              'Failed to find public notes',
+              'SEARCH_ERROR',
+            );
     }
   }
 
@@ -109,10 +131,16 @@ class SqliteNoteRepository extends BaseRepository<Note, int>
       );
       return results.map(fromMap).toList();
     } catch (e) {
-      final failure = ErrorTransformer.transformException(e, 'searching notes by content');
+      final Failure failure = ErrorTransformer.transformException(
+        e,
+        'searching notes by content',
+      );
       throw failure is DatabaseFailure
           ? DatabaseException(failure.message, failure.code)
-          : DatabaseException('Failed to search notes by content', 'SEARCH_ERROR');
+          : const DatabaseException(
+              'Failed to search notes by content',
+              'SEARCH_ERROR',
+            );
     }
   }
 
@@ -132,10 +160,16 @@ class SqliteNoteRepository extends BaseRepository<Note, int>
       );
       return results.map(fromMap).toList();
     } catch (e) {
-      final failure = ErrorTransformer.transformException(e, 'finding recent notes');
+      final Failure failure = ErrorTransformer.transformException(
+        e,
+        'finding recent notes',
+      );
       throw failure is DatabaseFailure
           ? DatabaseException(failure.message, failure.code)
-          : DatabaseException('Failed to find recent notes', 'SEARCH_ERROR');
+          : const DatabaseException(
+              'Failed to find recent notes',
+              'SEARCH_ERROR',
+            );
     }
   }
 
@@ -155,10 +189,16 @@ class SqliteNoteRepository extends BaseRepository<Note, int>
       );
       return results.map(fromMap).toList();
     } catch (e) {
-      final failure = ErrorTransformer.transformException(e, 'finding notes by date range');
+      final Failure failure = ErrorTransformer.transformException(
+        e,
+        'finding notes by date range',
+      );
       throw failure is DatabaseFailure
           ? DatabaseException(failure.message, failure.code)
-          : DatabaseException('Failed to find notes by date range', 'SEARCH_ERROR');
+          : const DatabaseException(
+              'Failed to find notes by date range',
+              'SEARCH_ERROR',
+            );
     }
   }
 
@@ -175,10 +215,16 @@ class SqliteNoteRepository extends BaseRepository<Note, int>
       );
       return results.first['count'] as int;
     } catch (e) {
-      final failure = ErrorTransformer.transformException(e, 'counting notes by contact ID');
+      final Failure failure = ErrorTransformer.transformException(
+        e,
+        'counting notes by contact ID',
+      );
       throw failure is DatabaseFailure
           ? DatabaseException(failure.message, failure.code)
-          : DatabaseException('Failed to count notes by contact ID', 'COUNT_ERROR');
+          : const DatabaseException(
+              'Failed to count notes by contact ID',
+              'COUNT_ERROR',
+            );
     }
   }
 
@@ -201,10 +247,16 @@ class SqliteNoteRepository extends BaseRepository<Note, int>
       }
       return fromMap(results.first);
     } catch (e) {
-      final failure = ErrorTransformer.transformException(e, 'finding most recent note by contact ID');
+      final Failure failure = ErrorTransformer.transformException(
+        e,
+        'finding most recent note by contact ID',
+      );
       throw failure is DatabaseFailure
           ? DatabaseException(failure.message, failure.code)
-          : DatabaseException('Failed to find most recent note by contact ID', 'SEARCH_ERROR');
+          : const DatabaseException(
+              'Failed to find most recent note by contact ID',
+              'SEARCH_ERROR',
+            );
     }
   }
 }

@@ -3,7 +3,10 @@ import 'package:flutter/material.dart';
 /// Call log item widget
 class CallLogItem extends StatelessWidget {
   const CallLogItem({
-    required this.contactName, required this.callType, required this.timestamp, super.key,
+    required this.contactName,
+    required this.callType,
+    required this.timestamp,
+    super.key,
     this.duration,
     this.onTap,
   });
@@ -64,18 +67,12 @@ class CallLogItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => ListTile(
-      leading: Icon(
-        _callIcon,
-        color: _getCallColor(context),
-      ),
-      title: Text(contactName),
-      subtitle: Text(_formatTimestamp()),
-      trailing: duration != null
-          ? Text(
-              _formatDuration(),
-              style: Theme.of(context).textTheme.bodySmall,
-            )
-          : null,
-      onTap: onTap,
-    );
+    leading: Icon(_callIcon, color: _getCallColor(context)),
+    title: Text(contactName),
+    subtitle: Text(_formatTimestamp()),
+    trailing: duration != null
+        ? Text(_formatDuration(), style: Theme.of(context).textTheme.bodySmall)
+        : null,
+    onTap: onTap,
+  );
 }

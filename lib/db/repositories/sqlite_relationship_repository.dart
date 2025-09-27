@@ -1,7 +1,6 @@
 import 'package:monica_companion/core/errors/exceptions.dart';
 import 'package:monica_companion/core/errors/failures.dart';
 import 'package:monica_companion/core/utils/error_transformer.dart';
-import 'package:monica_companion/core/utils/logger.dart';
 import 'package:monica_companion/db/interfaces/database_interface.dart';
 import 'package:monica_companion/db/interfaces/relationship_repository.dart';
 import 'package:monica_companion/db/models/relationship.dart';
@@ -11,7 +10,7 @@ import 'package:monica_companion/db/repositories/base_repository.dart';
 class SqliteRelationshipRepository extends BaseRepository<Relationship, int>
     implements RelationshipRepository {
   SqliteRelationshipRepository(DatabaseInterface database)
-      : super(database, 'relationships');
+    : super(database, 'relationships');
 
   @override
   Relationship fromMap(Map<String, dynamic> map) => Relationship.fromMap(map);
@@ -30,10 +29,16 @@ class SqliteRelationshipRepository extends BaseRepository<Relationship, int>
       );
       return results.map(fromMap).toList();
     } catch (e) {
-      final failure = ErrorTransformer.transformException(e, 'finding relationships by contact ID');
+      final Failure failure = ErrorTransformer.transformException(
+        e,
+        'finding relationships by contact ID',
+      );
       throw failure is DatabaseFailure
           ? DatabaseException(failure.message, failure.code)
-          : DatabaseException('Failed to find relationships by contact ID', 'SEARCH_ERROR');
+          : const DatabaseException(
+              'Failed to find relationships by contact ID',
+              'SEARCH_ERROR',
+            );
     }
   }
 
@@ -51,15 +56,24 @@ class SqliteRelationshipRepository extends BaseRepository<Relationship, int>
       );
       return results.map(fromMap).toList();
     } catch (e) {
-      final failure = ErrorTransformer.transformException(e, 'finding relationships by type');
+      final Failure failure = ErrorTransformer.transformException(
+        e,
+        'finding relationships by type',
+      );
       throw failure is DatabaseFailure
           ? DatabaseException(failure.message, failure.code)
-          : DatabaseException('Failed to find relationships by type', 'SEARCH_ERROR');
+          : const DatabaseException(
+              'Failed to find relationships by type',
+              'SEARCH_ERROR',
+            );
     }
   }
 
   @override
-  Future<List<Relationship>> findByDateRange(DateTime start, DateTime end) async {
+  Future<List<Relationship>> findByDateRange(
+    DateTime start,
+    DateTime end,
+  ) async {
     try {
       const String sql = '''
         SELECT * FROM relationships
@@ -72,10 +86,16 @@ class SqliteRelationshipRepository extends BaseRepository<Relationship, int>
       );
       return results.map(fromMap).toList();
     } catch (e) {
-      final failure = ErrorTransformer.transformException(e, 'finding relationships by date range');
+      final Failure failure = ErrorTransformer.transformException(
+        e,
+        'finding relationships by date range',
+      );
       throw failure is DatabaseFailure
           ? DatabaseException(failure.message, failure.code)
-          : DatabaseException('Failed to find relationships by date range', 'SEARCH_ERROR');
+          : const DatabaseException(
+              'Failed to find relationships by date range',
+              'SEARCH_ERROR',
+            );
     }
   }
 
@@ -93,10 +113,16 @@ class SqliteRelationshipRepository extends BaseRepository<Relationship, int>
       );
       return results.map(fromMap).toList();
     } catch (e) {
-      final failure = ErrorTransformer.transformException(e, 'finding relationships started before date');
+      final Failure failure = ErrorTransformer.transformException(
+        e,
+        'finding relationships started before date',
+      );
       throw failure is DatabaseFailure
           ? DatabaseException(failure.message, failure.code)
-          : DatabaseException('Failed to find relationships started before date', 'SEARCH_ERROR');
+          : const DatabaseException(
+              'Failed to find relationships started before date',
+              'SEARCH_ERROR',
+            );
     }
   }
 
@@ -114,10 +140,16 @@ class SqliteRelationshipRepository extends BaseRepository<Relationship, int>
       );
       return results.map(fromMap).toList();
     } catch (e) {
-      final failure = ErrorTransformer.transformException(e, 'finding relationships started after date');
+      final Failure failure = ErrorTransformer.transformException(
+        e,
+        'finding relationships started after date',
+      );
       throw failure is DatabaseFailure
           ? DatabaseException(failure.message, failure.code)
-          : DatabaseException('Failed to find relationships started after date', 'SEARCH_ERROR');
+          : const DatabaseException(
+              'Failed to find relationships started after date',
+              'SEARCH_ERROR',
+            );
     }
   }
 
@@ -136,10 +168,16 @@ class SqliteRelationshipRepository extends BaseRepository<Relationship, int>
       );
       return results.map(fromMap).toList();
     } catch (e) {
-      final failure = ErrorTransformer.transformException(e, 'finding recent relationships');
+      final Failure failure = ErrorTransformer.transformException(
+        e,
+        'finding recent relationships',
+      );
       throw failure is DatabaseFailure
           ? DatabaseException(failure.message, failure.code)
-          : DatabaseException('Failed to find recent relationships', 'SEARCH_ERROR');
+          : const DatabaseException(
+              'Failed to find recent relationships',
+              'SEARCH_ERROR',
+            );
     }
   }
 
@@ -156,10 +194,16 @@ class SqliteRelationshipRepository extends BaseRepository<Relationship, int>
       );
       return results.first['count'] as int;
     } catch (e) {
-      final failure = ErrorTransformer.transformException(e, 'counting relationships by contact ID');
+      final Failure failure = ErrorTransformer.transformException(
+        e,
+        'counting relationships by contact ID',
+      );
       throw failure is DatabaseFailure
           ? DatabaseException(failure.message, failure.code)
-          : DatabaseException('Failed to count relationships by contact ID', 'COUNT_ERROR');
+          : const DatabaseException(
+              'Failed to count relationships by contact ID',
+              'COUNT_ERROR',
+            );
     }
   }
 
@@ -172,12 +216,20 @@ class SqliteRelationshipRepository extends BaseRepository<Relationship, int>
         ORDER BY relationship_type ASC
       ''';
       final List<Map<String, dynamic>> results = await database.rawQuery(sql);
-      return results.map((Map<String, dynamic> row) => row['relationship_type'] as String).toList();
+      return results
+          .map((Map<String, dynamic> row) => row['relationship_type'] as String)
+          .toList();
     } catch (e) {
-      final failure = ErrorTransformer.transformException(e, 'getting unique relationship types');
+      final Failure failure = ErrorTransformer.transformException(
+        e,
+        'getting unique relationship types',
+      );
       throw failure is DatabaseFailure
           ? DatabaseException(failure.message, failure.code)
-          : DatabaseException('Failed to get unique relationship types', 'SEARCH_ERROR');
+          : const DatabaseException(
+              'Failed to get unique relationship types',
+              'SEARCH_ERROR',
+            );
     }
   }
 
@@ -196,10 +248,16 @@ class SqliteRelationshipRepository extends BaseRepository<Relationship, int>
       );
       return results.map(fromMap).toList();
     } catch (e) {
-      final failure = ErrorTransformer.transformException(e, 'finding longest relationships');
+      final Failure failure = ErrorTransformer.transformException(
+        e,
+        'finding longest relationships',
+      );
       throw failure is DatabaseFailure
           ? DatabaseException(failure.message, failure.code)
-          : DatabaseException('Failed to find longest relationships', 'SEARCH_ERROR');
+          : const DatabaseException(
+              'Failed to find longest relationships',
+              'SEARCH_ERROR',
+            );
     }
   }
 }

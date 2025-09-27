@@ -35,5 +35,3 @@ class MonicaApp extends StatelessWidget {
     home: const MainShell(),
   );
 }
-
-

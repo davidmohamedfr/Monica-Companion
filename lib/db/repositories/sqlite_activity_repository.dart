@@ -1,7 +1,6 @@
 import 'package:monica_companion/core/errors/exceptions.dart';
 import 'package:monica_companion/core/errors/failures.dart';
 import 'package:monica_companion/core/utils/error_transformer.dart';
-import 'package:monica_companion/core/utils/logger.dart';
 import 'package:monica_companion/db/interfaces/activity_repository.dart';
 import 'package:monica_companion/db/interfaces/database_interface.dart';
 import 'package:monica_companion/db/models/activity.dart';
@@ -11,7 +10,7 @@ import 'package:monica_companion/db/repositories/base_repository.dart';
 class SqliteActivityRepository extends BaseRepository<Activity, int>
     implements ActivityRepository {
   SqliteActivityRepository(DatabaseInterface database)
-      : super(database, 'activities');
+    : super(database, 'activities');
 
   @override
   Activity fromMap(Map<String, dynamic> map) => Activity.fromMap(map);
@@ -29,17 +28,23 @@ class SqliteActivityRepository extends BaseRepository<Activity, int>
         sql,
         <dynamic>[
           '%,$contactIdStr,%', // Middle of list
-          '$contactIdStr,%',   // Start of list
-          '%,$contactIdStr',   // End of list
-          contactIdStr,        // Only participant
+          '$contactIdStr,%', // Start of list
+          '%,$contactIdStr', // End of list
+          contactIdStr, // Only participant
         ],
       );
       return results.map(fromMap).toList();
     } catch (e) {
-      final failure = ErrorTransformer.transformException(e, 'finding activities by participant');
+      final Failure failure = ErrorTransformer.transformException(
+        e,
+        'finding activities by participant',
+      );
       throw failure is DatabaseFailure
           ? DatabaseException(failure.message, failure.code)
-          : DatabaseException('Failed to find activities by participant', 'SEARCH_ERROR');
+          : const DatabaseException(
+              'Failed to find activities by participant',
+              'SEARCH_ERROR',
+            );
     }
   }
 
@@ -57,10 +62,16 @@ class SqliteActivityRepository extends BaseRepository<Activity, int>
       );
       return results.map(fromMap).toList();
     } catch (e) {
-      final failure = ErrorTransformer.transformException(e, 'finding activities by date range');
+      final Failure failure = ErrorTransformer.transformException(
+        e,
+        'finding activities by date range',
+      );
       throw failure is DatabaseFailure
           ? DatabaseException(failure.message, failure.code)
-          : DatabaseException('Failed to find activities by date range', 'SEARCH_ERROR');
+          : const DatabaseException(
+              'Failed to find activities by date range',
+              'SEARCH_ERROR',
+            );
     }
   }
 
@@ -79,10 +90,16 @@ class SqliteActivityRepository extends BaseRepository<Activity, int>
       );
       return results.map(fromMap).toList();
     } catch (e) {
-      final failure = ErrorTransformer.transformException(e, 'finding activities by location');
+      final Failure failure = ErrorTransformer.transformException(
+        e,
+        'finding activities by location',
+      );
       throw failure is DatabaseFailure
           ? DatabaseException(failure.message, failure.code)
-          : DatabaseException('Failed to find activities by location', 'SEARCH_ERROR');
+          : const DatabaseException(
+              'Failed to find activities by location',
+              'SEARCH_ERROR',
+            );
     }
   }
 
@@ -101,10 +118,16 @@ class SqliteActivityRepository extends BaseRepository<Activity, int>
       );
       return results.map(fromMap).toList();
     } catch (e) {
-      final failure = ErrorTransformer.transformException(e, 'finding recent activities');
+      final Failure failure = ErrorTransformer.transformException(
+        e,
+        'finding recent activities',
+      );
       throw failure is DatabaseFailure
           ? DatabaseException(failure.message, failure.code)
-          : DatabaseException('Failed to find recent activities', 'SEARCH_ERROR');
+          : const DatabaseException(
+              'Failed to find recent activities',
+              'SEARCH_ERROR',
+            );
     }
   }
 
@@ -123,10 +146,16 @@ class SqliteActivityRepository extends BaseRepository<Activity, int>
       );
       return results.map(fromMap).toList();
     } catch (e) {
-      final failure = ErrorTransformer.transformException(e, 'finding activities by title');
+      final Failure failure = ErrorTransformer.transformException(
+        e,
+        'finding activities by title',
+      );
       throw failure is DatabaseFailure
           ? DatabaseException(failure.message, failure.code)
-          : DatabaseException('Failed to find activities by title', 'SEARCH_ERROR');
+          : const DatabaseException(
+              'Failed to find activities by title',
+              'SEARCH_ERROR',
+            );
     }
   }
 
@@ -148,10 +177,16 @@ class SqliteActivityRepository extends BaseRepository<Activity, int>
       );
       return results.map(fromMap).toList();
     } catch (e) {
-      final failure = ErrorTransformer.transformException(e, 'finding upcoming activities');
+      final Failure failure = ErrorTransformer.transformException(
+        e,
+        'finding upcoming activities',
+      );
       throw failure is DatabaseFailure
           ? DatabaseException(failure.message, failure.code)
-          : DatabaseException('Failed to find upcoming activities', 'SEARCH_ERROR');
+          : const DatabaseException(
+              'Failed to find upcoming activities',
+              'SEARCH_ERROR',
+            );
     }
   }
 
@@ -166,10 +201,16 @@ class SqliteActivityRepository extends BaseRepository<Activity, int>
       final List<Map<String, dynamic>> results = await database.rawQuery(sql);
       return results.map(fromMap).toList();
     } catch (e) {
-      final failure = ErrorTransformer.transformException(e, 'finding activities with multiple participants');
+      final Failure failure = ErrorTransformer.transformException(
+        e,
+        'finding activities with multiple participants',
+      );
       throw failure is DatabaseFailure
           ? DatabaseException(failure.message, failure.code)
-          : DatabaseException('Failed to find activities with multiple participants', 'SEARCH_ERROR');
+          : const DatabaseException(
+              'Failed to find activities with multiple participants',
+              'SEARCH_ERROR',
+            );
     }
   }
 
@@ -185,17 +226,23 @@ class SqliteActivityRepository extends BaseRepository<Activity, int>
         sql,
         <dynamic>[
           '%,$contactIdStr,%', // Middle of list
-          '$contactIdStr,%',   // Start of list
-          '%,$contactIdStr',   // End of list
-          contactIdStr,        // Only participant
+          '$contactIdStr,%', // Start of list
+          '%,$contactIdStr', // End of list
+          contactIdStr, // Only participant
         ],
       );
       return results.first['count'] as int;
     } catch (e) {
-      final failure = ErrorTransformer.transformException(e, 'counting activities by participant');
+      final Failure failure = ErrorTransformer.transformException(
+        e,
+        'counting activities by participant',
+      );
       throw failure is DatabaseFailure
           ? DatabaseException(failure.message, failure.code)
-          : DatabaseException('Failed to count activities by participant', 'COUNT_ERROR');
+          : const DatabaseException(
+              'Failed to count activities by participant',
+              'COUNT_ERROR',
+            );
     }
   }
 
@@ -208,12 +255,20 @@ class SqliteActivityRepository extends BaseRepository<Activity, int>
         ORDER BY location ASC
       ''';
       final List<Map<String, dynamic>> results = await database.rawQuery(sql);
-      return results.map((Map<String, dynamic> row) => row['location'] as String).toList();
+      return results
+          .map((Map<String, dynamic> row) => row['location'] as String)
+          .toList();
     } catch (e) {
-      final failure = ErrorTransformer.transformException(e, 'getting unique activity locations');
+      final Failure failure = ErrorTransformer.transformException(
+        e,
+        'getting unique activity locations',
+      );
       throw failure is DatabaseFailure
           ? DatabaseException(failure.message, failure.code)
-          : DatabaseException('Failed to get unique activity locations', 'SEARCH_ERROR');
+          : const DatabaseException(
+              'Failed to get unique activity locations',
+              'SEARCH_ERROR',
+            );
     }
   }
 }

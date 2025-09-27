@@ -21,10 +21,13 @@ void main() {
     mockRepositoryRegistry = MockRepositoryRegistry();
 
     // Setup service locator mock
-    when(() => mockRepositoryRegistry.contactRepository)
-        .thenReturn(mockContactRepository);
+    when(
+      () => mockRepositoryRegistry.contactRepository,
+    ).thenReturn(mockContactRepository);
 
-    ServiceLocator.instance.registerSingleton<RepositoryRegistry>(mockRepositoryRegistry);
+    ServiceLocator.instance.registerSingleton<RepositoryRegistry>(
+      mockRepositoryRegistry,
+    );
   });
 
   tearDown(() {
@@ -32,29 +35,27 @@ void main() {
   });
 
   group('ContactsScreen Widget Tests', () {
-    testWidgets('should display loading indicator initially', (WidgetTester tester) async {
-      when(() => mockContactRepository.findAll())
-          .thenAnswer((_) async => <Contact>[]);
+    testWidgets('should display loading indicator initially', (
+      WidgetTester tester,
+    ) async {
+      when(
+        () => mockContactRepository.findAll(),
+      ).thenAnswer((_) async => <Contact>[]);
 
-      await tester.pumpWidget(
-        const MaterialApp(
-          home: ContactsScreen(),
-        ),
-      );
+      await tester.pumpWidget(const MaterialApp(home: ContactsScreen()));
 
       // Should show loading indicator
       expect(find.byType(CircularProgressIndicator), findsOneWidget);
     });
 
-    testWidgets('should display empty state when no contacts', (WidgetTester tester) async {
-      when(() => mockContactRepository.findAll())
-          .thenAnswer((_) async => <Contact>[]);
+    testWidgets('should display empty state when no contacts', (
+      WidgetTester tester,
+    ) async {
+      when(
+        () => mockContactRepository.findAll(),
+      ).thenAnswer((_) async => <Contact>[]);
 
-      await tester.pumpWidget(
-        const MaterialApp(
-          home: ContactsScreen(),
-        ),
-      );
+      await tester.pumpWidget(const MaterialApp(home: ContactsScreen()));
 
       // Wait for loading to complete
       await tester.pump();
@@ -63,20 +64,19 @@ void main() {
       expect(find.text('No contacts yet'), findsOneWidget);
     });
 
-    testWidgets('should display contacts list when contacts exist', (WidgetTester tester) async {
+    testWidgets('should display contacts list when contacts exist', (
+      WidgetTester tester,
+    ) async {
       final List<Contact> contacts = <Contact>[
         const Contact(id: 1, name: 'John Doe', email: 'john@example.com'),
         const Contact(id: 2, name: 'Jane Smith', phone: '+1234567890'),
       ];
 
-      when(() => mockContactRepository.findAll())
-          .thenAnswer((_) async => contacts);
+      when(
+        () => mockContactRepository.findAll(),
+      ).thenAnswer((_) async => contacts);
 
-      await tester.pumpWidget(
-        const MaterialApp(
-          home: ContactsScreen(),
-        ),
-      );
+      await tester.pumpWidget(const MaterialApp(home: ContactsScreen()));
 
       // Wait for loading to complete
       await tester.pump();
@@ -90,15 +90,14 @@ void main() {
       expect(find.text('+1234567890'), findsOneWidget);
     });
 
-    testWidgets('should display app bar with title and actions', (WidgetTester tester) async {
-      when(() => mockContactRepository.findAll())
-          .thenAnswer((_) async => <Contact>[]);
+    testWidgets('should display app bar with title and actions', (
+      WidgetTester tester,
+    ) async {
+      when(
+        () => mockContactRepository.findAll(),
+      ).thenAnswer((_) async => <Contact>[]);
 
-      await tester.pumpWidget(
-        const MaterialApp(
-          home: ContactsScreen(),
-        ),
-      );
+      await tester.pumpWidget(const MaterialApp(home: ContactsScreen()));
 
       await tester.pump();
 
@@ -110,15 +109,14 @@ void main() {
       expect(find.byIcon(Icons.add), findsNWidgets(2));
     });
 
-    testWidgets('should show error message when loading fails', (WidgetTester tester) async {
-      when(() => mockContactRepository.findAll())
-          .thenThrow(Exception('Database error'));
+    testWidgets('should show error message when loading fails', (
+      WidgetTester tester,
+    ) async {
+      when(
+        () => mockContactRepository.findAll(),
+      ).thenThrow(Exception('Database error'));
 
-      await tester.pumpWidget(
-        const MaterialApp(
-          home: ContactsScreen(),
-        ),
-      );
+      await tester.pumpWidget(const MaterialApp(home: ContactsScreen()));
 
       // Wait for loading to complete and didChangeDependencies to trigger
       await tester.pump();
@@ -128,7 +126,10 @@ void main() {
       // Should show snackbar with error message
       expect(find.byType(SnackBar), findsOneWidget);
       // There will be 2 instances - one in SnackBar and one in error state, so we expect findsWidgets
-      expect(find.textContaining('A database error occurred. Please try again.'), findsWidgets);
+      expect(
+        find.textContaining('A database error occurred. Please try again.'),
+        findsWidgets,
+      );
     });
 
     testWidgets('should handle contact tap', (WidgetTester tester) async {
@@ -136,14 +137,11 @@ void main() {
         const Contact(id: 1, name: 'John Doe'),
       ];
 
-      when(() => mockContactRepository.findAll())
-          .thenAnswer((_) async => contacts);
+      when(
+        () => mockContactRepository.findAll(),
+      ).thenAnswer((_) async => contacts);
 
-      await tester.pumpWidget(
-        const MaterialApp(
-          home: ContactsScreen(),
-        ),
-      );
+      await tester.pumpWidget(const MaterialApp(home: ContactsScreen()));
 
       await tester.pump();
 
@@ -158,14 +156,11 @@ void main() {
     });
 
     testWidgets('should handle search button tap', (WidgetTester tester) async {
-      when(() => mockContactRepository.findAll())
-          .thenAnswer((_) async => <Contact>[]);
+      when(
+        () => mockContactRepository.findAll(),
+      ).thenAnswer((_) async => <Contact>[]);
 
-      await tester.pumpWidget(
-        const MaterialApp(
-          home: ContactsScreen(),
-        ),
-      );
+      await tester.pumpWidget(const MaterialApp(home: ContactsScreen()));
 
       await tester.pump();
 
@@ -179,14 +174,11 @@ void main() {
     });
 
     testWidgets('should handle add button tap', (WidgetTester tester) async {
-      when(() => mockContactRepository.findAll())
-          .thenAnswer((_) async => <Contact>[]);
+      when(
+        () => mockContactRepository.findAll(),
+      ).thenAnswer((_) async => <Contact>[]);
 
-      await tester.pumpWidget(
-        const MaterialApp(
-          home: ContactsScreen(),
-        ),
-      );
+      await tester.pumpWidget(const MaterialApp(home: ContactsScreen()));
 
       await tester.pump();
 
@@ -197,23 +189,21 @@ void main() {
       // Verify the tap doesn't crash (add functionality not yet implemented)
       expect(find.byType(ContactsScreen), findsOneWidget);
       expect(find.byIcon(Icons.add), findsNWidgets(2));
-;
     });
 
-    testWidgets('should display contact list items correctly', (WidgetTester tester) async {
+    testWidgets('should display contact list items correctly', (
+      WidgetTester tester,
+    ) async {
       final List<Contact> contacts = <Contact>[
         const Contact(id: 1, name: 'John Doe', email: 'john@example.com'),
         const Contact(id: 2, name: 'Jane Smith', phone: '+1234567890'),
       ];
 
-      when(() => mockContactRepository.findAll())
-          .thenAnswer((_) async => contacts);
+      when(
+        () => mockContactRepository.findAll(),
+      ).thenAnswer((_) async => contacts);
 
-      await tester.pumpWidget(
-        const MaterialApp(
-          home: ContactsScreen(),
-        ),
-      );
+      await tester.pumpWidget(const MaterialApp(home: ContactsScreen()));
 
       await tester.pump();
 

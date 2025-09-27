@@ -3,7 +3,10 @@ import 'package:monica_companion/db/models/base_model.dart';
 /// Interaction entity representing communication records
 class Interaction extends BaseModel {
   const Interaction({
-    required this.contactId, required this.type, required this.date, super.id,
+    required this.contactId,
+    required this.type,
+    required this.date,
+    super.id,
     super.createdAt,
     this.duration,
     this.notes,
@@ -30,29 +33,29 @@ class Interaction extends BaseModel {
 
   @override
   Map<String, dynamic> toMap() => <String, dynamic>{
-      'id': id,
-      'contact_id': contactId,
-      'type': type,
-      'date': date,
-      'duration': duration,
-      'notes': notes,
-      'location': location,
-      'created_at': createdAt?.toIso8601String(),
-    };
+    'id': id,
+    'contact_id': contactId,
+    'type': type,
+    'date': date,
+    'duration': duration,
+    'notes': notes,
+    'location': location,
+    'created_at': createdAt?.toIso8601String(),
+  };
 
   /// Create Interaction from database map
   static Interaction fromMap(Map<String, dynamic> map) => Interaction(
-      id: map['id'] as int?,
-      contactId: map['contact_id'] as int,
-      type: map['type'] as String,
-      date: map['date'] as String,
-      duration: map['duration'] as int?,
-      notes: map['notes'] as String?,
-      location: map['location'] as String?,
-      createdAt: map['created_at'] != null
-          ? DateTime.parse(map['created_at'] as String)
-          : null,
-    );
+    id: map['id'] as int?,
+    contactId: map['contact_id'] as int,
+    type: map['type'] as String,
+    date: map['date'] as String,
+    duration: map['duration'] as int?,
+    notes: map['notes'] as String?,
+    location: map['location'] as String?,
+    createdAt: map['created_at'] != null
+        ? DateTime.parse(map['created_at'] as String)
+        : null,
+  );
 
   @override
   Interaction copyWith({
@@ -65,25 +68,25 @@ class Interaction extends BaseModel {
     String? notes,
     String? location,
   }) => Interaction(
-      id: id ?? this.id,
-      createdAt: createdAt ?? this.createdAt,
-      contactId: contactId ?? this.contactId,
-      type: type ?? this.type,
-      date: date ?? this.date,
-      duration: duration ?? this.duration,
-      notes: notes ?? this.notes,
-      location: location ?? this.location,
-    );
+    id: id ?? this.id,
+    createdAt: createdAt ?? this.createdAt,
+    contactId: contactId ?? this.contactId,
+    type: type ?? this.type,
+    date: date ?? this.date,
+    duration: duration ?? this.duration,
+    notes: notes ?? this.notes,
+    location: location ?? this.location,
+  );
 
   @override
   List<Object?> get props => <Object?>[
-        id,
-        createdAt,
-        contactId,
-        type,
-        date,
-        duration,
-        notes,
-        location,
-      ];
+    id,
+    createdAt,
+    contactId,
+    type,
+    date,
+    duration,
+    notes,
+    location,
+  ];
 }
