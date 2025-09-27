@@ -67,3 +67,23 @@ In order to complete a feature at its best, always check at the end of the imple
 - [ ] Flutter/Dart versions consistent across all CI jobs
 - [ ] Android minSdkVersion set to 24 (Android 7.0) minimum
 - [ ] Build artifacts generated and stored with appropriate retention
+
+## Problem-Solving Approach
+
+### Flutter Run Priority
+- When flutter run fails, prioritize build system issues over missing imports
+- Investigate transaction deadlocks in database initialization before feature complexity
+- Simplify complex systems when they prevent basic app functionality
+- Focus on minimum viable implementation that enables development workflow
+
+### Implementation Strategy
+- **TDD should be the preferred approach when implementing features**
+- Write tests first to define expected behavior before implementation
+- Use Red-Green-Refactor cycle: failing test → minimal implementation → refactor
+- Start with simplest implementation that makes tests pass, then optimize
+
+### Complexity Management
+- Prioritize working core functionality over advanced configurations
+- Add complexity incrementally as basic functionality stabilizes
+- Remove blocking complexity that prevents development progress
+- Advanced optimizations come after core features work properly
