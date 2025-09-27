@@ -40,7 +40,9 @@ class TestHelpers {
     final MockRepositoryRegistry mockRegistry = MockRepositoryRegistry();
     when(mockRegistry.initialize).thenAnswer((_) async {});
     when(mockRegistry.dispose).thenAnswer((_) async {});
-    when(() => mockRegistry.contactRepository).thenReturn(mockContactRepository);
+    when(
+      () => mockRegistry.contactRepository,
+    ).thenReturn(mockContactRepository);
 
     // Register services
     locator.registerSingleton<DatabaseInterface>(mockDatabase);

@@ -142,11 +142,10 @@ void main() {
         amount: testAmount,
         type: testType,
         date: testDate,
-        paid: false,
       );
 
       final Debt updated = original.copyWith(
-        amount: 200.0,
+        amount: 200,
         currency: testCurrency,
         type: DebtType.iOwe,
         description: testDescription,
@@ -248,7 +247,6 @@ void main() {
         amount: testAmount,
         type: testType,
         date: testDate,
-        paid: false,
       );
 
       final Map<String, dynamic> unpaidMap = unpaidDebt.toMap();
@@ -259,7 +257,13 @@ void main() {
     });
 
     test('should handle different currencies', () {
-      const List<String> currencies = ['USD', 'EUR', 'GBP', 'JPY', 'CAD'];
+      const List<String> currencies = <String>[
+        'USD',
+        'EUR',
+        'GBP',
+        'JPY',
+        'CAD',
+      ];
 
       for (final String currency in currencies) {
         final Debt debt = Debt(
@@ -280,7 +284,7 @@ void main() {
     });
 
     test('should handle various amounts', () {
-      const List<double> amounts = [0.01, 1.0, 25.50, 100.0, 999.99, 10000.0];
+      const List<double> amounts = <double>[0.01, 1, 25.50, 100, 999.99, 10000];
 
       for (final double amount in amounts) {
         final Debt debt = Debt(
@@ -318,7 +322,10 @@ void main() {
     test('should handle DebtType.fromString correctly', () {
       expect(DebtType.fromString('owed_to_me'), DebtType.owedToMe);
       expect(DebtType.fromString('i_owe'), DebtType.iOwe);
-      expect(DebtType.fromString('invalid'), DebtType.owedToMe); // Default fallback
+      expect(
+        DebtType.fromString('invalid'),
+        DebtType.owedToMe,
+      ); // Default fallback
     });
 
     test('should handle paid conversion from different int values', () {
@@ -350,7 +357,7 @@ void main() {
     });
 
     test('should handle precise decimal amounts', () {
-      const List<double> preciseAmounts = [
+      const List<double> preciseAmounts = <double>[
         12.34,
         99.99,
         123.456,

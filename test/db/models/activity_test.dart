@@ -4,16 +4,13 @@ import 'package:monica_companion/db/models/activity.dart';
 void main() {
   group('Activity Model', () {
     const String testTitle = 'Dinner at Italian Restaurant';
-    const String testDescription = 'Great evening with friends at Luigi\'s';
+    const String testDescription = "Great evening with friends at Luigi's";
     const String testDate = '2024-01-15T19:00:00.000Z';
-    const String testLocation = 'Luigi\'s Italian Restaurant';
-    const List<int> testParticipants = [1, 2, 3];
+    const String testLocation = "Luigi's Italian Restaurant";
+    const List<int> testParticipants = <int>[1, 2, 3];
 
     test('should create Activity with required fields', () {
-      const Activity activity = Activity(
-        title: testTitle,
-        date: testDate,
-      );
+      const Activity activity = Activity(title: testTitle, date: testDate);
 
       expect(activity.title, testTitle);
       expect(activity.date, testDate);
@@ -118,7 +115,7 @@ void main() {
         id: 1,
         title: testTitle,
         date: testDate,
-        participants: [1, 2],
+        participants: <int>[1, 2],
       );
 
       final Activity updated = original.copyWith(
@@ -135,7 +132,10 @@ void main() {
       expect(updated.location, testLocation);
       expect(updated.participants, testParticipants);
       expect(original.title, testTitle); // Original should be unchanged
-      expect(original.participants, [1, 2]); // Original should be unchanged
+      expect(original.participants, <int>[
+        1,
+        2,
+      ]); // Original should be unchanged
     });
 
     test('should implement Equatable correctly', () {
@@ -166,11 +166,7 @@ void main() {
     });
 
     test('should handle empty participants list', () {
-      const Activity activity = Activity(
-        title: testTitle,
-        date: testDate,
-        participants: <int>[],
-      );
+      const Activity activity = Activity(title: testTitle, date: testDate);
 
       final Map<String, dynamic> map = activity.toMap();
       expect(map['participants'], '');
@@ -180,7 +176,7 @@ void main() {
     });
 
     test('should handle single participant', () {
-      const List<int> singleParticipant = [42];
+      const List<int> singleParticipant = <int>[42];
       const Activity activity = Activity(
         title: testTitle,
         date: testDate,
@@ -195,7 +191,7 @@ void main() {
     });
 
     test('should handle multiple participants', () {
-      const List<int> manyParticipants = [1, 5, 10, 15, 20, 25];
+      const List<int> manyParticipants = <int>[1, 5, 10, 15, 20, 25];
       const Activity activity = Activity(
         title: testTitle,
         date: testDate,
@@ -223,12 +219,12 @@ void main() {
     });
 
     test('should handle round-trip serialization with participants', () {
-      const List<List<int>> participantLists = [
+      const List<List<int>> participantLists = <List<int>>[
         <int>[],
-        [1],
-        [1, 2],
-        [1, 2, 3, 4, 5],
-        [100, 200, 300],
+        <int>[1],
+        <int>[1, 2],
+        <int>[1, 2, 3, 4, 5],
+        <int>[100, 200, 300],
       ];
 
       for (final List<int> participants in participantLists) {
@@ -248,7 +244,7 @@ void main() {
     });
 
     test('should handle different activity types', () {
-      const List<String> activityTitles = [
+      const List<String> activityTitles = <String>[
         'Movie Night',
         'Coffee Meeting',
         'Birthday Party',
@@ -257,10 +253,7 @@ void main() {
       ];
 
       for (final String title in activityTitles) {
-        final Activity activity = Activity(
-          title: title,
-          date: testDate,
-        );
+        final Activity activity = Activity(title: title, date: testDate);
 
         expect(activity.title, title);
 
@@ -272,17 +265,14 @@ void main() {
     });
 
     test('should handle different date formats', () {
-      const List<String> dateFormats = [
+      const List<String> dateFormats = <String>[
         '2024-01-15T19:00:00.000Z',
         '2024-12-31T23:59:59.999Z',
         '2025-06-15T12:00:00.000Z',
       ];
 
       for (final String date in dateFormats) {
-        final Activity activity = Activity(
-          title: testTitle,
-          date: date,
-        );
+        final Activity activity = Activity(title: testTitle, date: date);
 
         expect(activity.date, date);
 
@@ -294,7 +284,7 @@ void main() {
     });
 
     test('should handle various locations', () {
-      const List<String> locations = [
+      const List<String> locations = <String>[
         'Central Park',
         'Home',
         'Office Conference Room',
@@ -319,12 +309,13 @@ void main() {
     });
 
     test('should handle long descriptions', () {
-      const String longDescription = 'This was an amazing evening where we all gathered together for a wonderful time. '
+      const String longDescription =
+          'This was an amazing evening where we all gathered together for a wonderful time. '
           'We started with appetizers and drinks, then moved on to the main course which was absolutely delicious. '
           'The conversation flowed naturally and everyone seemed to really enjoy themselves. '
           'It was one of those perfect nights that you remember for years to come.';
 
-      final Activity activity = Activity(
+      const Activity activity = Activity(
         title: testTitle,
         date: testDate,
         description: longDescription,

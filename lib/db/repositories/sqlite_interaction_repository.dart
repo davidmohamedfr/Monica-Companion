@@ -1,7 +1,6 @@
 import 'package:monica_companion/core/errors/exceptions.dart';
 import 'package:monica_companion/core/errors/failures.dart';
 import 'package:monica_companion/core/utils/error_transformer.dart';
-import 'package:monica_companion/core/utils/logger.dart';
 import 'package:monica_companion/db/interfaces/database_interface.dart';
 import 'package:monica_companion/db/interfaces/interaction_repository.dart';
 import 'package:monica_companion/db/models/interaction.dart';
@@ -11,7 +10,7 @@ import 'package:monica_companion/db/repositories/base_repository.dart';
 class SqliteInteractionRepository extends BaseRepository<Interaction, int>
     implements InteractionRepository {
   SqliteInteractionRepository(DatabaseInterface database)
-      : super(database, 'interactions');
+    : super(database, 'interactions');
 
   @override
   Interaction fromMap(Map<String, dynamic> map) => Interaction.fromMap(map);
@@ -30,10 +29,16 @@ class SqliteInteractionRepository extends BaseRepository<Interaction, int>
       );
       return results.map(fromMap).toList();
     } catch (e) {
-      final failure = ErrorTransformer.transformException(e, 'finding interactions by contact ID');
+      final Failure failure = ErrorTransformer.transformException(
+        e,
+        'finding interactions by contact ID',
+      );
       throw failure is DatabaseFailure
           ? DatabaseException(failure.message, failure.code)
-          : DatabaseException('Failed to find interactions by contact ID', 'SEARCH_ERROR');
+          : const DatabaseException(
+              'Failed to find interactions by contact ID',
+              'SEARCH_ERROR',
+            );
     }
   }
 
@@ -51,15 +56,24 @@ class SqliteInteractionRepository extends BaseRepository<Interaction, int>
       );
       return results.map(fromMap).toList();
     } catch (e) {
-      final failure = ErrorTransformer.transformException(e, 'finding interactions by type');
+      final Failure failure = ErrorTransformer.transformException(
+        e,
+        'finding interactions by type',
+      );
       throw failure is DatabaseFailure
           ? DatabaseException(failure.message, failure.code)
-          : DatabaseException('Failed to find interactions by type', 'SEARCH_ERROR');
+          : const DatabaseException(
+              'Failed to find interactions by type',
+              'SEARCH_ERROR',
+            );
     }
   }
 
   @override
-  Future<List<Interaction>> findByDateRange(DateTime start, DateTime end) async {
+  Future<List<Interaction>> findByDateRange(
+    DateTime start,
+    DateTime end,
+  ) async {
     try {
       const String sql = '''
         SELECT * FROM interactions
@@ -72,10 +86,16 @@ class SqliteInteractionRepository extends BaseRepository<Interaction, int>
       );
       return results.map(fromMap).toList();
     } catch (e) {
-      final failure = ErrorTransformer.transformException(e, 'finding interactions by date range');
+      final Failure failure = ErrorTransformer.transformException(
+        e,
+        'finding interactions by date range',
+      );
       throw failure is DatabaseFailure
           ? DatabaseException(failure.message, failure.code)
-          : DatabaseException('Failed to find interactions by date range', 'SEARCH_ERROR');
+          : const DatabaseException(
+              'Failed to find interactions by date range',
+              'SEARCH_ERROR',
+            );
     }
   }
 
@@ -94,10 +114,16 @@ class SqliteInteractionRepository extends BaseRepository<Interaction, int>
       );
       return results.map(fromMap).toList();
     } catch (e) {
-      final failure = ErrorTransformer.transformException(e, 'finding recent interactions');
+      final Failure failure = ErrorTransformer.transformException(
+        e,
+        'finding recent interactions',
+      );
       throw failure is DatabaseFailure
           ? DatabaseException(failure.message, failure.code)
-          : DatabaseException('Failed to find recent interactions', 'SEARCH_ERROR');
+          : const DatabaseException(
+              'Failed to find recent interactions',
+              'SEARCH_ERROR',
+            );
     }
   }
 
@@ -114,10 +140,16 @@ class SqliteInteractionRepository extends BaseRepository<Interaction, int>
       );
       return results.first['count'] as int;
     } catch (e) {
-      final failure = ErrorTransformer.transformException(e, 'counting interactions by contact ID');
+      final Failure failure = ErrorTransformer.transformException(
+        e,
+        'counting interactions by contact ID',
+      );
       throw failure is DatabaseFailure
           ? DatabaseException(failure.message, failure.code)
-          : DatabaseException('Failed to count interactions by contact ID', 'COUNT_ERROR');
+          : const DatabaseException(
+              'Failed to count interactions by contact ID',
+              'COUNT_ERROR',
+            );
     }
   }
 
@@ -140,10 +172,16 @@ class SqliteInteractionRepository extends BaseRepository<Interaction, int>
       }
       return fromMap(results.first);
     } catch (e) {
-      final failure = ErrorTransformer.transformException(e, 'finding last interaction by contact ID');
+      final Failure failure = ErrorTransformer.transformException(
+        e,
+        'finding last interaction by contact ID',
+      );
       throw failure is DatabaseFailure
           ? DatabaseException(failure.message, failure.code)
-          : DatabaseException('Failed to find last interaction by contact ID', 'SEARCH_ERROR');
+          : const DatabaseException(
+              'Failed to find last interaction by contact ID',
+              'SEARCH_ERROR',
+            );
     }
   }
 }

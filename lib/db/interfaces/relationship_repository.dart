@@ -2,7 +2,8 @@ import 'package:monica_companion/db/interfaces/repository_interface.dart';
 import 'package:monica_companion/db/models/relationship.dart';
 
 /// Repository interface for Relationship entities
-abstract class RelationshipRepository implements RepositoryInterface<Relationship, int> {
+abstract class RelationshipRepository
+    implements RepositoryInterface<Relationship, int> {
   /// Find relationships for a specific contact
   Future<List<Relationship>> findByContactId(int contactId);
 

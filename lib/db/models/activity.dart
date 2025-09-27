@@ -3,7 +3,9 @@ import 'package:monica_companion/db/models/base_model.dart';
 /// Activity entity representing shared experiences or events
 class Activity extends BaseModel {
   const Activity({
-    required this.title, required this.date, super.id,
+    required this.title,
+    required this.date,
+    super.id,
     super.createdAt,
     this.description,
     this.location,
@@ -27,22 +29,22 @@ class Activity extends BaseModel {
 
   @override
   Map<String, dynamic> toMap() => <String, dynamic>{
-      'id': id,
-      'title': title,
-      'description': description,
-      'date': date,
-      'location': location,
-      'participants': participants.join(','), // Store as comma-separated string
-      'created_at': createdAt?.toIso8601String(),
-    };
+    'id': id,
+    'title': title,
+    'description': description,
+    'date': date,
+    'location': location,
+    'participants': participants.join(','), // Store as comma-separated string
+    'created_at': createdAt?.toIso8601String(),
+  };
 
   /// Create Activity from database map
   static Activity fromMap(Map<String, dynamic> map) {
     final String? participantsString = map['participants'] as String?;
     final List<int> participants =
         participantsString != null && participantsString.isNotEmpty
-            ? participantsString.split(',').map(int.parse).toList()
-            : <int>[];
+        ? participantsString.split(',').map(int.parse).toList()
+        : <int>[];
 
     return Activity(
       id: map['id'] as int?,
@@ -67,23 +69,23 @@ class Activity extends BaseModel {
     String? location,
     List<int>? participants,
   }) => Activity(
-      id: id ?? this.id,
-      createdAt: createdAt ?? this.createdAt,
-      title: title ?? this.title,
-      description: description ?? this.description,
-      date: date ?? this.date,
-      location: location ?? this.location,
-      participants: participants ?? this.participants,
-    );
+    id: id ?? this.id,
+    createdAt: createdAt ?? this.createdAt,
+    title: title ?? this.title,
+    description: description ?? this.description,
+    date: date ?? this.date,
+    location: location ?? this.location,
+    participants: participants ?? this.participants,
+  );
 
   @override
   List<Object?> get props => <Object?>[
-        id,
-        createdAt,
-        title,
-        description,
-        date,
-        location,
-        participants,
-      ];
+    id,
+    createdAt,
+    title,
+    description,
+    date,
+    location,
+    participants,
+  ];
 }

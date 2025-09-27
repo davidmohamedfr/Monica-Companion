@@ -39,10 +39,10 @@ class _MainShellState extends State<MainShell> {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-      body: _getScreen(_selectedIndex),
-      bottomNavigationBar: MonicaBottomNavigationBar(
-        currentIndex: _selectedIndex,
-        onTap: _onItemTapped,
-      ),
-    );
+    body: _getScreen(_selectedIndex),
+    bottomNavigationBar: MonicaBottomNavigationBar(
+      currentIndex: _selectedIndex,
+      onTap: _onItemTapped,
+    ),
+  );
 }

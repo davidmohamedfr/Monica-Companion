@@ -140,11 +140,7 @@ void main() {
     });
 
     test('copyWith should create new instance with updated fields', () {
-      const Contact original = Contact(
-        id: 1,
-        name: testName,
-        email: testEmail,
-      );
+      const Contact original = Contact(id: 1, name: testName, email: testEmail);
 
       final Contact updated = original.copyWith(
         name: 'Jane Doe',
@@ -159,23 +155,11 @@ void main() {
     });
 
     test('should implement Equatable correctly', () {
-      const Contact contact1 = Contact(
-        id: 1,
-        name: testName,
-        email: testEmail,
-      );
+      const Contact contact1 = Contact(id: 1, name: testName, email: testEmail);
 
-      const Contact contact2 = Contact(
-        id: 1,
-        name: testName,
-        email: testEmail,
-      );
+      const Contact contact2 = Contact(id: 1, name: testName, email: testEmail);
 
-      const Contact contact3 = Contact(
-        id: 2,
-        name: testName,
-        email: testEmail,
-      );
+      const Contact contact3 = Contact(id: 2, name: testName, email: testEmail);
 
       expect(contact1, equals(contact2));
       expect(contact1, isNot(equals(contact3)));

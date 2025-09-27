@@ -1,7 +1,6 @@
 import 'package:monica_companion/core/errors/exceptions.dart';
 import 'package:monica_companion/core/errors/failures.dart';
 import 'package:monica_companion/core/utils/error_transformer.dart';
-import 'package:monica_companion/core/utils/logger.dart';
 import 'package:monica_companion/db/interfaces/database_interface.dart';
 import 'package:monica_companion/db/interfaces/debt_repository.dart';
 import 'package:monica_companion/db/models/debt.dart';
@@ -10,8 +9,7 @@ import 'package:monica_companion/db/repositories/base_repository.dart';
 /// SQLite implementation of DebtRepository
 class SqliteDebtRepository extends BaseRepository<Debt, int>
     implements DebtRepository {
-  SqliteDebtRepository(DatabaseInterface database)
-      : super(database, 'debts');
+  SqliteDebtRepository(DatabaseInterface database) : super(database, 'debts');
 
   @override
   Debt fromMap(Map<String, dynamic> map) => Debt.fromMap(map);
@@ -30,10 +28,16 @@ class SqliteDebtRepository extends BaseRepository<Debt, int>
       );
       return results.map(fromMap).toList();
     } catch (e) {
-      final failure = ErrorTransformer.transformException(e, 'finding debts by contact ID');
+      final Failure failure = ErrorTransformer.transformException(
+        e,
+        'finding debts by contact ID',
+      );
       throw failure is DatabaseFailure
           ? DatabaseException(failure.message, failure.code)
-          : DatabaseException('Failed to find debts by contact ID', 'SEARCH_ERROR');
+          : const DatabaseException(
+              'Failed to find debts by contact ID',
+              'SEARCH_ERROR',
+            );
     }
   }
 
@@ -51,10 +55,16 @@ class SqliteDebtRepository extends BaseRepository<Debt, int>
       );
       return results.map(fromMap).toList();
     } catch (e) {
-      final failure = ErrorTransformer.transformException(e, 'finding debts by type');
+      final Failure failure = ErrorTransformer.transformException(
+        e,
+        'finding debts by type',
+      );
       throw failure is DatabaseFailure
           ? DatabaseException(failure.message, failure.code)
-          : DatabaseException('Failed to find debts by type', 'SEARCH_ERROR');
+          : const DatabaseException(
+              'Failed to find debts by type',
+              'SEARCH_ERROR',
+            );
     }
   }
 
@@ -69,10 +79,16 @@ class SqliteDebtRepository extends BaseRepository<Debt, int>
       final List<Map<String, dynamic>> results = await database.rawQuery(sql);
       return results.map(fromMap).toList();
     } catch (e) {
-      final failure = ErrorTransformer.transformException(e, 'finding unpaid debts');
+      final Failure failure = ErrorTransformer.transformException(
+        e,
+        'finding unpaid debts',
+      );
       throw failure is DatabaseFailure
           ? DatabaseException(failure.message, failure.code)
-          : DatabaseException('Failed to find unpaid debts', 'SEARCH_ERROR');
+          : const DatabaseException(
+              'Failed to find unpaid debts',
+              'SEARCH_ERROR',
+            );
     }
   }
 
@@ -87,15 +103,24 @@ class SqliteDebtRepository extends BaseRepository<Debt, int>
       final List<Map<String, dynamic>> results = await database.rawQuery(sql);
       return results.map(fromMap).toList();
     } catch (e) {
-      final failure = ErrorTransformer.transformException(e, 'finding paid debts');
+      final Failure failure = ErrorTransformer.transformException(
+        e,
+        'finding paid debts',
+      );
       throw failure is DatabaseFailure
           ? DatabaseException(failure.message, failure.code)
-          : DatabaseException('Failed to find paid debts', 'SEARCH_ERROR');
+          : const DatabaseException(
+              'Failed to find paid debts',
+              'SEARCH_ERROR',
+            );
     }
   }
 
   @override
-  Future<List<Debt>> findByAmountRange(double minAmount, double maxAmount) async {
+  Future<List<Debt>> findByAmountRange(
+    double minAmount,
+    double maxAmount,
+  ) async {
     try {
       const String sql = '''
         SELECT * FROM debts
@@ -108,10 +133,16 @@ class SqliteDebtRepository extends BaseRepository<Debt, int>
       );
       return results.map(fromMap).toList();
     } catch (e) {
-      final failure = ErrorTransformer.transformException(e, 'finding debts by amount range');
+      final Failure failure = ErrorTransformer.transformException(
+        e,
+        'finding debts by amount range',
+      );
       throw failure is DatabaseFailure
           ? DatabaseException(failure.message, failure.code)
-          : DatabaseException('Failed to find debts by amount range', 'SEARCH_ERROR');
+          : const DatabaseException(
+              'Failed to find debts by amount range',
+              'SEARCH_ERROR',
+            );
     }
   }
 
@@ -129,10 +160,16 @@ class SqliteDebtRepository extends BaseRepository<Debt, int>
       );
       return results.map(fromMap).toList();
     } catch (e) {
-      final failure = ErrorTransformer.transformException(e, 'finding debts by date range');
+      final Failure failure = ErrorTransformer.transformException(
+        e,
+        'finding debts by date range',
+      );
       throw failure is DatabaseFailure
           ? DatabaseException(failure.message, failure.code)
-          : DatabaseException('Failed to find debts by date range', 'SEARCH_ERROR');
+          : const DatabaseException(
+              'Failed to find debts by date range',
+              'SEARCH_ERROR',
+            );
     }
   }
 
@@ -150,10 +187,16 @@ class SqliteDebtRepository extends BaseRepository<Debt, int>
       );
       return results.map(fromMap).toList();
     } catch (e) {
-      final failure = ErrorTransformer.transformException(e, 'finding debts by currency');
+      final Failure failure = ErrorTransformer.transformException(
+        e,
+        'finding debts by currency',
+      );
       throw failure is DatabaseFailure
           ? DatabaseException(failure.message, failure.code)
-          : DatabaseException('Failed to find debts by currency', 'SEARCH_ERROR');
+          : const DatabaseException(
+              'Failed to find debts by currency',
+              'SEARCH_ERROR',
+            );
     }
   }
 
@@ -170,10 +213,16 @@ class SqliteDebtRepository extends BaseRepository<Debt, int>
       );
       return results.first['count'] as int;
     } catch (e) {
-      final failure = ErrorTransformer.transformException(e, 'counting debts by contact ID');
+      final Failure failure = ErrorTransformer.transformException(
+        e,
+        'counting debts by contact ID',
+      );
       throw failure is DatabaseFailure
           ? DatabaseException(failure.message, failure.code)
-          : DatabaseException('Failed to count debts by contact ID', 'COUNT_ERROR');
+          : const DatabaseException(
+              'Failed to count debts by contact ID',
+              'COUNT_ERROR',
+            );
     }
   }
 
@@ -190,10 +239,16 @@ class SqliteDebtRepository extends BaseRepository<Debt, int>
       );
       return (results.first['total'] as num).toDouble();
     } catch (e) {
-      final failure = ErrorTransformer.transformException(e, 'getting total owed to me by contact ID');
+      final Failure failure = ErrorTransformer.transformException(
+        e,
+        'getting total owed to me by contact ID',
+      );
       throw failure is DatabaseFailure
           ? DatabaseException(failure.message, failure.code)
-          : DatabaseException('Failed to get total owed to me by contact ID', 'CALCULATION_ERROR');
+          : const DatabaseException(
+              'Failed to get total owed to me by contact ID',
+              'CALCULATION_ERROR',
+            );
     }
   }
 
@@ -210,10 +265,16 @@ class SqliteDebtRepository extends BaseRepository<Debt, int>
       );
       return (results.first['total'] as num).toDouble();
     } catch (e) {
-      final failure = ErrorTransformer.transformException(e, 'getting total I owe by contact ID');
+      final Failure failure = ErrorTransformer.transformException(
+        e,
+        'getting total I owe by contact ID',
+      );
       throw failure is DatabaseFailure
           ? DatabaseException(failure.message, failure.code)
-          : DatabaseException('Failed to get total I owe by contact ID', 'CALCULATION_ERROR');
+          : const DatabaseException(
+              'Failed to get total I owe by contact ID',
+              'CALCULATION_ERROR',
+            );
     }
   }
 
@@ -230,10 +291,16 @@ class SqliteDebtRepository extends BaseRepository<Debt, int>
       );
       return (results.first['total'] as num).toDouble();
     } catch (e) {
-      final failure = ErrorTransformer.transformException(e, 'getting total unpaid by contact ID');
+      final Failure failure = ErrorTransformer.transformException(
+        e,
+        'getting total unpaid by contact ID',
+      );
       throw failure is DatabaseFailure
           ? DatabaseException(failure.message, failure.code)
-          : DatabaseException('Failed to get total unpaid by contact ID', 'CALCULATION_ERROR');
+          : const DatabaseException(
+              'Failed to get total unpaid by contact ID',
+              'CALCULATION_ERROR',
+            );
     }
   }
 }

@@ -5,16 +5,14 @@ void main() {
   group('Task Model', () {
     const int testContactId = 1;
     const String testTitle = 'Call John about dinner plans';
-    const String testDescription = 'Need to confirm time and location for Saturday dinner';
+    const String testDescription =
+        'Need to confirm time and location for Saturday dinner';
     const String testDueDate = '2024-01-20T18:00:00.000Z';
     const bool testCompleted = true;
     const int testPriority = 4;
 
     test('should create Task with required fields', () {
-      const Task task = Task(
-        contactId: testContactId,
-        title: testTitle,
-      );
+      const Task task = Task(contactId: testContactId, title: testTitle);
 
       expect(task.contactId, testContactId);
       expect(task.title, testTitle);
@@ -128,8 +126,6 @@ void main() {
         id: 1,
         contactId: testContactId,
         title: testTitle,
-        completed: false,
-        priority: 1,
       );
 
       final Task updated = original.copyWith(
@@ -195,11 +191,7 @@ void main() {
       expect(completedFromMap.completed, true);
 
       // Test false value
-      const Task pendingTask = Task(
-        contactId: testContactId,
-        title: testTitle,
-        completed: false,
-      );
+      const Task pendingTask = Task(contactId: testContactId, title: testTitle);
 
       final Map<String, dynamic> pendingMap = pendingTask.toMap();
       expect(pendingMap['completed'], 0);
@@ -209,7 +201,7 @@ void main() {
     });
 
     test('should handle priority levels correctly', () {
-      const List<int> priorityLevels = [1, 2, 3, 4, 5];
+      const List<int> priorityLevels = <int>[1, 2, 3, 4, 5];
 
       for (final int priority in priorityLevels) {
         final Task task = Task(
@@ -228,10 +220,7 @@ void main() {
     });
 
     test('should use default values when not specified', () {
-      const Task task = Task(
-        contactId: testContactId,
-        title: testTitle,
-      );
+      const Task task = Task(contactId: testContactId, title: testTitle);
 
       expect(task.completed, false);
       expect(task.priority, 1);
@@ -269,7 +258,7 @@ void main() {
     });
 
     test('should handle various due date formats', () {
-      const List<String> dueDates = [
+      const List<String> dueDates = <String>[
         '2024-01-20T18:00:00.000Z',
         '2024-12-25T00:00:00.000Z',
         '2025-06-15T12:30:00.000Z',
@@ -294,7 +283,7 @@ void main() {
 
     test('should handle edge case priority values', () {
       // Test minimum and maximum priority values
-      const List<int> edgePriorities = [0, 1, 5, 10];
+      const List<int> edgePriorities = <int>[0, 1, 5, 10];
 
       for (final int priority in edgePriorities) {
         final Task task = Task(

@@ -12,6 +12,7 @@ import 'package:monica_companion/main.dart';
 import 'package:monica_companion/services/service_locator.dart';
 
 import '../test/helpers/test_helpers.dart';
+
 void main() {
   setUp(() async {
     // Setup service locator with mocks for all tests
@@ -33,6 +34,9 @@ void main() {
     // Verify that our app displays the main navigation interface
     expect(find.byType(MainShell), findsOneWidget);
     expect(find.byType(NavigationBar), findsOneWidget);
-    expect(find.text('Contacts'), findsWidgets); // Should find in both app bar and navigation
+    expect(
+      find.text('Contacts'),
+      findsWidgets,
+    ); // Should find in both app bar and navigation
   });
 }

@@ -1,7 +1,6 @@
 import 'package:monica_companion/core/errors/exceptions.dart';
 import 'package:monica_companion/core/errors/failures.dart';
 import 'package:monica_companion/core/utils/error_transformer.dart';
-import 'package:monica_companion/core/utils/logger.dart';
 import 'package:monica_companion/db/interfaces/database_interface.dart';
 import 'package:monica_companion/db/interfaces/reminder_repository.dart';
 import 'package:monica_companion/db/models/reminder.dart';
@@ -11,7 +10,7 @@ import 'package:monica_companion/db/repositories/base_repository.dart';
 class SqliteReminderRepository extends BaseRepository<Reminder, int>
     implements ReminderRepository {
   SqliteReminderRepository(DatabaseInterface database)
-      : super(database, 'reminders');
+    : super(database, 'reminders');
 
   @override
   Reminder fromMap(Map<String, dynamic> map) => Reminder.fromMap(map);
@@ -30,10 +29,16 @@ class SqliteReminderRepository extends BaseRepository<Reminder, int>
       );
       return results.map(fromMap).toList();
     } catch (e) {
-      final failure = ErrorTransformer.transformException(e, 'finding reminders by contact ID');
+      final Failure failure = ErrorTransformer.transformException(
+        e,
+        'finding reminders by contact ID',
+      );
       throw failure is DatabaseFailure
           ? DatabaseException(failure.message, failure.code)
-          : DatabaseException('Failed to find reminders by contact ID', 'SEARCH_ERROR');
+          : const DatabaseException(
+              'Failed to find reminders by contact ID',
+              'SEARCH_ERROR',
+            );
     }
   }
 
@@ -48,10 +53,16 @@ class SqliteReminderRepository extends BaseRepository<Reminder, int>
       final List<Map<String, dynamic>> results = await database.rawQuery(sql);
       return results.map(fromMap).toList();
     } catch (e) {
-      final failure = ErrorTransformer.transformException(e, 'finding active reminders');
+      final Failure failure = ErrorTransformer.transformException(
+        e,
+        'finding active reminders',
+      );
       throw failure is DatabaseFailure
           ? DatabaseException(failure.message, failure.code)
-          : DatabaseException('Failed to find active reminders', 'SEARCH_ERROR');
+          : const DatabaseException(
+              'Failed to find active reminders',
+              'SEARCH_ERROR',
+            );
     }
   }
 
@@ -66,10 +77,16 @@ class SqliteReminderRepository extends BaseRepository<Reminder, int>
       final List<Map<String, dynamic>> results = await database.rawQuery(sql);
       return results.map(fromMap).toList();
     } catch (e) {
-      final failure = ErrorTransformer.transformException(e, 'finding inactive reminders');
+      final Failure failure = ErrorTransformer.transformException(
+        e,
+        'finding inactive reminders',
+      );
       throw failure is DatabaseFailure
           ? DatabaseException(failure.message, failure.code)
-          : DatabaseException('Failed to find inactive reminders', 'SEARCH_ERROR');
+          : const DatabaseException(
+              'Failed to find inactive reminders',
+              'SEARCH_ERROR',
+            );
     }
   }
 
@@ -87,10 +104,16 @@ class SqliteReminderRepository extends BaseRepository<Reminder, int>
       );
       return results.map(fromMap).toList();
     } catch (e) {
-      final failure = ErrorTransformer.transformException(e, 'finding reminders by frequency');
+      final Failure failure = ErrorTransformer.transformException(
+        e,
+        'finding reminders by frequency',
+      );
       throw failure is DatabaseFailure
           ? DatabaseException(failure.message, failure.code)
-          : DatabaseException('Failed to find reminders by frequency', 'SEARCH_ERROR');
+          : const DatabaseException(
+              'Failed to find reminders by frequency',
+              'SEARCH_ERROR',
+            );
     }
   }
 
@@ -109,10 +132,16 @@ class SqliteReminderRepository extends BaseRepository<Reminder, int>
       );
       return results.map(fromMap).toList();
     } catch (e) {
-      final failure = ErrorTransformer.transformException(e, 'finding overdue reminders');
+      final Failure failure = ErrorTransformer.transformException(
+        e,
+        'finding overdue reminders',
+      );
       throw failure is DatabaseFailure
           ? DatabaseException(failure.message, failure.code)
-          : DatabaseException('Failed to find overdue reminders', 'SEARCH_ERROR');
+          : const DatabaseException(
+              'Failed to find overdue reminders',
+              'SEARCH_ERROR',
+            );
     }
   }
 
@@ -134,10 +163,16 @@ class SqliteReminderRepository extends BaseRepository<Reminder, int>
       );
       return results.map(fromMap).toList();
     } catch (e) {
-      final failure = ErrorTransformer.transformException(e, 'finding upcoming reminders');
+      final Failure failure = ErrorTransformer.transformException(
+        e,
+        'finding upcoming reminders',
+      );
       throw failure is DatabaseFailure
           ? DatabaseException(failure.message, failure.code)
-          : DatabaseException('Failed to find upcoming reminders', 'SEARCH_ERROR');
+          : const DatabaseException(
+              'Failed to find upcoming reminders',
+              'SEARCH_ERROR',
+            );
     }
   }
 
@@ -155,10 +190,16 @@ class SqliteReminderRepository extends BaseRepository<Reminder, int>
       );
       return results.map(fromMap).toList();
     } catch (e) {
-      final failure = ErrorTransformer.transformException(e, 'finding reminders by date range');
+      final Failure failure = ErrorTransformer.transformException(
+        e,
+        'finding reminders by date range',
+      );
       throw failure is DatabaseFailure
           ? DatabaseException(failure.message, failure.code)
-          : DatabaseException('Failed to find reminders by date range', 'SEARCH_ERROR');
+          : const DatabaseException(
+              'Failed to find reminders by date range',
+              'SEARCH_ERROR',
+            );
     }
   }
 
@@ -177,10 +218,16 @@ class SqliteReminderRepository extends BaseRepository<Reminder, int>
       );
       return results.map(fromMap).toList();
     } catch (e) {
-      final failure = ErrorTransformer.transformException(e, 'finding reminders by title');
+      final Failure failure = ErrorTransformer.transformException(
+        e,
+        'finding reminders by title',
+      );
       throw failure is DatabaseFailure
           ? DatabaseException(failure.message, failure.code)
-          : DatabaseException('Failed to find reminders by title', 'SEARCH_ERROR');
+          : const DatabaseException(
+              'Failed to find reminders by title',
+              'SEARCH_ERROR',
+            );
     }
   }
 
@@ -197,10 +244,16 @@ class SqliteReminderRepository extends BaseRepository<Reminder, int>
       );
       return results.first['count'] as int;
     } catch (e) {
-      final failure = ErrorTransformer.transformException(e, 'counting reminders by contact ID');
+      final Failure failure = ErrorTransformer.transformException(
+        e,
+        'counting reminders by contact ID',
+      );
       throw failure is DatabaseFailure
           ? DatabaseException(failure.message, failure.code)
-          : DatabaseException('Failed to count reminders by contact ID', 'COUNT_ERROR');
+          : const DatabaseException(
+              'Failed to count reminders by contact ID',
+              'COUNT_ERROR',
+            );
     }
   }
 
@@ -217,10 +270,16 @@ class SqliteReminderRepository extends BaseRepository<Reminder, int>
       );
       return results.first['count'] as int;
     } catch (e) {
-      final failure = ErrorTransformer.transformException(e, 'counting active reminders by contact ID');
+      final Failure failure = ErrorTransformer.transformException(
+        e,
+        'counting active reminders by contact ID',
+      );
       throw failure is DatabaseFailure
           ? DatabaseException(failure.message, failure.code)
-          : DatabaseException('Failed to count active reminders by contact ID', 'COUNT_ERROR');
+          : const DatabaseException(
+              'Failed to count active reminders by contact ID',
+              'COUNT_ERROR',
+            );
     }
   }
 
@@ -244,10 +303,16 @@ class SqliteReminderRepository extends BaseRepository<Reminder, int>
       }
       return fromMap(results.first);
     } catch (e) {
-      final failure = ErrorTransformer.transformException(e, 'finding next due reminder by contact ID');
+      final Failure failure = ErrorTransformer.transformException(
+        e,
+        'finding next due reminder by contact ID',
+      );
       throw failure is DatabaseFailure
           ? DatabaseException(failure.message, failure.code)
-          : DatabaseException('Failed to find next due reminder by contact ID', 'SEARCH_ERROR');
+          : const DatabaseException(
+              'Failed to find next due reminder by contact ID',
+              'SEARCH_ERROR',
+            );
     }
   }
 }

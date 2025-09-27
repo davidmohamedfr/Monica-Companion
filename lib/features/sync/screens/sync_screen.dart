@@ -7,34 +7,30 @@ class SyncScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-      appBar: AppBar(
-        title: const Text('Sync'),
-        actions: <Widget>[
-          IconButton(
-            icon: const Icon(Icons.refresh),
-            onPressed: () {
-              // TODO: Implement manual sync
-            },
+    appBar: AppBar(
+      title: const Text('Sync'),
+      actions: <Widget>[
+        IconButton(
+          icon: const Icon(Icons.refresh),
+          onPressed: () {
+            // TODO: Implement manual sync
+          },
+        ),
+      ],
+    ),
+    body: const Padding(
+      padding: EdgeInsets.all(16),
+      child: Column(
+        children: <Widget>[
+          SyncStatusCard(
+            isOnline: true,
+            lastSyncTime: '2 hours ago',
+            pendingChanges: 5,
           ),
+          SizedBox(height: 24),
+          Expanded(child: Center(child: Text('Sync Screen - Coming Soon'))),
         ],
       ),
-      body: const Padding(
-        padding: EdgeInsets.all(16),
-        child: Column(
-          children: <Widget>[
-            SyncStatusCard(
-              isOnline: true,
-              lastSyncTime: '2 hours ago',
-              pendingChanges: 5,
-            ),
-            SizedBox(height: 24),
-            Expanded(
-              child: Center(
-                child: Text('Sync Screen - Coming Soon'),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
+    ),
+  );
 }

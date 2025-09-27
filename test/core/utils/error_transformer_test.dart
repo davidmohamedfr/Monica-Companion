@@ -8,10 +8,13 @@ void main() {
     group('transformException', () {
       test('should transform DatabaseException to DatabaseFailure', () {
         // Arrange
-        const exception = DatabaseException('Test error', 'TEST_CODE');
+        const DatabaseException exception = DatabaseException(
+          'Test error',
+          'TEST_CODE',
+        );
 
         // Act
-        final result = ErrorTransformer.transformException(
+        final Failure result = ErrorTransformer.transformException(
           exception,
           'test context',
         );
@@ -24,10 +27,13 @@ void main() {
 
       test('should transform ValidationException to ValidationFailure', () {
         // Arrange
-        const exception = ValidationException('Validation error', 'VAL_CODE');
+        const ValidationException exception = ValidationException(
+          'Validation error',
+          'VAL_CODE',
+        );
 
         // Act
-        final result = ErrorTransformer.transformException(
+        final Failure result = ErrorTransformer.transformException(
           exception,
           'test context',
         );
@@ -40,10 +46,12 @@ void main() {
 
       test('should handle SQLite constraint errors', () {
         // Arrange
-        final exception = Exception('SQLITE_CONSTRAINT_UNIQUE failed');
+        final Exception exception = Exception(
+          'SQLITE_CONSTRAINT_UNIQUE failed',
+        );
 
         // Act
-        final result = ErrorTransformer.transformException(
+        final Failure result = ErrorTransformer.transformException(
           exception,
           'test context',
         );
@@ -55,10 +63,10 @@ void main() {
 
       test('should handle database busy errors', () {
         // Arrange
-        final exception = Exception('SQLITE_BUSY database is locked');
+        final Exception exception = Exception('SQLITE_BUSY database is locked');
 
         // Act
-        final result = ErrorTransformer.transformException(
+        final Failure result = ErrorTransformer.transformException(
           exception,
           'test context',
         );
@@ -70,10 +78,10 @@ void main() {
 
       test('should handle foreign key constraint errors', () {
         // Arrange
-        final exception = Exception('FOREIGN KEY constraint failed');
+        final Exception exception = Exception('FOREIGN KEY constraint failed');
 
         // Act
-        final result = ErrorTransformer.transformException(
+        final Failure result = ErrorTransformer.transformException(
           exception,
           'test context',
         );
@@ -85,10 +93,10 @@ void main() {
 
       test('should handle unknown exceptions as database failures', () {
         // Arrange
-        final exception = Exception('Unknown error');
+        final Exception exception = Exception('Unknown error');
 
         // Act
-        final result = ErrorTransformer.transformException(
+        final Failure result = ErrorTransformer.transformException(
           exception,
           'test context',
         );
@@ -102,10 +110,13 @@ void main() {
     group('getUserFriendlyMessage', () {
       test('should return user-friendly message for DatabaseFailure', () {
         // Arrange
-        const failure = DatabaseFailure('Database error', 'DATABASE_BUSY');
+        const DatabaseFailure failure = DatabaseFailure(
+          'Database error',
+          'DATABASE_BUSY',
+        );
 
         // Act
-        final result = ErrorTransformer.getUserFriendlyMessage(failure);
+        final String result = ErrorTransformer.getUserFriendlyMessage(failure);
 
         // Assert
         expect(
@@ -116,27 +127,24 @@ void main() {
 
       test('should return user-friendly message for NetworkFailure', () {
         // Arrange
-        const failure = NetworkFailure('Network error');
+        const NetworkFailure failure = NetworkFailure('Network error');
 
         // Act
-        final result = ErrorTransformer.getUserFriendlyMessage(failure);
+        final String result = ErrorTransformer.getUserFriendlyMessage(failure);
 
         // Assert
-        expect(
-          result,
-          'Please check your internet connection and try again.',
-        );
+        expect(result, 'Please check your internet connection and try again.');
       });
 
       test('should return user-friendly message for ValidationFailure', () {
         // Arrange
-        const failure = ValidationFailure(
+        const ValidationFailure failure = ValidationFailure(
           'Validation error',
           'UNIQUE_CONSTRAINT',
         );
 
         // Act
-        final result = ErrorTransformer.getUserFriendlyMessage(failure);
+        final String result = ErrorTransformer.getUserFriendlyMessage(failure);
 
         // Assert
         expect(result, 'This information already exists.');
@@ -144,10 +152,12 @@ void main() {
 
       test('should return default message for unknown failure types', () {
         // Arrange
-        const failure = AuthenticationFailure('Auth error');
+        const AuthenticationFailure failure = AuthenticationFailure(
+          'Auth error',
+        );
 
         // Act
-        final result = ErrorTransformer.getUserFriendlyMessage(failure);
+        final String result = ErrorTransformer.getUserFriendlyMessage(failure);
 
         // Assert
         expect(result, 'Authentication failed. Please sign in again.');

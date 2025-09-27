@@ -1,7 +1,6 @@
 import 'package:monica_companion/core/errors/exceptions.dart';
 import 'package:monica_companion/core/errors/failures.dart';
 import 'package:monica_companion/core/utils/error_transformer.dart';
-import 'package:monica_companion/core/utils/logger.dart';
 import 'package:monica_companion/db/interfaces/contact_repository.dart';
 import 'package:monica_companion/db/interfaces/database_interface.dart';
 import 'package:monica_companion/db/models/contact.dart';
@@ -11,7 +10,7 @@ import 'package:monica_companion/db/repositories/base_repository.dart';
 class SqliteContactRepository extends BaseRepository<Contact, int>
     implements ContactRepository {
   SqliteContactRepository(DatabaseInterface database)
-      : super(database, 'contacts');
+    : super(database, 'contacts');
 
   @override
   Contact fromMap(Map<String, dynamic> map) => Contact.fromMap(map);
@@ -30,10 +29,16 @@ class SqliteContactRepository extends BaseRepository<Contact, int>
       );
       return results.map(fromMap).toList();
     } catch (e) {
-      final failure = ErrorTransformer.transformException(e, 'finding contacts by name');
+      final Failure failure = ErrorTransformer.transformException(
+        e,
+        'finding contacts by name',
+      );
       throw failure is DatabaseFailure
           ? DatabaseException(failure.message, failure.code)
-          : DatabaseException('Failed to find contacts by name', 'SEARCH_ERROR');
+          : const DatabaseException(
+              'Failed to find contacts by name',
+              'SEARCH_ERROR',
+            );
     }
   }
 
@@ -51,10 +56,16 @@ class SqliteContactRepository extends BaseRepository<Contact, int>
       );
       return results.map(fromMap).toList();
     } catch (e) {
-      final failure = ErrorTransformer.transformException(e, 'finding contacts by email');
+      final Failure failure = ErrorTransformer.transformException(
+        e,
+        'finding contacts by email',
+      );
       throw failure is DatabaseFailure
           ? DatabaseException(failure.message, failure.code)
-          : DatabaseException('Failed to find contacts by email', 'SEARCH_ERROR');
+          : const DatabaseException(
+              'Failed to find contacts by email',
+              'SEARCH_ERROR',
+            );
     }
   }
 
@@ -73,10 +84,16 @@ class SqliteContactRepository extends BaseRepository<Contact, int>
       );
       return results.map(fromMap).toList();
     } catch (e) {
-      final failure = ErrorTransformer.transformException(e, 'finding contacts by birthday month');
+      final Failure failure = ErrorTransformer.transformException(
+        e,
+        'finding contacts by birthday month',
+      );
       throw failure is DatabaseFailure
           ? DatabaseException(failure.message, failure.code)
-          : DatabaseException('Failed to find contacts by birthday month', 'SEARCH_ERROR');
+          : const DatabaseException(
+              'Failed to find contacts by birthday month',
+              'SEARCH_ERROR',
+            );
     }
   }
 
@@ -102,16 +119,26 @@ class SqliteContactRepository extends BaseRepository<Contact, int>
         ORDER BY strftime('%m', birthday) ASC, strftime('%d', birthday) ASC, name ASC
       ''';
 
-      final List<Map<String, dynamic>> results = await database.rawQuery(
-        sql,
-        <dynamic>[now.toIso8601String(), futureDate.toIso8601String(), now.toIso8601String(), now.toIso8601String(), now.toIso8601String()],
-      );
+      final List<Map<String, dynamic>> results = await database
+          .rawQuery(sql, <dynamic>[
+            now.toIso8601String(),
+            futureDate.toIso8601String(),
+            now.toIso8601String(),
+            now.toIso8601String(),
+            now.toIso8601String(),
+          ]);
       return results.map(fromMap).toList();
     } catch (e) {
-      final failure = ErrorTransformer.transformException(e, 'finding upcoming birthdays');
+      final Failure failure = ErrorTransformer.transformException(
+        e,
+        'finding upcoming birthdays',
+      );
       throw failure is DatabaseFailure
           ? DatabaseException(failure.message, failure.code)
-          : DatabaseException('Failed to find upcoming birthdays', 'SEARCH_ERROR');
+          : const DatabaseException(
+              'Failed to find upcoming birthdays',
+              'SEARCH_ERROR',
+            );
     }
   }
 
@@ -130,10 +157,16 @@ class SqliteContactRepository extends BaseRepository<Contact, int>
       );
       return results.map(fromMap).toList();
     } catch (e) {
-      final failure = ErrorTransformer.transformException(e, 'searching contacts');
+      final Failure failure = ErrorTransformer.transformException(
+        e,
+        'searching contacts',
+      );
       throw failure is DatabaseFailure
           ? DatabaseException(failure.message, failure.code)
-          : DatabaseException('Failed to search contacts', 'SEARCH_ERROR');
+          : const DatabaseException(
+              'Failed to search contacts',
+              'SEARCH_ERROR',
+            );
     }
   }
 }

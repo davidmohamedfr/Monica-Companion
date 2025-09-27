@@ -180,7 +180,12 @@ void main() {
     });
 
     test('should handle different interaction types', () {
-      const List<String> types = ['call', 'message', 'meeting', 'email'];
+      const List<String> types = <String>[
+        'call',
+        'message',
+        'meeting',
+        'email',
+      ];
 
       for (final String type in types) {
         final Interaction interaction = Interaction(
@@ -200,7 +205,7 @@ void main() {
     });
 
     test('should preserve duration precision', () {
-      const List<int> durations = [0, 1, 60, 300, 3600, 7200];
+      const List<int> durations = <int>[0, 1, 60, 300, 3600, 7200];
 
       for (final int duration in durations) {
         final Interaction interaction = Interaction(

@@ -17,13 +17,16 @@ void main() {
       // Initialize database and dependencies
       await DatabaseModule.initialize();
 
-      final RepositoryRegistry registry = ServiceLocator.instance.get<RepositoryRegistry>();
+      final RepositoryRegistry registry = ServiceLocator.instance
+          .get<RepositoryRegistry>();
       contactRepository = registry.contactRepository;
     });
 
     tearDownAll(DatabaseModule.dispose);
 
-    testWidgets('should perform full CRUD operations on contacts', (WidgetTester tester) async {
+    testWidgets('should perform full CRUD operations on contacts', (
+      WidgetTester tester,
+    ) async {
       // Start the app to ensure database is initialized
       await tester.pumpWidget(const MonicaApp());
       await tester.pumpAndSettle();
@@ -41,7 +44,9 @@ void main() {
       expect(contactId, isPositive);
 
       // READ: Find the inserted contact
-      final Contact? retrievedContact = await contactRepository.findById(contactId);
+      final Contact? retrievedContact = await contactRepository.findById(
+        contactId,
+      );
       expect(retrievedContact, isNotNull);
       expect(retrievedContact!.id, contactId);
       expect(retrievedContact.name, testContact.name);
@@ -58,13 +63,17 @@ void main() {
       expect(updateResult, true);
 
       // Verify update
-      final Contact? updatedRetrieved = await contactRepository.findById(contactId);
+      final Contact? updatedRetrieved = await contactRepository.findById(
+        contactId,
+      );
       expect(updatedRetrieved, isNotNull);
       expect(updatedRetrieved!.notes, 'Updated during integration testing');
       expect(updatedRetrieved.phone, '+0987654321');
 
       // SEARCH: Test search functionality
-      final List<Contact> searchResults = await contactRepository.search('Integration');
+      final List<Contact> searchResults = await contactRepository.search(
+        'Integration',
+      );
       expect(searchResults, isNotEmpty);
       expect(searchResults.any((Contact c) => c.id == contactId), true);
 
@@ -77,7 +86,9 @@ void main() {
       expect(deleteResult, true);
 
       // Verify deletion
-      final Contact? deletedContact = await contactRepository.findById(contactId);
+      final Contact? deletedContact = await contactRepository.findById(
+        contactId,
+      );
       expect(deletedContact, isNull);
 
       // Verify count decreases
@@ -85,7 +96,9 @@ void main() {
       expect(countAfter, countBefore - 1);
     });
 
-    testWidgets('should handle multiple contacts operations', (WidgetTester tester) async {
+    testWidgets('should handle multiple contacts operations', (
+      WidgetTester tester,
+    ) async {
       await tester.pumpWidget(const MonicaApp());
       await tester.pumpAndSettle();
 
@@ -112,12 +125,16 @@ void main() {
       expect(allContacts.length, greaterThanOrEqualTo(3));
 
       // Search by name
-      final List<Contact> aliceResults = await contactRepository.findByName('Alice');
+      final List<Contact> aliceResults = await contactRepository.findByName(
+        'Alice',
+      );
       expect(aliceResults, isNotEmpty);
       expect(aliceResults.any((Contact c) => c.name.contains('Alice')), true);
 
       // Search by email
-      final List<Contact> emailResults = await contactRepository.findByEmail('bob@example.com');
+      final List<Contact> emailResults = await contactRepository.findByEmail(
+        'bob@example.com',
+      );
       expect(emailResults, isNotEmpty);
       expect(emailResults.first.email, 'bob@example.com');
 
@@ -132,14 +149,18 @@ void main() {
       }
     });
 
-    testWidgets('should handle database constraints and errors', (WidgetTester tester) async {
+    testWidgets('should handle database constraints and errors', (
+      WidgetTester tester,
+    ) async {
       await tester.pumpWidget(const MonicaApp());
       await tester.pumpAndSettle();
 
       // Test inserting contact with missing required fields
       try {
         // This should work as name is the only required field
-        final int id = await contactRepository.insert(const Contact(name: 'Test User'));
+        final int id = await contactRepository.insert(
+          const Contact(name: 'Test User'),
+        );
         expect(id, isPositive);
 
         // Clean up
@@ -159,13 +180,20 @@ void main() {
       expect(deleteNonExistent, false);
     });
 
-    testWidgets('should handle concurrent database operations', (WidgetTester tester) async {
+    testWidgets('should handle concurrent database operations', (
+      WidgetTester tester,
+    ) async {
       await tester.pumpWidget(const MonicaApp());
       await tester.pumpAndSettle();
 
       // Create test contacts for concurrent operations
-      final List<Contact> testContacts = List.generate(10, (int index) =>
-        Contact(name: 'Concurrent Test User $index', email: 'test$index@example.com'));
+      final List<Contact> testContacts = List.generate(
+        10,
+        (int index) => Contact(
+          name: 'Concurrent Test User $index',
+          email: 'test$index@example.com',
+        ),
+      );
 
       // Perform multiple concurrent insert operations
       final List<Future<int>> insertFutures = testContacts
@@ -194,7 +222,9 @@ void main() {
       expect(deletedCount, 10);
     });
 
-    testWidgets('should handle database constraints validation', (WidgetTester tester) async {
+    testWidgets('should handle database constraints validation', (
+      WidgetTester tester,
+    ) async {
       await tester.pumpWidget(const MonicaApp());
       await tester.pumpAndSettle();
 
@@ -226,18 +256,23 @@ void main() {
       }
     });
 
-    testWidgets('should handle large dataset operations efficiently', (WidgetTester tester) async {
+    testWidgets('should handle large dataset operations efficiently', (
+      WidgetTester tester,
+    ) async {
       await tester.pumpWidget(const MonicaApp());
       await tester.pumpAndSettle();
 
       // Create a larger dataset to test performance and stability
-      final List<Contact> largeDataset = List.generate(100, (int index) =>
-        Contact(
+      final List<Contact> largeDataset = List.generate(
+        100,
+        (int index) => Contact(
           name: 'Performance Test User $index',
           email: 'perftest$index@example.com',
           phone: '+1${index.toString().padLeft(10, '0')}',
-          notes: 'Performance testing contact #$index with some additional notes',
-        ));
+          notes:
+              'Performance testing contact #$index with some additional notes',
+        ),
+      );
 
       final Stopwatch stopwatch = Stopwatch()..start();
 
@@ -254,11 +289,16 @@ void main() {
       stopwatch.start();
 
       // Test search performance on larger dataset
-      final List<Contact> searchResults = await contactRepository.search('Performance');
+      final List<Contact> searchResults = await contactRepository.search(
+        'Performance',
+      );
       stopwatch.stop();
 
       expect(searchResults.length, greaterThanOrEqualTo(100));
-      expect(stopwatch.elapsedMilliseconds, lessThan(2000)); // 2 seconds max for search
+      expect(
+        stopwatch.elapsedMilliseconds,
+        lessThan(2000),
+      ); // 2 seconds max for search
 
       stopwatch.reset();
       stopwatch.start();
@@ -268,19 +308,24 @@ void main() {
       stopwatch.stop();
 
       expect(allContacts.length, greaterThanOrEqualTo(100));
-      expect(stopwatch.elapsedMilliseconds, lessThan(3000)); // 3 seconds max for findAll
+      expect(
+        stopwatch.elapsedMilliseconds,
+        lessThan(3000),
+      ); // 3 seconds max for findAll
 
       // Clean up
       final int deletedCount = await contactRepository.deleteAll(ids);
       expect(deletedCount, 100);
     });
 
-    testWidgets('should maintain data integrity during stress operations', (WidgetTester tester) async {
+    testWidgets('should maintain data integrity during stress operations', (
+      WidgetTester tester,
+    ) async {
       await tester.pumpWidget(const MonicaApp());
       await tester.pumpAndSettle();
 
       // Create initial test data
-      final Contact originalContact = Contact(
+      const Contact originalContact = Contact(
         name: 'Stress Test User',
         email: 'stress@test.com',
         phone: '+1234567890',
@@ -300,7 +345,9 @@ void main() {
           notes: 'Updated notes iteration $i',
         );
 
-        final bool updateResult = await contactRepository.update(updatedContact);
+        final bool updateResult = await contactRepository.update(
+          updatedContact,
+        );
         expect(updateResult, true);
 
         // Verify the update took effect
