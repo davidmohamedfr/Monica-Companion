@@ -1,10 +1,18 @@
 import 'package:mocktail/mocktail.dart';
+import 'package:monica_companion/db/interfaces/contact_repository.dart';
 import 'package:monica_companion/db/interfaces/database_interface.dart';
+import 'package:monica_companion/db/repositories/repository_registry.dart';
 import 'package:monica_companion/services/interfaces/api_service.dart';
 import 'package:monica_companion/services/interfaces/storage_service.dart';
 
 /// Mock database interface for testing
 class MockDatabaseInterface extends Mock implements DatabaseInterface {}
+
+/// Mock repository registry for testing
+class MockRepositoryRegistry extends Mock implements RepositoryRegistry {}
+
+/// Mock contact repository for testing
+class MockContactRepository extends Mock implements ContactRepository {}
 
 /// Mock API service for testing
 class MockApiService extends Mock implements ApiService {}
