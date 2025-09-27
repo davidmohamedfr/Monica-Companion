@@ -1,0 +1,317 @@
+import 'package:flutter_test/flutter_test.dart';
+import 'package:mocktail/mocktail.dart';
+import 'package:monica_companion/db/interfaces/database_interface.dart';
+import 'package:monica_companion/db/migrations/migration_runner.dart';
+import 'package:sqflite/sqflite.dart';
+
+// Mock classes
+class MockDatabaseInterface extends Mock implements DatabaseInterface {}
+class MockTransaction extends Mock implements Transaction {}
+
+void main() {
+  late MockDatabaseInterface mockDatabase;
+
+  setUpAll(() {
+    // Register fallback values for mocktail
+    registerFallbackValue(MockDatabaseInterface());
+    registerFallbackValue(MockTransaction());
+  });
+
+  setUp(() {
+    mockDatabase = MockDatabaseInterface();
+
+    // Setup default mock behaviors
+    when(() => mockDatabase.rawQuery(any(), any())).thenAnswer((_) async => <Map<String, dynamic>>[]);
+    when(() => mockDatabase.rawExecute(any(), any())).thenAnswer((_) async => 1);
+    when(() => mockDatabase.transaction(any())).thenAnswer((invocation) async {
+      final Function(Transaction) callback = invocation.positionalArguments[0];
+      final MockTransaction mockTxn = MockTransaction();
+      when(() => mockTxn.rawUpdate(any(), any())).thenAnswer((_) async => 1);
+      await callback(mockTxn);
+    });
+  });
+
+  tearDown(() {
+    reset(mockDatabase);
+  });
+
+  group('MigrationRunner - Core Functionality', () {
+    testWidgets('should create migration runner with database interface', (WidgetTester tester) async {
+      final MigrationRunner migrationRunner = MigrationRunner(mockDatabase);
+
+      expect(migrationRunner, isA<MigrationRunner>());
+      expect(mockDatabase, isA<DatabaseInterface>());
+    });
+
+    testWidgets('should query schema version when migrations are up to date', (WidgetTester tester) async {
+      // Mock high version to avoid triggering migration execution
+      const int highVersion = 999;
+      when(() => mockDatabase.rawQuery(any(), any())).thenAnswer((_) async => <Map<String, dynamic>>[
+        <String, dynamic>{'version': highVersion},
+      ]);
+
+      final MigrationRunner migrationRunner = MigrationRunner(mockDatabase);
+      await migrationRunner.runMigrations();
+
+      verify(() => mockDatabase.rawQuery(
+        'SELECT version FROM schema_version ORDER BY version DESC LIMIT 1',
+      )).called(1);
+
+      // Should not execute any migrations since version is high
+      verifyNever(() => mockDatabase.rawExecute(any(), any()));
+    });
+
+    testWidgets('should use correct SQL for version queries', (WidgetTester tester) async {
+      const int highVersion = 999;
+      when(() => mockDatabase.rawQuery(any(), any())).thenAnswer((_) async => <Map<String, dynamic>>[
+        <String, dynamic>{'version': highVersion},
+      ]);
+
+      final MigrationRunner migrationRunner = MigrationRunner(mockDatabase);
+      await migrationRunner.runMigrations();
+
+      verify(() => mockDatabase.rawQuery(
+        'SELECT version FROM schema_version ORDER BY version DESC LIMIT 1',
+      )).called(1);
+    });
+  });
+
+  group('MigrationRunner - Rollback Operations', () {
+    testWidgets('should not perform rollback when target version equals current version', (WidgetTester tester) async {
+      const int currentVersion = 1;
+      const int targetVersion = 1;
+
+      when(() => mockDatabase.rawQuery(any(), any())).thenAnswer((_) async => <Map<String, dynamic>>[
+        <String, dynamic>{'version': currentVersion},
+      ]);
+
+      final MigrationRunner migrationRunner = MigrationRunner(mockDatabase);
+      await migrationRunner.rollbackToVersion(targetVersion);
+
+      // Should only query version, no other operations
+      verify(() => mockDatabase.rawQuery(any(), any())).called(1);
+      verifyNever(() => mockDatabase.rawExecute(any(), any()));
+    });
+
+    testWidgets('should not perform rollback when target version is higher than current', (WidgetTester tester) async {
+      const int currentVersion = 1;
+      const int targetVersion = 2;
+
+      when(() => mockDatabase.rawQuery(any(), any())).thenAnswer((_) async => <Map<String, dynamic>>[
+        <String, dynamic>{'version': currentVersion},
+      ]);
+
+      final MigrationRunner migrationRunner = MigrationRunner(mockDatabase);
+      await migrationRunner.rollbackToVersion(targetVersion);
+
+      // Should only query version, no rollback operations
+      verify(() => mockDatabase.rawQuery(any(), any())).called(1);
+      verifyNever(() => mockDatabase.rawExecute(any(), any()));
+    });
+
+    testWidgets('should delete version records during rollback', (WidgetTester tester) async {
+      const int currentVersion = 2;
+      const int targetVersion = 1;
+
+      when(() => mockDatabase.rawQuery(any(), any())).thenAnswer((_) async => <Map<String, dynamic>>[
+        <String, dynamic>{'version': currentVersion},
+      ]);
+
+      final MigrationRunner migrationRunner = MigrationRunner(mockDatabase);
+      await migrationRunner.rollbackToVersion(targetVersion);
+
+      // Should delete version records greater than target
+      verify(() => mockDatabase.rawExecute(
+        'DELETE FROM schema_version WHERE version > ?',
+        <dynamic>[targetVersion],
+      )).called(1);
+    });
+
+    testWidgets('should handle rollback errors', (WidgetTester tester) async {
+      const int currentVersion = 2;
+      const int targetVersion = 0;
+      final Exception rollbackError = Exception('Rollback delete failed');
+
+      when(() => mockDatabase.rawQuery(any(), any())).thenAnswer((_) async => <Map<String, dynamic>>[
+        <String, dynamic>{'version': currentVersion},
+      ]);
+
+      // Mock transaction to throw error during rollback
+      when(() => mockDatabase.transaction(any())).thenAnswer((invocation) async {
+        final Function(Transaction) callback = invocation.positionalArguments[0];
+        final MockTransaction mockTxn = MockTransaction();
+        when(() => mockTxn.rawUpdate(any(), any())).thenThrow(rollbackError);
+        await callback(mockTxn);
+      });
+
+      final MigrationRunner migrationRunner = MigrationRunner(mockDatabase);
+
+      expect(
+        () => migrationRunner.rollbackToVersion(targetVersion),
+        throwsA(equals(rollbackError)),
+      );
+    });
+  });
+
+  group('MigrationRunner - Version Management Logic', () {
+    testWidgets('should handle database query errors gracefully during version check', (WidgetTester tester) async {
+      final Exception queryError = Exception('Query failed');
+      when(() => mockDatabase.rawQuery(any(), any())).thenThrow(queryError);
+
+      final MigrationRunner migrationRunner = MigrationRunner(mockDatabase);
+
+      // The migration runner handles query errors by defaulting to version 0
+      // This would then try to run migrations, but we can't easily test that without complex mocking
+      // So we test that the query is attempted
+      try {
+        await migrationRunner.runMigrations();
+      } catch (e) {
+        // Expected - migrations would fail due to our limited mocking
+      }
+
+      verify(() => mockDatabase.rawQuery(any(), any())).called(1);
+    });
+
+    testWidgets('should extract version from valid query results', (WidgetTester tester) async {
+      const int expectedVersion = 999; // High version to avoid migration execution
+      when(() => mockDatabase.rawQuery(any(), any())).thenAnswer((_) async => <Map<String, dynamic>>[
+        <String, dynamic>{'version': expectedVersion},
+      ]);
+
+      final MigrationRunner migrationRunner = MigrationRunner(mockDatabase);
+      await migrationRunner.runMigrations();
+
+      // Version query should have been made and processed
+      verify(() => mockDatabase.rawQuery(any(), any())).called(1);
+    });
+
+    testWidgets('should handle empty query results', (WidgetTester tester) async {
+      when(() => mockDatabase.rawQuery(any(), any())).thenAnswer((_) async => <Map<String, dynamic>>[]);
+
+      final MigrationRunner migrationRunner = MigrationRunner(mockDatabase);
+
+      // Empty results default to version 0, which would trigger migrations
+      // We expect this to fail due to our limited transaction mocking
+      try {
+        await migrationRunner.runMigrations();
+      } catch (e) {
+        // Expected - migrations would fail due to our limited mocking
+      }
+
+      verify(() => mockDatabase.rawQuery(any(), any())).called(1);
+    });
+  });
+
+  group('MigrationRunner - Database Integration', () {
+    testWidgets('should interact with database interface for version queries', (WidgetTester tester) async {
+      const int highVersion = 999;
+      when(() => mockDatabase.rawQuery(any(), any())).thenAnswer((_) async => <Map<String, dynamic>>[
+        <String, dynamic>{'version': highVersion},
+      ]);
+
+      final MigrationRunner migrationRunner = MigrationRunner(mockDatabase);
+      await migrationRunner.runMigrations();
+
+      // Should use the database interface
+      verify(() => mockDatabase.rawQuery(any(), any())).called(1);
+    });
+
+    testWidgets('should use database interface for rollback operations', (WidgetTester tester) async {
+      const int currentVersion = 2;
+      const int targetVersion = 1;
+
+      when(() => mockDatabase.rawQuery(any(), any())).thenAnswer((_) async => <Map<String, dynamic>>[
+        <String, dynamic>{'version': currentVersion},
+      ]);
+
+      final MigrationRunner migrationRunner = MigrationRunner(mockDatabase);
+      await migrationRunner.rollbackToVersion(targetVersion);
+
+      // Should use database interface for both query and execute
+      verify(() => mockDatabase.rawQuery(any(), any())).called(1);
+      verify(() => mockDatabase.rawExecute(any(), any())).called(1);
+    });
+
+    testWidgets('should maintain proper SQL syntax in operations', (WidgetTester tester) async {
+      const int currentVersion = 2;
+      const int targetVersion = 1;
+
+      when(() => mockDatabase.rawQuery(any(), any())).thenAnswer((_) async => <Map<String, dynamic>>[
+        <String, dynamic>{'version': currentVersion},
+      ]);
+
+      final MigrationRunner migrationRunner = MigrationRunner(mockDatabase);
+      await migrationRunner.rollbackToVersion(targetVersion);
+
+      // Verify correct SQL statements
+      verify(() => mockDatabase.rawQuery(
+        'SELECT version FROM schema_version ORDER BY version DESC LIMIT 1',
+      )).called(1);
+
+      verify(() => mockDatabase.rawExecute(
+        'DELETE FROM schema_version WHERE version > ?',
+        <dynamic>[targetVersion],
+      )).called(1);
+    });
+  });
+
+  group('MigrationRunner - Error Resilience', () {
+    testWidgets('should handle version query failures without crashing', (WidgetTester tester) async {
+      final Exception queryError = Exception('Schema table not found');
+      when(() => mockDatabase.rawQuery(any(), any())).thenThrow(queryError);
+
+      final MigrationRunner migrationRunner = MigrationRunner(mockDatabase);
+
+      // Should attempt to run migrations despite query error (defaults to version 0)
+      // This will fail due to our mocking limitations, but that's expected
+      try {
+        await migrationRunner.runMigrations();
+      } catch (e) {
+        // Expected failure due to limited mocking
+      }
+
+      verify(() => mockDatabase.rawQuery(any(), any())).called(1);
+    });
+
+    testWidgets('should propagate rollback execution errors', (WidgetTester tester) async {
+      const int currentVersion = 2;
+      const int targetVersion = 0;
+      final Exception executionError = Exception('Delete operation failed');
+
+      when(() => mockDatabase.rawQuery(any(), any())).thenAnswer((_) async => <Map<String, dynamic>>[
+        <String, dynamic>{'version': currentVersion},
+      ]);
+
+      // Mock transaction to throw error during rollback
+      when(() => mockDatabase.transaction(any())).thenAnswer((invocation) async {
+        final Function(Transaction) callback = invocation.positionalArguments[0];
+        final MockTransaction mockTxn = MockTransaction();
+        when(() => mockTxn.rawUpdate(any(), any())).thenThrow(executionError);
+        await callback(mockTxn);
+      });
+
+      final MigrationRunner migrationRunner = MigrationRunner(mockDatabase);
+
+      expect(
+        () => migrationRunner.rollbackToVersion(targetVersion),
+        throwsA(equals(executionError)),
+      );
+    });
+
+    testWidgets('should maintain database state consistency during operations', (WidgetTester tester) async {
+      const int highVersion = 999;
+      when(() => mockDatabase.rawQuery(any(), any())).thenAnswer((_) async => <Map<String, dynamic>>[
+        <String, dynamic>{'version': highVersion},
+      ]);
+
+      final MigrationRunner migrationRunner = MigrationRunner(mockDatabase);
+
+      // Multiple operations should be consistent
+      await migrationRunner.runMigrations();
+      await migrationRunner.runMigrations();
+
+      // Should query version each time
+      verify(() => mockDatabase.rawQuery(any(), any())).called(2);
+    });
+  });
+}

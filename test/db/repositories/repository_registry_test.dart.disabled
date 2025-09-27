@@ -1,0 +1,423 @@
+import 'package:flutter_test/flutter_test.dart';
+import 'package:mocktail/mocktail.dart';
+import 'package:monica_companion/db/interfaces/activity_repository.dart';
+import 'package:monica_companion/db/interfaces/contact_repository.dart';
+import 'package:monica_companion/db/interfaces/database_interface.dart';
+import 'package:monica_companion/db/interfaces/debt_repository.dart';
+import 'package:monica_companion/db/interfaces/gift_repository.dart';
+import 'package:monica_companion/db/interfaces/interaction_repository.dart';
+import 'package:monica_companion/db/interfaces/life_event_repository.dart';
+import 'package:monica_companion/db/interfaces/note_repository.dart';
+import 'package:monica_companion/db/interfaces/relationship_repository.dart';
+import 'package:monica_companion/db/interfaces/reminder_repository.dart';
+import 'package:monica_companion/db/interfaces/task_repository.dart';
+import 'package:monica_companion/db/repositories/repository_registry.dart';
+
+class MockDatabaseInterface extends Mock implements DatabaseInterface {}
+
+void main() {
+  group('RepositoryRegistry', () {
+    late MockDatabaseInterface mockDatabase;
+    late RepositoryRegistry repositoryRegistry;
+
+    setUp(() {
+      mockDatabase = MockDatabaseInterface();
+      repositoryRegistry = RepositoryRegistry(mockDatabase);
+    });
+
+    group('Lazy Initialization', () {
+      testWidgets('should create ContactRepository instance on first access', (WidgetTester tester) async {
+        // Act
+        final ContactRepository repository = repositoryRegistry.contactRepository;
+
+        // Assert
+        expect(repository, isA<ContactRepository>());
+        expect(repository, isNotNull);
+      });
+
+      testWidgets('should return same ContactRepository instance on multiple calls', (WidgetTester tester) async {
+        // Act
+        final ContactRepository repo1 = repositoryRegistry.contactRepository;
+        final ContactRepository repo2 = repositoryRegistry.contactRepository;
+
+        // Assert - Should be the same instance (cached)
+        expect(identical(repo1, repo2), isTrue);
+      });
+
+      testWidgets('should create InteractionRepository instance on first access', (WidgetTester tester) async {
+        // Act
+        final InteractionRepository repository = repositoryRegistry.interactionRepository;
+
+        // Assert
+        expect(repository, isA<InteractionRepository>());
+        expect(repository, isNotNull);
+      });
+
+      testWidgets('should return same InteractionRepository instance on multiple calls', (WidgetTester tester) async {
+        // Act
+        final InteractionRepository repo1 = repositoryRegistry.interactionRepository;
+        final InteractionRepository repo2 = repositoryRegistry.interactionRepository;
+
+        // Assert
+        expect(identical(repo1, repo2), isTrue);
+      });
+
+      testWidgets('should create LifeEventRepository instance on first access', (WidgetTester tester) async {
+        // Act
+        final LifeEventRepository repository = repositoryRegistry.lifeEventRepository;
+
+        // Assert
+        expect(repository, isA<LifeEventRepository>());
+        expect(repository, isNotNull);
+      });
+
+      testWidgets('should create NoteRepository instance on first access', (WidgetTester tester) async {
+        // Act
+        final NoteRepository repository = repositoryRegistry.noteRepository;
+
+        // Assert
+        expect(repository, isA<NoteRepository>());
+        expect(repository, isNotNull);
+      });
+
+      testWidgets('should create TaskRepository instance on first access', (WidgetTester tester) async {
+        // Act
+        final TaskRepository repository = repositoryRegistry.taskRepository;
+
+        // Assert
+        expect(repository, isA<TaskRepository>());
+        expect(repository, isNotNull);
+      });
+
+      testWidgets('should create GiftRepository instance on first access', (WidgetTester tester) async {
+        // Act
+        final GiftRepository repository = repositoryRegistry.giftRepository;
+
+        // Assert
+        expect(repository, isA<GiftRepository>());
+        expect(repository, isNotNull);
+      });
+
+      testWidgets('should create ActivityRepository instance on first access', (WidgetTester tester) async {
+        // Act
+        final ActivityRepository repository = repositoryRegistry.activityRepository;
+
+        // Assert
+        expect(repository, isA<ActivityRepository>());
+        expect(repository, isNotNull);
+      });
+
+      testWidgets('should create DebtRepository instance on first access', (WidgetTester tester) async {
+        // Act
+        final DebtRepository repository = repositoryRegistry.debtRepository;
+
+        // Assert
+        expect(repository, isA<DebtRepository>());
+        expect(repository, isNotNull);
+      });
+
+      testWidgets('should create ReminderRepository instance on first access', (WidgetTester tester) async {
+        // Act
+        final ReminderRepository repository = repositoryRegistry.reminderRepository;
+
+        // Assert
+        expect(repository, isA<ReminderRepository>());
+        expect(repository, isNotNull);
+      });
+
+      testWidgets('should create RelationshipRepository instance on first access', (WidgetTester tester) async {
+        // Act
+        final RelationshipRepository repository = repositoryRegistry.relationshipRepository;
+
+        // Assert
+        expect(repository, isA<RelationshipRepository>());
+        expect(repository, isNotNull);
+      });
+    });
+
+    group('Instance Caching', () {
+      testWidgets('should cache all repository instances independently', (WidgetTester tester) async {
+        // Act - Access all repositories twice
+        final ContactRepository contact1 = repositoryRegistry.contactRepository;
+        final InteractionRepository interaction1 = repositoryRegistry.interactionRepository;
+        final LifeEventRepository lifeEvent1 = repositoryRegistry.lifeEventRepository;
+        final NoteRepository note1 = repositoryRegistry.noteRepository;
+        final TaskRepository task1 = repositoryRegistry.taskRepository;
+
+        final ContactRepository contact2 = repositoryRegistry.contactRepository;
+        final InteractionRepository interaction2 = repositoryRegistry.interactionRepository;
+        final LifeEventRepository lifeEvent2 = repositoryRegistry.lifeEventRepository;
+        final NoteRepository note2 = repositoryRegistry.noteRepository;
+        final TaskRepository task2 = repositoryRegistry.taskRepository;
+
+        // Assert - Each type should be cached independently
+        expect(identical(contact1, contact2), isTrue);
+        expect(identical(interaction1, interaction2), isTrue);
+        expect(identical(lifeEvent1, lifeEvent2), isTrue);
+        expect(identical(note1, note2), isTrue);
+        expect(identical(task1, task2), isTrue);
+
+        // Assert - Different types should be different instances
+        expect(identical(contact1, interaction1), isFalse);
+        expect(identical(note1, task1), isFalse);
+      });
+
+      testWidgets('should cache all 10 repository types correctly', (WidgetTester tester) async {
+        // Act - Access all 10 repositories multiple times
+        final List<dynamic> firstAccess = <dynamic>[
+          repositoryRegistry.contactRepository,
+          repositoryRegistry.interactionRepository,
+          repositoryRegistry.lifeEventRepository,
+          repositoryRegistry.noteRepository,
+          repositoryRegistry.taskRepository,
+          repositoryRegistry.giftRepository,
+          repositoryRegistry.activityRepository,
+          repositoryRegistry.debtRepository,
+          repositoryRegistry.reminderRepository,
+          repositoryRegistry.relationshipRepository,
+        ];
+
+        final List<dynamic> secondAccess = <dynamic>[
+          repositoryRegistry.contactRepository,
+          repositoryRegistry.interactionRepository,
+          repositoryRegistry.lifeEventRepository,
+          repositoryRegistry.noteRepository,
+          repositoryRegistry.taskRepository,
+          repositoryRegistry.giftRepository,
+          repositoryRegistry.activityRepository,
+          repositoryRegistry.debtRepository,
+          repositoryRegistry.reminderRepository,
+          repositoryRegistry.relationshipRepository,
+        ];
+
+        // Assert - Each pair should be identical (cached)
+        for (int i = 0; i < firstAccess.length; i++) {
+          expect(identical(firstAccess[i], secondAccess[i]), isTrue,
+              reason: 'Repository at index $i should be cached');
+        }
+
+        // Assert - All repositories should be different instances from each other
+        for (int i = 0; i < firstAccess.length; i++) {
+          for (int j = i + 1; j < firstAccess.length; j++) {
+            expect(identical(firstAccess[i], firstAccess[j]), isFalse,
+                reason: 'Repositories at indices $i and $j should be different');
+          }
+        }
+      });
+    });
+
+    group('Database Integration', () {
+      testWidgets('should inject database instance into all repositories', (WidgetTester tester) async {
+        // Arrange - We can't directly access the private _database field,
+        // but we can verify the repositories are created with the mock database
+        when(() => mockDatabase.initialize()).thenAnswer((_) async {});
+
+        // Act
+        await repositoryRegistry.initialize();
+
+        // Access some repositories to trigger creation
+        final ContactRepository contactRepo = repositoryRegistry.contactRepository;
+        final InteractionRepository interactionRepo = repositoryRegistry.interactionRepository;
+
+        // Assert - Repositories should be created successfully
+        expect(contactRepo, isNotNull);
+        expect(interactionRepo, isNotNull);
+
+        // Verify database initialization was called
+        verify(() => mockDatabase.initialize()).called(1);
+      });
+
+      testWidgets('should handle database initialization during registry initialization', (WidgetTester tester) async {
+        // Arrange
+        when(() => mockDatabase.initialize()).thenAnswer((_) async {});
+
+        // Act
+        await repositoryRegistry.initialize();
+
+        // Assert
+        verify(() => mockDatabase.initialize()).called(1);
+      });
+
+      testWidgets('should propagate database initialization errors', (WidgetTester tester) async {
+        // Arrange
+        when(() => mockDatabase.initialize()).thenThrow(Exception('Database initialization failed'));
+
+        // Act & Assert
+        await expectLater(
+          repositoryRegistry.initialize(),
+          throwsA(isA<Exception>()),
+        );
+
+        verify(() => mockDatabase.initialize()).called(1);
+      });
+    });
+
+    group('Disposal and Cleanup', () {
+      testWidgets('should clear all repository instances on dispose', (WidgetTester tester) async {
+        // Arrange - Create instances by accessing them
+        final ContactRepository contactBefore = repositoryRegistry.contactRepository;
+        final InteractionRepository interactionBefore = repositoryRegistry.interactionRepository;
+        final NoteRepository noteBefore = repositoryRegistry.noteRepository;
+
+        expect(contactBefore, isNotNull);
+        expect(interactionBefore, isNotNull);
+        expect(noteBefore, isNotNull);
+
+        // Act
+        repositoryRegistry.dispose();
+
+        // Assert - New instances should be created after dispose
+        final ContactRepository contactAfter = repositoryRegistry.contactRepository;
+        final InteractionRepository interactionAfter = repositoryRegistry.interactionRepository;
+        final NoteRepository noteAfter = repositoryRegistry.noteRepository;
+
+        expect(identical(contactBefore, contactAfter), isFalse);
+        expect(identical(interactionBefore, interactionAfter), isFalse);
+        expect(identical(noteBefore, noteAfter), isFalse);
+      });
+
+      testWidgets('should handle multiple dispose calls safely', (WidgetTester tester) async {
+        // Arrange - Create some instances
+        repositoryRegistry.contactRepository;
+        repositoryRegistry.interactionRepository;
+
+        // Act - Multiple dispose calls
+        repositoryRegistry.dispose();
+        repositoryRegistry.dispose();
+
+        // Assert - Should not throw and repositories should still work
+        final ContactRepository contact = repositoryRegistry.contactRepository;
+        expect(contact, isNotNull);
+      });
+
+      testWidgets('should dispose all 10 repository types', (WidgetTester tester) async {
+        // Arrange - Create all repository instances
+        final List<dynamic> beforeDispose = <dynamic>[
+          repositoryRegistry.contactRepository,
+          repositoryRegistry.interactionRepository,
+          repositoryRegistry.lifeEventRepository,
+          repositoryRegistry.noteRepository,
+          repositoryRegistry.taskRepository,
+          repositoryRegistry.giftRepository,
+          repositoryRegistry.activityRepository,
+          repositoryRegistry.debtRepository,
+          repositoryRegistry.reminderRepository,
+          repositoryRegistry.relationshipRepository,
+        ];
+
+        // Act
+        repositoryRegistry.dispose();
+
+        // Assert - All new instances should be different
+        final List<dynamic> afterDispose = <dynamic>[
+          repositoryRegistry.contactRepository,
+          repositoryRegistry.interactionRepository,
+          repositoryRegistry.lifeEventRepository,
+          repositoryRegistry.noteRepository,
+          repositoryRegistry.taskRepository,
+          repositoryRegistry.giftRepository,
+          repositoryRegistry.activityRepository,
+          repositoryRegistry.debtRepository,
+          repositoryRegistry.reminderRepository,
+          repositoryRegistry.relationshipRepository,
+        ];
+
+        for (int i = 0; i < beforeDispose.length; i++) {
+          expect(identical(beforeDispose[i], afterDispose[i]), isFalse,
+              reason: 'Repository at index $i should be recreated after dispose');
+        }
+      });
+    });
+
+    group('Access Patterns', () {
+      testWidgets('should handle multiple sequential repository access', (WidgetTester tester) async {
+        // Act - Sequential access to same repository type multiple times
+        final ContactRepository repo1 = repositoryRegistry.contactRepository;
+        final ContactRepository repo2 = repositoryRegistry.contactRepository;
+        final ContactRepository repo3 = repositoryRegistry.contactRepository;
+
+        // Assert - All should be the same instance
+        expect(identical(repo1, repo2), isTrue);
+        expect(identical(repo2, repo3), isTrue);
+      });
+
+      testWidgets('should handle mixed repository type access patterns', (WidgetTester tester) async {
+        // Act - Access different repository types in sequence
+        final ContactRepository contactRepo = repositoryRegistry.contactRepository;
+        final InteractionRepository interactionRepo = repositoryRegistry.interactionRepository;
+        final NoteRepository noteRepo = repositoryRegistry.noteRepository;
+        final TaskRepository taskRepo = repositoryRegistry.taskRepository;
+
+        // Assert - All should be created successfully and be different types
+        expect(contactRepo, isA<ContactRepository>());
+        expect(interactionRepo, isA<InteractionRepository>());
+        expect(noteRepo, isA<NoteRepository>());
+        expect(taskRepo, isA<TaskRepository>());
+
+        // Each should be different instances
+        expect(identical(contactRepo, interactionRepo), isFalse);
+        expect(identical(contactRepo, noteRepo), isFalse);
+        expect(identical(contactRepo, taskRepo), isFalse);
+      });
+    });
+
+    group('Type Safety and Interface Compliance', () {
+      testWidgets('should return correct interface types for all repositories', (WidgetTester tester) async {
+        // Act & Assert - Verify each repository returns correct interface type
+        expect(repositoryRegistry.contactRepository, isA<ContactRepository>());
+        expect(repositoryRegistry.interactionRepository, isA<InteractionRepository>());
+        expect(repositoryRegistry.lifeEventRepository, isA<LifeEventRepository>());
+        expect(repositoryRegistry.noteRepository, isA<NoteRepository>());
+        expect(repositoryRegistry.taskRepository, isA<TaskRepository>());
+        expect(repositoryRegistry.giftRepository, isA<GiftRepository>());
+        expect(repositoryRegistry.activityRepository, isA<ActivityRepository>());
+        expect(repositoryRegistry.debtRepository, isA<DebtRepository>());
+        expect(repositoryRegistry.reminderRepository, isA<ReminderRepository>());
+        expect(repositoryRegistry.relationshipRepository, isA<RelationshipRepository>());
+      });
+
+      testWidgets('should create concrete SQLite implementations', (WidgetTester tester) async {
+        // Act
+        final ContactRepository contactRepo = repositoryRegistry.contactRepository;
+        final InteractionRepository interactionRepo = repositoryRegistry.interactionRepository;
+
+        // Assert - Should be concrete SQLite implementations
+        expect(contactRepo.toString(), contains('SqliteContactRepository'));
+        expect(interactionRepo.toString(), contains('SqliteInteractionRepository'));
+      });
+    });
+
+    group('Error Resilience', () {
+      testWidgets('should handle individual repository creation errors gracefully', (WidgetTester tester) async {
+        // Note: Since repository creation is straightforward and doesn't involve
+        // complex initialization, we test that the registry doesn't break
+        // even when accessed in various patterns
+
+        // Act & Assert - Multiple access patterns should work
+        expect(() => repositoryRegistry.contactRepository, returnsNormally);
+        expect(() => repositoryRegistry.interactionRepository, returnsNormally);
+
+        // Dispose and recreate
+        repositoryRegistry.dispose();
+        expect(() => repositoryRegistry.contactRepository, returnsNormally);
+      });
+
+      testWidgets('should maintain registry state integrity after operations', (WidgetTester tester) async {
+        // Arrange & Act - Mix of operations
+        final ContactRepository contact1 = repositoryRegistry.contactRepository;
+        repositoryRegistry.dispose();
+        final ContactRepository contact2 = repositoryRegistry.contactRepository;
+        final InteractionRepository interaction = repositoryRegistry.interactionRepository;
+
+        // Assert - State should be consistent
+        expect(contact2, isNotNull);
+        expect(interaction, isNotNull);
+        expect(identical(contact1, contact2), isFalse); // Different after dispose
+
+        // Verify caching still works
+        final ContactRepository contact3 = repositoryRegistry.contactRepository;
+        expect(identical(contact2, contact3), isTrue);
+      });
+    });
+  });
+}

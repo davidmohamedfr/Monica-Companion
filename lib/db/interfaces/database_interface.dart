@@ -1,3 +1,5 @@
+import 'package:sqflite/sqflite.dart';
+
 /// Base database interface for all database operations
 abstract class DatabaseInterface {
   /// Initialize the database
@@ -21,15 +23,8 @@ abstract class DatabaseInterface {
   /// Execute a raw SQL insert/update/delete
   Future<int> rawExecute(String sql, [List<dynamic>? arguments]);
 
-  /// Begin a transaction
-  Future<void> beginTransaction();
-
-  /// Commit a transaction
-  Future<void> commitTransaction();
-
-  /// Rollback a transaction
-  Future<void> rollbackTransaction();
-
   /// Execute operations within a transaction
-  Future<T> transaction<T>(Future<T> Function() action);
+  /// The action function receives a Transaction object that should be used
+  /// for all database operations within the transaction
+  Future<T> transaction<T>(Future<T> Function(Transaction txn) action);
 }
