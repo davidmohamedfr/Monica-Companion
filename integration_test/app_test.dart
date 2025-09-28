@@ -26,8 +26,20 @@ void main() {
 
       // Verify the app loaded correctly with actual UI elements
       expect(find.byType(AppBar), findsOneWidget);
-      expect(find.byIcon(Icons.search), findsOneWidget);
-      expect(find.byIcon(Icons.add), findsOneWidget);
+      expect(
+        find.descendant(
+          of: find.byType(AppBar),
+          matching: find.byIcon(Icons.search),
+        ),
+        findsOneWidget,
+      );
+      expect(
+        find.descendant(
+          of: find.byType(AppBar),
+          matching: find.byIcon(Icons.add),
+        ),
+        findsOneWidget,
+      );
 
       // Take screenshot for test documentation
       await IntegrationTestHelpers.takeScreenshot(binding, 'app_startup');
@@ -43,13 +55,43 @@ void main() {
 
       // Verify main UI elements are displayed
       expect(find.byType(AppBar), findsOneWidget);
-      expect(find.byIcon(Icons.search), findsOneWidget);
-      expect(find.byIcon(Icons.add), findsOneWidget);
+      expect(
+        find.descendant(
+          of: find.byType(AppBar),
+          matching: find.byIcon(Icons.search),
+        ),
+        findsOneWidget,
+      );
+      expect(
+        find.descendant(
+          of: find.byType(AppBar),
+          matching: find.byIcon(Icons.add),
+        ),
+        findsOneWidget,
+      );
 
-      // Verify navigation elements exist
-      expect(find.text('Calls'), findsOneWidget);
-      expect(find.text('Settings'), findsOneWidget);
-      expect(find.text('Sync'), findsOneWidget);
+      // Verify navigation elements exist in bottom navigation
+      expect(
+        find.descendant(
+          of: find.byType(NavigationBar),
+          matching: find.text('Calls'),
+        ),
+        findsOneWidget,
+      );
+      expect(
+        find.descendant(
+          of: find.byType(NavigationBar),
+          matching: find.text('Settings'),
+        ),
+        findsOneWidget,
+      );
+      expect(
+        find.descendant(
+          of: find.byType(NavigationBar),
+          matching: find.text('Sync'),
+        ),
+        findsOneWidget,
+      );
 
       await IntegrationTestHelpers.takeScreenshot(
         binding,
