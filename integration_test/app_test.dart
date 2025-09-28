@@ -1,5 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
+import 'package:monica_companion/core/services/app_initialization_service.dart';
 
 import 'package:monica_companion/main.dart';
 import 'helpers/integration_test_helpers.dart';
@@ -7,6 +8,11 @@ import 'helpers/integration_test_helpers.dart';
 void main() {
   final IntegrationTestWidgetsFlutterBinding binding =
       IntegrationTestHelpers.setupIntegrationTest();
+
+  setUpAll(() async {
+    // Initialize app services before running tests
+    await AppInitializationService.instance.initialize();
+  });
 
   group('App Integration Tests', () {
     testWidgets('app should start without crashing', (

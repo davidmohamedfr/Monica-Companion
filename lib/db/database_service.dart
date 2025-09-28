@@ -56,16 +56,19 @@ class DatabaseService implements DatabaseInterface {
       )
     ''');
 
-    // Create contacts table
+    // Create contacts table with complete schema
     await db.execute('''
       CREATE TABLE contacts (
-        id TEXT PRIMARY KEY,
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
         name TEXT NOT NULL,
         email TEXT,
         phone TEXT,
         avatar TEXT,
-        created_at TEXT NOT NULL,
-        updated_at TEXT NOT NULL
+        birthday TEXT,
+        address TEXT,
+        notes TEXT,
+        created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+        updated_at TEXT DEFAULT CURRENT_TIMESTAMP
       )
     ''');
 
