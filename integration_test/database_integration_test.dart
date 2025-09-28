@@ -33,11 +33,13 @@ void main() {
       await tester.pumpAndSettle();
 
       // Test data
-      const Contact testContact = Contact(
+      final Contact testContact = Contact(
         name: 'Integration Test User',
         email: 'integration@test.com',
         phone: '+1234567890',
         notes: 'Created during integration testing',
+        createdAt: DateTime.now(),
+        updatedAt: DateTime.now(),
       );
 
       // CREATE: Insert a new contact
@@ -105,9 +107,24 @@ void main() {
 
       // Create multiple test contacts
       final List<Contact> testContacts = <Contact>[
-        const Contact(name: 'Alice Johnson', email: 'alice@example.com'),
-        const Contact(name: 'Bob Wilson', email: 'bob@example.com'),
-        const Contact(name: 'Charlie Brown', email: 'charlie@example.com'),
+        Contact(
+          name: 'Alice Johnson',
+          email: 'alice@example.com',
+          createdAt: DateTime.now(),
+          updatedAt: DateTime.now(),
+        ),
+        Contact(
+          name: 'Bob Wilson',
+          email: 'bob@example.com',
+          createdAt: DateTime.now(),
+          updatedAt: DateTime.now(),
+        ),
+        Contact(
+          name: 'Charlie Brown',
+          email: 'charlie@example.com',
+          createdAt: DateTime.now(),
+          updatedAt: DateTime.now(),
+        ),
       ];
 
       // Insert all contacts
@@ -160,7 +177,11 @@ void main() {
       try {
         // This should work as name is the only required field
         final int id = await contactRepository.insert(
-          const Contact(name: 'Test User'),
+          Contact(
+            name: 'Test User',
+            createdAt: DateTime.now(),
+            updatedAt: DateTime.now(),
+          ),
         );
         expect(id, isPositive);
 
@@ -231,7 +252,13 @@ void main() {
 
       // Test inserting contact with empty name (should fail or be handled gracefully)
       try {
-        await contactRepository.insert(const Contact(name: ''));
+        await contactRepository.insert(
+          Contact(
+            name: '',
+            createdAt: DateTime.now(),
+            updatedAt: DateTime.now(),
+          ),
+        );
         // If it doesn't throw, verify it at least creates a record or handles gracefully
       } catch (e) {
         // Database constraint errors are expected and should be handled gracefully
@@ -241,7 +268,13 @@ void main() {
       // Test inserting contact with very long name
       final String longName = 'A' * 1000; // Very long name
       try {
-        final int id = await contactRepository.insert(Contact(name: longName));
+        final int id = await contactRepository.insert(
+          Contact(
+            name: longName,
+            createdAt: DateTime.now(),
+            updatedAt: DateTime.now(),
+          ),
+        );
         expect(id, isPositive);
 
         // Verify it was truncated or stored correctly
@@ -326,11 +359,13 @@ void main() {
       await tester.pumpAndSettle();
 
       // Create initial test data
-      const Contact originalContact = Contact(
+      final Contact originalContact = Contact(
         name: 'Stress Test User',
         email: 'stress@test.com',
         phone: '+1234567890',
         notes: 'Original notes',
+        createdAt: DateTime.now(),
+        updatedAt: DateTime.now(),
       );
 
       final int contactId = await contactRepository.insert(originalContact);

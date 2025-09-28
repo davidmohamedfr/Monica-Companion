@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
 import 'package:monica_companion/core/services/app_initialization_service.dart';
@@ -24,8 +25,9 @@ void main() {
       await IntegrationTestHelpers.waitForAppToLoad(tester);
 
       // Verify the app loaded correctly with actual UI elements
-      expect(find.text('Monica Companion'), findsOneWidget);
-      expect(find.text('Development Build'), findsOneWidget);
+      expect(find.byType(AppBar), findsOneWidget);
+      expect(find.byIcon(Icons.search), findsOneWidget);
+      expect(find.byIcon(Icons.add), findsOneWidget);
 
       // Take screenshot for test documentation
       await IntegrationTestHelpers.takeScreenshot(binding, 'app_startup');
@@ -40,15 +42,14 @@ void main() {
       await IntegrationTestHelpers.waitForAppToLoad(tester);
 
       // Verify main UI elements are displayed
-      expect(find.text('Monica Companion'), findsOneWidget);
-      expect(find.text('Development Build'), findsOneWidget);
+      expect(find.byType(AppBar), findsOneWidget);
+      expect(find.byIcon(Icons.search), findsOneWidget);
+      expect(find.byIcon(Icons.add), findsOneWidget);
 
-      // Verify tagline and description exist
-      expect(
-        find.text('Personal relationships, perfectly managed'),
-        findsOneWidget,
-      );
-      expect(find.textContaining('Environment:'), findsOneWidget);
+      // Verify navigation elements exist
+      expect(find.text('Calls'), findsOneWidget);
+      expect(find.text('Settings'), findsOneWidget);
+      expect(find.text('Sync'), findsOneWidget);
 
       await IntegrationTestHelpers.takeScreenshot(
         binding,
