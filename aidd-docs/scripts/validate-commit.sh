@@ -148,18 +148,19 @@ validate_file_changes() {
         return 1
     fi
 
-    # Validate commit message prefix matches file types
-    local commit_msg=$(git log --format=%s -1 2>/dev/null || echo "")
-    if [[ -n "$commit_msg" ]]; then
-        if [[ "$has_aidd" == true ]] && ! echo "$commit_msg" | grep -q "^aidd:"; then
-            print_error "AIDD files require 'aidd:' prefix in commit message"
-            return 1
-        fi
+    # AIDD commit message format validation
+    # AIDD files require [aidd] tag in commit message: "type: [aidd] description"
+    if [[ "$has_aidd" == true ]]; then
+        # During pre-commit, we can't access the commit message yet
+        # This validation will be enforced through the commit-msg hook
+        print_success "AIDD files detected - ensure commit message includes [aidd] tag"
+        echo "  Required format: type: [aidd] description"
+        echo "  Example: docs: [aidd] update memory bank with new patterns"
+    fi
 
-        if [[ "$has_public" == true ]] && echo "$commit_msg" | grep -q "^aidd:"; then
-            print_error "Public files cannot use 'aidd:' prefix in commit message"
-            return 1
-        fi
+    if [[ "$has_public" == true ]] && [[ "$has_aidd" == false ]]; then
+        print_success "Public-only commit detected - use conventional commit format"
+        echo "  Example: feat: add new feature"
     fi
 
     # Report unknown files
@@ -217,6 +218,66 @@ validate_environment() {
         print_warning "No staged changes found"
     fi
 
+    return 0
+}
+
+# AIDD commit message validation with [aidd] tag format
+commit_msg_hook() {
+    local commit_msg_file="$1"
+
+    echo "🛡️  AIDD Commit Message Validation"
+    echo "================================="
+
+    if [[ ! -f "$commit_msg_file" ]]; then
+        print_error "Commit message file not found: $commit_msg_file"
+        return 1
+    fi
+
+    local commit_msg=$(head -n1 "$commit_msg_file")
+
+    # Get staged files to determine if AIDD files are involved
+    local staged_files=$(get_staged_files)
+    local aidd_files=()
+    local public_files=()
+
+    # Categorize files
+    while IFS= read -r file; do
+        if [[ -z "$file" ]]; then
+            continue
+        fi
+
+        if is_aidd_file "$file"; then
+            aidd_files+=("$file")
+        elif is_public_file "$file"; then
+            public_files+=("$file")
+        fi
+    done <<< "$staged_files"
+
+    local has_aidd=$( [[ ${#aidd_files[@]} -gt 0 ]] && echo true || echo false )
+    local has_public=$( [[ ${#public_files[@]} -gt 0 ]] && echo true || echo false )
+
+    # Validate AIDD tag requirement: "type: [aidd] description"
+    if [[ "$has_aidd" == true ]] && ! echo "$commit_msg" | grep -q "\[aidd\]"; then
+        print_error "AIDD files require [aidd] tag in commit message"
+        print_error "Current message: $commit_msg"
+        print_error "Required format: type: [aidd] description"
+        print_error "Example: docs: [aidd] update memory bank patterns"
+        print_error "AIDD files in commit:"
+        printf '  %s\n' "${aidd_files[@]}"
+        return 1
+    fi
+
+    # Validate public files don't use [aidd] tag
+    if [[ "$has_public" == true ]] && echo "$commit_msg" | grep -q "\[aidd\]"; then
+        print_error "Public files cannot use [aidd] tag in commit message"
+        print_error "Current message: $commit_msg"
+        print_error "Use conventional commit format without [aidd] tag"
+        print_error "Public files in commit:"
+        printf '  %s\n' "${public_files[@]}"
+        return 1
+    fi
+
+    print_success "AIDD commit message validation passed"
     return 0
 }
 
@@ -283,15 +344,23 @@ EOF
         elif [[ "$1" == "--pre-commit" ]]; then
             pre_commit_hook
 
+        elif [[ "$1" == "--commit-msg" ]]; then
+            if [[ -z "$2" ]]; then
+                print_error "Commit message file path required for --commit-msg"
+                exit 1
+            fi
+            commit_msg_hook "$2"
+
         elif [[ "$1" == "--help" || "$1" == "-h" ]]; then
             echo "Usage: $0 [options]"
             echo ""
             echo "AIDD/Public commit validation script"
             echo ""
             echo "Options:"
-            echo "  --install     Install as git pre-commit hook"
-            echo "  --pre-commit  Run pre-commit validation"
-            echo "  -h, --help    Show this help message"
+            echo "  --install       Install as git pre-commit hook"
+            echo "  --pre-commit    Run pre-commit validation"
+            echo "  --commit-msg    Run AIDD commit message validation"
+            echo "  -h, --help      Show this help message"
             echo ""
             echo "Manual validation:"
             echo "  $0                        # Run validation on staged files"
