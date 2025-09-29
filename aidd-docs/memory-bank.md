@@ -791,6 +791,12 @@ MonicaMobileApp/
   - Complete entity data: Entity models require complete field sets for database operations
   - Database interface completeness: Interfaces must include both `rawExecute` and `rawInsert` methods
 
+- **Database Testing Synchronization**:
+  - Method-specific mocking: Insert operations mock `rawInsert`, update/delete operations mock `rawExecute`
+  - Interface evolution: Database interface changes require coordinated test mock updates
+  - Mock verification alignment: Verification calls must match implementation method usage
+  - Error prevention: Proper mock synchronization prevents `type 'Null' is not a subtype` errors
+
 - **Code Quality Tools**:
   - Linter: `dart analyze --fatal-infos --fatal-warnings` → @analysis_options.yaml
   - Formatter: `dart format --set-exit-if-changed` → Enforced formatting

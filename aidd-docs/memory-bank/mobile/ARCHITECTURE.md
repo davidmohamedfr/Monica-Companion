@@ -294,6 +294,11 @@ SQLite Exception → ErrorTransformer → Domain Failure → User Message
 - **Repository Implementation**: Repository implementations must use appropriate database methods - `rawInsert` for inserts, `rawExecute` for updates/deletes
 - **Error Handling**: Proper exception-to-failure transformation for all database operations
 
+**Database Repository Testing Strategy:**
+- **Operation-specific mocking**: Mock specific database interface methods based on operation type (rawInsert for inserts, rawExecute for updates/deletes)
+- **Test-implementation synchronization**: Database interface evolution requires coordinated updates across implementation and test files
+- **Mock consistency**: Test mocks must match actual repository method usage to prevent type mismatch errors
+
 ## Feature Architecture
 
 ### Navigation System

@@ -400,3 +400,9 @@ await tester.tap(find.descendant(
 - **Complete entities**: All entity models must have required fields (id, createdAt, updatedAt)
 - **Transaction handling**: Database repository methods must handle concurrent operations properly
 - **Cleanup**: Tests should clean up database state after execution
+
+### Database Interface Mock Synchronization
+- **Method-specific mocking**: Insert operations should mock `rawInsert` method, while update/delete operations should mock `rawExecute` method
+- **Interface evolution tracking**: When database interface methods are added or changed, all related test mocks must be updated to match actual implementation usage
+- **Mock verification alignment**: Mock verification calls must use the same methods as the mocked implementation to avoid test failures
+- **Integration test mock consistency**: Integration test mocks should match the exact database methods used by repository implementations
