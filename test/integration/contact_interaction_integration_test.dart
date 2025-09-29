@@ -61,7 +61,7 @@ void main() {
 
           // Mock contact creation and retrieval
           when(
-            () => mockDatabase.rawExecute(any(), any()),
+            () => mockDatabase.rawInsert(any(), any()),
           ).thenAnswer((_) async => 1);
 
           when(() => mockDatabase.rawQuery(any(), any())).thenAnswer((
@@ -105,7 +105,7 @@ void main() {
 
           // Verify proper method calls were made
           verify(
-            () => mockDatabase.rawExecute(any(), any()),
+            () => mockDatabase.rawInsert(any(), any()),
           ).called(greaterThan(0));
           verify(() => mockDatabase.rawQuery(any(), any())).called(2);
         },
@@ -125,7 +125,7 @@ void main() {
         );
 
         // Mock database constraint violation
-        when(() => mockDatabase.rawExecute(any(), any())).thenThrow(
+        when(() => mockDatabase.rawInsert(any(), any())).thenThrow(
           Exception('FOREIGN KEY constraint failed: no such contact_id'),
         );
 
@@ -143,7 +143,7 @@ void main() {
           ),
         );
 
-        verify(() => mockDatabase.rawExecute(any(), any())).called(1);
+        verify(() => mockDatabase.rawInsert(any(), any())).called(1);
       });
 
       testWidgets('should handle bulk operations with data consistency', (
@@ -167,7 +167,7 @@ void main() {
 
         // Mock bulk insertion and retrieval
         when(
-          () => mockDatabase.rawExecute(any(), any()),
+          () => mockDatabase.rawInsert(any(), any()),
         ).thenAnswer((_) async => 1);
 
         when(() => mockDatabase.rawQuery(any(), any())).thenAnswer(
@@ -199,7 +199,7 @@ void main() {
         );
 
         // Verify bulk operations executed correctly
-        verify(() => mockDatabase.rawExecute(any(), any())).called(5);
+        verify(() => mockDatabase.rawInsert(any(), any())).called(5);
         verify(() => mockDatabase.rawQuery(any(), any())).called(1);
       });
     });
@@ -266,7 +266,7 @@ void main() {
 
           // Mock contact creation success
           when(
-            () => mockDatabase.rawExecute(any(), any()),
+            () => mockDatabase.rawInsert(any(), any()),
           ).thenAnswer((_) async => 1);
 
           // Act - Contact creation should succeed
@@ -274,7 +274,7 @@ void main() {
 
           // Mock interaction creation failure
           when(
-            () => mockDatabase.rawExecute(any(), any()),
+            () => mockDatabase.rawInsert(any(), any()),
           ).thenThrow(Exception('Temporary failure'));
 
           // Interaction creation should fail with proper error handling
@@ -292,7 +292,7 @@ void main() {
 
           // Assert - Verify operations were attempted
           verify(
-            () => mockDatabase.rawExecute(any(), any()),
+            () => mockDatabase.rawInsert(any(), any()),
           ).called(greaterThan(0));
         },
       );
