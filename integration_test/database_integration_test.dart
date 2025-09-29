@@ -214,6 +214,8 @@ void main() {
         (int index) => Contact(
           name: 'Concurrent Test User $index',
           email: 'test$index@example.com',
+          createdAt: DateTime.now(),
+          updatedAt: DateTime.now(),
         ),
       );
 
@@ -379,6 +381,8 @@ void main() {
           email: 'stress$i@test.com',
           phone: '+123456789$i',
           notes: 'Updated notes iteration $i',
+          createdAt: originalContact.createdAt,
+          updatedAt: DateTime.now(),
         );
 
         final bool updateResult = await contactRepository.update(
