@@ -23,6 +23,9 @@ abstract class DatabaseInterface {
   /// Execute a raw SQL insert/update/delete
   Future<int> rawExecute(String sql, [List<dynamic>? arguments]);
 
+  /// Execute a raw SQL insert and return the inserted row ID
+  Future<int> rawInsert(String sql, [List<dynamic>? arguments]);
+
   /// Execute operations within a transaction
   /// The action function receives a Transaction object that should be used
   /// for all database operations within the transaction
