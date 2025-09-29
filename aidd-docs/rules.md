@@ -121,6 +121,14 @@ class GetContactsUseCase {
 - Integration test requirements: Use actual database, complete entity data, specific widget selectors
 - Widget selector specificity: Use `find.descendant()` to avoid duplicate matches in navigation tests
 
+#### Database Interface Testing Patterns
+
+- Insert operations: Mock `rawInsert` method for proper ID return
+- Update/Delete operations: Mock `rawExecute` method for row count return
+- Interface evolution: Update all test mocks when database interface methods change
+- Mock verification: Use same method names in verify() calls as in when() setups
+- Error prevention: Coordinated mock updates prevent null subtype errors
+
 ### Ports and Adapters (Hexagonal Architecture) pattern implementation for Flutter ensuring core business logic isolation through well-defined interfaces (ports) and their concrete implementations (adapters), enabling technology independence and improved testability
 
 #### Core Domain Isolation

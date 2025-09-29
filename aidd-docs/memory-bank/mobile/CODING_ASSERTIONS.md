@@ -150,6 +150,11 @@ Here are all the commands that must be run after each feature implementation, in
 - **Navigation test patterns**: Target specific UI components (AppBar, NavigationBar) as ancestors instead of generic text content
 - **Database cleanup**: Integration tests should clean up database state after execution
 
+### Database Interface Test Synchronization
+- **Interface change propagation**: Database interface changes require immediate test mock updates to prevent `type 'Null' is not a subtype` errors
+- **Repository-test alignment**: Repository method implementations must align with test mock expectations for proper test coverage
+- **Coordinated updates**: When adding new database interface methods, update both implementation and all related test files simultaneously
+
 ### Mock Patterns
 - Use `mocktail` for mocking: `class MockDatabaseInterface extends Mock implements DatabaseInterface`
 - Centralized mocks in `/test/mocks/mock_services.dart`
