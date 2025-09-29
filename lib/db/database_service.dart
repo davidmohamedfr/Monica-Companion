@@ -122,6 +122,13 @@ class DatabaseService implements DatabaseInterface {
     return db.rawUpdate(sql, arguments ?? <Object?>[]);
   }
 
+  /// Execute a raw SQL insert and return the inserted row ID
+  @override
+  Future<int> rawInsert(String sql, [List<dynamic>? arguments]) async {
+    final Database db = await database;
+    return db.rawInsert(sql, arguments ?? <Object?>[]);
+  }
+
   /// Execute operations within a transaction
   /// Properly passes the Transaction object to the action function
   /// for database operations within the transaction

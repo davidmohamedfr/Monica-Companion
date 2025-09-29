@@ -27,7 +27,7 @@ abstract class BaseRepository<T extends BaseModel, ID>
       final String sql =
           'INSERT INTO $tableName ($columns) VALUES ($placeholders)';
 
-      final int id = await database.rawExecute(sql, map.values.toList());
+      final int id = await database.rawInsert(sql, map.values.toList());
       return id as ID;
     } catch (e) {
       Logger.error('Failed to insert entity in $tableName', error: e);
