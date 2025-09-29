@@ -92,6 +92,8 @@ class GetContactsUseCase {
 - Repository interfaces at @lib/db/interfaces
 - Generic CRUD operations in base
 - Feature-specific repositories extend base
+- Database interface completeness: Interfaces must include both `rawExecute` (for updates/deletes) and `rawInsert` (for inserts with ID return) methods
+- Repository implementations must use appropriate database methods for different operations
 
 #### Error Handling
 
@@ -114,8 +116,10 @@ class GetContactsUseCase {
 - Unit tests per layer
 - Mock dependencies with interfaces
 - Test use cases independently
-- Integration tests for features
+- Integration tests for features with real database operations
 - Widget tests for UI components
+- Integration test requirements: Use actual database, complete entity data, specific widget selectors
+- Widget selector specificity: Use `find.descendant()` to avoid duplicate matches in navigation tests
 
 ### Ports and Adapters (Hexagonal Architecture) pattern implementation for Flutter ensuring core business logic isolation through well-defined interfaces (ports) and their concrete implementations (adapters), enabling technology independence and improved testability
 

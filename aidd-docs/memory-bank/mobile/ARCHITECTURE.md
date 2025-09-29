@@ -288,6 +288,12 @@ SQLite Exception → ErrorTransformer → Domain Failure → User Message
 - **Base Repository**: Common CRUD operations in `BaseRepository`
 - **Type Safety**: Strong typing with domain models and generics
 
+**Database Interface Requirements:**
+- **Complete Method Coverage**: Interfaces must include both `rawExecute` (for updates/deletes) and `rawInsert` (for inserts with ID return) methods
+- **Transaction Support**: All database operations must support transaction context for concurrent operations
+- **Repository Implementation**: Repository implementations must use appropriate database methods - `rawInsert` for inserts, `rawExecute` for updates/deletes
+- **Error Handling**: Proper exception-to-failure transformation for all database operations
+
 ## Feature Architecture
 
 ### Navigation System

@@ -781,9 +781,15 @@ MonicaMobileApp/
 
 - **Test Execution**:
   - Unit tests: `flutter test --coverage` → Feature-organized with helpers (@test/)
-  - Integration tests: `flutter test integration_test/` → Android emulator testing
+  - Integration tests: `flutter test integration_test/` → Android emulator testing with real database operations
   - Test helpers and mocks: @test/helpers/ and @test/mocks/
   - Coverage reporting: Codecov integration
+
+- **Integration Test Guidelines**:
+  - Real database operations: Integration tests must use actual database, never mocks
+  - Widget selector specificity: Use descendant finders to avoid duplicate widget matches
+  - Complete entity data: Entity models require complete field sets for database operations
+  - Database interface completeness: Interfaces must include both `rawExecute` and `rawInsert` methods
 
 - **Code Quality Tools**:
   - Linter: `dart analyze --fatal-infos --fatal-warnings` → @analysis_options.yaml
