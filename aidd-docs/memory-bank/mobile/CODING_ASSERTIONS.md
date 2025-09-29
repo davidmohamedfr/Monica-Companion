@@ -143,6 +143,13 @@ Here are all the commands that must be run after each feature implementation, in
 - Test scope: Mirror actual implementation patterns in test structure
 - Mock setup: Use `late` keyword for mock objects initialized in `setUp()`
 
+### Integration Test Requirements
+- **Real database operations**: Integration tests must use actual database, never mocks
+- **Complete entity data**: Entity constructors in tests must provide complete field sets matching database schema requirements (createdAt, updatedAt, etc.)
+- **Widget selector specificity**: Use `find.descendant()` with specific widget types to avoid duplicate widget matches
+- **Navigation test patterns**: Target specific UI components (AppBar, NavigationBar) as ancestors instead of generic text content
+- **Database cleanup**: Integration tests should clean up database state after execution
+
 ### Mock Patterns
 - Use `mocktail` for mocking: `class MockDatabaseInterface extends Mock implements DatabaseInterface`
 - Centralized mocks in `/test/mocks/mock_services.dart`
@@ -165,12 +172,15 @@ Here are all the commands that must be run after each feature implementation, in
 - Generic CRUD operations: `insert()`, `update()`, `delete()`, `findById()`, `findAll()`
 - Transaction support: `insertAll()` uses database transactions for bulk operations
 - Error handling: Wrap all database operations in try-catch, throw `DatabaseException`
-- Raw SQL execution: Use `database.rawQuery()` and `database.rawExecute()`
+- Raw SQL execution: Use `database.rawQuery()`, `database.rawExecute()`, and `database.rawInsert()`
+- Database method usage: `rawInsert()` for inserts with ID return, `rawExecute()` for updates/deletes
 - Table-specific implementations: `SqliteContactRepository extends BaseRepository<Contact, int>`
+- Concurrent operations: Repository methods must handle concurrent operations with proper transaction support
 
 ### Database Interface Pattern
 - Abstract interface: `DatabaseInterface` defines core database operations
-- Standard methods: `initialize()`, `close()`, `rawQuery()`, `rawExecute()`, `transaction()`
+- Standard methods: `initialize()`, `close()`, `rawQuery()`, `rawExecute()`, `rawInsert()`, `transaction()`
+- Complete interface coverage: Interfaces must include both `rawExecute` (for updates/deletes) and `rawInsert` (for inserts with ID return) methods
 - Implementation agnostic: Support for different database backends through interface
 - Service injection: Register as singleton in `DatabaseModule.initialize()`
 

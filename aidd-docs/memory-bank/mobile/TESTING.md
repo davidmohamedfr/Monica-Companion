@@ -181,10 +181,12 @@ integration_test/
 
 ### Integration Testing Pattern
 - **Real app startup**: Full `MonicaApp` initialization in tests
-- **Database operations**: Actual CRUD operations on test database
+- **Database operations**: Actual CRUD operations on test database (not mocked)
 - **Feature workflows**: End-to-end user journey validation
 - **Cross-feature integration**: Navigation between screens and features
 - **Screenshot documentation**: Visual regression testing capabilities
+- **Widget selector specificity**: Use descendant finders to avoid duplicate widget matches
+- **Test data completeness**: Entity models require complete field sets for database operations
 
 ### Mock Strategy
 - **Interface implementation**: Mocks implement actual service interfaces
@@ -231,8 +233,10 @@ final List<Contact> expectedContacts = [
 
 ### Integration vs Unit Testing
 - **Unit tests**: Mock database interface, test SQL generation and data transformation
-- **Integration tests**: Real database operations, actual CRUD workflows
+- **Integration tests**: Real database operations, actual CRUD workflows (never mocked)
 - **Coverage**: Repository methods tested at both levels for complete validation
+- **Widget Test Specificity**: Navigation tests failing due to 'too many widgets found' should target specific widget types (AppBar, NavigationBar) as ancestors
+- **Test Entity Requirements**: Test data for entities must include all required fields for database operations (createdAt, updatedAt, etc.)
 
 ## Test Implementation Strategy
 
@@ -348,10 +352,13 @@ testWidgets('should perform full CRUD operations on contacts', (WidgetTester tes
   await tester.pumpWidget(const MonicaApp());
   await tester.pumpAndSettle();
 
-  const Contact testContact = Contact(
+  // IMPORTANT: Complete entity with all required fields
+  final Contact testContact = Contact(
     name: 'Integration Test User',
     email: 'integration@test.com',
     phone: '+1234567890',
+    createdAt: DateTime.now(),  // Required for database operations
+    updatedAt: DateTime.now(),  // Required for database operations
   );
 
   // CREATE
@@ -364,3 +371,32 @@ testWidgets('should perform full CRUD operations on contacts', (WidgetTester tes
   expect(retrievedContact!.name, testContact.name);
 });
 ```
+
+## Integration Test Guidelines
+
+### Widget Selector Best Practices
+```dart
+// ❌ WRONG: Generic text finder causing duplicates
+expect(find.text('Contacts'), findsOneWidget);
+
+// ✅ CORRECT: Specific descendant finder
+expect(
+  find.descendant(
+    of: find.byType(AppBar),
+    matching: find.text('Contacts')
+  ),
+  findsOneWidget,
+);
+
+// ✅ CORRECT: Target navigation specifically
+await tester.tap(find.descendant(
+  of: find.byType(NavigationBar),
+  matching: find.text('Settings'),
+));
+```
+
+### Database Integration Requirements
+- **Real database operations**: Integration tests must use actual database, never mocks
+- **Complete entities**: All entity models must have required fields (id, createdAt, updatedAt)
+- **Transaction handling**: Database repository methods must handle concurrent operations properly
+- **Cleanup**: Tests should clean up database state after execution
