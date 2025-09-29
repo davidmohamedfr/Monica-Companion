@@ -175,14 +175,14 @@ void main() {
 
     test('insert should insert contact and return id', () async {
       when(
-        () => mockDatabase.rawExecute(any(), any()),
+        () => mockDatabase.rawInsert(any(), any()),
       ).thenAnswer((_) async => 1);
 
       final int result = await repository.insert(testContact);
 
       expect(result, 1);
       verify(
-        () => mockDatabase.rawExecute(
+        () => mockDatabase.rawInsert(
           'INSERT INTO contacts (name, email, phone, avatar, birthday, address, notes, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)',
           any(),
         ),
