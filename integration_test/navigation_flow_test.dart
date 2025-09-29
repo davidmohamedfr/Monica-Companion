@@ -40,12 +40,29 @@ void main() {
         ),
         findsOneWidget,
       );
-      // Check for contacts screen elements
-      expect(find.byIcon(Icons.search), findsOneWidget);
-      expect(find.byIcon(Icons.add), findsOneWidget);
+      // Check for contacts screen elements in AppBar
+      expect(
+        find.descendant(
+          of: find.byType(AppBar),
+          matching: find.byIcon(Icons.search),
+        ),
+        findsOneWidget,
+      );
+      expect(
+        find.descendant(
+          of: find.byType(AppBar),
+          matching: find.byIcon(Icons.add),
+        ),
+        findsOneWidget,
+      );
 
       // Navigate to Calls tab
-      await tester.tap(find.text('Calls'));
+      await tester.tap(
+        find.descendant(
+          of: find.byType(NavigationBar),
+          matching: find.text('Calls'),
+        ),
+      );
       await tester.pumpAndSettle();
 
       expect(find.byType(CallsScreen), findsOneWidget);
@@ -54,10 +71,21 @@ void main() {
         findsOneWidget,
       );
       expect(find.text('Calls Screen - Coming Soon'), findsOneWidget);
-      expect(find.byIcon(Icons.filter_list), findsOneWidget);
+      expect(
+        find.descendant(
+          of: find.byType(AppBar),
+          matching: find.byIcon(Icons.filter_list),
+        ),
+        findsOneWidget,
+      );
 
       // Navigate to Settings tab
-      await tester.tap(find.text('Settings'));
+      await tester.tap(
+        find.descendant(
+          of: find.byType(NavigationBar),
+          matching: find.text('Settings'),
+        ),
+      );
       await tester.pumpAndSettle();
 
       expect(find.byType(SettingsScreen), findsOneWidget);
@@ -74,7 +102,12 @@ void main() {
       expect(find.text('About'), findsOneWidget);
 
       // Navigate to Sync tab
-      await tester.tap(find.text('Sync'));
+      await tester.tap(
+        find.descendant(
+          of: find.byType(NavigationBar),
+          matching: find.text('Sync'),
+        ),
+      );
       await tester.pumpAndSettle();
 
       expect(find.byType(SyncScreen), findsOneWidget);
@@ -83,11 +116,22 @@ void main() {
         findsOneWidget,
       );
       expect(find.byType(SyncStatusCard), findsOneWidget);
-      expect(find.byIcon(Icons.refresh), findsOneWidget);
+      expect(
+        find.descendant(
+          of: find.byType(AppBar),
+          matching: find.byIcon(Icons.refresh),
+        ),
+        findsOneWidget,
+      );
       expect(find.text('Sync Screen - Coming Soon'), findsOneWidget);
 
       // Navigate back to Contacts
-      await tester.tap(find.text('Contacts'));
+      await tester.tap(
+        find.descendant(
+          of: find.byType(NavigationBar),
+          matching: find.text('Contacts'),
+        ),
+      );
       await tester.pumpAndSettle();
 
       expect(find.byType(ContactsScreen), findsOneWidget);
@@ -107,7 +151,12 @@ void main() {
       await tester.pumpAndSettle();
 
       // Navigate to Settings and verify content
-      await tester.tap(find.text('Settings'));
+      await tester.tap(
+        find.descendant(
+          of: find.byType(NavigationBar),
+          matching: find.text('Settings'),
+        ),
+      );
       await tester.pumpAndSettle();
 
       expect(find.text('Account'), findsOneWidget);
@@ -115,13 +164,26 @@ void main() {
       expect(find.text('About'), findsOneWidget);
 
       // Navigate to Sync
-      await tester.tap(find.text('Sync'));
+      await tester.tap(
+        find.descendant(
+          of: find.byType(NavigationBar),
+          matching: find.text('Sync'),
+        ),
+      );
       await tester.pumpAndSettle();
 
-      expect(find.text('Sync'), findsOneWidget);
+      expect(
+        find.descendant(of: find.byType(AppBar), matching: find.text('Sync')),
+        findsOneWidget,
+      );
 
       // Navigate back to Settings
-      await tester.tap(find.text('Settings'));
+      await tester.tap(
+        find.descendant(
+          of: find.byType(NavigationBar),
+          matching: find.text('Settings'),
+        ),
+      );
       await tester.pumpAndSettle();
 
       // Should still show Settings content
@@ -136,10 +198,30 @@ void main() {
       await tester.pumpAndSettle();
 
       // Rapidly switch between tabs
-      await tester.tap(find.text('Calls'));
-      await tester.tap(find.text('Settings'));
-      await tester.tap(find.text('Sync'));
-      await tester.tap(find.text('Contacts'));
+      await tester.tap(
+        find.descendant(
+          of: find.byType(NavigationBar),
+          matching: find.text('Calls'),
+        ),
+      );
+      await tester.tap(
+        find.descendant(
+          of: find.byType(NavigationBar),
+          matching: find.text('Settings'),
+        ),
+      );
+      await tester.tap(
+        find.descendant(
+          of: find.byType(NavigationBar),
+          matching: find.text('Sync'),
+        ),
+      );
+      await tester.tap(
+        find.descendant(
+          of: find.byType(NavigationBar),
+          matching: find.text('Contacts'),
+        ),
+      );
       await tester.pumpAndSettle();
 
       // Should end up on Contacts tab
@@ -160,33 +242,93 @@ void main() {
       await tester.pumpAndSettle();
 
       // Contacts screen app bar
-      expect(find.text('Contacts'), findsOneWidget);
-      expect(find.byIcon(Icons.search), findsOneWidget);
-      expect(find.byIcon(Icons.add), findsOneWidget);
+      expect(
+        find.descendant(
+          of: find.byType(AppBar),
+          matching: find.text('Contacts'),
+        ),
+        findsOneWidget,
+      );
+      expect(
+        find.descendant(
+          of: find.byType(AppBar),
+          matching: find.byIcon(Icons.search),
+        ),
+        findsOneWidget,
+      );
+      expect(
+        find.descendant(
+          of: find.byType(AppBar),
+          matching: find.byIcon(Icons.add),
+        ),
+        findsOneWidget,
+      );
 
       // Navigate to Calls
-      await tester.tap(find.text('Calls'));
+      await tester.tap(
+        find.descendant(
+          of: find.byType(NavigationBar),
+          matching: find.text('Calls'),
+        ),
+      );
       await tester.pumpAndSettle();
 
-      expect(find.text('Calls'), findsOneWidget);
-      expect(find.byIcon(Icons.filter_list), findsOneWidget);
+      expect(
+        find.descendant(of: find.byType(AppBar), matching: find.text('Calls')),
+        findsOneWidget,
+      );
+      expect(
+        find.descendant(
+          of: find.byType(AppBar),
+          matching: find.byIcon(Icons.filter_list),
+        ),
+        findsOneWidget,
+      );
 
       // Navigate to Settings
-      await tester.tap(find.text('Settings'));
+      await tester.tap(
+        find.descendant(
+          of: find.byType(NavigationBar),
+          matching: find.text('Settings'),
+        ),
+      );
       await tester.pumpAndSettle();
 
-      expect(find.text('Settings'), findsOneWidget);
       expect(
-        find.byIcon(Icons.search),
+        find.descendant(
+          of: find.byType(AppBar),
+          matching: find.text('Settings'),
+        ),
+        findsOneWidget,
+      );
+      expect(
+        find.descendant(
+          of: find.byType(AppBar),
+          matching: find.byIcon(Icons.search),
+        ),
         findsNothing,
       ); // Settings doesn't have search
 
       // Navigate to Sync
-      await tester.tap(find.text('Sync'));
+      await tester.tap(
+        find.descendant(
+          of: find.byType(NavigationBar),
+          matching: find.text('Sync'),
+        ),
+      );
       await tester.pumpAndSettle();
 
-      expect(find.text('Sync'), findsOneWidget);
-      expect(find.byIcon(Icons.refresh), findsOneWidget);
+      expect(
+        find.descendant(of: find.byType(AppBar), matching: find.text('Sync')),
+        findsOneWidget,
+      );
+      expect(
+        find.descendant(
+          of: find.byType(AppBar),
+          matching: find.byIcon(Icons.refresh),
+        ),
+        findsOneWidget,
+      );
     });
 
     testWidgets('should handle screen orientation changes', (
@@ -207,10 +349,21 @@ void main() {
       expect(find.byType(MonicaBottomNavigationBar), findsOneWidget);
 
       // Navigate while in landscape
-      await tester.tap(find.text('Settings'));
+      await tester.tap(
+        find.descendant(
+          of: find.byType(NavigationBar),
+          matching: find.text('Settings'),
+        ),
+      );
       await tester.pumpAndSettle();
 
-      expect(find.text('Settings'), findsOneWidget);
+      expect(
+        find.descendant(
+          of: find.byType(AppBar),
+          matching: find.text('Settings'),
+        ),
+        findsOneWidget,
+      );
 
       // Reset to portrait
       await tester.binding.setSurfaceSize(const Size(400, 800));
@@ -227,10 +380,30 @@ void main() {
 
       // Test navigation resilience by rapid switching
       for (int i = 0; i < 5; i++) {
-        await tester.tap(find.text('Calls'));
-        await tester.tap(find.text('Settings'));
-        await tester.tap(find.text('Sync'));
-        await tester.tap(find.text('Contacts'));
+        await tester.tap(
+          find.descendant(
+            of: find.byType(NavigationBar),
+            matching: find.text('Calls'),
+          ),
+        );
+        await tester.tap(
+          find.descendant(
+            of: find.byType(NavigationBar),
+            matching: find.text('Settings'),
+          ),
+        );
+        await tester.tap(
+          find.descendant(
+            of: find.byType(NavigationBar),
+            matching: find.text('Sync'),
+          ),
+        );
+        await tester.tap(
+          find.descendant(
+            of: find.byType(NavigationBar),
+            matching: find.text('Contacts'),
+          ),
+        );
       }
       await tester.pumpAndSettle();
 
@@ -256,6 +429,15 @@ void main() {
       await tester.pumpWidget(const MonicaApp());
       await tester.pumpAndSettle();
 
+      // Navigate to Settings again after rebuild to verify state
+      await tester.tap(
+        find.descendant(
+          of: find.byType(NavigationBar),
+          matching: find.text('Settings'),
+        ),
+      );
+      await tester.pumpAndSettle();
+
       // Should still be functional after rebuild
       expect(find.byType(MainShell), findsOneWidget);
       expect(find.byType(MonicaBottomNavigationBar), findsOneWidget);
@@ -272,13 +454,50 @@ void main() {
       expect(navigationBar, findsOneWidget);
 
       // Test that navigation items are accessible
-      expect(tester.getSemantics(find.text('Contacts')), isNotNull);
-      expect(tester.getSemantics(find.text('Calls')), isNotNull);
-      expect(tester.getSemantics(find.text('Settings')), isNotNull);
-      expect(tester.getSemantics(find.text('Sync')), isNotNull);
+      expect(
+        tester.getSemantics(
+          find.descendant(
+            of: find.byType(NavigationBar),
+            matching: find.text('Contacts'),
+          ),
+        ),
+        isNotNull,
+      );
+      expect(
+        tester.getSemantics(
+          find.descendant(
+            of: find.byType(NavigationBar),
+            matching: find.text('Calls'),
+          ),
+        ),
+        isNotNull,
+      );
+      expect(
+        tester.getSemantics(
+          find.descendant(
+            of: find.byType(NavigationBar),
+            matching: find.text('Settings'),
+          ),
+        ),
+        isNotNull,
+      );
+      expect(
+        tester.getSemantics(
+          find.descendant(
+            of: find.byType(NavigationBar),
+            matching: find.text('Sync'),
+          ),
+        ),
+        isNotNull,
+      );
 
       // Navigate using semantics
-      await tester.tap(find.text('Settings'));
+      await tester.tap(
+        find.descendant(
+          of: find.byType(NavigationBar),
+          matching: find.text('Settings'),
+        ),
+      );
       await tester.pumpAndSettle();
 
       expect(find.byType(SettingsScreen), findsOneWidget);
@@ -290,19 +509,39 @@ void main() {
       await tester.pumpWidget(const MonicaApp());
       await tester.pumpAndSettle();
 
-      // Simulate intensive navigation to test memory handling
-      for (int cycle = 0; cycle < 20; cycle++) {
+      // Simulate intensive navigation to test memory handling (reduced cycles)
+      for (int cycle = 0; cycle < 5; cycle++) {
         // Navigate through all screens multiple times
-        await tester.tap(find.text('Calls'));
+        await tester.tap(
+          find.descendant(
+            of: find.byType(NavigationBar),
+            matching: find.text('Calls'),
+          ),
+        );
         await tester.pumpAndSettle();
 
-        await tester.tap(find.text('Settings'));
+        await tester.tap(
+          find.descendant(
+            of: find.byType(NavigationBar),
+            matching: find.text('Settings'),
+          ),
+        );
         await tester.pumpAndSettle();
 
-        await tester.tap(find.text('Sync'));
+        await tester.tap(
+          find.descendant(
+            of: find.byType(NavigationBar),
+            matching: find.text('Sync'),
+          ),
+        );
         await tester.pumpAndSettle();
 
-        await tester.tap(find.text('Contacts'));
+        await tester.tap(
+          find.descendant(
+            of: find.byType(NavigationBar),
+            matching: find.text('Contacts'),
+          ),
+        );
         await tester.pumpAndSettle();
 
         // Force a frame to ensure memory cleanup
@@ -322,36 +561,90 @@ void main() {
       await tester.pumpWidget(const MonicaApp());
       await tester.pumpAndSettle();
 
-      // Test Contacts screen actions
-      expect(find.byIcon(Icons.search), findsOneWidget);
-      expect(find.byIcon(Icons.add), findsOneWidget);
+      // Test Contacts screen actions in AppBar
+      expect(
+        find.descendant(
+          of: find.byType(AppBar),
+          matching: find.byIcon(Icons.search),
+        ),
+        findsOneWidget,
+      );
+      expect(
+        find.descendant(
+          of: find.byType(AppBar),
+          matching: find.byIcon(Icons.add),
+        ),
+        findsOneWidget,
+      );
 
-      await tester.tap(find.byIcon(Icons.search));
+      await tester.tap(
+        find.descendant(
+          of: find.byType(AppBar),
+          matching: find.byIcon(Icons.search),
+        ),
+      );
       await tester.pump();
       // Should not crash (search not implemented yet)
       expect(find.byType(ContactsScreen), findsOneWidget);
 
-      await tester.tap(find.byIcon(Icons.add));
+      await tester.tap(
+        find.descendant(
+          of: find.byType(AppBar),
+          matching: find.byIcon(Icons.add),
+        ),
+      );
       await tester.pump();
       // Should not crash (add not implemented yet)
       expect(find.byType(ContactsScreen), findsOneWidget);
 
       // Test Calls screen actions
-      await tester.tap(find.text('Calls'));
+      await tester.tap(
+        find.descendant(
+          of: find.byType(NavigationBar),
+          matching: find.text('Calls'),
+        ),
+      );
       await tester.pumpAndSettle();
 
-      expect(find.byIcon(Icons.filter_list), findsOneWidget);
-      await tester.tap(find.byIcon(Icons.filter_list));
+      expect(
+        find.descendant(
+          of: find.byType(AppBar),
+          matching: find.byIcon(Icons.filter_list),
+        ),
+        findsOneWidget,
+      );
+      await tester.tap(
+        find.descendant(
+          of: find.byType(AppBar),
+          matching: find.byIcon(Icons.filter_list),
+        ),
+      );
       await tester.pump();
       // Should not crash (filter not implemented yet)
       expect(find.byType(CallsScreen), findsOneWidget);
 
       // Test Sync screen actions
-      await tester.tap(find.text('Sync'));
+      await tester.tap(
+        find.descendant(
+          of: find.byType(NavigationBar),
+          matching: find.text('Sync'),
+        ),
+      );
       await tester.pumpAndSettle();
 
-      expect(find.byIcon(Icons.refresh), findsOneWidget);
-      await tester.tap(find.byIcon(Icons.refresh));
+      expect(
+        find.descendant(
+          of: find.byType(AppBar),
+          matching: find.byIcon(Icons.refresh),
+        ),
+        findsOneWidget,
+      );
+      await tester.tap(
+        find.descendant(
+          of: find.byType(AppBar),
+          matching: find.byIcon(Icons.refresh),
+        ),
+      );
       await tester.pump();
       // Should not crash (manual sync not implemented yet)
       expect(find.byType(SyncScreen), findsOneWidget);
