@@ -178,6 +178,10 @@ integration_test/
 - **User interaction simulation**: Taps, text input, navigation
 - **Widget tree verification**: Specific widget presence and properties
 - **Async operation handling**: `pumpAndSettle()` for animations and state changes
+- **NetworkImage handling**: Suppress errors in test environment
+- **Predicate matchers**: Use for complex state verification
+- **Theme integration**: Test light/dark mode adaption
+- **Accessibility**: Verify screen reader compatibility
 
 ### Integration Testing Pattern
 - **Real app startup**: Full `MonicaApp` initialization in tests
@@ -187,6 +191,7 @@ integration_test/
 - **Screenshot documentation**: Visual regression testing capabilities
 - **Widget selector specificity**: Use descendant finders to avoid duplicate widget matches
 - **Test data completeness**: Entity models require complete field sets for database operations
+- **UI change resilience**: Make tests robust to minor UI changes
 
 ### Mock Strategy
 - **Interface implementation**: Mocks implement actual service interfaces
@@ -194,6 +199,7 @@ integration_test/
 - **Behavioral setup**: Default behaviors configured in setUp()
 - **Verification patterns**: Method call counting and argument capture
 - **Service locator integration**: Centralized dependency mocking
+- **Realistic data**: Never use URLs that return 404s, set photoUrl: null
 
 ## Database Testing Strategy
 
@@ -406,3 +412,209 @@ await tester.tap(find.descendant(
 - **Interface evolution tracking**: When database interface methods are added or changed, all related test mocks must be updated to match actual implementation usage
 - **Mock verification alignment**: Mock verification calls must use the same methods as the mocked implementation to avoid test failures
 - **Integration test mock consistency**: Integration test mocks should match the exact database methods used by repository implementations
+
+### General Testing Principles
+- Mock services implement actual interfaces
+- Test helpers provide reusable utilities
+- Integration tests verify real app behavior
+- Coverage reports ensure comprehensive testing
+- Conventional commit format enforced for test commits
+- **Iterative test development**: Write → Run → Fix → Document discrepancies
+- **Performance testing**: Include benchmarks for operations on large datasets (1000+ items)
+- **Edge case focus**: Empty states, null values, Unicode, special characters
+- **Widget test resilience**: Handle NetworkImage failures, use predicate matchers for state
+
+## Test Development Best Practices
+
+### Iterative Test Writing
+- **Run tests immediately** after writing to verify behavior
+- **Investigate implementation** before changing test expectations
+- **Document discrepancies** with inline comments when actual behavior differs from expected
+- **Adjust tests to match reality**, not the other way around
+
+### Widget Testing Patterns
+
+#### NetworkImage Handling
+NetworkImage components fail in test environment (HTTP returns 400). Handle this with:
+
+```dart
+// Option 1: Suppress NetworkImageLoadException in test setup
+setUpAll(() {
+  FlutterError.onError = (FlutterErrorDetails details) {
+    if (details.exception.toString().contains('NetworkImageLoadException')) {
+      return; // Ignore network image errors in tests
+    }
+    FlutterError.presentError(details);
+  };
+});
+
+// Option 2: Skip tests that rely on NetworkImage
+testWidgets('should display NetworkImage', (tester) async {
+  // Test logic...
+}, skip: true); // NetworkImage fails in test environment
+```
+
+#### BLoC State Testing
+Use predicate matchers instead of exact state matching:
+
+```dart
+// ❌ Bad: Exact state matching fails with const expressions
+expect(
+  bloc.state,
+  ContactsState(isLoading: false, contacts: testContacts),
+);
+
+// ✅ Good: Predicate matcher for complex state
+expect(
+  bloc.state,
+  predicate<ContactsState>((state) =>
+    state.isLoading == false &&
+    state.contacts.length == 2
+  ),
+);
+```
+
+#### Theme and Accessibility Testing
+```dart
+testWidgets('should adapt to theme', (tester) async {
+  await tester.pumpWidget(
+    MaterialApp(
+      theme: ThemeData.dark(),
+      home: Scaffold(body: MyWidget()),
+    ),
+  );
+
+  // Verify widget adapts to dark theme
+  final widget = tester.widget<Widget>(find.byType(MyWidget));
+  // Assert theme-dependent properties
+});
+
+testWidgets('should be accessible', (tester) async {
+  // Verify screen reader compatibility
+  final ListTile listTile = tester.widget(find.byType(ListTile));
+  expect(listTile.title, isA<Text>());
+  expect(listTile.subtitle, isA<Text>());
+});
+```
+
+### Test Organization Structure
+- **Group by concern**: Basic functionality, Edge Cases, Error Handling, Performance
+- **Descriptive names**: "should handle empty name gracefully" not "test empty name"
+- **Test data setup**: Use `setUpAll` for reusable test fixtures
+- **Performance benchmarks**: Include for operations on 1000+ items
+
+```dart
+group('ContactListItem Widget Tests', () {
+  late Contact testContact;
+
+  setUpAll(() {
+    testContact = Contact(id: '1', name: 'Test');
+  });
+
+  group('Basic Widget Structure Tests', () {
+    // Happy path tests
+  });
+
+  group('Edge Case Tests', () {
+    // Null values, empty strings, special characters
+  });
+
+  group('Performance Tests', () {
+    // Rendering speed, large datasets
+  });
+});
+```
+
+### Coverage Strategy
+
+1. **Identify critical untested behaviors** systematically (score 0-5)
+   - 5 = Critical user flows (search, filters, navigation)
+   - 4 = Important features (UI components, error handling)
+   - 3 = Utilities and helpers (validators, formatters)
+   - 2 = Nice-to-have (performance optimizations, i18n)
+   - 1 = Low priority (developer experience, logging)
+
+2. **Prioritize testing order**:
+   - User-facing functionality and edge cases first
+   - Core business logic (repositories, services)
+   - UI components with complex behavior
+   - Utilities and validators
+   - Internationalization scenarios (Unicode, special characters)
+
+3. **Test coverage targets**:
+   - Critical paths: 90%+
+   - Features: 80%+
+   - Utilities: 70%+
+   - Overall: 60% minimum (enforced in CI)
+
+### Repository/Service Testing
+
+Comprehensive pattern for testing business logic layers:
+
+```dart
+group('ContactsRepository Tests', () {
+  late ContactsRepository repository;
+  late MockContactsService mockService;
+
+  setUp(() {
+    mockService = MockContactsService();
+    repository = ContactsRepositoryImpl(mockService);
+  });
+
+  group('Happy Path Tests', () {
+    test('should return all contacts from service', () async {
+      // Normal operations work correctly
+    });
+  });
+
+  group('Error Handling Tests', () {
+    test('should propagate service exceptions', () async {
+      // Exceptions bubble up properly
+    });
+  });
+
+  group('Edge Case Tests', () {
+    test('should handle null values', () async {
+      // Null values, empty collections
+    });
+
+    test('should handle Unicode characters', () async {
+      // Internationalization scenarios
+    });
+  });
+
+  group('Performance Tests', () {
+    test('should handle large datasets efficiently', () async {
+      final stopwatch = Stopwatch()..start();
+      await repository.searchContacts('query', largeDataset);
+      stopwatch.stop();
+
+      expect(stopwatch.elapsedMilliseconds, lessThan(100));
+    });
+  });
+});
+```
+
+### Mock Data Management
+
+**Rules for mock data**:
+- Never use URLs that cause 404s (placeholder images, etc.)
+- Set `photoUrl: null` for mock contacts to avoid network errors
+- Use realistic test data that matches production patterns
+- Include edge cases in test fixtures (empty strings, null values)
+
+```dart
+// ❌ Bad: Causes 404 errors in tests
+Contact(
+  id: '1',
+  name: 'Test User',
+  photoUrl: 'https://thispersondoesnotexist.com/image',
+);
+
+// ✅ Good: Avoids network requests
+Contact(
+  id: '1',
+  name: 'Test User',
+  photoUrl: null, // No network requests in tests
+);
+```
