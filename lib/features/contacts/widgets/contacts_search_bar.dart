@@ -65,9 +65,7 @@ class _ContactsSearchBarState extends State<ContactsSearchBar> {
         controller: _controller,
         decoration: InputDecoration(
           hintText: widget.hintText,
-          hintStyle: TextStyle(
-            color: theme.colorScheme.onSurfaceVariant,
-          ),
+          hintStyle: TextStyle(color: theme.colorScheme.onSurfaceVariant),
           prefixIcon: Icon(
             Icons.search,
             color: theme.colorScheme.onSurfaceVariant,
@@ -87,9 +85,7 @@ class _ContactsSearchBarState extends State<ContactsSearchBar> {
             vertical: 12,
           ),
         ),
-        style: TextStyle(
-          color: theme.colorScheme.onSurface,
-        ),
+        style: TextStyle(color: theme.colorScheme.onSurface),
         textInputAction: TextInputAction.search,
       ),
     );

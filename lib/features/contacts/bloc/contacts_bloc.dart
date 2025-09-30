@@ -14,9 +14,9 @@ class ContactsBloc extends Bloc<ContactsEvent, ContactsState> {
   ContactsBloc({
     required ContactsRepository contactsRepository,
     required SharedPreferences sharedPreferences,
-  })  : _contactsRepository = contactsRepository,
-        _sharedPreferences = sharedPreferences,
-        super(const ContactsState()) {
+  }) : _contactsRepository = contactsRepository,
+       _sharedPreferences = sharedPreferences,
+       super(const ContactsState()) {
     on<LoadContactsEvent>(_onLoadContacts);
     on<SearchContactsEvent>(_onSearchContacts);
     on<FilterContactsEvent>(_onFilterContacts);
@@ -31,7 +31,6 @@ class ContactsBloc extends Bloc<ContactsEvent, ContactsState> {
   Timer? _debounceTimer;
 
   static const String _viewModeKey = 'contacts_view_mode';
-
 
   void _loadSavedViewMode() {
     final int? savedViewModeIndex = _sharedPreferences.getInt(_viewModeKey);
@@ -52,17 +51,21 @@ class ContactsBloc extends Bloc<ContactsEvent, ContactsState> {
       final List<Contact> contacts = await _contactsRepository.getContacts();
       final List<Contact> filteredContacts = _applyCurrentFilters(contacts);
 
-      emit(state.copyWith(
-        contacts: contacts,
-        filteredContacts: filteredContacts,
-        isLoading: false,
-      ));
+      emit(
+        state.copyWith(
+          contacts: contacts,
+          filteredContacts: filteredContacts,
+          isLoading: false,
+        ),
+      );
     } on Exception catch (e) {
       Logger.error('Failed to load contacts', error: e);
-      emit(state.copyWith(
-        isLoading: false,
-        errorMessage: 'Failed to load contacts: ${e.toString()}',
-      ));
+      emit(
+        state.copyWith(
+          isLoading: false,
+          errorMessage: 'Failed to load contacts: ${e.toString()}',
+        ),
+      );
     }
   }
 
@@ -75,19 +78,17 @@ class ContactsBloc extends Bloc<ContactsEvent, ContactsState> {
       emit(state.copyWith(searchQuery: event.query));
 
       if (event.query.isEmpty) {
-        final List<Contact> filteredContacts =
-          _applyCurrentFilters(state.contacts);
+        final List<Contact> filteredContacts = _applyCurrentFilters(
+          state.contacts,
+        );
         emit(state.copyWith(filteredContacts: filteredContacts));
         return;
       }
 
       _debounceTimer = Timer(const Duration(milliseconds: 300), () async {
         try {
-          final List<Contact> searchResults =
-              await _contactsRepository.searchAndFilterContacts(
-            event.query,
-            state.currentFilter,
-          );
+          final List<Contact> searchResults = await _contactsRepository
+              .searchAndFilterContacts(event.query, state.currentFilter);
 
           if (!emit.isDone) {
             emit(state.copyWith(filteredContacts: searchResults));
@@ -95,17 +96,21 @@ class ContactsBloc extends Bloc<ContactsEvent, ContactsState> {
         } on Exception catch (e) {
           Logger.error('Failed to search contacts', error: e);
           if (!emit.isDone) {
-            emit(state.copyWith(
-              errorMessage: 'Failed to search contacts: ${e.toString()}',
-            ));
+            emit(
+              state.copyWith(
+                errorMessage: 'Failed to search contacts: ${e.toString()}',
+              ),
+            );
           }
         }
       });
     } on Exception catch (e) {
       Logger.error('Failed to search contacts', error: e);
-      emit(state.copyWith(
-        errorMessage: 'Failed to search contacts: ${e.toString()}',
-      ));
+      emit(
+        state.copyWith(
+          errorMessage: 'Failed to search contacts: ${e.toString()}',
+        ),
+      );
     }
   }
 
@@ -117,22 +122,21 @@ class ContactsBloc extends Bloc<ContactsEvent, ContactsState> {
       emit(state.copyWith(currentFilter: event.filter));
 
       if (state.searchQuery.isNotEmpty) {
-        final List<Contact> searchResults =
-            await _contactsRepository.searchAndFilterContacts(
-              state.searchQuery,
-              event.filter,
-            );
+        final List<Contact> searchResults = await _contactsRepository
+            .searchAndFilterContacts(state.searchQuery, event.filter);
         emit(state.copyWith(filteredContacts: searchResults));
       } else {
-        final List<Contact> filteredContacts =
-            await _contactsRepository.filterContacts(event.filter);
+        final List<Contact> filteredContacts = await _contactsRepository
+            .filterContacts(event.filter);
         emit(state.copyWith(filteredContacts: filteredContacts));
       }
     } on Exception catch (e) {
       Logger.error('Failed to filter contacts', error: e);
-      emit(state.copyWith(
-        errorMessage: 'Failed to filter contacts: ${e.toString()}',
-      ));
+      emit(
+        state.copyWith(
+          errorMessage: 'Failed to filter contacts: ${e.toString()}',
+        ),
+      );
     }
   }
 
@@ -167,7 +171,7 @@ class ContactsBloc extends Bloc<ContactsEvent, ContactsState> {
         return contacts.where((Contact contact) {
           final DateTime? lastContacted = contact.lastContactedAt;
           return lastContacted != null &&
-                 now.difference(lastContacted) <= recentThreshold;
+              now.difference(lastContacted) <= recentThreshold;
         }).toList();
       case ContactFilter.needsInteraction:
         return contacts

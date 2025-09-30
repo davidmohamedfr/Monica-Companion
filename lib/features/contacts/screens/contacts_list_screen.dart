@@ -40,47 +40,44 @@ class _ContactsListScreenState extends State<ContactsListScreen> {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-      appBar: AppBar(
-        title: const Text('Contacts'),
-        actions: <Widget>[
-          IconButton(
-            icon: const Icon(Icons.refresh),
-            onPressed: () {
-              context.read<ContactsBloc>().add(const RefreshContactsEvent());
+    appBar: AppBar(
+      title: const Text('Contacts'),
+      actions: <Widget>[
+        IconButton(
+          icon: const Icon(Icons.refresh),
+          onPressed: () {
+            context.read<ContactsBloc>().add(const RefreshContactsEvent());
+          },
+          tooltip: 'Refresh contacts',
+        ),
+      ],
+    ),
+    body: BlocBuilder<ContactsBloc, ContactsState>(
+      builder: (BuildContext context, ContactsState state) => Column(
+        children: <Widget>[
+          ContactsSearchBar(
+            onSearchChanged: (String query) {
+              context.read<ContactsBloc>().add(SearchContactsEvent(query));
             },
-            tooltip: 'Refresh contacts',
+            initialValue: state.searchQuery,
           ),
+          ContactsFilterBar(
+            currentFilter: state.currentFilter,
+            onFilterChanged: (ContactFilter filter) {
+              context.read<ContactsBloc>().add(FilterContactsEvent(filter));
+            },
+          ),
+          ContactsViewModeSelector(
+            currentViewMode: state.currentViewMode,
+            onViewModeChanged: (ContactViewMode viewMode) {
+              context.read<ContactsBloc>().add(ChangeViewModeEvent(viewMode));
+            },
+          ),
+          Expanded(child: _buildContactsList(context, state)),
         ],
       ),
-      body: BlocBuilder<ContactsBloc, ContactsState>(
-        builder: (BuildContext context, ContactsState state) => Column(
-            children: <Widget>[
-              ContactsSearchBar(
-                onSearchChanged: (String query) {
-                  context.read<ContactsBloc>().add(SearchContactsEvent(query));
-                },
-                initialValue: state.searchQuery,
-              ),
-              ContactsFilterBar(
-                currentFilter: state.currentFilter,
-                onFilterChanged: (ContactFilter filter) {
-                  context.read<ContactsBloc>().add(FilterContactsEvent(filter));
-                },
-              ),
-              ContactsViewModeSelector(
-                currentViewMode: state.currentViewMode,
-                onViewModeChanged: (ContactViewMode viewMode) {
-                  context.read<ContactsBloc>()
-                      .add(ChangeViewModeEvent(viewMode));
-                },
-              ),
-              Expanded(
-                child: _buildContactsList(context, state),
-              ),
-            ],
-          ),
-        ),
-      );
+    ),
+  );
 
   Widget _buildContactsList(BuildContext context, ContactsState state) {
     if (state.isLoading && state.contacts.isEmpty) {
@@ -141,47 +138,47 @@ class _ContactsListScreenState extends State<ContactsListScreen> {
   }
 
   Widget _buildListView(List<Contact> contacts) => ListView.builder(
-      controller: _scrollController,
-      itemCount: contacts.length,
-      itemBuilder: (BuildContext context, int index) {
-        final Contact contact = contacts[index];
-        return ContactListItem(
-          contact: contact,
-          onTap: () => _navigateToContactDetail(contact),
-        );
-      },
-    );
+    controller: _scrollController,
+    itemCount: contacts.length,
+    itemBuilder: (BuildContext context, int index) {
+      final Contact contact = contacts[index];
+      return ContactListItem(
+        contact: contact,
+        onTap: () => _navigateToContactDetail(contact),
+      );
+    },
+  );
 
   Widget _buildGridView(List<Contact> contacts) => GridView.builder(
-      controller: _scrollController,
-      padding: const EdgeInsets.all(8),
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2,
-        childAspectRatio: 0.8,
-        crossAxisSpacing: 8,
-        mainAxisSpacing: 8,
-      ),
-      itemCount: contacts.length,
-      itemBuilder: (BuildContext context, int index) {
-        final Contact contact = contacts[index];
-        return ContactGridItem(
-          contact: contact,
-          onTap: () => _navigateToContactDetail(contact),
-        );
-      },
-    );
+    controller: _scrollController,
+    padding: const EdgeInsets.all(8),
+    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+      crossAxisCount: 2,
+      childAspectRatio: 0.8,
+      crossAxisSpacing: 8,
+      mainAxisSpacing: 8,
+    ),
+    itemCount: contacts.length,
+    itemBuilder: (BuildContext context, int index) {
+      final Contact contact = contacts[index];
+      return ContactGridItem(
+        contact: contact,
+        onTap: () => _navigateToContactDetail(contact),
+      );
+    },
+  );
 
   Widget _buildCardView(List<Contact> contacts) => ListView.builder(
-      controller: _scrollController,
-      itemCount: contacts.length,
-      itemBuilder: (BuildContext context, int index) {
-        final Contact contact = contacts[index];
-        return ContactCardItem(
-          contact: contact,
-          onTap: () => _navigateToContactDetail(contact),
-        );
-      },
-    );
+    controller: _scrollController,
+    itemCount: contacts.length,
+    itemBuilder: (BuildContext context, int index) {
+      final Contact contact = contacts[index];
+      return ContactCardItem(
+        contact: contact,
+        onTap: () => _navigateToContactDetail(contact),
+      );
+    },
+  );
 
   String _getEmptyMessage(ContactsState state) {
     if (state.searchQuery.isNotEmpty &&

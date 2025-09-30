@@ -2,11 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:monica_companion/features/contacts/models/contact_model.dart';
 
 class ContactListItem extends StatelessWidget {
-  const ContactListItem({
-    required this.contact,
-    this.onTap,
-    super.key,
-  });
+  const ContactListItem({required this.contact, this.onTap, super.key});
 
   final Contact contact;
   final VoidCallback? onTap;
@@ -19,42 +15,30 @@ class ContactListItem extends StatelessWidget {
       leading: _buildAvatar(),
       title: Text(
         contact.name,
-        style: theme.textTheme.bodyLarge?.copyWith(
-          fontWeight: FontWeight.w500,
-        ),
+        style: theme.textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.w500),
       ),
       subtitle: _buildSubtitle(theme),
       trailing: contact.isFavorite
-          ? Icon(
-              Icons.favorite,
-              color: theme.colorScheme.primary,
-              size: 20,
-            )
+          ? Icon(Icons.favorite, color: theme.colorScheme.primary, size: 20)
           : null,
       onTap: onTap,
       dense: false,
-      contentPadding: const EdgeInsets.symmetric(
-        horizontal: 16,
-        vertical: 4,
-      ),
+      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
     );
   }
 
   Widget _buildAvatar() => CircleAvatar(
-      radius: 24,
-      backgroundImage: contact.photoUrl != null
-          ? NetworkImage(contact.photoUrl!)
-          : null,
-      child: contact.photoUrl == null
-          ? Text(
-              _getInitials(contact.name),
-              style: const TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w500,
-              ),
-            )
-          : null,
-    );
+    radius: 24,
+    backgroundImage: contact.photoUrl != null
+        ? NetworkImage(contact.photoUrl!)
+        : null,
+    child: contact.photoUrl == null
+        ? Text(
+            _getInitials(contact.name),
+            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+          )
+        : null,
+  );
 
   Widget? _buildSubtitle(ThemeData theme) {
     final List<String> subtitleParts = <String>[];
@@ -92,6 +76,6 @@ class ContactListItem extends StatelessWidget {
     }
 
     return (words[0].isNotEmpty ? words[0][0] : '') +
-           (words[1].isNotEmpty ? words[1][0] : '');
+        (words[1].isNotEmpty ? words[1][0] : '');
   }
 }

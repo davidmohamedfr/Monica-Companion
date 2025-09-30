@@ -2,11 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:monica_companion/features/contacts/models/contact_model.dart';
 
 class ContactGridItem extends StatelessWidget {
-  const ContactGridItem({
-    required this.contact,
-    this.onTap,
-    super.key,
-  });
+  const ContactGridItem({required this.contact, this.onTap, super.key});
 
   final Contact contact;
   final VoidCallback? onTap;
@@ -70,20 +66,17 @@ class ContactGridItem extends StatelessWidget {
   }
 
   Widget _buildAvatar() => CircleAvatar(
-      radius: 32,
-      backgroundImage: contact.photoUrl != null
-          ? NetworkImage(contact.photoUrl!)
-          : null,
-      child: contact.photoUrl == null
-          ? Text(
-              _getInitials(contact.name),
-              style: const TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.w500,
-              ),
-            )
-          : null,
-    );
+    radius: 32,
+    backgroundImage: contact.photoUrl != null
+        ? NetworkImage(contact.photoUrl!)
+        : null,
+    child: contact.photoUrl == null
+        ? Text(
+            _getInitials(contact.name),
+            style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
+          )
+        : null,
+  );
 
   Widget _buildContactInfo(ThemeData theme) {
     String contactInfo = '';
@@ -116,6 +109,6 @@ class ContactGridItem extends StatelessWidget {
     }
 
     return (words[0].isNotEmpty ? words[0][0] : '') +
-           (words[1].isNotEmpty ? words[1][0] : '');
+        (words[1].isNotEmpty ? words[1][0] : '');
   }
 }
