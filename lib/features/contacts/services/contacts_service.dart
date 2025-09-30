@@ -22,7 +22,8 @@ class ContactsServiceImpl implements ContactsService {
 
       // Comprehensive mock contacts based on the VCF file data
       await Future<void>.delayed(
-          const Duration(seconds: 1)); // Simulate API delay
+        const Duration(seconds: 1),
+      ); // Simulate API delay
 
       return <Contact>[
         // French contacts from VCF file
@@ -199,7 +200,8 @@ class ContactsServiceImpl implements ContactsService {
         rethrow;
       }
       throw ContactsException(
-          'Failed to fetch device contacts: ${e.toString()}');
+        'Failed to fetch device contacts: ${e.toString()}',
+      );
     }
   }
 
@@ -210,7 +212,8 @@ class ContactsServiceImpl implements ContactsService {
       return status.isGranted;
     } catch (e) {
       throw ContactsPermissionException(
-          'Failed to request contacts permission: ${e.toString()}');
+        'Failed to request contacts permission: ${e.toString()}',
+      );
     }
   }
 
@@ -221,7 +224,8 @@ class ContactsServiceImpl implements ContactsService {
       return status.isGranted;
     } catch (e) {
       throw ContactsPermissionException(
-          'Failed to check contacts permission: ${e.toString()}');
+        'Failed to check contacts permission: ${e.toString()}',
+      );
     }
   }
 }

@@ -195,14 +195,16 @@ class WelcomeScreen extends StatelessWidget {
   );
 
   void _navigateToContacts(BuildContext context) {
-    unawaited(Navigator.of(context).push(
-      MaterialPageRoute<void>(
-        builder: (BuildContext context) => BlocProvider<ContactsBloc>(
-          create: (BuildContext context) =>
-              ServiceLocator.instance.get<ContactsBloc>(),
-          child: const ContactsListScreen(),
+    unawaited(
+      Navigator.of(context).push(
+        MaterialPageRoute<void>(
+          builder: (BuildContext context) => BlocProvider<ContactsBloc>(
+            create: (BuildContext context) =>
+                ServiceLocator.instance.get<ContactsBloc>(),
+            child: const ContactsListScreen(),
+          ),
         ),
       ),
-    ));
+    );
   }
 }
