@@ -13,22 +13,22 @@ class ContactsFilterBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Container(
-      height: 50,
-      margin: const EdgeInsets.symmetric(vertical: 8),
-      child: ListView.separated(
-        scrollDirection: Axis.horizontal,
-        padding: const EdgeInsets.symmetric(horizontal: 16),
-        itemCount: ContactFilter.values.length,
-        separatorBuilder: (BuildContext context, int index) =>
-            const SizedBox(width: 8),
-        itemBuilder: (BuildContext context, int index) {
-          final ContactFilter filter = ContactFilter.values[index];
-          final bool isSelected = filter == currentFilter;
+    height: 50,
+    margin: const EdgeInsets.symmetric(vertical: 8),
+    child: ListView.separated(
+      scrollDirection: Axis.horizontal,
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      itemCount: ContactFilter.values.length,
+      separatorBuilder: (BuildContext context, int index) =>
+          const SizedBox(width: 8),
+      itemBuilder: (BuildContext context, int index) {
+        final ContactFilter filter = ContactFilter.values[index];
+        final bool isSelected = filter == currentFilter;
 
-          return _buildFilterChip(context, filter, isSelected);
-        },
-      ),
-    );
+        return _buildFilterChip(context, filter, isSelected);
+      },
+    ),
+  );
 
   Widget _buildFilterChip(
     BuildContext context,

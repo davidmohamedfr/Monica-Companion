@@ -31,25 +31,25 @@ class ContactsState extends FeatureState {
     bool? isLoading,
     String? errorMessage,
   }) => ContactsState(
-      contacts: contacts ?? this.contacts,
-      filteredContacts: filteredContacts ?? this.filteredContacts,
-      searchQuery: searchQuery ?? this.searchQuery,
-      currentFilter: currentFilter ?? this.currentFilter,
-      currentViewMode: currentViewMode ?? this.currentViewMode,
-      isLoading: isLoading ?? this.isLoading,
-      errorMessage: errorMessage ?? this.errorMessage,
-    );
+    contacts: contacts ?? this.contacts,
+    filteredContacts: filteredContacts ?? this.filteredContacts,
+    searchQuery: searchQuery ?? this.searchQuery,
+    currentFilter: currentFilter ?? this.currentFilter,
+    currentViewMode: currentViewMode ?? this.currentViewMode,
+    isLoading: isLoading ?? this.isLoading,
+    errorMessage: errorMessage ?? this.errorMessage,
+  );
 
   ContactsState clearError() => copyWith();
 
   @override
   List<Object?> get props => <Object?>[
-        contacts,
-        filteredContacts,
-        searchQuery,
-        currentFilter,
-        currentViewMode,
-        isLoading,
-        errorMessage,
-      ];
+    contacts,
+    filteredContacts,
+    searchQuery,
+    currentFilter,
+    currentViewMode,
+    isLoading,
+    errorMessage,
+  ];
 }

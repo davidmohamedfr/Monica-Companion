@@ -31,25 +31,25 @@ class Contact extends Equatable {
     DateTime? lastContactedAt,
     bool? needsInteractionSoon,
   }) => Contact(
-      id: id ?? this.id,
-      name: name ?? this.name,
-      phone: phone ?? this.phone,
-      email: email ?? this.email,
-      photoUrl: photoUrl ?? this.photoUrl,
-      isFavorite: isFavorite ?? this.isFavorite,
-      lastContactedAt: lastContactedAt ?? this.lastContactedAt,
-      needsInteractionSoon: needsInteractionSoon ?? this.needsInteractionSoon,
-    );
+    id: id ?? this.id,
+    name: name ?? this.name,
+    phone: phone ?? this.phone,
+    email: email ?? this.email,
+    photoUrl: photoUrl ?? this.photoUrl,
+    isFavorite: isFavorite ?? this.isFavorite,
+    lastContactedAt: lastContactedAt ?? this.lastContactedAt,
+    needsInteractionSoon: needsInteractionSoon ?? this.needsInteractionSoon,
+  );
 
   @override
   List<Object?> get props => <Object?>[
-        id,
-        name,
-        phone,
-        email,
-        photoUrl,
-        isFavorite,
-        lastContactedAt,
-        needsInteractionSoon,
-      ];
+    id,
+    name,
+    phone,
+    email,
+    photoUrl,
+    isFavorite,
+    lastContactedAt,
+    needsInteractionSoon,
+  ];
 }
