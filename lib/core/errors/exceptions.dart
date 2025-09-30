@@ -52,3 +52,13 @@ class ServerException extends AppException {
 class CacheException extends AppException {
   const CacheException(super.message, [super.code]);
 }
+
+/// Contacts-related exceptions
+class ContactsException extends AppException {
+  const ContactsException(super.message, [super.code]);
+}
+
+/// Contacts permission-related exceptions
+class ContactsPermissionException extends PermissionException {
+  const ContactsPermissionException(super.message, [super.code]);
+}
