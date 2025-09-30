@@ -723,13 +723,29 @@ class UserCard extends StatelessWidget {
 
 #### Testing Strategy
 
-- Write tests before fixing bugs
+- Write tests for critical behaviors before implementation
 - Follow Arrange-Act-Assert pattern
-- Aim for 80%+ coverage
+- Aim for 80%+ coverage (minimum 60% enforced)
 - Test edge cases thoroughly
 - Keep tests independent
 - Use descriptive test names
 - Group related tests together
+- Run tests immediately after writing
+- Investigate implementation before changing tests
+- Document behavior discrepancies
+
+#### Test-First Development
+
+- Identify critical untested behaviors systematically
+- Score behaviors by priority (0-5)
+  - 5 = Critical user flows (search, filters, navigation)
+  - 4 = Important features (UI components, error handling)
+  - 3 = Utilities and helpers (validators, formatters)
+  - 2 = Nice-to-have (performance, i18n)
+  - 1 = Low priority (developer experience)
+- Write tests for highest priority items first
+- Iterate: Write → Run → Fix → Document
+- Adjust test expectations to match actual behavior
 
 #### Unit Testing
 
@@ -740,6 +756,7 @@ class UserCard extends StatelessWidget {
 - Test validators @lib/core/utils/validators.dart
 - Test data transformations
 - Use `package:test` for assertions
+- Include performance benchmarks for large datasets (1000+ items)
 
 ```dart
 test('should validate email correctly', () {
@@ -763,6 +780,31 @@ test('should validate email correctly', () {
 - Use `pumpWidget` for rendering
 - Apply `pump` for animations
 - Test golden files for UI
+- **Handle NetworkImage failures** in test environment
+- Use **predicate matchers** for complex state verification
+- Test theme integration (light/dark mode)
+- Verify accessibility annotations
+
+**NetworkImage Handling:**
+```dart
+setUpAll(() {
+  FlutterError.onError = (details) {
+    if (details.exception.toString().contains('NetworkImageLoadException')) {
+      return; // Ignore in tests
+    }
+    FlutterError.presentError(details);
+  };
+});
+```
+
+**BLoC State Testing:**
+```dart
+// ✅ Use predicate matchers
+expect(
+  bloc.state,
+  predicate<State>((s) => s.isLoading == false && s.data.length == 2),
+);
+```
 
 #### Integration Testing
 
@@ -773,6 +815,39 @@ test('should validate email correctly', () {
 - Cover critical paths first
 - Test navigation flows
 - Verify data persistence
+- Make tests resilient to UI changes
+
+#### Test Organization
+
+- Mirror source structure
+- One test file per source
+- **Group by concern**: Basic functionality, Edge Cases, Error Handling, Performance
+- Use clear test descriptions: "should handle empty name gracefully"
+- Separate unit/widget/integration
+- Share test utilities
+- Follow naming conventions
+- Use `setUpAll` for reusable test fixtures
+
+```dart
+group('ContactListItem Widget Tests', () {
+  group('Basic Widget Structure Tests', () {
+    // Happy path tests
+  });
+
+  group('Edge Case Tests', () {
+    // Null values, empty strings, special characters
+  });
+
+  group('Performance Tests', () {
+    test('should render quickly', () {
+      final stopwatch = Stopwatch()..start();
+      // Test rendering
+      stopwatch.stop();
+      expect(stopwatch.elapsedMilliseconds, lessThan(100));
+    });
+  });
+});
+```
 
 #### Mocking Best Practices
 
@@ -783,16 +858,16 @@ test('should validate email correctly', () {
 - Mock at boundaries only
 - Keep mocks simple
 - Document mock behavior
+- **Never use URLs that return 404s** in mock data
+- Set `photoUrl: null` for mock contacts
 
-#### Test Organization
+```dart
+// ❌ Bad: Causes 404 errors
+Contact(photoUrl: 'https://placeholder.com/image');
 
-- Mirror source structure
-- One test file per source
-- Group by functionality
-- Use clear test descriptions
-- Separate unit/widget/integration
-- Share test utilities
-- Follow naming conventions
+// ✅ Good: No network requests
+Contact(photoUrl: null);
+```
 
 #### Testing Commands
 
@@ -803,3 +878,52 @@ test('should validate email correctly', () {
 - Watch mode for TDD
 - Use `checks` for assertions
 - Profile test performance
+
+#### Test Coverage Targets
+
+- Critical paths (search, filters): 90%+
+- Features (UI components, services): 80%+
+- Utilities (validators, helpers): 70%+
+- Overall minimum: 60% (enforced in CI)
+- Focus on user-facing functionality first
+- Include internationalization scenarios (Unicode, special characters)
+
+#### Test Quality Checklist
+
+- [ ] Tests run immediately after writing
+- [ ] All edge cases covered (null, empty, Unicode)
+- [ ] Performance benchmarks included for large datasets
+- [ ] Error scenarios tested
+- [ ] Mock data realistic and error-free
+- [ ] Test names descriptive and clear
+- [ ] Tests grouped by concern
+- [ ] NetworkImage handling implemented for widgets
+- [ ] Accessibility verified for UI components
+- [ ] Theme integration tested (light/dark)
+
+#### Repository/Service Testing Pattern
+
+```dart
+group('ContactsRepository Tests', () {
+  group('Happy Path Tests', () {
+    // Normal operations
+  });
+
+  group('Error Handling Tests', () {
+    test('should propagate exceptions', () {
+      // Exception testing
+    });
+  });
+
+  group('Edge Case Tests', () {
+    test('should handle null values', () {});
+    test('should handle Unicode characters', () {});
+  });
+
+  group('Performance Tests', () {
+    test('should handle 1000+ items efficiently', () {
+      // Performance benchmark
+    });
+  });
+});
+```
