@@ -7,7 +7,9 @@ abstract class ContactsRepository {
   Future<List<Contact>> searchContacts(String query);
   Future<List<Contact>> filterContacts(ContactFilter filter);
   Future<List<Contact>> searchAndFilterContacts(
-      String query, ContactFilter filter);
+    String query,
+    ContactFilter filter,
+  );
 }
 
 class ContactsRepositoryImpl implements ContactsRepository {
@@ -30,8 +32,9 @@ class ContactsRepositoryImpl implements ContactsRepository {
     final String lowercaseQuery = query.toLowerCase();
 
     return contacts.where((Contact contact) {
-      final bool nameMatch =
-          contact.name.toLowerCase().contains(lowercaseQuery);
+      final bool nameMatch = contact.name.toLowerCase().contains(
+        lowercaseQuery,
+      );
       final bool phoneMatch =
           contact.phone?.toLowerCase().contains(lowercaseQuery) ?? false;
       final bool emailMatch =
@@ -50,7 +53,9 @@ class ContactsRepositoryImpl implements ContactsRepository {
 
   @override
   Future<List<Contact>> searchAndFilterContacts(
-      String query, ContactFilter filter) async {
+    String query,
+    ContactFilter filter,
+  ) async {
     final List<Contact> contacts = await searchContacts(query);
 
     return _applyFilter(contacts, filter);
@@ -61,16 +66,14 @@ class ContactsRepositoryImpl implements ContactsRepository {
       case ContactFilter.all:
         return contacts;
       case ContactFilter.favorites:
-        return contacts
-            .where((Contact contact) => contact.isFavorite)
-            .toList();
+        return contacts.where((Contact contact) => contact.isFavorite).toList();
       case ContactFilter.recentlyContacted:
         final DateTime now = DateTime.now();
         const Duration recentThreshold = Duration(days: 30);
         return contacts.where((Contact contact) {
           final DateTime? lastContacted = contact.lastContactedAt;
           return lastContacted != null &&
-                 now.difference(lastContacted) <= recentThreshold;
+              now.difference(lastContacted) <= recentThreshold;
         }).toList();
       case ContactFilter.needsInteraction:
         return contacts
