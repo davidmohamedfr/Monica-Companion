@@ -13,7 +13,7 @@ class SyncScreen extends StatelessWidget {
         IconButton(
           icon: const Icon(Icons.refresh),
           onPressed: () {
-            // TODO: Implement manual sync
+            // TODO(user): Implement manual sync
           },
         ),
       ],

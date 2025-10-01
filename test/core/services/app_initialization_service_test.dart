@@ -196,7 +196,7 @@ void main() {
       // Simulate the error handling pattern
       try {
         throw testError;
-      } catch (e) {
+      } on Exception catch (e) {
         expect(e, equals(testError));
         // In the actual service, this would be rethrown
         expect(() => throw e, throwsA(equals(testError)));
@@ -210,7 +210,7 @@ void main() {
       // Simulate the error handling pattern
       try {
         throw testError;
-      } catch (e) {
+      } on Exception catch (e) {
         expect(e, equals(testError));
         // In the actual service, this would be rethrown
         expect(() => throw e, throwsA(equals(testError)));
