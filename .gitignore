@@ -12,7 +12,6 @@ build/
 *.ipr
 *.iws
 .vscode/
-lefthook-local.yml
 
 # Platform-specific build artifacts
 android/.gradle/
