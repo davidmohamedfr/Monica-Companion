@@ -9,8 +9,9 @@
 - **After round 1**: 202 errors (122 fixed, 38% reduction)
 - **After round 2**: 106 errors (218 fixed, 67% reduction)
 - **After round 3**: 100 errors (224 fixed, 69% reduction)
-- **Final errors**: 100
-- **Total reduction**: 224 errors fixed (69% reduction)
+- **After round 4**: 79 errors (245 fixed, 76% reduction)
+- **Final errors**: 79
+- **Total reduction**: 245 errors fixed (76% reduction)
 
 ## ✅ Completed Fixes
 
@@ -151,7 +152,28 @@
 #### 9. ~~`discarded_futures` (2 errors)~~ ✅ **FIXED**
 - Fixed in Round 3
 
-#### 10. `one_member_abstracts` (2 errors)
+#### 10. ~~`cascade_invocations` (20 errors)~~ ✅ **FIXED** - Round 4
+- **Location**: Test files with repeated receiver calls
+- **Action**: Converted sequential calls to cascade notation
+- **Examples**:
+  - `integration_test/database_integration_test.dart:327,343` - stopwatch operations
+  - `test/helpers/test_helpers.dart:28,48` - ServiceLocator registration
+  - `test/core/di/database_module_test.dart` - 4 instances
+  - `test/core/services/app_initialization_service_test.dart` - 2 instances
+  - `test/services/service_locator_test.dart` - 9 instances
+- **Pattern**:
+```dart
+// Before:
+serviceLocator.registerSingleton<ServiceA>(serviceA);
+serviceLocator.registerSingleton<ServiceB>(serviceB);
+
+// After:
+serviceLocator
+  ..registerSingleton<ServiceA>(serviceA)
+  ..registerSingleton<ServiceB>(serviceB);
+```
+
+#### 11. `one_member_abstracts` (2 errors)
 - **Location**: `test/services/service_locator_test.dart:5,17`
 - **Description**: Abstract test mock classes with single member
 - **Status**: Test code pattern - acceptable
@@ -226,6 +248,17 @@
 #### Test Files
 - `test/features/contacts/bloc/contacts_bloc_test.dart` - Fixed 2 discarded futures by making tearDown async and awaiting bloc.close()
 
+### Round 4 (21 errors fixed)
+
+#### Integration Tests
+- `integration_test/database_integration_test.dart:327,343` - Converted stopwatch operations to cascade notation (2 instances)
+
+#### Test Files
+- `test/helpers/test_helpers.dart:28,48` - Converted ServiceLocator calls to cascade notation (2 instances)
+- `test/core/di/database_module_test.dart` - Converted repeated registerSingleton calls to cascades (4 instances)
+- `test/core/services/app_initialization_service_test.dart` - Converted service registration to cascades (2 instances)
+- `test/services/service_locator_test.dart` - Converted service locator operations to cascades (9 instances)
+
 ## Commands Used
 
 ```bash
@@ -256,24 +289,24 @@ flutter analyze
 
 ### ✅ All Critical Errors Fixed!
 
-All high-priority errors have been resolved. Remaining 100 errors are:
+All high-priority errors have been resolved. Remaining 79 errors are:
 
-1. **Style preferences** (~84 instances):
-   - `cascade_invocations` in test files (~31)
+1. **Style preferences** (~64 instances):
+   - `cascade_invocations` in test files (~11) - **mostly false positives** (single calls, async operations, code in between)
    - `lines_longer_than_80_chars` in test data strings (~53)
 
-2. **Accepted patterns** (~16 instances):
+2. **Accepted patterns** (~15 instances):
    - `prefer_constructors_over_static_methods` - Factory methods (~10)
    - `one_member_abstracts` - Test mocks (~2)
-   - Others (~4)
+   - Others (~3)
 
 ### Optional Further Improvements
 
 3. **Consider lint rule adjustments**:
    - Disable `prefer_constructors_over_static_methods` for model files
-   - Consider relaxing `cascade_invocations` for test files
-   - Consider relaxing `lines_longer_than_80_chars` for comments
+   - Disable `cascade_invocations` for test files (many false positives)
+   - Consider relaxing `lines_longer_than_80_chars` for test comments/data
 
-4. **Commit strategy** (following AIDD guidelines):
-   - Commit this task documentation first
-   - Then commit code changes in separate commit
+### Completed Commits (Round 4)
+1. Task documentation commit (this file)
+2. Code changes commit (cascade_invocations fixes)
