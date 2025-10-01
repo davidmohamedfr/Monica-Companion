@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:monica_companion/features/calls/screens/calls_screen.dart';
-import 'package:monica_companion/features/contacts/screens/contacts_screen.dart';
+import 'package:monica_companion/features/contacts/screens/contacts_list_screen.dart';
 import 'package:monica_companion/features/navigation/widgets/bottom_navigation_bar.dart';
 import 'package:monica_companion/features/settings/screens/settings_screen.dart';
 import 'package:monica_companion/features/sync/screens/sync_screen.dart';
@@ -19,7 +19,7 @@ class _MainShellState extends State<MainShell> {
   Widget _getScreen(int index) {
     switch (index) {
       case 0:
-        return const ContactsScreen();
+        return const ContactsListScreen();
       case 1:
         return const CallsScreen();
       case 2:
@@ -27,7 +27,7 @@ class _MainShellState extends State<MainShell> {
       case 3:
         return const SyncScreen();
       default:
-        return const ContactsScreen();
+        return const ContactsListScreen();
     }
   }
 
