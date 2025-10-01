@@ -1,6 +1,5 @@
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:mocktail/mocktail.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:monica_companion/core/errors/exceptions.dart';
 import 'package:monica_companion/features/contacts/models/contact_model.dart';
