@@ -32,7 +32,6 @@ class ContactsServiceImpl implements ContactsService {
           name: 'Thomas Dupuis',
           phone: '+3360120000',
           email: 'thomas.dupuis0@example.com',
-          photoUrl: null, // Removed 404 placeholder
           isFavorite: true,
           lastContactedAt: DateTime.now().subtract(const Duration(days: 3)),
         ),
@@ -41,7 +40,6 @@ class ContactsServiceImpl implements ContactsService {
           name: 'Maya Dupuis',
           phone: '+3360120001',
           email: 'maya.dupuis1@example.com',
-          photoUrl: null, // Removed 404 placeholder
           isFavorite: true,
           lastContactedAt: DateTime.now().subtract(const Duration(days: 7)),
         ),
@@ -50,7 +48,6 @@ class ContactsServiceImpl implements ContactsService {
           name: 'Manon Weber',
           phone: '+3360120002',
           email: 'manon.weber2@example.com',
-          photoUrl: null, // Removed 404 placeholder
           lastContactedAt: DateTime.now().subtract(const Duration(days: 12)),
         ),
         Contact(
@@ -58,8 +55,6 @@ class ContactsServiceImpl implements ContactsService {
           name: 'Sabrina Dufour',
           phone: '+3360120003',
           email: 'sabrina.dufour3@example.com',
-          photoUrl: null, // Removed 404 placeholder
-          isFavorite: false,
           lastContactedAt: DateTime.now().subtract(const Duration(days: 20)),
         ),
         Contact(
@@ -67,7 +62,6 @@ class ContactsServiceImpl implements ContactsService {
           name: 'Julien Poirier',
           phone: '+3360120004',
           email: 'julien.poirier4@example.com',
-          photoUrl: null, // Removed 404 placeholder
           needsInteractionSoon: true,
           lastContactedAt: DateTime.now().subtract(const Duration(days: 45)),
         ),
@@ -76,7 +70,6 @@ class ContactsServiceImpl implements ContactsService {
           name: 'Claire Martin',
           phone: '+3360120005',
           email: 'claire.martin5@example.com',
-          photoUrl: null, // Removed 404 placeholder
           lastContactedAt: DateTime.now().subtract(const Duration(days: 8)),
         ),
         Contact(
@@ -84,7 +77,6 @@ class ContactsServiceImpl implements ContactsService {
           name: 'Lucas Bernard',
           phone: '+3360120006',
           email: 'lucas.bernard6@example.com',
-          photoUrl: null, // Removed 404 placeholder
           isFavorite: true,
           lastContactedAt: DateTime.now().subtract(const Duration(days: 2)),
         ),
@@ -93,7 +85,6 @@ class ContactsServiceImpl implements ContactsService {
           name: 'Emma Moreau',
           phone: '+3360120007',
           email: 'emma.moreau7@example.com',
-          photoUrl: null, // Removed 404 placeholder
           needsInteractionSoon: true,
           lastContactedAt: DateTime.now().subtract(const Duration(days: 60)),
         ),
@@ -102,7 +93,6 @@ class ContactsServiceImpl implements ContactsService {
           name: 'Hugo Petit',
           phone: '+3360120008',
           email: 'hugo.petit8@example.com',
-          photoUrl: null, // Removed 404 placeholder
           lastContactedAt: DateTime.now().subtract(const Duration(days: 15)),
         ),
         Contact(
@@ -110,7 +100,6 @@ class ContactsServiceImpl implements ContactsService {
           name: 'Louise Roux',
           phone: '+3360120009',
           email: 'louise.roux9@example.com',
-          photoUrl: null, // Removed 404 placeholder
           isFavorite: true,
           lastContactedAt: DateTime.now().subtract(const Duration(days: 5)),
         ),
@@ -128,7 +117,6 @@ class ContactsServiceImpl implements ContactsService {
           name: 'Camille Noir',
           phone: '+3360120011',
           email: 'camille.noir11@example.com',
-          isFavorite: false,
           lastContactedAt: DateTime.now().subtract(const Duration(days: 18)),
         ),
         Contact(
@@ -144,7 +132,6 @@ class ContactsServiceImpl implements ContactsService {
           phone: '+3360120013',
           email: 'ines.rouge13@example.com',
           isFavorite: true,
-          needsInteractionSoon: false,
           lastContactedAt: DateTime.now().subtract(const Duration(days: 4)),
         ),
         Contact(
@@ -191,7 +178,6 @@ class ContactsServiceImpl implements ContactsService {
           name: 'Yuki Tanaka',
           phone: '+81 3 1234 5678',
           email: 'yuki.tanaka@email.jp',
-          isFavorite: false,
           lastContactedAt: DateTime.now().subtract(const Duration(days: 14)),
         ),
       ];

@@ -21,9 +21,7 @@ void main() {
     late Contact bobSmith;
     late Contact aliceJohnson;
 
-    setUpAll(() {
-      TestHelpers.setupMockFallbacks();
-    });
+    setUpAll(TestHelpers.setupMockFallbacks);
 
     setUp(() {
       mockContactsService = MockContactsService();
@@ -46,7 +44,6 @@ void main() {
         name: 'Jane Doe',
         phone: '+0987654321',
         email: 'jane.doe@email.com',
-        isFavorite: false,
         lastContactedAt: now.subtract(const Duration(days: 10)),
       );
 
@@ -65,12 +62,10 @@ void main() {
         name: 'Alice Johnson',
         phone: '+5566778899',
         email: 'alice.johnson@domain.org',
-        isFavorite: false,
-        needsInteractionSoon: false,
         lastContactedAt: now.subtract(const Duration(days: 100)),
       );
 
-      testContacts = [johnDoe, janeDoe, bobSmith, aliceJohnson];
+      testContacts = <Contact>[johnDoe, janeDoe, bobSmith, aliceJohnson];
 
       // Setup default mock response
       when(
@@ -81,7 +76,7 @@ void main() {
     group('getContacts Tests', () {
       test('should return all contacts from service', () async {
         // Act
-        final result = await repository.getContacts();
+        final List<Contact> result = await repository.getContacts();
 
         // Assert
         expect(result, equals(testContacts));
@@ -96,17 +91,14 @@ void main() {
         ).thenThrow(Exception('Service error'));
 
         // Act & Assert
-        expect(
-          () async => await repository.getContacts(),
-          throwsA(isA<Exception>()),
-        );
+        expect(() async => repository.getContacts(), throwsA(isA<Exception>()));
       });
     });
 
     group('searchContacts Tests', () {
       test('should return all contacts when query is empty', () async {
         // Act
-        final result = await repository.searchContacts('');
+        final List<Contact> result = await repository.searchContacts('');
 
         // Assert
         expect(result, equals(testContacts));
@@ -117,7 +109,7 @@ void main() {
         'should return empty results when query is whitespace only',
         () async {
           // Act (whitespace query is not treated as empty by implementation)
-          final result = await repository.searchContacts('   ');
+          final List<Contact> result = await repository.searchContacts('   ');
 
           // Assert
           expect(result, isEmpty); // No contacts match whitespace
@@ -126,7 +118,7 @@ void main() {
 
       test('should search by name (case insensitive)', () async {
         // Act
-        final result = await repository.searchContacts('john');
+        final List<Contact> result = await repository.searchContacts('john');
 
         // Assert
         expect(result.length, equals(2));
@@ -136,7 +128,7 @@ void main() {
 
       test('should search by name with exact case', () async {
         // Act
-        final result = await repository.searchContacts('John');
+        final List<Contact> result = await repository.searchContacts('John');
 
         // Assert
         expect(result.length, equals(2));
@@ -146,7 +138,9 @@ void main() {
 
       test('should search by phone number', () async {
         // Act
-        final result = await repository.searchContacts('1234567890');
+        final List<Contact> result = await repository.searchContacts(
+          '1234567890',
+        );
 
         // Assert
         expect(result.length, equals(1));
@@ -155,7 +149,7 @@ void main() {
 
       test('should search by partial phone number', () async {
         // Act
-        final result = await repository.searchContacts('123');
+        final List<Contact> result = await repository.searchContacts('123');
 
         // Assert
         expect(result.length, equals(1));
@@ -165,7 +159,9 @@ void main() {
 
       test('should search by email address', () async {
         // Act
-        final result = await repository.searchContacts('jane.doe@email.com');
+        final List<Contact> result = await repository.searchContacts(
+          'jane.doe@email.com',
+        );
 
         // Assert
         expect(result.length, equals(1));
@@ -174,7 +170,9 @@ void main() {
 
       test('should search by email domain', () async {
         // Act
-        final result = await repository.searchContacts('email.com');
+        final List<Contact> result = await repository.searchContacts(
+          'email.com',
+        );
 
         // Assert
         expect(result.length, equals(2));
@@ -184,7 +182,9 @@ void main() {
 
       test('should handle special characters in search query', () async {
         // Act
-        final result = await repository.searchContacts('@company');
+        final List<Contact> result = await repository.searchContacts(
+          '@company',
+        );
 
         // Assert
         expect(result.length, equals(1));
@@ -193,7 +193,9 @@ void main() {
 
       test('should return empty list for non-matching query', () async {
         // Act
-        final result = await repository.searchContacts('nonexistent');
+        final List<Contact> result = await repository.searchContacts(
+          'nonexistent',
+        );
 
         // Assert
         expect(result, isEmpty);
@@ -201,19 +203,22 @@ void main() {
 
       test('should handle Unicode characters in search', () async {
         // Arrange
-        final unicodeContact = Contact(
+        const Contact unicodeContact = Contact(
           id: '5',
           name: 'José García',
           phone: '+34123456789',
           email: 'jose@example.com',
         );
-        final contactsWithUnicode = [...testContacts, unicodeContact];
+        final List<Contact> contactsWithUnicode = <Contact>[
+          ...testContacts,
+          unicodeContact,
+        ];
         when(
           () => mockContactsService.getDeviceContacts(),
         ).thenAnswer((_) async => contactsWithUnicode);
 
         // Act
-        final result = await repository.searchContacts('José');
+        final List<Contact> result = await repository.searchContacts('José');
 
         // Assert
         expect(result.length, equals(1));
@@ -222,18 +227,21 @@ void main() {
 
       test('should search contacts with null phone number', () async {
         // Arrange
-        final contactWithoutPhone = Contact(
+        const Contact contactWithoutPhone = Contact(
           id: '6',
           name: 'No Phone Contact',
           email: 'nophone@example.com',
         );
-        final modifiedContacts = [...testContacts, contactWithoutPhone];
+        final List<Contact> modifiedContacts = <Contact>[
+          ...testContacts,
+          contactWithoutPhone,
+        ];
         when(
           () => mockContactsService.getDeviceContacts(),
         ).thenAnswer((_) async => modifiedContacts);
 
         // Act
-        final result = await repository.searchContacts('nophone');
+        final List<Contact> result = await repository.searchContacts('nophone');
 
         // Assert
         expect(result.length, equals(1));
@@ -242,18 +250,23 @@ void main() {
 
       test('should search contacts with null email', () async {
         // Arrange
-        final contactWithoutEmail = Contact(
+        const Contact contactWithoutEmail = Contact(
           id: '7',
           name: 'No Email Contact',
           phone: '+9876543210',
         );
-        final modifiedContacts = [...testContacts, contactWithoutEmail];
+        final List<Contact> modifiedContacts = <Contact>[
+          ...testContacts,
+          contactWithoutEmail,
+        ];
         when(
           () => mockContactsService.getDeviceContacts(),
         ).thenAnswer((_) async => modifiedContacts);
 
         // Act
-        final result = await repository.searchContacts('9876543210');
+        final List<Contact> result = await repository.searchContacts(
+          '9876543210',
+        );
 
         // Assert
         expect(result.length, equals(1));
@@ -264,7 +277,9 @@ void main() {
     group('filterContacts Tests', () {
       test('should return all contacts for ContactFilter.all', () async {
         // Act
-        final result = await repository.filterContacts(ContactFilter.all);
+        final List<Contact> result = await repository.filterContacts(
+          ContactFilter.all,
+        );
 
         // Assert
         expect(result, equals(testContacts));
@@ -273,20 +288,22 @@ void main() {
 
       test('should filter favorite contacts only', () async {
         // Act
-        final result = await repository.filterContacts(ContactFilter.favorites);
+        final List<Contact> result = await repository.filterContacts(
+          ContactFilter.favorites,
+        );
 
         // Assert
         expect(result.length, equals(2));
         expect(result, contains(johnDoe));
         expect(result, contains(bobSmith));
-        expect(result.every((contact) => contact.isFavorite), isTrue);
+        expect(result.every((Contact contact) => contact.isFavorite), isTrue);
       });
 
       test(
         'should filter recently contacted contacts (within 30 days)',
         () async {
           // Act
-          final result = await repository.filterContacts(
+          final List<Contact> result = await repository.filterContacts(
             ContactFilter.recentlyContacted,
           );
 
@@ -300,7 +317,7 @@ void main() {
 
       test('should filter contacts needing interaction soon', () async {
         // Act
-        final result = await repository.filterContacts(
+        final List<Contact> result = await repository.filterContacts(
           ContactFilter.needsInteraction,
         );
 
@@ -314,14 +331,13 @@ void main() {
         'should handle contacts with null lastContactedAt for recently contacted filter',
         () async {
           // Arrange
-          final contactWithoutLastContacted = Contact(
+          const Contact contactWithoutLastContacted = Contact(
             id: '8',
             name: 'Never Contacted',
             phone: '+1111111111',
             email: 'never@example.com',
-            lastContactedAt: null,
           );
-          final modifiedContacts = [
+          final List<Contact> modifiedContacts = <Contact>[
             ...testContacts,
             contactWithoutLastContacted,
           ];
@@ -330,7 +346,7 @@ void main() {
           ).thenAnswer((_) async => modifiedContacts);
 
           // Act
-          final result = await repository.filterContacts(
+          final List<Contact> result = await repository.filterContacts(
             ContactFilter.recentlyContacted,
           );
 
@@ -344,21 +360,24 @@ void main() {
         'should handle edge case where lastContactedAt is close to 30 days',
         () async {
           // Arrange
-          final now = DateTime.now();
-          final twentyNineDaysAgo = Contact(
+          final DateTime now = DateTime.now();
+          final Contact twentyNineDaysAgo = Contact(
             id: '9',
             name: 'Twenty Nine Days Contact',
             phone: '+2222222222',
             email: 'twentynine@example.com',
             lastContactedAt: now.subtract(const Duration(days: 29)),
           );
-          final modifiedContacts = [...testContacts, twentyNineDaysAgo];
+          final List<Contact> modifiedContacts = <Contact>[
+            ...testContacts,
+            twentyNineDaysAgo,
+          ];
           when(
             () => mockContactsService.getDeviceContacts(),
           ).thenAnswer((_) async => modifiedContacts);
 
           // Act
-          final result = await repository.filterContacts(
+          final List<Contact> result = await repository.filterContacts(
             ContactFilter.recentlyContacted,
           );
 
@@ -369,21 +388,24 @@ void main() {
 
       test('should handle future lastContactedAt dates', () async {
         // Arrange
-        final now = DateTime.now();
-        final futureContact = Contact(
+        final DateTime now = DateTime.now();
+        final Contact futureContact = Contact(
           id: '10',
           name: 'Future Contact',
           phone: '+3333333333',
           email: 'future@example.com',
           lastContactedAt: now.add(const Duration(days: 5)),
         );
-        final modifiedContacts = [...testContacts, futureContact];
+        final List<Contact> modifiedContacts = <Contact>[
+          ...testContacts,
+          futureContact,
+        ];
         when(
           () => mockContactsService.getDeviceContacts(),
         ).thenAnswer((_) async => modifiedContacts);
 
         // Act
-        final result = await repository.filterContacts(
+        final List<Contact> result = await repository.filterContacts(
           ContactFilter.recentlyContacted,
         );
 
@@ -398,7 +420,7 @@ void main() {
     group('searchAndFilterContacts Tests', () {
       test('should combine search and filter correctly', () async {
         // Act - Search for "doe" and filter favorites
-        final result = await repository.searchAndFilterContacts(
+        final List<Contact> result = await repository.searchAndFilterContacts(
           'doe',
           ContactFilter.favorites,
         );
@@ -415,7 +437,7 @@ void main() {
         'should return empty when search and filter have no matches',
         () async {
           // Act - Search for "nonexistent" and filter favorites
-          final result = await repository.searchAndFilterContacts(
+          final List<Contact> result = await repository.searchAndFilterContacts(
             'nonexistent',
             ContactFilter.favorites,
           );
@@ -427,7 +449,7 @@ void main() {
 
       test('should handle empty search with filter', () async {
         // Act - Empty search with favorites filter
-        final result = await repository.searchAndFilterContacts(
+        final List<Contact> result = await repository.searchAndFilterContacts(
           '',
           ContactFilter.favorites,
         );
@@ -442,7 +464,7 @@ void main() {
         'should combine search by email with recently contacted filter',
         () async {
           // Act - Search by email domain and filter recently contacted
-          final result = await repository.searchAndFilterContacts(
+          final List<Contact> result = await repository.searchAndFilterContacts(
             'email.com',
             ContactFilter.recentlyContacted,
           );
@@ -458,7 +480,7 @@ void main() {
         'should combine search by phone with needsInteraction filter',
         () async {
           // Act - Search by phone and filter needs interaction
-          final result = await repository.searchAndFilterContacts(
+          final List<Contact> result = await repository.searchAndFilterContacts(
             '112233',
             ContactFilter.needsInteraction,
           );
@@ -471,7 +493,7 @@ void main() {
 
       test('should handle complex search with multiple filters', () async {
         // Act - Search for contacts with "smith" that are favorites
-        final result = await repository.searchAndFilterContacts(
+        final List<Contact> result = await repository.searchAndFilterContacts(
           'smith',
           ContactFilter.favorites,
         );
@@ -485,7 +507,7 @@ void main() {
         'should be case insensitive for search combined with filter',
         () async {
           // Act - Case insensitive search with filter
-          final result = await repository.searchAndFilterContacts(
+          final List<Contact> result = await repository.searchAndFilterContacts(
             'JOHN',
             ContactFilter.favorites,
           );
@@ -505,7 +527,7 @@ void main() {
         ).thenAnswer((_) async => <Contact>[]);
 
         // Act
-        final result = await repository.getContacts();
+        final List<Contact> result = await repository.getContacts();
 
         // Assert
         expect(result, isEmpty);
@@ -519,7 +541,7 @@ void main() {
 
         // Act & Assert
         expect(
-          () async => await repository.searchContacts('test'),
+          () async => repository.searchContacts('test'),
           throwsA(isA<Exception>()),
         );
       });
@@ -532,17 +554,17 @@ void main() {
 
         // Act & Assert
         expect(
-          () async => await repository.filterContacts(ContactFilter.favorites),
+          () async => repository.filterContacts(ContactFilter.favorites),
           throwsA(isA<Exception>()),
         );
       });
 
       test('should handle very long search queries', () async {
         // Arrange
-        final longQuery = 'a' * 1000;
+        final String longQuery = 'a' * 1000;
 
         // Act
-        final result = await repository.searchContacts(longQuery);
+        final List<Contact> result = await repository.searchContacts(longQuery);
 
         // Assert
         expect(result, isEmpty); // Should not crash
@@ -550,7 +572,9 @@ void main() {
 
       test('should handle search with only special characters', () async {
         // Act
-        final result = await repository.searchContacts('!@#\$%^&*()');
+        final List<Contact> result = await repository.searchContacts(
+          r'!@#$%^&*()',
+        );
 
         // Assert
         expect(result, isEmpty); // Should not crash
@@ -558,19 +582,24 @@ void main() {
 
       test('should handle contacts with empty names gracefully', () async {
         // Arrange
-        final contactWithEmptyName = Contact(
+        const Contact contactWithEmptyName = Contact(
           id: '11',
           name: '',
           phone: '+4444444444',
           email: 'empty@example.com',
         );
-        final modifiedContacts = [...testContacts, contactWithEmptyName];
+        final List<Contact> modifiedContacts = <Contact>[
+          ...testContacts,
+          contactWithEmptyName,
+        ];
         when(
           () => mockContactsService.getDeviceContacts(),
         ).thenAnswer((_) async => modifiedContacts);
 
         // Act
-        final result = await repository.searchContacts('4444444444');
+        final List<Contact> result = await repository.searchContacts(
+          '4444444444',
+        );
 
         // Assert
         expect(result.length, equals(1));
@@ -581,9 +610,9 @@ void main() {
     group('Performance and Large Dataset Tests', () {
       test('should handle large number of contacts efficiently', () async {
         // Arrange
-        final largeContactList = List.generate(
+        final List<Contact> largeContactList = List<Contact>.generate(
           1000,
-          (index) => Contact(
+          (int index) => Contact(
             id: 'large_$index',
             name: 'Contact $index',
             phone: '+${1000000000 + index}',
@@ -596,8 +625,10 @@ void main() {
         ).thenAnswer((_) async => largeContactList);
 
         // Act
-        final stopwatch = Stopwatch()..start();
-        final result = await repository.searchContacts('Contact 5');
+        final Stopwatch stopwatch = Stopwatch()..start();
+        final List<Contact> result = await repository.searchContacts(
+          'Contact 5',
+        );
         stopwatch.stop();
 
         // Assert
@@ -607,9 +638,9 @@ void main() {
 
       test('should handle large dataset filtering efficiently', () async {
         // Arrange
-        final largeContactList = List.generate(
+        final List<Contact> largeContactList = List<Contact>.generate(
           1000,
-          (index) => Contact(
+          (int index) => Contact(
             id: 'large_$index',
             name: 'Contact $index',
             phone: '+${1000000000 + index}',
@@ -622,11 +653,13 @@ void main() {
         ).thenAnswer((_) async => largeContactList);
 
         // Act
-        final result = await repository.filterContacts(ContactFilter.favorites);
+        final List<Contact> result = await repository.filterContacts(
+          ContactFilter.favorites,
+        );
 
         // Assert
         expect(result.length, equals(100)); // Should find 100 favorites
-        expect(result.every((contact) => contact.isFavorite), isTrue);
+        expect(result.every((Contact contact) => contact.isFavorite), isTrue);
       });
     });
   });
