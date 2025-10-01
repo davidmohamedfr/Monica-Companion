@@ -27,7 +27,7 @@ class SqliteNoteRepository extends BaseRepository<Note, int>
         <dynamic>[contactId],
       );
       return results.map(fromMap).toList();
-    } catch (e) {
+    } on Object catch (e) {
       final Failure failure = ErrorTransformer.transformException(
         e,
         'finding notes by contact ID',
@@ -54,7 +54,7 @@ class SqliteNoteRepository extends BaseRepository<Note, int>
         <dynamic>[category],
       );
       return results.map(fromMap).toList();
-    } catch (e) {
+    } on Object catch (e) {
       final Failure failure = ErrorTransformer.transformException(
         e,
         'finding notes by category',
@@ -78,7 +78,7 @@ class SqliteNoteRepository extends BaseRepository<Note, int>
       ''';
       final List<Map<String, dynamic>> results = await database.rawQuery(sql);
       return results.map(fromMap).toList();
-    } catch (e) {
+    } on Object catch (e) {
       final Failure failure = ErrorTransformer.transformException(
         e,
         'finding private notes',
@@ -102,7 +102,7 @@ class SqliteNoteRepository extends BaseRepository<Note, int>
       ''';
       final List<Map<String, dynamic>> results = await database.rawQuery(sql);
       return results.map(fromMap).toList();
-    } catch (e) {
+    } on Object catch (e) {
       final Failure failure = ErrorTransformer.transformException(
         e,
         'finding public notes',
@@ -130,7 +130,7 @@ class SqliteNoteRepository extends BaseRepository<Note, int>
         <dynamic>[searchPattern],
       );
       return results.map(fromMap).toList();
-    } catch (e) {
+    } on Object catch (e) {
       final Failure failure = ErrorTransformer.transformException(
         e,
         'searching notes by content',
@@ -159,7 +159,7 @@ class SqliteNoteRepository extends BaseRepository<Note, int>
         <dynamic>[cutoffString, cutoffString],
       );
       return results.map(fromMap).toList();
-    } catch (e) {
+    } on Object catch (e) {
       final Failure failure = ErrorTransformer.transformException(
         e,
         'finding recent notes',
@@ -188,7 +188,7 @@ class SqliteNoteRepository extends BaseRepository<Note, int>
         <dynamic>[startString, endString, startString, endString],
       );
       return results.map(fromMap).toList();
-    } catch (e) {
+    } on Object catch (e) {
       final Failure failure = ErrorTransformer.transformException(
         e,
         'finding notes by date range',
@@ -214,7 +214,7 @@ class SqliteNoteRepository extends BaseRepository<Note, int>
         <dynamic>[contactId],
       );
       return results.first['count'] as int;
-    } catch (e) {
+    } on Object catch (e) {
       final Failure failure = ErrorTransformer.transformException(
         e,
         'counting notes by contact ID',
@@ -246,7 +246,7 @@ class SqliteNoteRepository extends BaseRepository<Note, int>
         return null;
       }
       return fromMap(results.first);
-    } catch (e) {
+    } on Object catch (e) {
       final Failure failure = ErrorTransformer.transformException(
         e,
         'finding most recent note by contact ID',

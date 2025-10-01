@@ -28,7 +28,7 @@ class SqliteInteractionRepository extends BaseRepository<Interaction, int>
         <dynamic>[contactId],
       );
       return results.map(fromMap).toList();
-    } catch (e) {
+    } on Object catch (e) {
       final Failure failure = ErrorTransformer.transformException(
         e,
         'finding interactions by contact ID',
@@ -55,7 +55,7 @@ class SqliteInteractionRepository extends BaseRepository<Interaction, int>
         <dynamic>[type],
       );
       return results.map(fromMap).toList();
-    } catch (e) {
+    } on Object catch (e) {
       final Failure failure = ErrorTransformer.transformException(
         e,
         'finding interactions by type',
@@ -85,7 +85,7 @@ class SqliteInteractionRepository extends BaseRepository<Interaction, int>
         <dynamic>[start.toIso8601String(), end.toIso8601String()],
       );
       return results.map(fromMap).toList();
-    } catch (e) {
+    } on Object catch (e) {
       final Failure failure = ErrorTransformer.transformException(
         e,
         'finding interactions by date range',
@@ -113,7 +113,7 @@ class SqliteInteractionRepository extends BaseRepository<Interaction, int>
         <dynamic>[cutoffDate.toIso8601String()],
       );
       return results.map(fromMap).toList();
-    } catch (e) {
+    } on Object catch (e) {
       final Failure failure = ErrorTransformer.transformException(
         e,
         'finding recent interactions',
@@ -139,7 +139,7 @@ class SqliteInteractionRepository extends BaseRepository<Interaction, int>
         <dynamic>[contactId],
       );
       return results.first['count'] as int;
-    } catch (e) {
+    } on Object catch (e) {
       final Failure failure = ErrorTransformer.transformException(
         e,
         'counting interactions by contact ID',
@@ -171,7 +171,7 @@ class SqliteInteractionRepository extends BaseRepository<Interaction, int>
         return null;
       }
       return fromMap(results.first);
-    } catch (e) {
+    } on Object catch (e) {
       final Failure failure = ErrorTransformer.transformException(
         e,
         'finding last interaction by contact ID',
