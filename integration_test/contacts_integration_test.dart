@@ -207,7 +207,8 @@ void main() {
         'hasLoadingIndicator=$hasLoadingIndicator, hasText=$hasText',
       );
 
-      // The app should be in one of these states or at least display the contacts screen
+      // The app should be in one of these states or at least
+      // display the contacts screen
       expect(
         hasContacts ||
             hasError ||

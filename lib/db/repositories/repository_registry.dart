@@ -100,7 +100,8 @@ class RepositoryRegistry {
   /// Initialize all repositories
   Future<void> initialize() async {
     // Database is already initialized by DatabaseModule
-    // This method can be used for any setup that needs to happen after database init
+    // This method can be used for any setup that needs to happen
+    // after database init
   }
 
   /// Dispose of all repository instances
