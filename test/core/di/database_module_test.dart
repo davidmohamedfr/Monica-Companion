@@ -128,10 +128,9 @@ void main() {
       // Expected: DatabaseInterface + RepositoryRegistry
 
       // Simulate registering all dependencies
-      mockServiceLocator.registerSingleton<DatabaseInterface>(mockDatabase);
-      mockServiceLocator.registerSingleton<RepositoryRegistry>(
-        mockRepositoryRegistry,
-      );
+      mockServiceLocator
+        ..registerSingleton<DatabaseInterface>(mockDatabase)
+        ..registerSingleton<RepositoryRegistry>(mockRepositoryRegistry);
 
       verify(
         () => mockServiceLocator.registerSingleton<DatabaseInterface>(any()),
@@ -160,10 +159,9 @@ void main() {
       // Test successful initialization flow
       await mockDatabase.initialize();
       await mockRepositoryRegistry.initialize();
-      mockServiceLocator.registerSingleton<DatabaseInterface>(mockDatabase);
-      mockServiceLocator.registerSingleton<RepositoryRegistry>(
-        mockRepositoryRegistry,
-      );
+      mockServiceLocator
+        ..registerSingleton<DatabaseInterface>(mockDatabase)
+        ..registerSingleton<RepositoryRegistry>(mockRepositoryRegistry);
 
       // Verify all initialization steps completed
       verify(() => mockDatabase.initialize()).called(1);
@@ -298,10 +296,9 @@ void main() {
       WidgetTester tester,
     ) async {
       // Test type-safe service registration
-      mockServiceLocator.registerSingleton<DatabaseInterface>(mockDatabase);
-      mockServiceLocator.registerSingleton<RepositoryRegistry>(
-        mockRepositoryRegistry,
-      );
+      mockServiceLocator
+        ..registerSingleton<DatabaseInterface>(mockDatabase)
+        ..registerSingleton<RepositoryRegistry>(mockRepositoryRegistry);
 
       // Verify services were registered with correct generic types
       verify(
@@ -442,10 +439,9 @@ void main() {
       // Initialization phase
       await mockDatabase.initialize();
       await mockRepositoryRegistry.initialize();
-      mockServiceLocator.registerSingleton<DatabaseInterface>(mockDatabase);
-      mockServiceLocator.registerSingleton<RepositoryRegistry>(
-        mockRepositoryRegistry,
-      );
+      mockServiceLocator
+        ..registerSingleton<DatabaseInterface>(mockDatabase)
+        ..registerSingleton<RepositoryRegistry>(mockRepositoryRegistry);
 
       // Usage phase (simulated by service retrieval)
       final RepositoryRegistry registry = mockServiceLocator
