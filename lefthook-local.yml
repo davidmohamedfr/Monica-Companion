@@ -7,7 +7,7 @@ pre-commit:
     # AIDD/Public separation validation
     aidd-validation:
       tags: quality
-      run: ./scripts/validate-commit.sh --pre-commit
+      run: ./aidd-docs/scripts/validate-commit.sh --pre-commit
       fail_text: |
         ❌ AIDD/Public separation validation failed!
         💡 Fix file categorization and commit message format
