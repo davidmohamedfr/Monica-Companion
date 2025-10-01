@@ -28,7 +28,7 @@ class SqliteLifeEventRepository extends BaseRepository<LifeEvent, int>
         <dynamic>[contactId],
       );
       return results.map(fromMap).toList();
-    } catch (e) {
+    } on Object catch (e) {
       final Failure failure = ErrorTransformer.transformException(
         e,
         'finding life events by contact ID',
@@ -55,7 +55,7 @@ class SqliteLifeEventRepository extends BaseRepository<LifeEvent, int>
         <dynamic>[eventType],
       );
       return results.map(fromMap).toList();
-    } catch (e) {
+    } on Object catch (e) {
       final Failure failure = ErrorTransformer.transformException(
         e,
         'finding life events by event type',
@@ -82,7 +82,7 @@ class SqliteLifeEventRepository extends BaseRepository<LifeEvent, int>
         <dynamic>[start.toIso8601String(), end.toIso8601String()],
       );
       return results.map(fromMap).toList();
-    } catch (e) {
+    } on Object catch (e) {
       final Failure failure = ErrorTransformer.transformException(
         e,
         'finding life events by date range',
@@ -109,7 +109,7 @@ class SqliteLifeEventRepository extends BaseRepository<LifeEvent, int>
         <dynamic>[importance],
       );
       return results.map(fromMap).toList();
-    } catch (e) {
+    } on Object catch (e) {
       final Failure failure = ErrorTransformer.transformException(
         e,
         'finding life events by importance',
@@ -140,7 +140,7 @@ class SqliteLifeEventRepository extends BaseRepository<LifeEvent, int>
         <dynamic>[now.toIso8601String(), futureDate.toIso8601String()],
       );
       return results.map(fromMap).toList();
-    } catch (e) {
+    } on Object catch (e) {
       final Failure failure = ErrorTransformer.transformException(
         e,
         'finding upcoming life events',
@@ -170,7 +170,7 @@ class SqliteLifeEventRepository extends BaseRepository<LifeEvent, int>
         <dynamic>[minImportance, maxImportance],
       );
       return results.map(fromMap).toList();
-    } catch (e) {
+    } on Object catch (e) {
       final Failure failure = ErrorTransformer.transformException(
         e,
         'finding life events by importance range',
@@ -196,7 +196,7 @@ class SqliteLifeEventRepository extends BaseRepository<LifeEvent, int>
         <dynamic>[contactId],
       );
       return results.first['count'] as int;
-    } catch (e) {
+    } on Object catch (e) {
       final Failure failure = ErrorTransformer.transformException(
         e,
         'counting life events by contact ID',

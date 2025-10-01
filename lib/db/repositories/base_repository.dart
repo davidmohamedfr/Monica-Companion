@@ -29,7 +29,7 @@ abstract class BaseRepository<T extends BaseModel, ID>
 
       final int id = await database.rawInsert(sql, map.values.toList());
       return id as ID;
-    } catch (e) {
+    } on Object catch (e) {
       Logger.error('Failed to insert entity in $tableName', error: e);
       throw DatabaseException('Failed to insert entity: $e');
     }
@@ -62,7 +62,7 @@ abstract class BaseRepository<T extends BaseModel, ID>
 
       final int id = await txn.rawInsert(sql, map.values.toList());
       return id as ID;
-    } catch (e) {
+    } on Object catch (e) {
       Logger.error('Failed to insert entity in $tableName', error: e);
       throw DatabaseException('Failed to insert entity: $e');
     }
@@ -86,7 +86,7 @@ abstract class BaseRepository<T extends BaseModel, ID>
 
       final int rowsAffected = await database.rawExecute(sql, values);
       return rowsAffected > 0;
-    } catch (e) {
+    } on Object catch (e) {
       Logger.error('Failed to update entity in $tableName', error: e);
       throw DatabaseException('Failed to update entity: $e');
     }
@@ -98,7 +98,7 @@ abstract class BaseRepository<T extends BaseModel, ID>
       final String sql = 'DELETE FROM $tableName WHERE id = ?';
       final int rowsAffected = await database.rawExecute(sql, <dynamic>[id]);
       return rowsAffected > 0;
-    } catch (e) {
+    } on Object catch (e) {
       Logger.error('Failed to delete entity from $tableName', error: e);
       throw DatabaseException('Failed to delete entity: $e');
     }
@@ -114,7 +114,7 @@ abstract class BaseRepository<T extends BaseModel, ID>
       final String placeholders = ids.map((_) => '?').join(', ');
       final String sql = 'DELETE FROM $tableName WHERE id IN ($placeholders)';
       return await database.rawExecute(sql, ids);
-    } catch (e) {
+    } on Object catch (e) {
       Logger.error('Failed to delete entities from $tableName', error: e);
       throw DatabaseException('Failed to delete entities: $e');
     }
@@ -133,7 +133,7 @@ abstract class BaseRepository<T extends BaseModel, ID>
         return null;
       }
       return fromMap(results.first);
-    } catch (e) {
+    } on Object catch (e) {
       Logger.error('Failed to find entity by ID in $tableName', error: e);
       throw DatabaseException('Failed to find entity: $e');
     }
@@ -146,7 +146,7 @@ abstract class BaseRepository<T extends BaseModel, ID>
       final List<Map<String, dynamic>> results = await database.rawQuery(sql);
 
       return results.map(fromMap).toList();
-    } catch (e) {
+    } on Object catch (e) {
       Logger.error('Failed to find all entities in $tableName', error: e);
       throw DatabaseException('Failed to find entities: $e');
     }
@@ -158,7 +158,7 @@ abstract class BaseRepository<T extends BaseModel, ID>
       final String sql = 'SELECT COUNT(*) as count FROM $tableName';
       final List<Map<String, dynamic>> results = await database.rawQuery(sql);
       return results.first['count'] as int;
-    } catch (e) {
+    } on Object catch (e) {
       Logger.error('Failed to count entities in $tableName', error: e);
       throw DatabaseException('Failed to count entities: $e');
     }
@@ -173,7 +173,7 @@ abstract class BaseRepository<T extends BaseModel, ID>
         <dynamic>[id],
       );
       return results.isNotEmpty;
-    } catch (e) {
+    } on Object catch (e) {
       Logger.error('Failed to check entity existence in $tableName', error: e);
       throw DatabaseException('Failed to check entity existence: $e');
     }
@@ -184,7 +184,7 @@ abstract class BaseRepository<T extends BaseModel, ID>
     try {
       final String sql = 'DELETE FROM $tableName';
       await database.rawExecute(sql);
-    } catch (e) {
+    } on Object catch (e) {
       Logger.error('Failed to clear entities from $tableName', error: e);
       throw DatabaseException('Failed to clear entities: $e');
     }

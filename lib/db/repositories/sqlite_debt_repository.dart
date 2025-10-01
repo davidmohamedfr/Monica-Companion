@@ -27,7 +27,7 @@ class SqliteDebtRepository extends BaseRepository<Debt, int>
         <dynamic>[contactId],
       );
       return results.map(fromMap).toList();
-    } catch (e) {
+    } on Object catch (e) {
       final Failure failure = ErrorTransformer.transformException(
         e,
         'finding debts by contact ID',
@@ -54,7 +54,7 @@ class SqliteDebtRepository extends BaseRepository<Debt, int>
         <dynamic>[type.value],
       );
       return results.map(fromMap).toList();
-    } catch (e) {
+    } on Object catch (e) {
       final Failure failure = ErrorTransformer.transformException(
         e,
         'finding debts by type',
@@ -78,7 +78,7 @@ class SqliteDebtRepository extends BaseRepository<Debt, int>
       ''';
       final List<Map<String, dynamic>> results = await database.rawQuery(sql);
       return results.map(fromMap).toList();
-    } catch (e) {
+    } on Object catch (e) {
       final Failure failure = ErrorTransformer.transformException(
         e,
         'finding unpaid debts',
@@ -102,7 +102,7 @@ class SqliteDebtRepository extends BaseRepository<Debt, int>
       ''';
       final List<Map<String, dynamic>> results = await database.rawQuery(sql);
       return results.map(fromMap).toList();
-    } catch (e) {
+    } on Object catch (e) {
       final Failure failure = ErrorTransformer.transformException(
         e,
         'finding paid debts',
@@ -132,7 +132,7 @@ class SqliteDebtRepository extends BaseRepository<Debt, int>
         <dynamic>[minAmount, maxAmount],
       );
       return results.map(fromMap).toList();
-    } catch (e) {
+    } on Object catch (e) {
       final Failure failure = ErrorTransformer.transformException(
         e,
         'finding debts by amount range',
@@ -159,7 +159,7 @@ class SqliteDebtRepository extends BaseRepository<Debt, int>
         <dynamic>[start.toIso8601String(), end.toIso8601String()],
       );
       return results.map(fromMap).toList();
-    } catch (e) {
+    } on Object catch (e) {
       final Failure failure = ErrorTransformer.transformException(
         e,
         'finding debts by date range',
@@ -186,7 +186,7 @@ class SqliteDebtRepository extends BaseRepository<Debt, int>
         <dynamic>[currency],
       );
       return results.map(fromMap).toList();
-    } catch (e) {
+    } on Object catch (e) {
       final Failure failure = ErrorTransformer.transformException(
         e,
         'finding debts by currency',
@@ -212,7 +212,7 @@ class SqliteDebtRepository extends BaseRepository<Debt, int>
         <dynamic>[contactId],
       );
       return results.first['count'] as int;
-    } catch (e) {
+    } on Object catch (e) {
       final Failure failure = ErrorTransformer.transformException(
         e,
         'counting debts by contact ID',
@@ -238,7 +238,7 @@ class SqliteDebtRepository extends BaseRepository<Debt, int>
         <dynamic>[contactId, DebtType.owedToMe.value],
       );
       return (results.first['total'] as num).toDouble();
-    } catch (e) {
+    } on Object catch (e) {
       final Failure failure = ErrorTransformer.transformException(
         e,
         'getting total owed to me by contact ID',
@@ -264,7 +264,7 @@ class SqliteDebtRepository extends BaseRepository<Debt, int>
         <dynamic>[contactId, DebtType.iOwe.value],
       );
       return (results.first['total'] as num).toDouble();
-    } catch (e) {
+    } on Object catch (e) {
       final Failure failure = ErrorTransformer.transformException(
         e,
         'getting total I owe by contact ID',
@@ -290,7 +290,7 @@ class SqliteDebtRepository extends BaseRepository<Debt, int>
         <dynamic>[contactId],
       );
       return (results.first['total'] as num).toDouble();
-    } catch (e) {
+    } on Object catch (e) {
       final Failure failure = ErrorTransformer.transformException(
         e,
         'getting total unpaid by contact ID',

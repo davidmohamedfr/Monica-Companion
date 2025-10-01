@@ -28,7 +28,7 @@ class SqliteContactRepository extends BaseRepository<Contact, int>
         <dynamic>['%$name%'],
       );
       return results.map(fromMap).toList();
-    } catch (e) {
+    } on Object catch (e) {
       final Failure failure = ErrorTransformer.transformException(
         e,
         'finding contacts by name',
@@ -55,7 +55,7 @@ class SqliteContactRepository extends BaseRepository<Contact, int>
         <dynamic>[email],
       );
       return results.map(fromMap).toList();
-    } catch (e) {
+    } on Object catch (e) {
       final Failure failure = ErrorTransformer.transformException(
         e,
         'finding contacts by email',
@@ -83,7 +83,7 @@ class SqliteContactRepository extends BaseRepository<Contact, int>
         <dynamic>[monthStr],
       );
       return results.map(fromMap).toList();
-    } catch (e) {
+    } on Object catch (e) {
       final Failure failure = ErrorTransformer.transformException(
         e,
         'finding contacts by birthday month',
@@ -128,7 +128,7 @@ class SqliteContactRepository extends BaseRepository<Contact, int>
             now.toIso8601String(),
           ]);
       return results.map(fromMap).toList();
-    } catch (e) {
+    } on Object catch (e) {
       final Failure failure = ErrorTransformer.transformException(
         e,
         'finding upcoming birthdays',
@@ -156,7 +156,7 @@ class SqliteContactRepository extends BaseRepository<Contact, int>
         <dynamic>[searchPattern, searchPattern, searchPattern],
       );
       return results.map(fromMap).toList();
-    } catch (e) {
+    } on Object catch (e) {
       final Failure failure = ErrorTransformer.transformException(
         e,
         'searching contacts',

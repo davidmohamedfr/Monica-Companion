@@ -28,7 +28,7 @@ class SqliteReminderRepository extends BaseRepository<Reminder, int>
         <dynamic>[contactId],
       );
       return results.map(fromMap).toList();
-    } catch (e) {
+    } on Object catch (e) {
       final Failure failure = ErrorTransformer.transformException(
         e,
         'finding reminders by contact ID',
@@ -52,7 +52,7 @@ class SqliteReminderRepository extends BaseRepository<Reminder, int>
       ''';
       final List<Map<String, dynamic>> results = await database.rawQuery(sql);
       return results.map(fromMap).toList();
-    } catch (e) {
+    } on Object catch (e) {
       final Failure failure = ErrorTransformer.transformException(
         e,
         'finding active reminders',
@@ -76,7 +76,7 @@ class SqliteReminderRepository extends BaseRepository<Reminder, int>
       ''';
       final List<Map<String, dynamic>> results = await database.rawQuery(sql);
       return results.map(fromMap).toList();
-    } catch (e) {
+    } on Object catch (e) {
       final Failure failure = ErrorTransformer.transformException(
         e,
         'finding inactive reminders',
@@ -103,7 +103,7 @@ class SqliteReminderRepository extends BaseRepository<Reminder, int>
         <dynamic>[frequency.value],
       );
       return results.map(fromMap).toList();
-    } catch (e) {
+    } on Object catch (e) {
       final Failure failure = ErrorTransformer.transformException(
         e,
         'finding reminders by frequency',
@@ -131,7 +131,7 @@ class SqliteReminderRepository extends BaseRepository<Reminder, int>
         <dynamic>[now.toIso8601String()],
       );
       return results.map(fromMap).toList();
-    } catch (e) {
+    } on Object catch (e) {
       final Failure failure = ErrorTransformer.transformException(
         e,
         'finding overdue reminders',
@@ -162,7 +162,7 @@ class SqliteReminderRepository extends BaseRepository<Reminder, int>
         <dynamic>[now.toIso8601String(), futureDate.toIso8601String()],
       );
       return results.map(fromMap).toList();
-    } catch (e) {
+    } on Object catch (e) {
       final Failure failure = ErrorTransformer.transformException(
         e,
         'finding upcoming reminders',
@@ -189,7 +189,7 @@ class SqliteReminderRepository extends BaseRepository<Reminder, int>
         <dynamic>[start.toIso8601String(), end.toIso8601String()],
       );
       return results.map(fromMap).toList();
-    } catch (e) {
+    } on Object catch (e) {
       final Failure failure = ErrorTransformer.transformException(
         e,
         'finding reminders by date range',
@@ -217,7 +217,7 @@ class SqliteReminderRepository extends BaseRepository<Reminder, int>
         <dynamic>[searchPattern],
       );
       return results.map(fromMap).toList();
-    } catch (e) {
+    } on Object catch (e) {
       final Failure failure = ErrorTransformer.transformException(
         e,
         'finding reminders by title',
@@ -243,7 +243,7 @@ class SqliteReminderRepository extends BaseRepository<Reminder, int>
         <dynamic>[contactId],
       );
       return results.first['count'] as int;
-    } catch (e) {
+    } on Object catch (e) {
       final Failure failure = ErrorTransformer.transformException(
         e,
         'counting reminders by contact ID',
@@ -269,7 +269,7 @@ class SqliteReminderRepository extends BaseRepository<Reminder, int>
         <dynamic>[contactId],
       );
       return results.first['count'] as int;
-    } catch (e) {
+    } on Object catch (e) {
       final Failure failure = ErrorTransformer.transformException(
         e,
         'counting active reminders by contact ID',
@@ -302,7 +302,7 @@ class SqliteReminderRepository extends BaseRepository<Reminder, int>
         return null;
       }
       return fromMap(results.first);
-    } catch (e) {
+    } on Object catch (e) {
       final Failure failure = ErrorTransformer.transformException(
         e,
         'finding next due reminder by contact ID',

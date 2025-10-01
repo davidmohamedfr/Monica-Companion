@@ -32,7 +32,7 @@ class MigrationRunner {
       if (result.isNotEmpty) {
         return result.first['version'] as int;
       }
-    } catch (e) {
+    } on Object catch (e) {
       // Schema version table doesn't exist yet
     }
 
@@ -55,7 +55,8 @@ class MigrationRunner {
   /// Update the schema version
   Future<void> _updateVersion(int version) async {
     await _database.rawExecute(
-      'INSERT OR REPLACE INTO schema_version (version, migrated_at) VALUES (?, ?)',
+      'INSERT OR REPLACE INTO schema_version '
+      '(version, migrated_at) VALUES (?, ?)',
       <dynamic>[version, DateTime.now().toIso8601String()],
     );
   }

@@ -27,7 +27,7 @@ class SqliteTaskRepository extends BaseRepository<Task, int>
         <dynamic>[contactId],
       );
       return results.map(fromMap).toList();
-    } catch (e) {
+    } on Object catch (e) {
       final Failure failure = ErrorTransformer.transformException(
         e,
         'finding tasks by contact ID',
@@ -51,7 +51,7 @@ class SqliteTaskRepository extends BaseRepository<Task, int>
       ''';
       final List<Map<String, dynamic>> results = await database.rawQuery(sql);
       return results.map(fromMap).toList();
-    } catch (e) {
+    } on Object catch (e) {
       final Failure failure = ErrorTransformer.transformException(
         e,
         'finding completed tasks',
@@ -75,7 +75,7 @@ class SqliteTaskRepository extends BaseRepository<Task, int>
       ''';
       final List<Map<String, dynamic>> results = await database.rawQuery(sql);
       return results.map(fromMap).toList();
-    } catch (e) {
+    } on Object catch (e) {
       final Failure failure = ErrorTransformer.transformException(
         e,
         'finding pending tasks',
@@ -102,7 +102,7 @@ class SqliteTaskRepository extends BaseRepository<Task, int>
         <dynamic>[priority],
       );
       return results.map(fromMap).toList();
-    } catch (e) {
+    } on Object catch (e) {
       final Failure failure = ErrorTransformer.transformException(
         e,
         'finding tasks by priority',
@@ -130,7 +130,7 @@ class SqliteTaskRepository extends BaseRepository<Task, int>
         <dynamic>[now.toIso8601String()],
       );
       return results.map(fromMap).toList();
-    } catch (e) {
+    } on Object catch (e) {
       final Failure failure = ErrorTransformer.transformException(
         e,
         'finding overdue tasks',
@@ -157,7 +157,7 @@ class SqliteTaskRepository extends BaseRepository<Task, int>
         <dynamic>[start.toIso8601String(), end.toIso8601String()],
       );
       return results.map(fromMap).toList();
-    } catch (e) {
+    } on Object catch (e) {
       final Failure failure = ErrorTransformer.transformException(
         e,
         'finding tasks by date range',
@@ -187,7 +187,7 @@ class SqliteTaskRepository extends BaseRepository<Task, int>
         <dynamic>[minPriority, maxPriority],
       );
       return results.map(fromMap).toList();
-    } catch (e) {
+    } on Object catch (e) {
       final Failure failure = ErrorTransformer.transformException(
         e,
         'finding tasks by priority range',
@@ -218,7 +218,7 @@ class SqliteTaskRepository extends BaseRepository<Task, int>
         <dynamic>[now.toIso8601String(), futureDate.toIso8601String()],
       );
       return results.map(fromMap).toList();
-    } catch (e) {
+    } on Object catch (e) {
       final Failure failure = ErrorTransformer.transformException(
         e,
         'finding upcoming tasks',
@@ -244,7 +244,7 @@ class SqliteTaskRepository extends BaseRepository<Task, int>
         <dynamic>[contactId],
       );
       return results.first['count'] as int;
-    } catch (e) {
+    } on Object catch (e) {
       final Failure failure = ErrorTransformer.transformException(
         e,
         'counting tasks by contact ID',
@@ -270,7 +270,7 @@ class SqliteTaskRepository extends BaseRepository<Task, int>
         <dynamic>[contactId],
       );
       return results.first['count'] as int;
-    } catch (e) {
+    } on Object catch (e) {
       final Failure failure = ErrorTransformer.transformException(
         e,
         'counting completed tasks by contact ID',
@@ -296,7 +296,7 @@ class SqliteTaskRepository extends BaseRepository<Task, int>
         <dynamic>[contactId],
       );
       return results.first['count'] as int;
-    } catch (e) {
+    } on Object catch (e) {
       final Failure failure = ErrorTransformer.transformException(
         e,
         'counting pending tasks by contact ID',
