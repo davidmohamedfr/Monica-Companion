@@ -1,5 +1,6 @@
 import 'package:monica_companion/core/di/database_module.dart';
 import 'package:monica_companion/core/utils/logger.dart';
+import 'package:monica_companion/features/contacts/di/contacts_dependencies.dart';
 
 /// Service responsible for initializing the application
 class AppInitializationService {
@@ -24,6 +25,9 @@ class AppInitializationService {
 
       // Initialize database and dependencies
       await DatabaseModule.initialize();
+
+      // Initialize feature dependencies
+      await ContactsDependencies.registerDependencies();
 
       _isInitialized = true;
       Logger.info('App initialization completed successfully');
