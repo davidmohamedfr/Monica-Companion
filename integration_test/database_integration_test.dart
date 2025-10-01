@@ -324,8 +324,9 @@ void main() {
       expect(ids.length, 100);
       expect(ids.every((int id) => id > 0), true);
 
-      stopwatch.reset();
-      stopwatch.start();
+      stopwatch
+        ..reset()
+        ..start();
 
       // Test search performance on larger dataset
       final List<Contact> searchResults = await contactRepository.search(
@@ -339,8 +340,9 @@ void main() {
         lessThan(2000),
       ); // 2 seconds max for search
 
-      stopwatch.reset();
-      stopwatch.start();
+      stopwatch
+        ..reset()
+        ..start();
 
       // Test findAll performance
       final List<Contact> allContacts = await contactRepository.findAll();
