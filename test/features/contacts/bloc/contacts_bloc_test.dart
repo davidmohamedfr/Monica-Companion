@@ -1,7 +1,6 @@
 import 'package:bloc_test/bloc_test.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:monica_companion/features/contacts/bloc/contacts_bloc.dart';
 import 'package:monica_companion/features/contacts/bloc/contacts_event.dart';
 import 'package:monica_companion/features/contacts/bloc/contacts_state.dart';
@@ -9,6 +8,8 @@ import 'package:monica_companion/features/contacts/models/contact_filter.dart';
 import 'package:monica_companion/features/contacts/models/contact_model.dart';
 import 'package:monica_companion/features/contacts/models/contact_view_mode.dart';
 import 'package:monica_companion/features/contacts/repositories/contacts_repository.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
 import '../../../helpers/test_helpers.dart';
 
 // Mock classes
@@ -43,11 +44,7 @@ void main() {
         phone: '+1234567890',
         email: 'john@example.com',
         isFavorite: true,
-        lastContactedAt: TestHelpers.createMockDateTime(
-          year: 2023,
-          month: 12,
-          day: 1,
-        ),
+        lastContactedAt: TestHelpers.createMockDateTime(month: 12),
       );
 
       testContact2 = Contact(
@@ -55,15 +52,10 @@ void main() {
         name: 'Jane Smith',
         phone: '+0987654321',
         email: 'jane@example.com',
-        isFavorite: false,
-        lastContactedAt: TestHelpers.createMockDateTime(
-          year: 2023,
-          month: 11,
-          day: 15,
-        ),
+        lastContactedAt: TestHelpers.createMockDateTime(month: 11, day: 15),
       );
 
-      testContacts = [testContact1, testContact2];
+      testContacts = <Contact>[testContact1, testContact2];
 
       // Setup default mock responses
       when(
@@ -114,13 +106,14 @@ void main() {
       blocTest<ContactsBloc, ContactsState>(
         'should emit loading then success state when contacts load successfully',
         build: () => contactsBloc,
-        act: (bloc) => bloc.add(const LoadContactsEvent()),
-        expect: () => [
+        act: (ContactsBloc bloc) => bloc.add(const LoadContactsEvent()),
+        expect: () => <Matcher>[
           predicate<ContactsState>(
-            (state) => state.isLoading == true && state.contacts.isEmpty,
+            (ContactsState state) =>
+                state.isLoading == true && state.contacts.isEmpty,
           ),
           predicate<ContactsState>(
-            (state) =>
+            (ContactsState state) =>
                 state.isLoading == false &&
                 state.contacts.length == 2 &&
                 state.filteredContacts.length == 2 &&
@@ -140,11 +133,13 @@ void main() {
           ).thenThrow(Exception('Failed to load contacts'));
           return contactsBloc;
         },
-        act: (bloc) => bloc.add(const LoadContactsEvent()),
-        expect: () => [
-          predicate<ContactsState>((state) => state.isLoading == true),
+        act: (ContactsBloc bloc) => bloc.add(const LoadContactsEvent()),
+        expect: () => <Matcher>[
           predicate<ContactsState>(
-            (state) =>
+            (ContactsState state) => state.isLoading == true,
+          ),
+          predicate<ContactsState>(
+            (ContactsState state) =>
                 state.isLoading == false &&
                 state.errorMessage != null &&
                 state.errorMessage!.contains('Failed to load contacts'),
@@ -162,14 +157,14 @@ void main() {
               'John',
               ContactFilter.all,
             ),
-          ).thenAnswer((_) async => [testContact1]);
+          ).thenAnswer((_) async => <Contact>[testContact1]);
           return contactsBloc;
         },
-        act: (bloc) => bloc.add(const SearchContactsEvent('John')),
+        act: (ContactsBloc bloc) => bloc.add(const SearchContactsEvent('John')),
         wait: const Duration(milliseconds: 400), // Wait for debounce
-        expect: () => [
+        expect: () => <Matcher>[
           predicate<ContactsState>(
-            (state) =>
+            (ContactsState state) =>
                 state.searchQuery == 'John' &&
                 state.filteredContacts.isEmpty, // Initial state before debounce
           ),
@@ -190,14 +185,16 @@ void main() {
         build: () => contactsBloc,
         seed: () => ContactsState(
           contacts: testContacts,
-          filteredContacts: [testContact1], // Previously filtered
+          filteredContacts: <Contact>[testContact1], // Previously filtered
           searchQuery: 'previous query',
         ),
-        act: (bloc) => bloc.add(const SearchContactsEvent('')),
-        expect: () => [
-          predicate<ContactsState>((state) => state.searchQuery.isEmpty),
+        act: (ContactsBloc bloc) => bloc.add(const SearchContactsEvent('')),
+        expect: () => <Matcher>[
           predicate<ContactsState>(
-            (state) =>
+            (ContactsState state) => state.searchQuery.isEmpty,
+          ),
+          predicate<ContactsState>(
+            (ContactsState state) =>
                 state.searchQuery.isEmpty &&
                 state.filteredContacts.length == 2, // Should show all contacts
           ),
@@ -212,10 +209,13 @@ void main() {
           ).thenThrow(Exception('Search failed'));
           return contactsBloc;
         },
-        act: (bloc) => bloc.add(const SearchContactsEvent('error')),
+        act: (ContactsBloc bloc) =>
+            bloc.add(const SearchContactsEvent('error')),
         wait: const Duration(milliseconds: 400),
-        expect: () => [
-          predicate<ContactsState>((state) => state.searchQuery == 'error'),
+        expect: () => <Matcher>[
+          predicate<ContactsState>(
+            (ContactsState state) => state.searchQuery == 'error',
+          ),
         ],
         verify: (_) {
           // Verify the repository method was called and failed
@@ -236,17 +236,18 @@ void main() {
           when(
             () =>
                 mockContactsRepository.filterContacts(ContactFilter.favorites),
-          ).thenAnswer((_) async => [testContact1]);
+          ).thenAnswer((_) async => <Contact>[testContact1]);
           return contactsBloc;
         },
-        act: (bloc) =>
+        act: (ContactsBloc bloc) =>
             bloc.add(const FilterContactsEvent(ContactFilter.favorites)),
-        expect: () => [
+        expect: () => <Matcher>[
           predicate<ContactsState>(
-            (state) => state.currentFilter == ContactFilter.favorites,
+            (ContactsState state) =>
+                state.currentFilter == ContactFilter.favorites,
           ),
           predicate<ContactsState>(
-            (state) =>
+            (ContactsState state) =>
                 state.currentFilter == ContactFilter.favorites &&
                 state.filteredContacts.length == 1 &&
                 state.filteredContacts.first.isFavorite == true,
@@ -262,20 +263,20 @@ void main() {
               'John',
               ContactFilter.favorites,
             ),
-          ).thenAnswer((_) async => [testContact1]);
+          ).thenAnswer((_) async => <Contact>[testContact1]);
           return contactsBloc;
         },
         seed: () => const ContactsState(searchQuery: 'John'),
-        act: (bloc) =>
+        act: (ContactsBloc bloc) =>
             bloc.add(const FilterContactsEvent(ContactFilter.favorites)),
-        expect: () => [
+        expect: () => <Matcher>[
           predicate<ContactsState>(
-            (state) =>
+            (ContactsState state) =>
                 state.searchQuery == 'John' &&
                 state.currentFilter == ContactFilter.favorites,
           ),
           predicate<ContactsState>(
-            (state) =>
+            (ContactsState state) =>
                 state.searchQuery == 'John' &&
                 state.currentFilter == ContactFilter.favorites &&
                 state.filteredContacts.length == 1,
@@ -291,14 +292,15 @@ void main() {
           ).thenThrow(Exception('Filter failed'));
           return contactsBloc;
         },
-        act: (bloc) =>
+        act: (ContactsBloc bloc) =>
             bloc.add(const FilterContactsEvent(ContactFilter.favorites)),
-        expect: () => [
+        expect: () => <Matcher>[
           predicate<ContactsState>(
-            (state) => state.currentFilter == ContactFilter.favorites,
+            (ContactsState state) =>
+                state.currentFilter == ContactFilter.favorites,
           ),
           predicate<ContactsState>(
-            (state) =>
+            (ContactsState state) =>
                 state.currentFilter == ContactFilter.favorites &&
                 state.errorMessage != null &&
                 state.errorMessage!.contains('Filter failed'),
@@ -311,11 +313,12 @@ void main() {
       blocTest<ContactsBloc, ContactsState>(
         'should change view mode and save to preferences',
         build: () => contactsBloc,
-        act: (bloc) =>
+        act: (ContactsBloc bloc) =>
             bloc.add(const ChangeViewModeEvent(ContactViewMode.grid)),
-        expect: () => [
+        expect: () => <Matcher>[
           predicate<ContactsState>(
-            (state) => state.currentViewMode == ContactViewMode.grid,
+            (ContactsState state) =>
+                state.currentViewMode == ContactViewMode.grid,
           ),
         ],
         verify: (_) {
@@ -334,7 +337,8 @@ void main() {
           () => mockSharedPreferences.setInt(any(), any()),
         ).thenThrow(Exception('Preference save failed'));
 
-        final initialViewMode = contactsBloc.state.currentViewMode;
+        final ContactViewMode initialViewMode =
+            contactsBloc.state.currentViewMode;
 
         // Act
         contactsBloc.add(const ChangeViewModeEvent(ContactViewMode.card));
@@ -349,11 +353,14 @@ void main() {
       blocTest<ContactsBloc, ContactsState>(
         'should trigger LoadContactsEvent',
         build: () => contactsBloc,
-        act: (bloc) => bloc.add(const RefreshContactsEvent()),
-        expect: () => [
-          predicate<ContactsState>((state) => state.isLoading == true),
+        act: (ContactsBloc bloc) => bloc.add(const RefreshContactsEvent()),
+        expect: () => <Matcher>[
           predicate<ContactsState>(
-            (state) => state.isLoading == false && state.contacts.length == 2,
+            (ContactsState state) => state.isLoading == true,
+          ),
+          predicate<ContactsState>(
+            (ContactsState state) =>
+                state.isLoading == false && state.contacts.length == 2,
           ),
         ],
         verify: (_) {
@@ -370,7 +377,7 @@ void main() {
         ).thenReturn(ContactViewMode.grid.index);
 
         // Act
-        final bloc = ContactsBloc(
+        final ContactsBloc bloc = ContactsBloc(
           contactsRepository: mockContactsRepository,
           sharedPreferences: mockSharedPreferences,
         );
@@ -382,7 +389,7 @@ void main() {
         expect(bloc.state.currentViewMode, equals(ContactViewMode.grid));
 
         // Cleanup
-        bloc.close();
+        await bloc.close();
       });
 
       test('should use default view mode when no saved preference exists', () {
@@ -392,7 +399,7 @@ void main() {
         ).thenReturn(null);
 
         // Act
-        final bloc = ContactsBloc(
+        final ContactsBloc bloc = ContactsBloc(
           contactsRepository: mockContactsRepository,
           sharedPreferences: mockSharedPreferences,
         );
@@ -410,15 +417,15 @@ void main() {
         'should preserve error message during successful operations',
         build: () => contactsBloc,
         seed: () => const ContactsState(errorMessage: 'Previous error'),
-        act: (bloc) => bloc.add(const LoadContactsEvent()),
-        expect: () => [
+        act: (ContactsBloc bloc) => bloc.add(const LoadContactsEvent()),
+        expect: () => <Matcher>[
           predicate<ContactsState>(
-            (state) =>
+            (ContactsState state) =>
                 state.errorMessage == 'Previous error' &&
                 state.isLoading == true,
           ),
           predicate<ContactsState>(
-            (state) =>
+            (ContactsState state) =>
                 state.errorMessage == 'Previous error' &&
                 state.isLoading == false &&
                 state.contacts.length == 2,
@@ -430,7 +437,7 @@ void main() {
     group('Memory Management Tests', () {
       test('should cancel debounce timer on close', () async {
         // Arrange
-        final bloc = ContactsBloc(
+        final ContactsBloc bloc = ContactsBloc(
           contactsRepository: mockContactsRepository,
           sharedPreferences: mockSharedPreferences,
         );

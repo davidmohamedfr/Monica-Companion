@@ -79,7 +79,7 @@ void main() {
         // Special characters that should be invalid
         expect(Validators.isValidEmail('user#name@example.com'), isFalse);
         expect(Validators.isValidEmail('user@exam ple.com'), isFalse);
-        expect(Validators.isValidEmail('user@example\$.com'), isFalse);
+        expect(Validators.isValidEmail(r'user@example$.com'), isFalse);
       });
 
       test('should handle international characters', () {
@@ -335,7 +335,7 @@ void main() {
       });
 
       test('should handle special characters', () {
-        expect(Validators.isNotEmpty('!@#\$%'), isTrue);
+        expect(Validators.isNotEmpty(r'!@#$%'), isTrue);
         expect(Validators.isNotEmpty('émojis 🙂'), isTrue);
         expect(Validators.isNotEmpty('中文'), isTrue);
         expect(Validators.isNotEmpty('العربية'), isTrue);
@@ -466,7 +466,7 @@ void main() {
           isTrue,
         ); // Starting with zero
         expect(
-          Validators.isValidApiToken('!@#\$%^&*()'),
+          Validators.isValidApiToken(r'!@#$%^&*()'),
           isTrue,
         ); // Only special chars (10)
         expect(
@@ -519,11 +519,11 @@ void main() {
       });
 
       test('should handle very long inputs', () {
-        final veryLongString = 'a' * 10000;
+        final String veryLongString = 'a' * 10000;
 
         expect(() => Validators.isValidEmail(veryLongString), returnsNormally);
         expect(
-          () => Validators.isValidUrl('https://\${veryLongString}.com'),
+          () => Validators.isValidUrl(r'https://${veryLongString}.com'),
           returnsNormally,
         );
         expect(
@@ -538,9 +538,9 @@ void main() {
       });
 
       test('should handle unicode and special encoding', () {
-        const unicodeString = '🚀📱💻🌟✨';
-        const emojiEmail = 'user@🌟.com';
-        const unicodeUrl = 'https://🌟.com';
+        const String unicodeString = '🚀📱💻🌟✨';
+        const String emojiEmail = 'user@🌟.com';
+        const String unicodeUrl = 'https://🌟.com';
 
         expect(() => Validators.isValidEmail(emojiEmail), returnsNormally);
         expect(() => Validators.isValidUrl(unicodeUrl), returnsNormally);
@@ -565,7 +565,7 @@ void main() {
       });
 
       test('should be consistent with whitespace-only string handling', () {
-        const whitespaceString = '   ';
+        const String whitespaceString = '   ';
 
         expect(Validators.isValidEmail(whitespaceString), isFalse);
         expect(Validators.isValidUrl(whitespaceString), isFalse);
@@ -581,13 +581,13 @@ void main() {
 
     group('Performance Tests', () {
       test('should validate quickly with reasonable inputs', () {
-        const email = 'test@example.com';
-        const url = 'https://example.com';
-        const phone = '+1234567890';
-        const token = 'valid_api_token_123';
-        const text = 'some text';
+        const String email = 'test@example.com';
+        const String url = 'https://example.com';
+        const String phone = '+1234567890';
+        const String token = 'valid_api_token_123';
+        const String text = 'some text';
 
-        final stopwatch = Stopwatch()..start();
+        final Stopwatch stopwatch = Stopwatch()..start();
 
         // Run each validator multiple times
         for (int i = 0; i < 1000; i++) {

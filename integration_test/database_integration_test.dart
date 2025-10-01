@@ -209,7 +209,7 @@ void main() {
       await tester.pumpAndSettle();
 
       // Create test contacts for concurrent operations
-      final List<Contact> testContacts = List.generate(
+      final List<Contact> testContacts = List<Contact>.generate(
         10,
         (int index) => Contact(
           name: 'Concurrent Test User $index',
@@ -299,7 +299,7 @@ void main() {
       await tester.pumpAndSettle();
 
       // Create a larger dataset to test performance and stability
-      final List<Contact> largeDataset = List.generate(
+      final List<Contact> largeDataset = List<Contact>.generate(
         100,
         (int index) => Contact(
           name: 'Performance Test User $index',

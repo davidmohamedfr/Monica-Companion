@@ -24,15 +24,14 @@ void main() {
     late Contact contactWithLongInfo;
 
     setUpAll(() {
-      basicContact = Contact(
+      basicContact = const Contact(
         id: '1',
         name: 'John Doe',
         phone: '+1234567890',
         email: 'john.doe@example.com',
-        isFavorite: false,
       );
 
-      favoriteContact = Contact(
+      favoriteContact = const Contact(
         id: '2',
         name: 'Jane Smith',
         phone: '+0987654321',
@@ -40,22 +39,17 @@ void main() {
         isFavorite: true,
       );
 
-      contactWithPhoto = Contact(
+      contactWithPhoto = const Contact(
         id: '3',
         name: 'Bob Wilson',
         phone: '+1122334455',
         email: 'bob.wilson@example.com',
         photoUrl: 'https://example.com/photo.jpg',
-        isFavorite: false,
       );
 
-      contactWithoutInfo = Contact(
-        id: '4',
-        name: 'Alice Brown',
-        isFavorite: false,
-      );
+      contactWithoutInfo = const Contact(id: '4', name: 'Alice Brown');
 
-      contactWithLongInfo = Contact(
+      contactWithLongInfo = const Contact(
         id: '5',
         name: 'Very Long Contact Name That Should Be Displayed Properly',
         phone: '+1-800-VERY-LONG-PHONE-NUMBER-FOR-TESTING',
@@ -65,13 +59,12 @@ void main() {
       );
     });
 
-    Widget createTestWidget(Contact contact, {VoidCallback? onTap}) {
-      return MaterialApp(
-        home: Scaffold(
-          body: ContactListItem(contact: contact, onTap: onTap),
-        ),
-      );
-    }
+    Widget createTestWidget(Contact contact, {VoidCallback? onTap}) =>
+        MaterialApp(
+          home: Scaffold(
+            body: ContactListItem(contact: contact, onTap: onTap),
+          ),
+        );
 
     group('Basic Widget Structure Tests', () {
       testWidgets('should render basic contact information correctly', (
@@ -139,7 +132,7 @@ void main() {
           final CircleAvatar avatar = tester.widget(find.byType(CircleAvatar));
           expect(avatar.backgroundImage, isA<NetworkImage>());
           expect(
-            (avatar.backgroundImage as NetworkImage).url,
+            (avatar.backgroundImage! as NetworkImage).url,
             equals('https://example.com/photo.jpg'),
           );
           expect(avatar.child, isNull); // No text when image is present
@@ -151,11 +144,7 @@ void main() {
         WidgetTester tester,
       ) async {
         // Arrange
-        final singleNameContact = Contact(
-          id: '6',
-          name: 'Madonna',
-          isFavorite: false,
-        );
+        const Contact singleNameContact = Contact(id: '6', name: 'Madonna');
 
         // Act
         await tester.pumpWidget(createTestWidget(singleNameContact));
@@ -168,7 +157,7 @@ void main() {
         WidgetTester tester,
       ) async {
         // Arrange
-        final emptyNameContact = Contact(id: '7', name: '', isFavorite: false);
+        const Contact emptyNameContact = Contact(id: '7', name: '');
 
         // Act
         await tester.pumpWidget(createTestWidget(emptyNameContact));
@@ -181,11 +170,7 @@ void main() {
         WidgetTester tester,
       ) async {
         // Arrange
-        final whitespaceNameContact = Contact(
-          id: '8',
-          name: '   ',
-          isFavorite: false,
-        );
+        const Contact whitespaceNameContact = Contact(id: '8', name: '   ');
 
         // Act
         await tester.pumpWidget(createTestWidget(whitespaceNameContact));
@@ -198,10 +183,9 @@ void main() {
         WidgetTester tester,
       ) async {
         // Arrange
-        final multiSpaceContact = Contact(
+        const Contact multiSpaceContact = Contact(
           id: '9',
           name: 'John   Middle   Doe',
-          isFavorite: false,
         );
 
         // Act
@@ -218,10 +202,9 @@ void main() {
         WidgetTester tester,
       ) async {
         // Arrange
-        final specialCharContact = Contact(
+        const Contact specialCharContact = Contact(
           id: '10',
           name: 'José María',
-          isFavorite: false,
         );
 
         // Act
@@ -235,11 +218,7 @@ void main() {
         WidgetTester tester,
       ) async {
         // Arrange
-        final lowercaseContact = Contact(
-          id: '11',
-          name: 'alice bob',
-          isFavorite: false,
-        );
+        const Contact lowercaseContact = Contact(id: '11', name: 'alice bob');
 
         // Act
         await tester.pumpWidget(createTestWidget(lowercaseContact));
@@ -311,11 +290,10 @@ void main() {
         WidgetTester tester,
       ) async {
         // Arrange
-        final phoneOnlyContact = Contact(
+        const Contact phoneOnlyContact = Contact(
           id: '12',
           name: 'Phone Only',
           phone: '+1234567890',
-          isFavorite: false,
         );
 
         // Act
@@ -330,11 +308,10 @@ void main() {
         WidgetTester tester,
       ) async {
         // Arrange
-        final emailOnlyContact = Contact(
+        const Contact emailOnlyContact = Contact(
           id: '13',
           name: 'Email Only',
           email: 'email@example.com',
-          isFavorite: false,
         );
 
         // Act
@@ -437,12 +414,11 @@ void main() {
         WidgetTester tester,
       ) async {
         // Arrange
-        final emptyPhoneContact = Contact(
+        const Contact emptyPhoneContact = Contact(
           id: '14',
           name: 'Empty Phone',
           phone: '',
           email: 'test@example.com',
-          isFavorite: false,
         );
 
         // Act
@@ -456,12 +432,11 @@ void main() {
         WidgetTester tester,
       ) async {
         // Arrange
-        final emptyEmailContact = Contact(
+        const Contact emptyEmailContact = Contact(
           id: '15',
           name: 'Empty Email',
           phone: '+1234567890',
           email: '',
-          isFavorite: false,
         );
 
         // Act
@@ -489,12 +464,7 @@ void main() {
         WidgetTester tester,
       ) async {
         // Arrange
-        final nullPhotoContact = Contact(
-          id: '16',
-          name: 'Null Photo',
-          photoUrl: null,
-          isFavorite: false,
-        );
+        const Contact nullPhotoContact = Contact(id: '16', name: 'Null Photo');
 
         // Act
         await tester.pumpWidget(createTestWidget(nullPhotoContact));
@@ -509,12 +479,11 @@ void main() {
         WidgetTester tester,
       ) async {
         // Arrange
-        final specialContact = Contact(
+        const Contact specialContact = Contact(
           id: '17',
           name: 'Special Chars',
           phone: '+1 (555) 123-4567',
           email: 'user+tag@sub-domain.co.uk',
-          isFavorite: false,
         );
 
         // Act
@@ -533,7 +502,7 @@ void main() {
         WidgetTester tester,
       ) async {
         // Arrange
-        final customTheme = ThemeData(
+        final ThemeData customTheme = ThemeData(
           colorScheme: const ColorScheme.light(
             primary: Colors.red,
             onSurfaceVariant: Colors.blue,
@@ -579,7 +548,7 @@ void main() {
         WidgetTester tester,
       ) async {
         // Arrange
-        const testKey = Key('test_contact_item');
+        const Key testKey = Key('test_contact_item');
 
         // Act
         await tester.pumpWidget(
@@ -629,7 +598,7 @@ void main() {
         WidgetTester tester,
       ) async {
         // Arrange
-        final stopwatch = Stopwatch()..start();
+        final Stopwatch stopwatch = Stopwatch()..start();
 
         // Act
         await tester.pumpWidget(createTestWidget(contactWithLongInfo));
