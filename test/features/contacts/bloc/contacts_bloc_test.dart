@@ -81,8 +81,8 @@ void main() {
       );
     });
 
-    tearDown(() {
-      contactsBloc.close();
+    tearDown(() async {
+      await contactsBloc.close();
     });
 
     group('Initial State Tests', () {
@@ -392,24 +392,27 @@ void main() {
         await bloc.close();
       });
 
-      test('should use default view mode when no saved preference exists', () {
-        // Arrange
-        when(
-          () => mockSharedPreferences.getInt('contacts_view_mode'),
-        ).thenReturn(null);
+      test(
+        'should use default view mode when no saved preference exists',
+        () async {
+          // Arrange
+          when(
+            () => mockSharedPreferences.getInt('contacts_view_mode'),
+          ).thenReturn(null);
 
-        // Act
-        final ContactsBloc bloc = ContactsBloc(
-          contactsRepository: mockContactsRepository,
-          sharedPreferences: mockSharedPreferences,
-        );
+          // Act
+          final ContactsBloc bloc = ContactsBloc(
+            contactsRepository: mockContactsRepository,
+            sharedPreferences: mockSharedPreferences,
+          );
 
-        // Assert
-        expect(bloc.state.currentViewMode, equals(ContactViewMode.list));
+          // Assert
+          expect(bloc.state.currentViewMode, equals(ContactViewMode.list));
 
-        // Cleanup
-        bloc.close();
-      });
+          // Cleanup
+          await bloc.close();
+        },
+      );
     });
 
     group('Error State Management Tests', () {

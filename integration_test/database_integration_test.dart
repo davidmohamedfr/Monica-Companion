@@ -252,7 +252,8 @@ void main() {
       await tester.pumpWidget(const MonicaApp());
       await tester.pumpAndSettle();
 
-      // Test inserting contact with empty name (should fail or be handled gracefully)
+      // Test inserting contact with empty name
+      // (should fail or be handled gracefully)
       try {
         await contactRepository.insert(
           Contact(
@@ -261,9 +262,11 @@ void main() {
             updatedAt: DateTime.now(),
           ),
         );
-        // If it doesn't throw, verify it at least creates a record or handles gracefully
+        // If it doesn't throw, verify it at least creates a record
+        // or handles gracefully
       } on Object catch (e) {
-        // Database constraint errors are expected and should be handled gracefully
+        // Database constraint errors are expected and should be
+        // handled gracefully
         expect(e, isNotNull);
       }
 
