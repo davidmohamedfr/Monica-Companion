@@ -187,7 +187,7 @@ void main() {
 
         // Clean up
         await contactRepository.delete(id);
-      } catch (e) {
+      } on Object catch (e) {
         fail('Inserting contact with required fields should not fail: $e');
       }
 
@@ -262,7 +262,7 @@ void main() {
           ),
         );
         // If it doesn't throw, verify it at least creates a record or handles gracefully
-      } catch (e) {
+      } on Object catch (e) {
         // Database constraint errors are expected and should be handled gracefully
         expect(e, isNotNull);
       }
@@ -286,7 +286,7 @@ void main() {
 
         // Clean up
         await contactRepository.delete(id);
-      } catch (e) {
+      } on Object catch (e) {
         // Length constraint errors are acceptable
         expect(e, isNotNull);
       }
