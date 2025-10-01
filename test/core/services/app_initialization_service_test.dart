@@ -250,8 +250,9 @@ void main() {
       ).thenReturn(mockRegistry);
 
       // Test service registration flow
-      mockLocator.registerSingleton<DatabaseInterface>(mockDatabase);
-      mockLocator.registerSingleton<RepositoryRegistry>(mockRegistry);
+      mockLocator
+        ..registerSingleton<DatabaseInterface>(mockDatabase)
+        ..registerSingleton<RepositoryRegistry>(mockRegistry);
 
       verify(
         () => mockLocator.registerSingleton<DatabaseInterface>(mockDatabase),
@@ -305,9 +306,10 @@ void main() {
       final MockRepositoryRegistry mockRegistry = MockRepositoryRegistry();
 
       // Multiple disposal calls should not cause errors
-      mockRegistry.dispose();
-      mockRegistry.dispose();
-      mockRegistry.dispose();
+      mockRegistry
+        ..dispose()
+        ..dispose()
+        ..dispose();
 
       verify(mockRegistry.dispose).called(3);
     });
