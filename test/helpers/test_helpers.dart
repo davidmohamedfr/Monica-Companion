@@ -22,11 +22,6 @@ class TestHelpers {
 
   /// Setup service locator with mock services for widget tests
   static Future<void> setupServiceLocatorForTests() async {
-    final ServiceLocator locator = ServiceLocator.instance;
-
-    // Clear any existing services
-    locator.clear();
-
     // Create mock database interface
     final MockDatabaseInterface mockDatabase = MockDatabaseInterface();
     when(mockDatabase.initialize).thenAnswer((_) async {});
@@ -44,9 +39,11 @@ class TestHelpers {
       () => mockRegistry.contactRepository,
     ).thenReturn(mockContactRepository);
 
-    // Register services
-    locator.registerSingleton<DatabaseInterface>(mockDatabase);
-    locator.registerSingleton<RepositoryRegistry>(mockRegistry);
+    // Clear existing services and register mocks
+    ServiceLocator.instance
+      ..clear()
+      ..registerSingleton<DatabaseInterface>(mockDatabase)
+      ..registerSingleton<RepositoryRegistry>(mockRegistry);
   }
 
   /// Create a mock DateTime for consistent testing

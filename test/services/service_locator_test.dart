@@ -39,8 +39,7 @@ void main() {
     late ServiceLocator serviceLocator;
 
     setUp(() {
-      serviceLocator = ServiceLocator.instance;
-      serviceLocator.clear(); // Ensure clean state for each test
+      serviceLocator = ServiceLocator.instance..clear();
     });
 
     group('Singleton Pattern', () {
@@ -100,8 +99,9 @@ void main() {
         final AnotherTestService anotherService = AnotherTestServiceImpl(42);
 
         // Act
-        serviceLocator.registerSingleton<TestService>(testService);
-        serviceLocator.registerSingleton<AnotherTestService>(anotherService);
+        serviceLocator
+          ..registerSingleton<TestService>(testService)
+          ..registerSingleton<AnotherTestService>(anotherService);
 
         final TestService retrievedTest = serviceLocator.get<TestService>();
         final AnotherTestService retrievedAnother = serviceLocator
@@ -227,16 +227,14 @@ void main() {
         // Arrange
         final TestService singletonService = TestServiceImpl('singleton');
 
-        serviceLocator.registerSingleton<TestService>(singletonService);
-        serviceLocator.registerFactory<TestService>(
-          () => TestServiceImpl('factory'),
-        );
+        serviceLocator
+          ..registerSingleton<TestService>(singletonService)
+          ..registerFactory<TestService>(() => TestServiceImpl('factory'));
 
         // Act - Remove singleton
-        serviceLocator.unregister<TestService>();
-        serviceLocator.registerFactory<TestService>(
-          () => TestServiceImpl('factory'),
-        );
+        serviceLocator
+          ..unregister<TestService>()
+          ..registerFactory<TestService>(() => TestServiceImpl('factory'));
 
         final TestService retrieved = serviceLocator.get<TestService>();
 
@@ -275,10 +273,11 @@ void main() {
         WidgetTester tester,
       ) async {
         // Arrange
-        serviceLocator.registerSingleton<TestService>(TestServiceImpl('test'));
-        serviceLocator.registerFactory<AnotherTestService>(
-          () => AnotherTestServiceImpl(1),
-        );
+        serviceLocator
+          ..registerSingleton<TestService>(TestServiceImpl('test'))
+          ..registerFactory<AnotherTestService>(
+            () => AnotherTestServiceImpl(1),
+          );
 
         // Act
         final List<Type> registeredTypes = serviceLocator.registeredTypes;
@@ -337,12 +336,9 @@ void main() {
         'should unregister both singleton and factory if both exist',
         (WidgetTester tester) async {
           // Arrange
-          serviceLocator.registerSingleton<TestService>(
-            TestServiceImpl('singleton'),
-          );
-          serviceLocator.registerFactory<TestService>(
-            () => TestServiceImpl('factory'),
-          );
+          serviceLocator
+            ..registerSingleton<TestService>(TestServiceImpl('singleton'))
+            ..registerFactory<TestService>(() => TestServiceImpl('factory'));
           expect(serviceLocator.isRegistered<TestService>(), isTrue);
 
           // Act
@@ -372,10 +368,11 @@ void main() {
         WidgetTester tester,
       ) async {
         // Arrange
-        serviceLocator.registerSingleton<TestService>(TestServiceImpl('test'));
-        serviceLocator.registerFactory<AnotherTestService>(
-          () => AnotherTestServiceImpl(1),
-        );
+        serviceLocator
+          ..registerSingleton<TestService>(TestServiceImpl('test'))
+          ..registerFactory<AnotherTestService>(
+            () => AnotherTestServiceImpl(1),
+          );
 
         expect(serviceLocator.isRegistered<TestService>(), isTrue);
         expect(serviceLocator.isRegistered<AnotherTestService>(), isTrue);
@@ -519,12 +516,11 @@ void main() {
         WidgetTester tester,
       ) async {
         // Arrange
-        serviceLocator.registerSingleton<TestService>(
-          TestServiceImpl('singleton'),
-        );
-        serviceLocator.registerFactory<AnotherTestService>(
-          () => AnotherTestServiceImpl(1),
-        );
+        serviceLocator
+          ..registerSingleton<TestService>(TestServiceImpl('singleton'))
+          ..registerFactory<AnotherTestService>(
+            () => AnotherTestServiceImpl(1),
+          );
 
         // Act - Mixed access patterns
         final TestService singleton1 = serviceLocator.get<TestService>();
@@ -602,10 +598,9 @@ void main() {
         WidgetTester tester,
       ) async {
         // Arrange
-        serviceLocator.registerSingleton<TestService>(TestServiceImpl('test'));
-        serviceLocator.registerSingleton<AnotherTestService>(
-          AnotherTestServiceImpl(42),
-        );
+        serviceLocator
+          ..registerSingleton<TestService>(TestServiceImpl('test'))
+          ..registerSingleton<AnotherTestService>(AnotherTestServiceImpl(42));
 
         // Act & Assert - Different types should be handled separately
         final TestService testService = serviceLocator.get<TestService>();
