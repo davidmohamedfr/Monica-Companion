@@ -12,12 +12,17 @@ void main() {
     ) async {
       // Launch the app
       app.main();
-      await tester.pumpAndSettle();
+      await tester.pumpAndSettle(const Duration(seconds: 3));
 
       print('🚀 App launched successfully');
 
       // Step 1: Navigate to contacts
       print('📱 Step 1: Navigating to contacts...');
+
+      // Wait for View Contacts button to appear
+      await tester.pump(const Duration(seconds: 1));
+      expect(find.text('View Contacts'), findsOneWidget);
+
       await tester.tap(find.text('View Contacts'));
       await tester.pumpAndSettle();
 
