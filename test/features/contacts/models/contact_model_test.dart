@@ -7,13 +7,10 @@ void main() {
     late Contact testContact;
     late DateTime testDateTime;
 
-    setUpAll(() {
-      TestHelpers.setupMockFallbacks();
-    });
+    setUpAll(TestHelpers.setupMockFallbacks);
 
     setUp(() {
       testDateTime = TestHelpers.createMockDateTime(
-        year: 2023,
         month: 6,
         day: 15,
         hour: 10,
@@ -28,7 +25,6 @@ void main() {
         photoUrl: 'https://example.com/photo.jpg',
         isFavorite: true,
         lastContactedAt: testDateTime,
-        needsInteractionSoon: false,
       );
     });
 
@@ -47,7 +43,7 @@ void main() {
 
       test('should create Contact with required parameters only', () {
         // Arrange & Act
-        const contact = Contact(id: 'minimal-id', name: 'Jane Smith');
+        const Contact contact = Contact(id: 'minimal-id', name: 'Jane Smith');
 
         // Assert
         expect(contact.id, equals('minimal-id'));
@@ -62,7 +58,10 @@ void main() {
 
       test('should create Contact with default values', () {
         // Arrange & Act
-        const contact = Contact(id: 'default-test', name: 'Default User');
+        const Contact contact = Contact(
+          id: 'default-test',
+          name: 'Default User',
+        );
 
         // Assert
         expect(contact.isFavorite, isFalse);
@@ -73,7 +72,7 @@ void main() {
     group('copyWith Tests', () {
       test('should create copy with updated name', () {
         // Act
-        final updatedContact = testContact.copyWith(name: 'Jane Doe');
+        final Contact updatedContact = testContact.copyWith(name: 'Jane Doe');
 
         // Assert
         expect(updatedContact.id, equals(testContact.id));
@@ -94,7 +93,7 @@ void main() {
 
       test('should create copy with updated favorite status', () {
         // Act
-        final updatedContact = testContact.copyWith(isFavorite: false);
+        final Contact updatedContact = testContact.copyWith(isFavorite: false);
 
         // Assert
         expect(updatedContact.isFavorite, isFalse);
@@ -103,7 +102,9 @@ void main() {
 
       test('should create copy with updated interaction status', () {
         // Act
-        final updatedContact = testContact.copyWith(needsInteractionSoon: true);
+        final Contact updatedContact = testContact.copyWith(
+          needsInteractionSoon: true,
+        );
 
         // Assert
         expect(updatedContact.needsInteractionSoon, isTrue);
@@ -112,10 +113,10 @@ void main() {
 
       test('should create copy with updated contact information', () {
         // Arrange
-        final newDateTime = TestHelpers.createMockDateTime(year: 2024);
+        final DateTime newDateTime = TestHelpers.createMockDateTime(year: 2024);
 
         // Act
-        final updatedContact = testContact.copyWith(
+        final Contact updatedContact = testContact.copyWith(
           phone: '+0987654321',
           email: 'jane.doe@example.com',
           lastContactedAt: newDateTime,
@@ -130,7 +131,7 @@ void main() {
 
       test('should create identical copy when no parameters provided', () {
         // Act
-        final copiedContact = testContact.copyWith();
+        final Contact copiedContact = testContact.copyWith();
 
         // Assert
         expect(copiedContact.id, equals(testContact.id));
@@ -153,7 +154,7 @@ void main() {
     group('Equatable Tests', () {
       test('should be equal when all properties are the same', () {
         // Arrange
-        final contact1 = Contact(
+        final Contact contact1 = Contact(
           id: 'same-id',
           name: 'Same Name',
           phone: '+1234567890',
@@ -161,10 +162,9 @@ void main() {
           photoUrl: 'https://example.com/same.jpg',
           isFavorite: true,
           lastContactedAt: testDateTime,
-          needsInteractionSoon: false,
         );
 
-        final contact2 = Contact(
+        final Contact contact2 = Contact(
           id: 'same-id',
           name: 'Same Name',
           phone: '+1234567890',
@@ -172,7 +172,6 @@ void main() {
           photoUrl: 'https://example.com/same.jpg',
           isFavorite: true,
           lastContactedAt: testDateTime,
-          needsInteractionSoon: false,
         );
 
         // Act & Assert
@@ -182,9 +181,9 @@ void main() {
 
       test('should not be equal when id is different', () {
         // Arrange
-        final contact1 = Contact(id: 'id-1', name: 'Same Name');
+        const Contact contact1 = Contact(id: 'id-1', name: 'Same Name');
 
-        final contact2 = Contact(id: 'id-2', name: 'Same Name');
+        const Contact contact2 = Contact(id: 'id-2', name: 'Same Name');
 
         // Act & Assert
         expect(contact1, isNot(equals(contact2)));
@@ -192,9 +191,9 @@ void main() {
 
       test('should not be equal when name is different', () {
         // Arrange
-        final contact1 = Contact(id: 'same-id', name: 'Name One');
+        const Contact contact1 = Contact(id: 'same-id', name: 'Name One');
 
-        final contact2 = Contact(id: 'same-id', name: 'Name Two');
+        const Contact contact2 = Contact(id: 'same-id', name: 'Name Two');
 
         // Act & Assert
         expect(contact1, isNot(equals(contact2)));
@@ -202,17 +201,13 @@ void main() {
 
       test('should not be equal when optional properties differ', () {
         // Arrange
-        final contact1 = Contact(
+        const Contact contact1 = Contact(
           id: 'same-id',
           name: 'Same Name',
           isFavorite: true,
         );
 
-        final contact2 = Contact(
-          id: 'same-id',
-          name: 'Same Name',
-          isFavorite: false,
-        );
+        const Contact contact2 = Contact(id: 'same-id', name: 'Same Name');
 
         // Act & Assert
         expect(contact1, isNot(equals(contact2)));
@@ -222,7 +217,7 @@ void main() {
     group('Edge Cases Tests', () {
       test('should handle empty strings correctly', () {
         // Arrange & Act
-        const contact = Contact(
+        const Contact contact = Contact(
           id: '',
           name: '',
           phone: '',
@@ -243,12 +238,7 @@ void main() {
         // This is the standard Flutter copyWith behavior
 
         // Act
-        final updatedContact = testContact.copyWith(
-          phone: null,
-          email: null,
-          photoUrl: null,
-          lastContactedAt: null,
-        );
+        final Contact updatedContact = testContact.copyWith();
 
         // Assert - null parameters should preserve original values
         expect(updatedContact.phone, equals(testContact.phone));
@@ -263,7 +253,7 @@ void main() {
 
       test('should handle special characters in contact information', () {
         // Arrange & Act
-        const contact = Contact(
+        const Contact contact = Contact(
           id: 'special-chars-123',
           name: 'José María García-López',
           phone: '+33 1 23 45 67 89',
@@ -285,7 +275,7 @@ void main() {
     group('toString Tests', () {
       test('should include all properties in props list', () {
         // Arrange
-        final contact = Contact(
+        final Contact contact = Contact(
           id: 'test-id',
           name: 'Test Name',
           phone: '+1234567890',
@@ -297,7 +287,7 @@ void main() {
         );
 
         // Act
-        final props = contact.props;
+        final List<Object?> props = contact.props;
 
         // Assert
         expect(props, hasLength(8));

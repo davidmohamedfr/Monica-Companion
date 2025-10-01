@@ -34,14 +34,15 @@ void main() {
       expect(find.text('Development Build'), findsOneWidget);
     });
 
-    testWidgets('should display app branding', (
-      WidgetTester tester,
-    ) async {
+    testWidgets('should display app branding', (WidgetTester tester) async {
       await tester.pumpWidget(const MonicaApp());
       await tester.pumpAndSettle();
 
       expect(find.byType(SvgPicture), findsOneWidget);
-      expect(find.text('Personal relationships, perfectly managed'), findsOneWidget);
+      expect(
+        find.text('Personal relationships, perfectly managed'),
+        findsOneWidget,
+      );
     });
 
     test('should initialize app config without error', () {
@@ -55,13 +56,14 @@ void main() {
   });
 
   group('Welcome Screen', () {
-    testWidgets('should display welcome message', (
-      WidgetTester tester,
-    ) async {
+    testWidgets('should display welcome message', (WidgetTester tester) async {
       await tester.pumpWidget(const MonicaApp());
       await tester.pumpAndSettle();
 
-      expect(find.textContaining('Welcome to Monica Companion'), findsOneWidget);
+      expect(
+        find.textContaining('Welcome to Monica Companion'),
+        findsOneWidget,
+      );
     });
 
     testWidgets('should display environment info', (WidgetTester tester) async {
@@ -91,9 +93,7 @@ void main() {
       expect(app.theme?.useMaterial3, isTrue);
     });
 
-    testWidgets('should use Monica brand color', (
-      WidgetTester tester,
-    ) async {
+    testWidgets('should use Monica brand color', (WidgetTester tester) async {
       await tester.pumpWidget(const MonicaApp());
 
       final MaterialApp app = tester.widget(find.byType(MaterialApp));
