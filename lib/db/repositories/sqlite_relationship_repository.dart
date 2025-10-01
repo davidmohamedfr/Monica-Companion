@@ -28,7 +28,7 @@ class SqliteRelationshipRepository extends BaseRepository<Relationship, int>
         <dynamic>[contactId],
       );
       return results.map(fromMap).toList();
-    } catch (e) {
+    } on Object catch (e) {
       final Failure failure = ErrorTransformer.transformException(
         e,
         'finding relationships by contact ID',
@@ -55,7 +55,7 @@ class SqliteRelationshipRepository extends BaseRepository<Relationship, int>
         <dynamic>[relationshipType],
       );
       return results.map(fromMap).toList();
-    } catch (e) {
+    } on Object catch (e) {
       final Failure failure = ErrorTransformer.transformException(
         e,
         'finding relationships by type',
@@ -85,7 +85,7 @@ class SqliteRelationshipRepository extends BaseRepository<Relationship, int>
         <dynamic>[start.toIso8601String(), end.toIso8601String()],
       );
       return results.map(fromMap).toList();
-    } catch (e) {
+    } on Object catch (e) {
       final Failure failure = ErrorTransformer.transformException(
         e,
         'finding relationships by date range',
@@ -112,7 +112,7 @@ class SqliteRelationshipRepository extends BaseRepository<Relationship, int>
         <dynamic>[date.toIso8601String()],
       );
       return results.map(fromMap).toList();
-    } catch (e) {
+    } on Object catch (e) {
       final Failure failure = ErrorTransformer.transformException(
         e,
         'finding relationships started before date',
@@ -139,7 +139,7 @@ class SqliteRelationshipRepository extends BaseRepository<Relationship, int>
         <dynamic>[date.toIso8601String()],
       );
       return results.map(fromMap).toList();
-    } catch (e) {
+    } on Object catch (e) {
       final Failure failure = ErrorTransformer.transformException(
         e,
         'finding relationships started after date',
@@ -167,7 +167,7 @@ class SqliteRelationshipRepository extends BaseRepository<Relationship, int>
         <dynamic>[cutoffDate.toIso8601String()],
       );
       return results.map(fromMap).toList();
-    } catch (e) {
+    } on Object catch (e) {
       final Failure failure = ErrorTransformer.transformException(
         e,
         'finding recent relationships',
@@ -193,7 +193,7 @@ class SqliteRelationshipRepository extends BaseRepository<Relationship, int>
         <dynamic>[contactId],
       );
       return results.first['count'] as int;
-    } catch (e) {
+    } on Object catch (e) {
       final Failure failure = ErrorTransformer.transformException(
         e,
         'counting relationships by contact ID',
@@ -219,7 +219,7 @@ class SqliteRelationshipRepository extends BaseRepository<Relationship, int>
       return results
           .map((Map<String, dynamic> row) => row['relationship_type'] as String)
           .toList();
-    } catch (e) {
+    } on Object catch (e) {
       final Failure failure = ErrorTransformer.transformException(
         e,
         'getting unique relationship types',
@@ -247,7 +247,7 @@ class SqliteRelationshipRepository extends BaseRepository<Relationship, int>
         <dynamic>[limit],
       );
       return results.map(fromMap).toList();
-    } catch (e) {
+    } on Object catch (e) {
       final Failure failure = ErrorTransformer.transformException(
         e,
         'finding longest relationships',

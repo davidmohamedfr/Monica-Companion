@@ -27,7 +27,7 @@ class SqliteGiftRepository extends BaseRepository<Gift, int>
         <dynamic>[contactId],
       );
       return results.map(fromMap).toList();
-    } catch (e) {
+    } on Object catch (e) {
       final Failure failure = ErrorTransformer.transformException(
         e,
         'finding gifts by contact ID',
@@ -54,7 +54,7 @@ class SqliteGiftRepository extends BaseRepository<Gift, int>
         <dynamic>[occasion],
       );
       return results.map(fromMap).toList();
-    } catch (e) {
+    } on Object catch (e) {
       final Failure failure = ErrorTransformer.transformException(
         e,
         'finding gifts by occasion',
@@ -81,7 +81,7 @@ class SqliteGiftRepository extends BaseRepository<Gift, int>
         <dynamic>[start.toIso8601String(), end.toIso8601String()],
       );
       return results.map(fromMap).toList();
-    } catch (e) {
+    } on Object catch (e) {
       final Failure failure = ErrorTransformer.transformException(
         e,
         'finding gifts by date range',
@@ -108,7 +108,7 @@ class SqliteGiftRepository extends BaseRepository<Gift, int>
         <dynamic>[minValue, maxValue],
       );
       return results.map(fromMap).toList();
-    } catch (e) {
+    } on Object catch (e) {
       final Failure failure = ErrorTransformer.transformException(
         e,
         'finding gifts by value range',
@@ -136,7 +136,7 @@ class SqliteGiftRepository extends BaseRepository<Gift, int>
         <dynamic>[searchPattern],
       );
       return results.map(fromMap).toList();
-    } catch (e) {
+    } on Object catch (e) {
       final Failure failure = ErrorTransformer.transformException(
         e,
         'finding gifts by name',
@@ -164,7 +164,7 @@ class SqliteGiftRepository extends BaseRepository<Gift, int>
         <dynamic>[cutoffDate.toIso8601String()],
       );
       return results.map(fromMap).toList();
-    } catch (e) {
+    } on Object catch (e) {
       final Failure failure = ErrorTransformer.transformException(
         e,
         'finding recent gifts',
@@ -191,7 +191,7 @@ class SqliteGiftRepository extends BaseRepository<Gift, int>
         <dynamic>[minValue],
       );
       return results.map(fromMap).toList();
-    } catch (e) {
+    } on Object catch (e) {
       final Failure failure = ErrorTransformer.transformException(
         e,
         'finding gifts by minimum value',
@@ -217,7 +217,7 @@ class SqliteGiftRepository extends BaseRepository<Gift, int>
         <dynamic>[contactId],
       );
       return results.first['count'] as int;
-    } catch (e) {
+    } on Object catch (e) {
       final Failure failure = ErrorTransformer.transformException(
         e,
         'counting gifts by contact ID',
@@ -243,7 +243,7 @@ class SqliteGiftRepository extends BaseRepository<Gift, int>
         <dynamic>[contactId],
       );
       return (results.first['total'] as num).toDouble();
-    } catch (e) {
+    } on Object catch (e) {
       final Failure failure = ErrorTransformer.transformException(
         e,
         'getting total gift value by contact ID',

@@ -34,7 +34,7 @@ class SqliteActivityRepository extends BaseRepository<Activity, int>
         ],
       );
       return results.map(fromMap).toList();
-    } catch (e) {
+    } on Object catch (e) {
       final Failure failure = ErrorTransformer.transformException(
         e,
         'finding activities by participant',
@@ -61,7 +61,7 @@ class SqliteActivityRepository extends BaseRepository<Activity, int>
         <dynamic>[start.toIso8601String(), end.toIso8601String()],
       );
       return results.map(fromMap).toList();
-    } catch (e) {
+    } on Object catch (e) {
       final Failure failure = ErrorTransformer.transformException(
         e,
         'finding activities by date range',
@@ -89,7 +89,7 @@ class SqliteActivityRepository extends BaseRepository<Activity, int>
         <dynamic>[searchPattern],
       );
       return results.map(fromMap).toList();
-    } catch (e) {
+    } on Object catch (e) {
       final Failure failure = ErrorTransformer.transformException(
         e,
         'finding activities by location',
@@ -117,7 +117,7 @@ class SqliteActivityRepository extends BaseRepository<Activity, int>
         <dynamic>[cutoffDate.toIso8601String()],
       );
       return results.map(fromMap).toList();
-    } catch (e) {
+    } on Object catch (e) {
       final Failure failure = ErrorTransformer.transformException(
         e,
         'finding recent activities',
@@ -145,7 +145,7 @@ class SqliteActivityRepository extends BaseRepository<Activity, int>
         <dynamic>[searchPattern],
       );
       return results.map(fromMap).toList();
-    } catch (e) {
+    } on Object catch (e) {
       final Failure failure = ErrorTransformer.transformException(
         e,
         'finding activities by title',
@@ -176,7 +176,7 @@ class SqliteActivityRepository extends BaseRepository<Activity, int>
         <dynamic>[now.toIso8601String(), futureDate.toIso8601String()],
       );
       return results.map(fromMap).toList();
-    } catch (e) {
+    } on Object catch (e) {
       final Failure failure = ErrorTransformer.transformException(
         e,
         'finding upcoming activities',
@@ -200,7 +200,7 @@ class SqliteActivityRepository extends BaseRepository<Activity, int>
       ''';
       final List<Map<String, dynamic>> results = await database.rawQuery(sql);
       return results.map(fromMap).toList();
-    } catch (e) {
+    } on Object catch (e) {
       final Failure failure = ErrorTransformer.transformException(
         e,
         'finding activities with multiple participants',
@@ -232,7 +232,7 @@ class SqliteActivityRepository extends BaseRepository<Activity, int>
         ],
       );
       return results.first['count'] as int;
-    } catch (e) {
+    } on Object catch (e) {
       final Failure failure = ErrorTransformer.transformException(
         e,
         'counting activities by participant',
@@ -258,7 +258,7 @@ class SqliteActivityRepository extends BaseRepository<Activity, int>
       return results
           .map((Map<String, dynamic> row) => row['location'] as String)
           .toList();
-    } catch (e) {
+    } on Object catch (e) {
       final Failure failure = ErrorTransformer.transformException(
         e,
         'getting unique activity locations',

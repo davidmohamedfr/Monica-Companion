@@ -44,7 +44,9 @@ class CallLogItem extends StatelessWidget {
   }
 
   String _formatDuration() {
-    if (duration == null) return '';
+    if (duration == null) {
+      return '';
+    }
     final int minutes = duration!.inMinutes;
     final int seconds = duration!.inSeconds % 60;
     return '$minutes:${seconds.toString().padLeft(2, '0')}';
