@@ -306,7 +306,8 @@ void main() {
 
         // Act & Assert
         final String expectedTime =
-            '${todayTimestamp.hour}:${todayTimestamp.minute.toString().padLeft(2, '0')}';
+            '${todayTimestamp.hour}:'
+            '${todayTimestamp.minute.toString().padLeft(2, '0')}';
         expect(find.text(expectedTime), findsOneWidget);
       });
 
