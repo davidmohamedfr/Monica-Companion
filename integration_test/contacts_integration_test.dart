@@ -21,6 +21,10 @@ void main() {
         await tester.pump(const Duration(seconds: 1));
         expect(find.text('View Contacts'), findsOneWidget);
 
+        // Ensure button is visible before tapping
+        await tester.ensureVisible(find.text('View Contacts'));
+        await tester.pumpAndSettle();
+
         await tester.tap(find.text('View Contacts'));
         await tester.pumpAndSettle();
 
@@ -177,6 +181,8 @@ void main() {
       debugPrint('🔐 Step 1: Testing permissions and error handling...');
 
       // Navigate to contacts
+      await tester.ensureVisible(find.text('View Contacts'));
+      await tester.pumpAndSettle();
       await tester.tap(find.text('View Contacts'));
       await tester.pumpAndSettle();
 
@@ -242,6 +248,8 @@ void main() {
 
       // Navigate to contacts
       debugPrint('📱 Step 2: Navigating to contacts...');
+      await tester.ensureVisible(find.text('View Contacts'));
+      await tester.pumpAndSettle();
       await tester.tap(find.text('View Contacts'));
       await tester.pumpAndSettle();
       await tester.pump(const Duration(seconds: 2));
@@ -278,6 +286,8 @@ void main() {
 
             // Navigate back to contacts
             debugPrint('📱 Step 5: Returning to contacts...');
+            await tester.ensureVisible(find.text('View Contacts'));
+            await tester.pumpAndSettle();
             await tester.tap(find.text('View Contacts'));
             await tester.pumpAndSettle();
             await tester.pump(const Duration(seconds: 1));
