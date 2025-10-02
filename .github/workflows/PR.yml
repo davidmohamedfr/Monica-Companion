@@ -170,14 +170,8 @@ jobs:
         emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
         disable-animations: true
         script: |
-          flutter build apk --debug
-          adb install -g build/app/outputs/flutter-apk/app-debug.apk
-          adb shell pm grant fr.m0hdaCorp.monica_companion android.permission.READ_CONTACTS
-          flutter test integration_test/ &
-          TEST_PID=$!
-          sleep 5
-          adb shell pm grant fr.m0hdaCorp.monica_companion android.permission.READ_CONTACTS
-          wait $TEST_PID
+          chmod +x scripts/run_integration_tests.sh
+          ./scripts/run_integration_tests.sh
 
   build-android:
     name: Build Android APK
