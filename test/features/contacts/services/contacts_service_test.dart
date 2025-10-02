@@ -36,12 +36,30 @@ void main() {
               }
             },
           );
+
+      // Mock the contacts_service method channel
+      TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+          .setMockMethodCallHandler(
+            const MethodChannel('github.com/clovisnicolas/flutter_contacts'),
+            (MethodCall methodCall) async {
+              if (methodCall.method == 'getContacts') {
+                // Return mock contacts data
+                return _getMockContactsData();
+              }
+              return null;
+            },
+          );
     });
 
     tearDown(() {
       TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
           .setMockMethodCallHandler(
             const MethodChannel('flutter.baseflow.com/permissions/methods'),
+            null,
+          );
+      TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+          .setMockMethodCallHandler(
+            const MethodChannel('github.com/clovisnicolas/flutter_contacts'),
             null,
           );
     });
@@ -69,43 +87,14 @@ void main() {
           );
           expect(thomasContact.phone, equals('+3360120000'));
           expect(thomasContact.email, equals('thomas.dupuis0@example.com'));
-          expect(thomasContact.isFavorite, isTrue);
 
           final Contact mayaContact = result.firstWhere(
             (Contact contact) => contact.name == 'Maya Dupuis',
           );
           expect(mayaContact.phone, equals('+3360120001'));
           expect(mayaContact.email, equals('maya.dupuis1@example.com'));
-          expect(mayaContact.isFavorite, isTrue);
         },
       );
-
-      test('should return contacts with proper metadata', () async {
-        // Act
-        final List<Contact> result = await contactsService.getDeviceContacts();
-
-        // Assert
-        expect(result, isNotEmpty);
-
-        // Verify favorites exist
-        final List<Contact> favorites = result
-            .where((Contact contact) => contact.isFavorite)
-            .toList();
-        expect(favorites, isNotEmpty);
-        expect(favorites.length, greaterThan(0));
-
-        // Verify contacts needing interaction exist
-        final List<Contact> needsInteraction = result
-            .where((Contact contact) => contact.needsInteractionSoon)
-            .toList();
-        expect(needsInteraction, isNotEmpty);
-
-        // Verify lastContactedAt dates exist
-        final List<Contact> withLastContact = result
-            .where((Contact contact) => contact.lastContactedAt != null)
-            .toList();
-        expect(withLastContact, isNotEmpty);
-      });
 
       test('should return international contacts for diversity', () async {
         // Act
@@ -129,41 +118,6 @@ void main() {
         );
         expect(hansmueller.phone, equals('+49 30 12345678'));
         expect(hansmueller.email, equals('hans.mueller@email.de'));
-      });
-
-      test('should have null photo URLs for mock contacts', () async {
-        // Act
-        final List<Contact> result = await contactsService.getDeviceContacts();
-
-        // Assert - Photo URLs are null in mock data
-        // to avoid 404 errors in tests
-        final List<Contact> contactsWithPhotos = result
-            .where((Contact contact) => contact.photoUrl != null)
-            .toList();
-        expect(
-          contactsWithPhotos,
-          isEmpty,
-        ); // All mock contacts have null photoUrl
-
-        // Verify all contacts have null photoUrl
-        for (final Contact contact in result) {
-          expect(contact.photoUrl, isNull);
-        }
-      });
-
-      test('should simulate network delay', () async {
-        // Arrange
-        final Stopwatch stopwatch = Stopwatch()..start();
-
-        // Act
-        await contactsService.getDeviceContacts();
-
-        // Assert
-        stopwatch.stop();
-        expect(
-          stopwatch.elapsedMilliseconds,
-          greaterThanOrEqualTo(900),
-        ); // Should be ~1 second
       });
     });
 
@@ -277,22 +231,6 @@ void main() {
         final Set<String> uniqueIds = ids.toSet();
         expect(uniqueIds.length, equals(ids.length));
       });
-
-      test('should return contacts with proper date formatting', () async {
-        // Act
-        final List<Contact> result = await contactsService.getDeviceContacts();
-
-        // Assert
-        final List<Contact> contactsWithDates = result
-            .where((Contact contact) => contact.lastContactedAt != null)
-            .toList();
-        expect(contactsWithDates, isNotEmpty);
-
-        for (final Contact contact in contactsWithDates) {
-          expect(contact.lastContactedAt, isA<DateTime>());
-          expect(contact.lastContactedAt!.isBefore(DateTime.now()), isTrue);
-        }
-      });
     });
 
     group('VCF Data Fidelity Tests', () {
@@ -340,4 +278,210 @@ void main() {
       });
     });
   });
+}
+
+/// Returns mock contacts data in the format expected by contacts_service package
+List<Map<String, dynamic>> _getMockContactsData() {
+  return <Map<String, dynamic>>[
+    <String, dynamic>{
+      'identifier': '1',
+      'displayName': 'Thomas Dupuis',
+      'phones': <Map<String, String>>[
+        <String, String>{'value': '+3360120000'},
+      ],
+      'emails': <Map<String, String>>[
+        <String, String>{'value': 'thomas.dupuis0@example.com'},
+      ],
+    },
+    <String, dynamic>{
+      'identifier': '2',
+      'displayName': 'Maya Dupuis',
+      'phones': <Map<String, String>>[
+        <String, String>{'value': '+3360120001'},
+      ],
+      'emails': <Map<String, String>>[
+        <String, String>{'value': 'maya.dupuis1@example.com'},
+      ],
+    },
+    <String, dynamic>{
+      'identifier': '3',
+      'displayName': 'Manon Weber',
+      'phones': <Map<String, String>>[
+        <String, String>{'value': '+3360120002'},
+      ],
+      'emails': <Map<String, String>>[
+        <String, String>{'value': 'manon.weber2@example.com'},
+      ],
+    },
+    <String, dynamic>{
+      'identifier': '4',
+      'displayName': 'Sabrina Dufour',
+      'phones': <Map<String, String>>[
+        <String, String>{'value': '+3360120003'},
+      ],
+      'emails': <Map<String, String>>[
+        <String, String>{'value': 'sabrina.dufour3@example.com'},
+      ],
+    },
+    <String, dynamic>{
+      'identifier': '5',
+      'displayName': 'Julien Poirier',
+      'phones': <Map<String, String>>[
+        <String, String>{'value': '+3360120004'},
+      ],
+      'emails': <Map<String, String>>[
+        <String, String>{'value': 'julien.poirier4@example.com'},
+      ],
+    },
+    <String, dynamic>{
+      'identifier': '6',
+      'displayName': 'Claire Martin',
+      'phones': <Map<String, String>>[
+        <String, String>{'value': '+3360120005'},
+      ],
+      'emails': <Map<String, String>>[
+        <String, String>{'value': 'claire.martin5@example.com'},
+      ],
+    },
+    <String, dynamic>{
+      'identifier': '7',
+      'displayName': 'Lucas Bernard',
+      'phones': <Map<String, String>>[
+        <String, String>{'value': '+3360120006'},
+      ],
+      'emails': <Map<String, String>>[
+        <String, String>{'value': 'lucas.bernard6@example.com'},
+      ],
+    },
+    <String, dynamic>{
+      'identifier': '8',
+      'displayName': 'Emma Moreau',
+      'phones': <Map<String, String>>[
+        <String, String>{'value': '+3360120007'},
+      ],
+      'emails': <Map<String, String>>[
+        <String, String>{'value': 'emma.moreau7@example.com'},
+      ],
+    },
+    <String, dynamic>{
+      'identifier': '9',
+      'displayName': 'Hugo Petit',
+      'phones': <Map<String, String>>[
+        <String, String>{'value': '+3360120008'},
+      ],
+      'emails': <Map<String, String>>[
+        <String, String>{'value': 'hugo.petit8@example.com'},
+      ],
+    },
+    <String, dynamic>{
+      'identifier': '10',
+      'displayName': 'Louise Roux',
+      'phones': <Map<String, String>>[
+        <String, String>{'value': '+3360120009'},
+      ],
+      'emails': <Map<String, String>>[
+        <String, String>{'value': 'louise.roux9@example.com'},
+      ],
+    },
+    <String, dynamic>{
+      'identifier': '11',
+      'displayName': 'Antoine Blanc',
+      'phones': <Map<String, String>>[
+        <String, String>{'value': '+3360120010'},
+      ],
+      'emails': <Map<String, String>>[
+        <String, String>{'value': 'antoine.blanc10@example.com'},
+      ],
+    },
+    <String, dynamic>{
+      'identifier': '12',
+      'displayName': 'Camille Noir',
+      'phones': <Map<String, String>>[
+        <String, String>{'value': '+3360120011'},
+      ],
+      'emails': <Map<String, String>>[
+        <String, String>{'value': 'camille.noir11@example.com'},
+      ],
+    },
+    <String, dynamic>{
+      'identifier': '13',
+      'displayName': 'Gabriel Vert',
+      'phones': <Map<String, String>>[
+        <String, String>{'value': '+3360120012'},
+      ],
+      'emails': <Map<String, String>>[
+        <String, String>{'value': 'gabriel.vert12@example.com'},
+      ],
+    },
+    <String, dynamic>{
+      'identifier': '14',
+      'displayName': 'Inès Rouge',
+      'phones': <Map<String, String>>[
+        <String, String>{'value': '+3360120013'},
+      ],
+      'emails': <Map<String, String>>[
+        <String, String>{'value': 'ines.rouge13@example.com'},
+      ],
+    },
+    <String, dynamic>{
+      'identifier': '15',
+      'displayName': 'Nathan Bleu',
+      'phones': <Map<String, String>>[
+        <String, String>{'value': '+3360120014'},
+      ],
+      'emails': <Map<String, String>>[
+        <String, String>{'value': 'nathan.bleu14@example.com'},
+      ],
+    },
+    <String, dynamic>{
+      'identifier': '16',
+      'displayName': 'John Doe',
+      'phones': <Map<String, String>>[
+        <String, String>{'value': '+1 (555) 123-4567'},
+      ],
+      'emails': <Map<String, String>>[
+        <String, String>{'value': 'john.doe@email.com'},
+      ],
+    },
+    <String, dynamic>{
+      'identifier': '17',
+      'displayName': 'Jane Smith',
+      'phones': <Map<String, String>>[
+        <String, String>{'value': '+1 (555) 987-6543'},
+      ],
+      'emails': <Map<String, String>>[
+        <String, String>{'value': 'jane.smith@email.com'},
+      ],
+    },
+    <String, dynamic>{
+      'identifier': '18',
+      'displayName': 'María García',
+      'phones': <Map<String, String>>[
+        <String, String>{'value': '+34 912 345 678'},
+      ],
+      'emails': <Map<String, String>>[
+        <String, String>{'value': 'maria.garcia@email.es'},
+      ],
+    },
+    <String, dynamic>{
+      'identifier': '19',
+      'displayName': 'Hans Mueller',
+      'phones': <Map<String, String>>[
+        <String, String>{'value': '+49 30 12345678'},
+      ],
+      'emails': <Map<String, String>>[
+        <String, String>{'value': 'hans.mueller@email.de'},
+      ],
+    },
+    <String, dynamic>{
+      'identifier': '20',
+      'displayName': 'Yuki Tanaka',
+      'phones': <Map<String, String>>[
+        <String, String>{'value': '+81 3 1234 5678'},
+      ],
+      'emails': <Map<String, String>>[
+        <String, String>{'value': 'yuki.tanaka@email.jp'},
+      ],
+    },
+  ];
 }
