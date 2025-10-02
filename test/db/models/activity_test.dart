@@ -310,10 +310,14 @@ void main() {
 
     test('should handle long descriptions', () {
       const String longDescription =
-          'This was an amazing evening where we all gathered together for a wonderful time. '
-          'We started with appetizers and drinks, then moved on to the main course which was absolutely delicious. '
-          'The conversation flowed naturally and everyone seemed to really enjoy themselves. '
-          'It was one of those perfect nights that you remember for years to come.';
+          'This was an amazing evening where we all gathered together '
+          'for a wonderful time. '
+          'We started with appetizers and drinks, then moved on to the '
+          'main course which was absolutely delicious. '
+          'The conversation flowed naturally and everyone seemed to '
+          'really enjoy themselves. '
+          'It was one of those perfect nights that you remember for '
+          'years to come.';
 
       const Activity activity = Activity(
         title: testTitle,

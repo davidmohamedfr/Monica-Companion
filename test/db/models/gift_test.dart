@@ -303,10 +303,14 @@ void main() {
 
     test('should handle long descriptions', () {
       const String longDescription =
-          'This is a very long description of a gift that someone gave to another person. '
-          'It contains multiple sentences and explains in detail what the gift was, when it was given, '
-          'why it was given, and how the recipient felt about receiving it. This tests that the model '
-          'can handle longer text content without issues during serialization and deserialization.';
+          'This is a very long description of a gift that someone '
+          'gave to another person. '
+          'It contains multiple sentences and explains in detail '
+          'what the gift was, when it was given, '
+          'why it was given, and how the recipient felt about '
+          'receiving it. This tests that the model '
+          'can handle longer text content without issues during '
+          'serialization and deserialization.';
 
       const Gift gift = Gift(
         contactId: testContactId,

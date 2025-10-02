@@ -286,7 +286,8 @@ void main() {
       WidgetTester tester,
     ) async {
       // Test service locator integration pattern
-      // Since ServiceLocator.instance is a singleton, we test the interaction pattern
+      // Since ServiceLocator.instance is a singleton,
+      // we test the interaction pattern
 
       // Simulate getting the service locator instance
       expect(mockServiceLocator, isA<ServiceLocator>());
@@ -338,7 +339,8 @@ void main() {
       WidgetTester tester,
     ) async {
       // Test static method initialization pattern
-      // Since DatabaseModule.initialize() is static, we test the conceptual pattern
+      // Since DatabaseModule.initialize() is static,
+      // we test the conceptual pattern
 
       // Test that static methods can be called without instance
       expect(() => DatabaseModule, returnsNormally);
@@ -348,7 +350,8 @@ void main() {
       WidgetTester tester,
     ) async {
       // Test static method disposal pattern
-      // Since DatabaseModule.dispose() is static, we test the conceptual pattern
+      // Since DatabaseModule.dispose() is static,
+      // we test the conceptual pattern
 
       // Test that static methods can be called without instance
       expect(() => DatabaseModule, returnsNormally);
@@ -481,7 +484,8 @@ void main() {
       WidgetTester tester,
     ) async {
       // Test coordination with AppInitializationService
-      // This simulates the pattern where DatabaseModule is called from AppInitializationService
+      // This simulates the pattern where DatabaseModule is called
+      // from AppInitializationService
 
       // Simulate the initialization flow
       await mockDatabase.initialize();

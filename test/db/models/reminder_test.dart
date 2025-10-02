@@ -361,8 +361,10 @@ void main() {
 
     test('should handle long descriptions', () {
       const String longDescription =
-          'This is a comprehensive reminder description that provides detailed information '
-          'about what needs to be done, when it should be done, and any special considerations that might be '
+          'This is a comprehensive reminder description that provides '
+          'detailed information '
+          'about what needs to be done, when it should be done, and any '
+          'special considerations that might be '
           'relevant for completing the task successfully.';
 
       const Reminder reminder = Reminder(
@@ -378,27 +380,26 @@ void main() {
       expect(fromMap.description, longDescription);
     });
 
-    test(
-      'should handle edge case where active is 0 in database but should default to true',
-      () {
-        // This tests the specific logic where active defaults to true unless explicitly set to 0
-        final Map<String, dynamic> map = <String, dynamic>{
-          'id': 1,
-          'contact_id': testContactId,
-          'title': testTitle,
-          'due_date': testDueDate,
-          'active': 0, // Explicitly false
-          'created_at': null,
-        };
+    test('should handle edge case where active is 0 in database '
+        'but should default to true', () {
+      // This tests the specific logic where active defaults to true
+      // unless explicitly set to 0
+      final Map<String, dynamic> map = <String, dynamic>{
+        'id': 1,
+        'contact_id': testContactId,
+        'title': testTitle,
+        'due_date': testDueDate,
+        'active': 0, // Explicitly false
+        'created_at': null,
+      };
 
-        final Reminder reminder = Reminder.fromMap(map);
-        expect(reminder.active, false);
+      final Reminder reminder = Reminder.fromMap(map);
+      expect(reminder.active, false);
 
-        // Test that null defaults to true
-        map['active'] = null;
-        final Reminder reminderNull = Reminder.fromMap(map);
-        expect(reminderNull.active, true);
-      },
-    );
+      // Test that null defaults to true
+      map['active'] = null;
+      final Reminder reminderNull = Reminder.fromMap(map);
+      expect(reminderNull.active, true);
+    });
   });
 }

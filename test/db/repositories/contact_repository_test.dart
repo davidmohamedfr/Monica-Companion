@@ -183,7 +183,9 @@ void main() {
       expect(result, 1);
       verify(
         () => mockDatabase.rawInsert(
-          'INSERT INTO contacts (name, email, phone, avatar, birthday, address, notes, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)',
+          'INSERT INTO contacts (name, email, phone, avatar, birthday, '
+          'address, notes, created_at, updated_at) '
+          'VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)',
           any(),
         ),
       ).called(1);
@@ -199,7 +201,9 @@ void main() {
       expect(result, true);
       verify(
         () => mockDatabase.rawExecute(
-          'UPDATE contacts SET name = ?, email = ?, phone = ?, avatar = ?, birthday = ?, address = ?, notes = ?, created_at = ?, updated_at = ? WHERE id = ?',
+          'UPDATE contacts SET name = ?, email = ?, phone = ?, avatar = ?, '
+          'birthday = ?, address = ?, notes = ?, created_at = ?, '
+          'updated_at = ? WHERE id = ?',
           any(),
         ),
       ).called(1);
