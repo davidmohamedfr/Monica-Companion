@@ -19,12 +19,16 @@ void main() {
       // Step 1: Navigate to contacts
       debugPrint('📱 Step 1: Navigating to contacts...');
 
-      // Wait for View Contacts button to appear
+      // Wait for View Contacts button to appear and scroll to it if needed
       await tester.pump(const Duration(seconds: 1));
       expect(find.text('View Contacts'), findsOneWidget);
 
-      // Ensure button is visible before tapping
-      await tester.ensureVisible(find.text('View Contacts'));
+      // Scroll to button if off-screen
+      await tester.dragUntilVisible(
+        find.text('View Contacts'),
+        find.byType(Scaffold),
+        const Offset(0, -50),
+      );
       await tester.pumpAndSettle();
 
       await tester.tap(find.text('View Contacts'));
