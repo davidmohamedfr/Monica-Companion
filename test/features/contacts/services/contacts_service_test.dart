@@ -47,32 +47,38 @@ void main() {
     });
 
     group('getDeviceContacts Tests', () {
-      test('should return contacts when permission is already granted', () async {
-        // This test verifies the service returns contacts from the mock implementation
-        // Since we can't mock Permission.contacts.status directly, we test the current implementation
+      test(
+        'should return contacts when permission is already granted',
+        () async {
+          // This test verifies the service returns contacts
+          // from the mock implementation
+          // Since we can't mock Permission.contacts.status directly,
+          // we test the current implementation
 
-        // Act
-        final List<Contact> result = await contactsService.getDeviceContacts();
+          // Act
+          final List<Contact> result = await contactsService
+              .getDeviceContacts();
 
-        // Assert
-        expect(result, isA<List<Contact>>());
-        expect(result.length, equals(20));
+          // Assert
+          expect(result, isA<List<Contact>>());
+          expect(result.length, equals(20));
 
-        // Verify specific contacts from VCF data
-        final Contact thomasContact = result.firstWhere(
-          (Contact contact) => contact.name == 'Thomas Dupuis',
-        );
-        expect(thomasContact.phone, equals('+3360120000'));
-        expect(thomasContact.email, equals('thomas.dupuis0@example.com'));
-        expect(thomasContact.isFavorite, isTrue);
+          // Verify specific contacts from VCF data
+          final Contact thomasContact = result.firstWhere(
+            (Contact contact) => contact.name == 'Thomas Dupuis',
+          );
+          expect(thomasContact.phone, equals('+3360120000'));
+          expect(thomasContact.email, equals('thomas.dupuis0@example.com'));
+          expect(thomasContact.isFavorite, isTrue);
 
-        final Contact mayaContact = result.firstWhere(
-          (Contact contact) => contact.name == 'Maya Dupuis',
-        );
-        expect(mayaContact.phone, equals('+3360120001'));
-        expect(mayaContact.email, equals('maya.dupuis1@example.com'));
-        expect(mayaContact.isFavorite, isTrue);
-      });
+          final Contact mayaContact = result.firstWhere(
+            (Contact contact) => contact.name == 'Maya Dupuis',
+          );
+          expect(mayaContact.phone, equals('+3360120001'));
+          expect(mayaContact.email, equals('maya.dupuis1@example.com'));
+          expect(mayaContact.isFavorite, isTrue);
+        },
+      );
 
       test('should return contacts with proper metadata', () async {
         // Act
@@ -129,7 +135,8 @@ void main() {
         // Act
         final List<Contact> result = await contactsService.getDeviceContacts();
 
-        // Assert - Photo URLs are null in mock data to avoid 404 errors in tests
+        // Assert - Photo URLs are null in mock data
+        // to avoid 404 errors in tests
         final List<Contact> contactsWithPhotos = result
             .where((Contact contact) => contact.photoUrl != null)
             .toList();
@@ -162,8 +169,8 @@ void main() {
 
     group('requestContactsPermission Tests', () {
       test('should handle permission request success', () async {
-        // Since we can't easily mock Permission.contacts.request() in this setup,
-        // we test the actual implementation behavior
+        // Since we can't easily mock Permission.contacts.request()
+        // in this setup, we test the actual implementation behavior
 
         // Act
         final bool result = await contactsService.requestContactsPermission();
