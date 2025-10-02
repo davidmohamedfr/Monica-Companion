@@ -104,7 +104,8 @@ void main() {
 
     group('LoadContactsEvent Tests', () {
       blocTest<ContactsBloc, ContactsState>(
-        'should emit loading then success state when contacts load successfully',
+        'should emit loading then success state '
+        'when contacts load successfully',
         build: () => contactsBloc,
         act: (ContactsBloc bloc) => bloc.add(const LoadContactsEvent()),
         expect: () => <Matcher>[

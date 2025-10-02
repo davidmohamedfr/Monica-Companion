@@ -48,36 +48,34 @@ void main() {
               .map((Interaction interaction) => interaction.toMap())
               .toList();
 
-      testWidgets(
-        'should return interactions for valid contact ID ordered by date descending',
-        (WidgetTester tester) async {
-          // Arrange
-          when(
-            () => mockDatabase.rawQuery(any(), any()),
-          ).thenAnswer((_) async => mockDatabaseResponse);
+      testWidgets('should return interactions for valid contact ID '
+          'ordered by date descending', (WidgetTester tester) async {
+        // Arrange
+        when(
+          () => mockDatabase.rawQuery(any(), any()),
+        ).thenAnswer((_) async => mockDatabaseResponse);
 
-          // Act
-          final List<Interaction> result = await repository.findByContactId(
-            testContactId,
-          );
+        // Act
+        final List<Interaction> result = await repository.findByContactId(
+          testContactId,
+        );
 
-          // Assert
-          expect(result, hasLength(2));
-          expect(result, equals(expectedInteractions));
+        // Assert
+        expect(result, hasLength(2));
+        expect(result, equals(expectedInteractions));
 
-          // Verify correct SQL query was executed
-          verify(
-            () => mockDatabase.rawQuery(
-              '''
+        // Verify correct SQL query was executed
+        verify(
+          () => mockDatabase.rawQuery(
+            '''
         SELECT * FROM interactions
         WHERE contact_id = ?
         ORDER BY date DESC
       ''',
-              <dynamic>[testContactId],
-            ),
-          ).called(1);
-        },
-      );
+            <dynamic>[testContactId],
+          ),
+        ).called(1);
+      });
 
       testWidgets(
         'should return empty list when no interactions found for contact',
