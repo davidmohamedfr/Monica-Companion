@@ -23,6 +23,10 @@ void main() {
       await tester.pump(const Duration(seconds: 1));
       expect(find.text('View Contacts'), findsOneWidget);
 
+      // Ensure button is visible before tapping
+      await tester.ensureVisible(find.text('View Contacts'));
+      await tester.pumpAndSettle();
+
       await tester.tap(find.text('View Contacts'));
       await tester.pumpAndSettle();
 
