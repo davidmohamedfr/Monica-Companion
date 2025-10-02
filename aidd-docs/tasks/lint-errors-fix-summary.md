@@ -10,8 +10,9 @@
 - **After round 2**: 106 errors (218 fixed, 67% reduction)
 - **After round 3**: 100 errors (224 fixed, 69% reduction)
 - **After round 4**: 79 errors (245 fixed, 76% reduction)
-- **Final errors**: 79
-- **Total reduction**: 245 errors fixed (76% reduction)
+- **After round 5**: 43 errors (281 fixed, 87% reduction)
+- **Final errors**: 43
+- **Total reduction**: 281 errors fixed (87% reduction)
 
 ## ✅ Completed Fixes
 
@@ -173,7 +174,21 @@ serviceLocator
   ..registerSingleton<ServiceB>(serviceB);
 ```
 
-#### 11. `one_member_abstracts` (2 errors)
+#### 11. ~~`lines_longer_than_80_chars` (36 errors)~~ ✅ **FIXED** - Round 5
+- **Location**: Test files with long comments and test data strings
+- **Action**: Split long comments and strings across multiple lines
+- **Examples**:
+  - `test/core/di/database_module_test.dart` - Split long comments (4 instances)
+  - `test/core/services/app_initialization_service_test.dart` - Split comments (7 instances)
+  - `test/db/database_initialization_test.dart` - Split SQL strings (3 instances)
+  - `test/db/models/activity_test.dart` - Split long test strings (4 instances)
+  - `test/db/models/gift_test.dart` - Split long test strings (4 instances)
+  - `test/db/models/relationship_test.dart` - Split long test strings (4 instances)
+  - `test/db/models/reminder_test.dart` - Split long test strings (4 instances)
+  - `test/db/repositories/contact_repository_test.dart` - Split SQL strings (2 instances)
+  - `test/features/contacts/services/contacts_service_test.dart` - Split comments (4 instances)
+
+#### 12. `one_member_abstracts` (2 errors)
 - **Location**: `test/services/service_locator_test.dart:5,17`
 - **Description**: Abstract test mock classes with single member
 - **Status**: Test code pattern - acceptable
@@ -259,6 +274,19 @@ serviceLocator
 - `test/core/services/app_initialization_service_test.dart` - Converted service registration to cascades (2 instances)
 - `test/services/service_locator_test.dart` - Converted service locator operations to cascades (9 instances)
 
+### Round 5 (36 errors fixed)
+
+#### Test Files - Line Length Fixes
+- `test/core/di/database_module_test.dart` - Split long comments (4 lines)
+- `test/core/services/app_initialization_service_test.dart` - Split long comments (7 lines)
+- `test/db/database_initialization_test.dart` - Split long SQL strings (3 lines)
+- `test/db/models/activity_test.dart` - Split long test data strings (4 lines)
+- `test/db/models/gift_test.dart` - Split long test data strings (4 lines)
+- `test/db/models/relationship_test.dart` - Split long test data strings (4 lines)
+- `test/db/models/reminder_test.dart` - Split long test data strings (4 lines)
+- `test/db/repositories/contact_repository_test.dart` - Split long SQL strings (2 lines)
+- `test/features/contacts/services/contacts_service_test.dart` - Split long comments (4 lines)
+
 ## Commands Used
 
 ```bash
@@ -289,11 +317,11 @@ flutter analyze
 
 ### ✅ All Critical Errors Fixed!
 
-All high-priority errors have been resolved. Remaining 79 errors are:
+All high-priority errors have been resolved. Remaining 43 errors are:
 
-1. **Style preferences** (~64 instances):
-   - `cascade_invocations` in test files (~11) - **mostly false positives** (single calls, async operations, code in between)
-   - `lines_longer_than_80_chars` in test data strings (~53)
+1. **Style preferences** (~28 instances):
+   - `cascade_invocations` in test files (~11) - **mostly false positives**
+   - `lines_longer_than_80_chars` in test files (~17) - remaining test data/comments
 
 2. **Accepted patterns** (~15 instances):
    - `prefer_constructors_over_static_methods` - Factory methods (~10)
@@ -307,6 +335,6 @@ All high-priority errors have been resolved. Remaining 79 errors are:
    - Disable `cascade_invocations` for test files (many false positives)
    - Consider relaxing `lines_longer_than_80_chars` for test comments/data
 
-### Completed Commits (Round 4)
-1. Task documentation commit (this file)
-2. Code changes commit (cascade_invocations fixes)
+### Completed Commits
+- **Round 4**: cascade_invocations fixes (21 errors)
+- **Round 5**: lines_longer_than_80_chars fixes (36 errors)
