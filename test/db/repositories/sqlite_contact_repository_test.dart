@@ -600,7 +600,8 @@ void main() {
       expect(
         sql,
         contains(
-          "ORDER BY strftime('%m', birthday) ASC, strftime('%d', birthday) ASC, name ASC",
+          "ORDER BY strftime('%m', birthday) ASC, "
+          "strftime('%d', birthday) ASC, name ASC",
         ),
       );
     });

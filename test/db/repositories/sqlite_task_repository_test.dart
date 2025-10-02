@@ -70,31 +70,27 @@ void main() {
   });
 
   group('SqliteTaskRepository - findByContactId', () {
-    testWidgets(
-      'should return tasks for valid contact ID ordered by priority and due date',
-      (WidgetTester tester) async {
-        when(
-          () => mockDatabase.rawQuery(any(), any()),
-        ).thenAnswer((_) async => mockDatabaseResponse);
+    testWidgets('should return tasks for valid contact ID '
+        'ordered by priority and due date', (WidgetTester tester) async {
+      when(
+        () => mockDatabase.rawQuery(any(), any()),
+      ).thenAnswer((_) async => mockDatabaseResponse);
 
-        final List<Task> result = await repository.findByContactId(
-          testContactId,
-        );
+      final List<Task> result = await repository.findByContactId(testContactId);
 
-        expect(result, hasLength(2));
-        expect(result, equals(expectedTasks));
-        verify(
-          () => mockDatabase.rawQuery(
-            '''
+      expect(result, hasLength(2));
+      expect(result, equals(expectedTasks));
+      verify(
+        () => mockDatabase.rawQuery(
+          '''
         SELECT * FROM tasks
         WHERE contact_id = ?
         ORDER BY priority DESC, due_date ASC, created_at DESC
       ''',
-            <dynamic>[testContactId],
-          ),
-        ).called(1);
-      },
-    );
+          <dynamic>[testContactId],
+        ),
+      ).called(1);
+    });
 
     testWidgets('should return empty list when no tasks found for contact', (
       WidgetTester tester,
@@ -453,33 +449,31 @@ void main() {
   });
 
   group('SqliteTaskRepository - findByPriorityRange', () {
-    testWidgets(
-      'should return tasks within priority range ordered by priority and due date',
-      (WidgetTester tester) async {
-        const int minPriority = 3;
-        const int maxPriority = 5;
-        when(
-          () => mockDatabase.rawQuery(any(), any()),
-        ).thenAnswer((_) async => mockDatabaseResponse);
+    testWidgets('should return tasks within priority range '
+        'ordered by priority and due date', (WidgetTester tester) async {
+      const int minPriority = 3;
+      const int maxPriority = 5;
+      when(
+        () => mockDatabase.rawQuery(any(), any()),
+      ).thenAnswer((_) async => mockDatabaseResponse);
 
-        final List<Task> result = await repository.findByPriorityRange(
-          minPriority,
-          maxPriority,
-        );
+      final List<Task> result = await repository.findByPriorityRange(
+        minPriority,
+        maxPriority,
+      );
 
-        expect(result, hasLength(2));
-        verify(
-          () => mockDatabase.rawQuery(
-            '''
+      expect(result, hasLength(2));
+      verify(
+        () => mockDatabase.rawQuery(
+          '''
         SELECT * FROM tasks
         WHERE priority BETWEEN ? AND ?
         ORDER BY priority DESC, due_date ASC, created_at DESC
       ''',
-            <dynamic>[minPriority, maxPriority],
-          ),
-        ).called(1);
-      },
-    );
+          <dynamic>[minPriority, maxPriority],
+        ),
+      ).called(1);
+    });
 
     testWidgets(
       'should return empty list when no tasks found in priority range',
