@@ -1,4 +1,4 @@
-import 'package:contacts_service/contacts_service.dart' as cs;
+import 'package:flutter_contacts/flutter_contacts.dart' as fc;
 import 'package:monica_companion/core/errors/exceptions.dart';
 import 'package:monica_companion/features/contacts/models/contact_model.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -22,26 +22,28 @@ class ContactsServiceImpl implements ContactsService {
       }
 
       // Fetch real device contacts
-      final Iterable<cs.Contact> deviceContacts =
-          await cs.ContactsService.getContacts();
+      final List<fc.Contact> deviceContacts = await fc
+          .FlutterContacts.getContacts(withProperties: true, withPhoto: true);
 
       // Convert to our Contact model
-      return deviceContacts.map((cs.Contact deviceContact) {
-        final String name = deviceContact.displayName ?? 'Unknown';
-        final String? phone = (deviceContact.phones?.isNotEmpty ?? false)
-            ? deviceContact.phones!.first.value
+      return deviceContacts.map((fc.Contact deviceContact) {
+        final String name = deviceContact.displayName.isNotEmpty
+            ? deviceContact.displayName
+            : 'Unknown';
+        final String? phone = deviceContact.phones.isNotEmpty
+            ? deviceContact.phones.first.number
             : null;
-        final String? email = (deviceContact.emails?.isNotEmpty ?? false)
-            ? deviceContact.emails!.first.value
+        final String? email = deviceContact.emails.isNotEmpty
+            ? deviceContact.emails.first.address
             : null;
 
         return Contact(
-          id: deviceContact.identifier ?? '',
+          id: deviceContact.id,
           name: name,
           phone: phone,
           email: email,
-          photoUrl: (deviceContact.avatar?.isNotEmpty ?? false)
-              ? 'data:image/png;base64,${deviceContact.avatar}'
+          photoUrl: deviceContact.photo != null
+              ? 'data:image/png;base64,${deviceContact.photo}'
               : null,
         );
       }).toList();

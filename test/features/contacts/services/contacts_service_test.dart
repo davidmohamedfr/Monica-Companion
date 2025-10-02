@@ -37,12 +37,12 @@ void main() {
             },
           );
 
-      // Mock the contacts_service method channel
+      // Mock the flutter_contacts method channel
       TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
           .setMockMethodCallHandler(
-            const MethodChannel('github.com/clovisnicolas/flutter_contacts'),
+            const MethodChannel('github.com/QuisApp/flutter_contacts'),
             (MethodCall methodCall) async {
-              if (methodCall.method == 'getContacts') {
+              if (methodCall.method == 'select') {
                 // Return mock contacts data
                 return _getMockContactsData();
               }
@@ -59,7 +59,7 @@ void main() {
           );
       TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
           .setMockMethodCallHandler(
-            const MethodChannel('github.com/clovisnicolas/flutter_contacts'),
+            const MethodChannel('github.com/QuisApp/flutter_contacts'),
             null,
           );
     });
@@ -280,207 +280,207 @@ void main() {
   });
 }
 
-/// Returns mock contacts data in the format expected by contacts_service package
+/// Returns mock contacts data in the format expected by flutter_contacts package
 List<Map<String, dynamic>> _getMockContactsData() {
   return <Map<String, dynamic>>[
     <String, dynamic>{
-      'identifier': '1',
+      'id': '1',
       'displayName': 'Thomas Dupuis',
       'phones': <Map<String, String>>[
-        <String, String>{'value': '+3360120000'},
+        <String, String>{'number': '+3360120000'},
       ],
       'emails': <Map<String, String>>[
-        <String, String>{'value': 'thomas.dupuis0@example.com'},
+        <String, String>{'address': 'thomas.dupuis0@example.com'},
       ],
     },
     <String, dynamic>{
-      'identifier': '2',
+      'id': '2',
       'displayName': 'Maya Dupuis',
       'phones': <Map<String, String>>[
-        <String, String>{'value': '+3360120001'},
+        <String, String>{'number': '+3360120001'},
       ],
       'emails': <Map<String, String>>[
-        <String, String>{'value': 'maya.dupuis1@example.com'},
+        <String, String>{'number': 'maya.dupuis1@example.com'},
       ],
     },
     <String, dynamic>{
-      'identifier': '3',
+      'id': '3',
       'displayName': 'Manon Weber',
       'phones': <Map<String, String>>[
-        <String, String>{'value': '+3360120002'},
+        <String, String>{'number': '+3360120002'},
       ],
       'emails': <Map<String, String>>[
-        <String, String>{'value': 'manon.weber2@example.com'},
+        <String, String>{'number': 'manon.weber2@example.com'},
       ],
     },
     <String, dynamic>{
-      'identifier': '4',
+      'id': '4',
       'displayName': 'Sabrina Dufour',
       'phones': <Map<String, String>>[
-        <String, String>{'value': '+3360120003'},
+        <String, String>{'number': '+3360120003'},
       ],
       'emails': <Map<String, String>>[
-        <String, String>{'value': 'sabrina.dufour3@example.com'},
+        <String, String>{'number': 'sabrina.dufour3@example.com'},
       ],
     },
     <String, dynamic>{
-      'identifier': '5',
+      'id': '5',
       'displayName': 'Julien Poirier',
       'phones': <Map<String, String>>[
-        <String, String>{'value': '+3360120004'},
+        <String, String>{'number': '+3360120004'},
       ],
       'emails': <Map<String, String>>[
-        <String, String>{'value': 'julien.poirier4@example.com'},
+        <String, String>{'number': 'julien.poirier4@example.com'},
       ],
     },
     <String, dynamic>{
-      'identifier': '6',
+      'id': '6',
       'displayName': 'Claire Martin',
       'phones': <Map<String, String>>[
-        <String, String>{'value': '+3360120005'},
+        <String, String>{'number': '+3360120005'},
       ],
       'emails': <Map<String, String>>[
-        <String, String>{'value': 'claire.martin5@example.com'},
+        <String, String>{'number': 'claire.martin5@example.com'},
       ],
     },
     <String, dynamic>{
-      'identifier': '7',
+      'id': '7',
       'displayName': 'Lucas Bernard',
       'phones': <Map<String, String>>[
-        <String, String>{'value': '+3360120006'},
+        <String, String>{'number': '+3360120006'},
       ],
       'emails': <Map<String, String>>[
-        <String, String>{'value': 'lucas.bernard6@example.com'},
+        <String, String>{'number': 'lucas.bernard6@example.com'},
       ],
     },
     <String, dynamic>{
-      'identifier': '8',
+      'id': '8',
       'displayName': 'Emma Moreau',
       'phones': <Map<String, String>>[
-        <String, String>{'value': '+3360120007'},
+        <String, String>{'number': '+3360120007'},
       ],
       'emails': <Map<String, String>>[
-        <String, String>{'value': 'emma.moreau7@example.com'},
+        <String, String>{'number': 'emma.moreau7@example.com'},
       ],
     },
     <String, dynamic>{
-      'identifier': '9',
+      'id': '9',
       'displayName': 'Hugo Petit',
       'phones': <Map<String, String>>[
-        <String, String>{'value': '+3360120008'},
+        <String, String>{'number': '+3360120008'},
       ],
       'emails': <Map<String, String>>[
-        <String, String>{'value': 'hugo.petit8@example.com'},
+        <String, String>{'number': 'hugo.petit8@example.com'},
       ],
     },
     <String, dynamic>{
-      'identifier': '10',
+      'id': '10',
       'displayName': 'Louise Roux',
       'phones': <Map<String, String>>[
-        <String, String>{'value': '+3360120009'},
+        <String, String>{'number': '+3360120009'},
       ],
       'emails': <Map<String, String>>[
-        <String, String>{'value': 'louise.roux9@example.com'},
+        <String, String>{'number': 'louise.roux9@example.com'},
       ],
     },
     <String, dynamic>{
-      'identifier': '11',
+      'id': '11',
       'displayName': 'Antoine Blanc',
       'phones': <Map<String, String>>[
-        <String, String>{'value': '+3360120010'},
+        <String, String>{'number': '+3360120010'},
       ],
       'emails': <Map<String, String>>[
-        <String, String>{'value': 'antoine.blanc10@example.com'},
+        <String, String>{'number': 'antoine.blanc10@example.com'},
       ],
     },
     <String, dynamic>{
-      'identifier': '12',
+      'id': '12',
       'displayName': 'Camille Noir',
       'phones': <Map<String, String>>[
-        <String, String>{'value': '+3360120011'},
+        <String, String>{'number': '+3360120011'},
       ],
       'emails': <Map<String, String>>[
-        <String, String>{'value': 'camille.noir11@example.com'},
+        <String, String>{'number': 'camille.noir11@example.com'},
       ],
     },
     <String, dynamic>{
-      'identifier': '13',
+      'id': '13',
       'displayName': 'Gabriel Vert',
       'phones': <Map<String, String>>[
-        <String, String>{'value': '+3360120012'},
+        <String, String>{'number': '+3360120012'},
       ],
       'emails': <Map<String, String>>[
-        <String, String>{'value': 'gabriel.vert12@example.com'},
+        <String, String>{'number': 'gabriel.vert12@example.com'},
       ],
     },
     <String, dynamic>{
-      'identifier': '14',
+      'id': '14',
       'displayName': 'Inès Rouge',
       'phones': <Map<String, String>>[
-        <String, String>{'value': '+3360120013'},
+        <String, String>{'number': '+3360120013'},
       ],
       'emails': <Map<String, String>>[
-        <String, String>{'value': 'ines.rouge13@example.com'},
+        <String, String>{'number': 'ines.rouge13@example.com'},
       ],
     },
     <String, dynamic>{
-      'identifier': '15',
+      'id': '15',
       'displayName': 'Nathan Bleu',
       'phones': <Map<String, String>>[
-        <String, String>{'value': '+3360120014'},
+        <String, String>{'number': '+3360120014'},
       ],
       'emails': <Map<String, String>>[
-        <String, String>{'value': 'nathan.bleu14@example.com'},
+        <String, String>{'number': 'nathan.bleu14@example.com'},
       ],
     },
     <String, dynamic>{
-      'identifier': '16',
+      'id': '16',
       'displayName': 'John Doe',
       'phones': <Map<String, String>>[
-        <String, String>{'value': '+1 (555) 123-4567'},
+        <String, String>{'number': '+1 (555) 123-4567'},
       ],
       'emails': <Map<String, String>>[
-        <String, String>{'value': 'john.doe@email.com'},
+        <String, String>{'number': 'john.doe@email.com'},
       ],
     },
     <String, dynamic>{
-      'identifier': '17',
+      'id': '17',
       'displayName': 'Jane Smith',
       'phones': <Map<String, String>>[
-        <String, String>{'value': '+1 (555) 987-6543'},
+        <String, String>{'number': '+1 (555) 987-6543'},
       ],
       'emails': <Map<String, String>>[
-        <String, String>{'value': 'jane.smith@email.com'},
+        <String, String>{'number': 'jane.smith@email.com'},
       ],
     },
     <String, dynamic>{
-      'identifier': '18',
+      'id': '18',
       'displayName': 'María García',
       'phones': <Map<String, String>>[
-        <String, String>{'value': '+34 912 345 678'},
+        <String, String>{'number': '+34 912 345 678'},
       ],
       'emails': <Map<String, String>>[
-        <String, String>{'value': 'maria.garcia@email.es'},
+        <String, String>{'number': 'maria.garcia@email.es'},
       ],
     },
     <String, dynamic>{
-      'identifier': '19',
+      'id': '19',
       'displayName': 'Hans Mueller',
       'phones': <Map<String, String>>[
-        <String, String>{'value': '+49 30 12345678'},
+        <String, String>{'number': '+49 30 12345678'},
       ],
       'emails': <Map<String, String>>[
-        <String, String>{'value': 'hans.mueller@email.de'},
+        <String, String>{'number': 'hans.mueller@email.de'},
       ],
     },
     <String, dynamic>{
-      'identifier': '20',
+      'id': '20',
       'displayName': 'Yuki Tanaka',
       'phones': <Map<String, String>>[
-        <String, String>{'value': '+81 3 1234 5678'},
+        <String, String>{'number': '+81 3 1234 5678'},
       ],
       'emails': <Map<String, String>>[
-        <String, String>{'value': 'yuki.tanaka@email.jp'},
+        <String, String>{'number': 'yuki.tanaka@email.jp'},
       ],
     },
   ];
