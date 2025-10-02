@@ -54,7 +54,8 @@ void main() {
         name: 'Very Long Contact Name That Should Be Displayed Properly',
         phone: '+1-800-VERY-LONG-PHONE-NUMBER-FOR-TESTING',
         email:
-            'very.long.email.address.for.testing@very.long.domain.name.example.com',
+            'very.long.email.address.for.testing@'
+            'very.long.domain.name.example.com',
         isFavorite: true,
       );
     });

@@ -68,31 +68,29 @@ void main() {
   });
 
   group('SqliteLifeEventRepository - findByContactId', () {
-    testWidgets(
-      'should return life events for valid contact ID ordered by date descending',
-      (WidgetTester tester) async {
-        when(
-          () => mockDatabase.rawQuery(any(), any()),
-        ).thenAnswer((_) async => mockDatabaseResponse);
+    testWidgets('should return life events for valid contact ID '
+        'ordered by date descending', (WidgetTester tester) async {
+      when(
+        () => mockDatabase.rawQuery(any(), any()),
+      ).thenAnswer((_) async => mockDatabaseResponse);
 
-        final List<LifeEvent> result = await repository.findByContactId(
-          testContactId,
-        );
+      final List<LifeEvent> result = await repository.findByContactId(
+        testContactId,
+      );
 
-        expect(result, hasLength(2));
-        expect(result, equals(expectedLifeEvents));
-        verify(
-          () => mockDatabase.rawQuery(
-            '''
+      expect(result, hasLength(2));
+      expect(result, equals(expectedLifeEvents));
+      verify(
+        () => mockDatabase.rawQuery(
+          '''
         SELECT * FROM life_events
         WHERE contact_id = ?
         ORDER BY date DESC
       ''',
-            <dynamic>[testContactId],
-          ),
-        ).called(1);
-      },
-    );
+          <dynamic>[testContactId],
+        ),
+      ).called(1);
+    });
 
     testWidgets(
       'should return empty list when no life events found for contact',
@@ -130,37 +128,35 @@ void main() {
   });
 
   group('SqliteLifeEventRepository - findByEventType', () {
-    testWidgets(
-      'should return life events with specific event type ordered by date descending',
-      (WidgetTester tester) async {
-        final List<Map<String, dynamic>> birthdayEvents = mockDatabaseResponse
-            .where(
-              (Map<String, dynamic> event) =>
-                  event['event_type'] == testEventType,
-            )
-            .toList();
-        when(
-          () => mockDatabase.rawQuery(any(), any()),
-        ).thenAnswer((_) async => birthdayEvents);
+    testWidgets('should return life events with specific event type '
+        'ordered by date descending', (WidgetTester tester) async {
+      final List<Map<String, dynamic>> birthdayEvents = mockDatabaseResponse
+          .where(
+            (Map<String, dynamic> event) =>
+                event['event_type'] == testEventType,
+          )
+          .toList();
+      when(
+        () => mockDatabase.rawQuery(any(), any()),
+      ).thenAnswer((_) async => birthdayEvents);
 
-        final List<LifeEvent> result = await repository.findByEventType(
-          testEventType,
-        );
+      final List<LifeEvent> result = await repository.findByEventType(
+        testEventType,
+      );
 
-        expect(result, hasLength(1));
-        expect(result.first.eventType, equals(testEventType));
-        verify(
-          () => mockDatabase.rawQuery(
-            '''
+      expect(result, hasLength(1));
+      expect(result.first.eventType, equals(testEventType));
+      verify(
+        () => mockDatabase.rawQuery(
+          '''
         SELECT * FROM life_events
         WHERE event_type = ?
         ORDER BY date DESC
       ''',
-            <dynamic>[testEventType],
-          ),
-        ).called(1);
-      },
-    );
+          <dynamic>[testEventType],
+        ),
+      ).called(1);
+    });
 
     testWidgets(
       'should return empty list when no events found for event type',
@@ -265,39 +261,37 @@ void main() {
   });
 
   group('SqliteLifeEventRepository - findByImportance', () {
-    testWidgets(
-      'should return life events with specific importance ordered by date descending',
-      (WidgetTester tester) async {
-        const int targetImportance = 5;
-        final List<Map<String, dynamic>> highImportanceEvents =
-            mockDatabaseResponse
-                .where(
-                  (Map<String, dynamic> event) =>
-                      event['importance'] == targetImportance,
-                )
-                .toList();
-        when(
-          () => mockDatabase.rawQuery(any(), any()),
-        ).thenAnswer((_) async => highImportanceEvents);
+    testWidgets('should return life events with specific importance '
+        'ordered by date descending', (WidgetTester tester) async {
+      const int targetImportance = 5;
+      final List<Map<String, dynamic>> highImportanceEvents =
+          mockDatabaseResponse
+              .where(
+                (Map<String, dynamic> event) =>
+                    event['importance'] == targetImportance,
+              )
+              .toList();
+      when(
+        () => mockDatabase.rawQuery(any(), any()),
+      ).thenAnswer((_) async => highImportanceEvents);
 
-        final List<LifeEvent> result = await repository.findByImportance(
-          targetImportance,
-        );
+      final List<LifeEvent> result = await repository.findByImportance(
+        targetImportance,
+      );
 
-        expect(result, hasLength(1));
-        expect(result.first.importance, equals(targetImportance));
-        verify(
-          () => mockDatabase.rawQuery(
-            '''
+      expect(result, hasLength(1));
+      expect(result.first.importance, equals(targetImportance));
+      verify(
+        () => mockDatabase.rawQuery(
+          '''
         SELECT * FROM life_events
         WHERE importance = ?
         ORDER BY date DESC
       ''',
-            <dynamic>[targetImportance],
-          ),
-        ).called(1);
-      },
-    );
+          <dynamic>[targetImportance],
+        ),
+      ).called(1);
+    });
 
     testWidgets(
       'should return empty list when no events found with specified importance',
@@ -333,42 +327,40 @@ void main() {
   });
 
   group('SqliteLifeEventRepository - findUpcomingEvents', () {
-    testWidgets(
-      'should return upcoming events within specified days ordered by date ascending',
-      (WidgetTester tester) async {
-        const int daysAhead = 7;
-        final List<Map<String, dynamic>> upcomingEventsResponse =
-            <Map<String, dynamic>>[
-              <String, dynamic>{
-                'id': 3,
-                'contact_id': testContactId,
-                'event_type': 'meeting',
-                'date': DateTime.now()
-                    .add(const Duration(days: 2))
-                    .toIso8601String(),
-                'description': 'Upcoming meeting',
-                'importance': 3,
-                'created_at': DateTime.now().toIso8601String(),
-              },
-            ];
-        when(
-          () => mockDatabase.rawQuery(any(), any()),
-        ).thenAnswer((_) async => upcomingEventsResponse);
+    testWidgets('should return upcoming events within specified days '
+        'ordered by date ascending', (WidgetTester tester) async {
+      const int daysAhead = 7;
+      final List<Map<String, dynamic>> upcomingEventsResponse =
+          <Map<String, dynamic>>[
+            <String, dynamic>{
+              'id': 3,
+              'contact_id': testContactId,
+              'event_type': 'meeting',
+              'date': DateTime.now()
+                  .add(const Duration(days: 2))
+                  .toIso8601String(),
+              'description': 'Upcoming meeting',
+              'importance': 3,
+              'created_at': DateTime.now().toIso8601String(),
+            },
+          ];
+      when(
+        () => mockDatabase.rawQuery(any(), any()),
+      ).thenAnswer((_) async => upcomingEventsResponse);
 
-        final List<LifeEvent> result = await repository.findUpcomingEvents(
-          daysAhead,
-        );
+      final List<LifeEvent> result = await repository.findUpcomingEvents(
+        daysAhead,
+      );
 
-        expect(result, hasLength(1));
-        verify(
-          () => mockDatabase.rawQuery('''
+      expect(result, hasLength(1));
+      verify(
+        () => mockDatabase.rawQuery('''
         SELECT * FROM life_events
         WHERE date BETWEEN ? AND ?
         ORDER BY date ASC
       ''', any()),
-        ).called(1);
-      },
-    );
+      ).called(1);
+    });
 
     testWidgets('should return empty list when no upcoming events found', (
       WidgetTester tester,
@@ -403,33 +395,31 @@ void main() {
   });
 
   group('SqliteLifeEventRepository - findByImportanceRange', () {
-    testWidgets(
-      'should return life events within importance range ordered by importance and date',
-      (WidgetTester tester) async {
-        const int minImportance = 3;
-        const int maxImportance = 5;
-        when(
-          () => mockDatabase.rawQuery(any(), any()),
-        ).thenAnswer((_) async => mockDatabaseResponse);
+    testWidgets('should return life events within importance range '
+        'ordered by importance and date', (WidgetTester tester) async {
+      const int minImportance = 3;
+      const int maxImportance = 5;
+      when(
+        () => mockDatabase.rawQuery(any(), any()),
+      ).thenAnswer((_) async => mockDatabaseResponse);
 
-        final List<LifeEvent> result = await repository.findByImportanceRange(
-          minImportance,
-          maxImportance,
-        );
+      final List<LifeEvent> result = await repository.findByImportanceRange(
+        minImportance,
+        maxImportance,
+      );
 
-        expect(result, hasLength(2));
-        verify(
-          () => mockDatabase.rawQuery(
-            '''
+      expect(result, hasLength(2));
+      verify(
+        () => mockDatabase.rawQuery(
+          '''
         SELECT * FROM life_events
         WHERE importance BETWEEN ? AND ?
         ORDER BY importance DESC, date DESC
       ''',
-            <dynamic>[minImportance, maxImportance],
-          ),
-        ).called(1);
-      },
-    );
+          <dynamic>[minImportance, maxImportance],
+        ),
+      ).called(1);
+    });
 
     testWidgets(
       'should return empty list when no events found in importance range',

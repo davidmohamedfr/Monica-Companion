@@ -327,34 +327,32 @@ void main() {
         expect(result.first.needsInteractionSoon, isTrue);
       });
 
-      test(
-        'should handle contacts with null lastContactedAt for recently contacted filter',
-        () async {
-          // Arrange
-          const Contact contactWithoutLastContacted = Contact(
-            id: '8',
-            name: 'Never Contacted',
-            phone: '+1111111111',
-            email: 'never@example.com',
-          );
-          final List<Contact> modifiedContacts = <Contact>[
-            ...testContacts,
-            contactWithoutLastContacted,
-          ];
-          when(
-            () => mockContactsService.getDeviceContacts(),
-          ).thenAnswer((_) async => modifiedContacts);
+      test('should handle contacts with null lastContactedAt '
+          'for recently contacted filter', () async {
+        // Arrange
+        const Contact contactWithoutLastContacted = Contact(
+          id: '8',
+          name: 'Never Contacted',
+          phone: '+1111111111',
+          email: 'never@example.com',
+        );
+        final List<Contact> modifiedContacts = <Contact>[
+          ...testContacts,
+          contactWithoutLastContacted,
+        ];
+        when(
+          () => mockContactsService.getDeviceContacts(),
+        ).thenAnswer((_) async => modifiedContacts);
 
-          // Act
-          final List<Contact> result = await repository.filterContacts(
-            ContactFilter.recentlyContacted,
-          );
+        // Act
+        final List<Contact> result = await repository.filterContacts(
+          ContactFilter.recentlyContacted,
+        );
 
-          // Assert
-          expect(result.length, equals(2)); // Only johnDoe and janeDoe
-          expect(result, isNot(contains(contactWithoutLastContacted)));
-        },
-      );
+        // Assert
+        expect(result.length, equals(2)); // Only johnDoe and janeDoe
+        expect(result, isNot(contains(contactWithoutLastContacted)));
+      });
 
       test(
         'should handle edge case where lastContactedAt is close to 30 days',

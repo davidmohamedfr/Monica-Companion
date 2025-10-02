@@ -24,92 +24,92 @@ void main() {
     });
 
     group('Cross-Entity Data Consistency', () {
-      testWidgets(
-        'should maintain data consistency when creating contact and interactions',
-        (WidgetTester tester) async {
-          // Arrange
-          const String contactName = 'John Doe';
-          const String contactEmail = 'john.doe@example.com';
-          final DateTime testDate = DateTime(2024, 1, 15, 14, 30);
+      testWidgets('should maintain data consistency '
+          'when creating contact and interactions', (
+        WidgetTester tester,
+      ) async {
+        // Arrange
+        const String contactName = 'John Doe';
+        const String contactEmail = 'john.doe@example.com';
+        final DateTime testDate = DateTime(2024, 1, 15, 14, 30);
 
-          final Contact testContact = Contact(
+        final Contact testContact = Contact(
+          id: 1,
+          name: contactName,
+          email: contactEmail,
+          createdAt: testDate,
+        );
+
+        final List<Interaction> expectedInteractions = <Interaction>[
+          Interaction(
             id: 1,
-            name: contactName,
-            email: contactEmail,
+            contactId: 1,
+            type: 'call',
+            date: testDate.toIso8601String(),
+            duration: 300,
+            notes: 'Initial contact call',
             createdAt: testDate,
-          );
+          ),
+          Interaction(
+            id: 2,
+            contactId: 1,
+            type: 'message',
+            date: testDate.add(const Duration(hours: 1)).toIso8601String(),
+            notes: 'Follow-up message',
+            createdAt: testDate.add(const Duration(hours: 1)),
+          ),
+        ];
 
-          final List<Interaction> expectedInteractions = <Interaction>[
-            Interaction(
-              id: 1,
-              contactId: 1,
-              type: 'call',
-              date: testDate.toIso8601String(),
-              duration: 300,
-              notes: 'Initial contact call',
-              createdAt: testDate,
-            ),
-            Interaction(
-              id: 2,
-              contactId: 1,
-              type: 'message',
-              date: testDate.add(const Duration(hours: 1)).toIso8601String(),
-              notes: 'Follow-up message',
-              createdAt: testDate.add(const Duration(hours: 1)),
-            ),
-          ];
+        // Mock contact creation and retrieval
+        when(
+          () => mockDatabase.rawInsert(any(), any()),
+        ).thenAnswer((_) async => 1);
 
-          // Mock contact creation and retrieval
-          when(
-            () => mockDatabase.rawInsert(any(), any()),
-          ).thenAnswer((_) async => 1);
-
-          when(() => mockDatabase.rawQuery(any(), any())).thenAnswer((
-            Invocation invocation,
-          ) async {
-            final List<dynamic> args =
-                invocation.positionalArguments[1] as List<dynamic>;
-            if (args.contains(contactEmail)) {
-              return <Map<String, dynamic>>[testContact.toMap()];
-            }
-            if (args.contains(1)) {
-              return expectedInteractions
-                  .map((Interaction i) => i.toMap())
-                  .toList();
-            }
-            return <Map<String, dynamic>>[];
-          });
-
-          // Act - Create contact and interactions
-          await contactRepository.insert(testContact);
-          for (final Interaction interaction in expectedInteractions) {
-            await interactionRepository.insert(interaction);
+        when(() => mockDatabase.rawQuery(any(), any())).thenAnswer((
+          Invocation invocation,
+        ) async {
+          final List<dynamic> args =
+              invocation.positionalArguments[1] as List<dynamic>;
+          if (args.contains(contactEmail)) {
+            return <Map<String, dynamic>>[testContact.toMap()];
           }
+          if (args.contains(1)) {
+            return expectedInteractions
+                .map((Interaction i) => i.toMap())
+                .toList();
+          }
+          return <Map<String, dynamic>>[];
+        });
 
-          // Verify data consistency
-          final List<Contact> retrievedContacts = await contactRepository
-              .findByEmail(contactEmail);
-          final List<Interaction> retrievedInteractions =
-              await interactionRepository.findByContactId(1);
+        // Act - Create contact and interactions
+        await contactRepository.insert(testContact);
+        for (final Interaction interaction in expectedInteractions) {
+          await interactionRepository.insert(interaction);
+        }
 
-          // Assert
-          expect(retrievedContacts, hasLength(1));
-          expect(retrievedContacts.first.name, contactName);
-          expect(retrievedContacts.first.email, contactEmail);
+        // Verify data consistency
+        final List<Contact> retrievedContacts = await contactRepository
+            .findByEmail(contactEmail);
+        final List<Interaction> retrievedInteractions =
+            await interactionRepository.findByContactId(1);
 
-          expect(retrievedInteractions, hasLength(2));
-          expect(
-            retrievedInteractions.every((Interaction i) => i.contactId == 1),
-            isTrue,
-          );
+        // Assert
+        expect(retrievedContacts, hasLength(1));
+        expect(retrievedContacts.first.name, contactName);
+        expect(retrievedContacts.first.email, contactEmail);
 
-          // Verify proper method calls were made
-          verify(
-            () => mockDatabase.rawInsert(any(), any()),
-          ).called(greaterThan(0));
-          verify(() => mockDatabase.rawQuery(any(), any())).called(2);
-        },
-      );
+        expect(retrievedInteractions, hasLength(2));
+        expect(
+          retrievedInteractions.every((Interaction i) => i.contactId == 1),
+          isTrue,
+        );
+
+        // Verify proper method calls were made
+        verify(
+          () => mockDatabase.rawInsert(any(), any()),
+        ).called(greaterThan(0));
+        verify(() => mockDatabase.rawQuery(any(), any())).called(2);
+      });
 
       testWidgets('should handle referential integrity constraints', (
         WidgetTester tester,
@@ -129,7 +129,8 @@ void main() {
           Exception('FOREIGN KEY constraint failed: no such contact_id'),
         );
 
-        // Act & Assert - Should throw appropriate exception for referential integrity violation
+        // Act & Assert - Should throw appropriate exception
+        // for referential integrity violation
         await expectLater(
           interactionRepository.insert(orphanedInteraction),
           throwsA(
@@ -137,7 +138,8 @@ void main() {
                 .having(
                   (DatabaseException e) => e.message,
                   'message',
-                  'Failed to insert entity: Exception: FOREIGN KEY constraint failed: no such contact_id',
+                  'Failed to insert entity: Exception: '
+                      'FOREIGN KEY constraint failed: no such contact_id',
                 )
                 .having((DatabaseException e) => e.code, 'code', isNull),
           ),
