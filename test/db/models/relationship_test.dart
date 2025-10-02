@@ -237,10 +237,14 @@ void main() {
 
     test('should handle long relationship descriptions', () {
       const String longDescription =
-          'This is a very detailed description of how we met and developed our relationship. '
-          'We first encountered each other during our freshman year at university in the computer science program. '
-          'Initially we were just classmates, but over time we became study partners and eventually close friends. '
-          'Our friendship has continued to grow stronger over the years through shared experiences and mutual support.';
+          'This is a very detailed description of how we met and '
+          'developed our relationship. '
+          'We first encountered each other during our freshman year '
+          'at university in the computer science program. '
+          'Initially we were just classmates, but over time we became '
+          'study partners and eventually close friends. '
+          'Our friendship has continued to grow stronger over the years '
+          'through shared experiences and mutual support.';
 
       const Relationship relationship = Relationship(
         contactId: testContactId,

@@ -51,8 +51,9 @@ void main() {
   setUp(() {
     appInitializationService = AppInitializationService.instance;
 
-    // Reset initialization state by accessing private field through reflection-like approach
-    // Since we can't easily reset private fields, we'll test the service in various states
+    // Reset initialization state by accessing private field
+    // through reflection-like approach. Since we can't easily
+    // reset private fields, we'll test service in various states
     LoggerCapture.clear();
   });
 
@@ -86,11 +87,13 @@ void main() {
     testWidgets('should start with uninitialized state', (
       WidgetTester tester,
     ) async {
-      // Note: Since we can't easily reset the singleton, we test the initial behavior conceptually
+      // Note: Since we can't easily reset the singleton,
+      // we test the initial behavior conceptually.
       // In a fresh instance, isInitialized should be false
       final bool initialState = appInitializationService.isInitialized;
 
-      // The service may or may not be initialized depending on previous test runs
+      // The service may or may not be initialized
+      // depending on previous test runs.
       // We test that the property exists and returns a boolean
       expect(initialState, isA<bool>());
     });
@@ -101,10 +104,12 @@ void main() {
       // This test verifies the re-initialization prevention logic
       // We simulate the scenario by testing the conceptual behavior
 
-      // Test the pattern where isInitialized check prevents duplicate initialization
+      // Test the pattern where isInitialized check
+      // prevents duplicate initialization
       const bool mockIsInitialized = true;
       if (mockIsInitialized) {
-        // This represents the early return behavior when already initialized
+        // This represents the early return behavior
+        // when already initialized
         expect(mockIsInitialized, isTrue);
       }
     });
@@ -115,7 +120,8 @@ void main() {
       WidgetTester tester,
     ) async {
       // Test the conceptual flow of database module coordination
-      // Since DatabaseModule has static methods, we test the integration pattern
+      // Since DatabaseModule has static methods,
+      // we test the integration pattern
 
       final MockDatabaseInterface mockDatabase = MockDatabaseInterface();
       final MockRepositoryRegistry mockRegistry = MockRepositoryRegistry();
@@ -284,7 +290,8 @@ void main() {
     testWidgets('should support complete initialization lifecycle', (
       WidgetTester tester,
     ) async {
-      // Test the complete lifecycle from uninitialized to initialized to disposed
+      // Test the complete lifecycle from uninitialized
+      // to initialized to disposed
       bool mockIsInitialized = false;
 
       // Initial state

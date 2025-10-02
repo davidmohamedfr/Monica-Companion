@@ -116,10 +116,13 @@ void main() {
 
         // Act - Simulate the onCreate callback that was fixed
         await mockDatabase.execute(
-          'CREATE TABLE IF NOT EXISTS schema_version (version INTEGER PRIMARY KEY, migrated_at TEXT NOT NULL)',
+          'CREATE TABLE IF NOT EXISTS schema_version '
+          '(version INTEGER PRIMARY KEY, migrated_at TEXT NOT NULL)',
         );
         await mockDatabase.execute(
-          'CREATE TABLE contacts (id TEXT PRIMARY KEY, name TEXT NOT NULL, email TEXT, phone TEXT, avatar TEXT, created_at TEXT NOT NULL, updated_at TEXT NOT NULL)',
+          'CREATE TABLE contacts (id TEXT PRIMARY KEY, '
+          'name TEXT NOT NULL, email TEXT, phone TEXT, avatar TEXT, '
+          'created_at TEXT NOT NULL, updated_at TEXT NOT NULL)',
         );
         await mockDatabase.insert('schema_version', <String, Object?>{
           'version': 1,
@@ -176,7 +179,9 @@ void main() {
         await mockDatabase.execute('DROP TABLE IF EXISTS contacts');
         // Simulate onCreate being called
         await mockDatabase.execute(
-          'CREATE TABLE contacts (id TEXT PRIMARY KEY, name TEXT NOT NULL, email TEXT, phone TEXT, avatar TEXT, created_at TEXT NOT NULL, updated_at TEXT NOT NULL)',
+          'CREATE TABLE contacts (id TEXT PRIMARY KEY, '
+          'name TEXT NOT NULL, email TEXT, phone TEXT, avatar TEXT, '
+          'created_at TEXT NOT NULL, updated_at TEXT NOT NULL)',
         );
         await mockDatabase.insert('schema_version', <String, Object?>{
           'version': newVersion,
