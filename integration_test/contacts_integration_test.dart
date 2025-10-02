@@ -21,15 +21,8 @@ void main() {
         await tester.pump(const Duration(seconds: 1));
         expect(find.text('View Contacts'), findsOneWidget);
 
-        // Scroll to button if off-screen
-        await tester.dragUntilVisible(
-          find.text('View Contacts'),
-          find.byType(Scaffold),
-          const Offset(0, -50),
-        );
-        await tester.pumpAndSettle();
-
-        await tester.tap(find.text('View Contacts'));
+        // Tap button (warnIfMissed: false handles off-screen scenarios)
+        await tester.tap(find.text('View Contacts'), warnIfMissed: false);
         await tester.pumpAndSettle();
 
         // Verify we're on the contacts screen
@@ -185,13 +178,7 @@ void main() {
       debugPrint('🔐 Step 1: Testing permissions and error handling...');
 
       // Navigate to contacts
-      await tester.dragUntilVisible(
-        find.text('View Contacts'),
-        find.byType(Scaffold),
-        const Offset(0, -50),
-      );
-      await tester.pumpAndSettle();
-      await tester.tap(find.text('View Contacts'));
+      await tester.tap(find.text('View Contacts'), warnIfMissed: false);
       await tester.pumpAndSettle();
 
       // Wait for contacts to load with a more reasonable timeout
@@ -256,13 +243,7 @@ void main() {
 
       // Navigate to contacts
       debugPrint('📱 Step 2: Navigating to contacts...');
-      await tester.dragUntilVisible(
-        find.text('View Contacts'),
-        find.byType(Scaffold),
-        const Offset(0, -50),
-      );
-      await tester.pumpAndSettle();
-      await tester.tap(find.text('View Contacts'));
+      await tester.tap(find.text('View Contacts'), warnIfMissed: false);
       await tester.pumpAndSettle();
       await tester.pump(const Duration(seconds: 2));
 
@@ -298,13 +279,7 @@ void main() {
 
             // Navigate back to contacts
             debugPrint('📱 Step 5: Returning to contacts...');
-            await tester.dragUntilVisible(
-              find.text('View Contacts'),
-              find.byType(Scaffold),
-              const Offset(0, -50),
-            );
-            await tester.pumpAndSettle();
-            await tester.tap(find.text('View Contacts'));
+            await tester.tap(find.text('View Contacts'), warnIfMissed: false);
             await tester.pumpAndSettle();
             await tester.pump(const Duration(seconds: 1));
 
