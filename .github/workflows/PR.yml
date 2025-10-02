@@ -171,8 +171,13 @@ jobs:
         disable-animations: true
         script: |
           flutter build apk --debug
-          adb install -r -g build/app/outputs/flutter-apk/app-debug.apk
-          flutter test integration_test/
+          adb install -g build/app/outputs/flutter-apk/app-debug.apk
+          adb shell pm grant fr.m0hdaCorp.monica_companion android.permission.READ_CONTACTS
+          flutter test integration_test/ &
+          TEST_PID=$!
+          sleep 5
+          adb shell pm grant fr.m0hdaCorp.monica_companion android.permission.READ_CONTACTS
+          wait $TEST_PID
 
   build-android:
     name: Build Android APK
