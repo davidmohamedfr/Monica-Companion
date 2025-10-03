@@ -300,7 +300,7 @@ List<Map<String, dynamic>> _getMockContactsData() {
         <String, String>{'number': '+3360120001'},
       ],
       'emails': <Map<String, String>>[
-        <String, String>{'number': 'maya.dupuis1@example.com'},
+        <String, String>{'address': 'maya.dupuis1@example.com'},
       ],
     },
     <String, dynamic>{
@@ -310,7 +310,7 @@ List<Map<String, dynamic>> _getMockContactsData() {
         <String, String>{'number': '+3360120002'},
       ],
       'emails': <Map<String, String>>[
-        <String, String>{'number': 'manon.weber2@example.com'},
+        <String, String>{'address': 'manon.weber2@example.com'},
       ],
     },
     <String, dynamic>{
@@ -320,7 +320,7 @@ List<Map<String, dynamic>> _getMockContactsData() {
         <String, String>{'number': '+3360120003'},
       ],
       'emails': <Map<String, String>>[
-        <String, String>{'number': 'sabrina.dufour3@example.com'},
+        <String, String>{'address': 'sabrina.dufour3@example.com'},
       ],
     },
     <String, dynamic>{
@@ -330,7 +330,7 @@ List<Map<String, dynamic>> _getMockContactsData() {
         <String, String>{'number': '+3360120004'},
       ],
       'emails': <Map<String, String>>[
-        <String, String>{'number': 'julien.poirier4@example.com'},
+        <String, String>{'address': 'julien.poirier4@example.com'},
       ],
     },
     <String, dynamic>{
@@ -340,7 +340,7 @@ List<Map<String, dynamic>> _getMockContactsData() {
         <String, String>{'number': '+3360120005'},
       ],
       'emails': <Map<String, String>>[
-        <String, String>{'number': 'claire.martin5@example.com'},
+        <String, String>{'address': 'claire.martin5@example.com'},
       ],
     },
     <String, dynamic>{
@@ -350,7 +350,7 @@ List<Map<String, dynamic>> _getMockContactsData() {
         <String, String>{'number': '+3360120006'},
       ],
       'emails': <Map<String, String>>[
-        <String, String>{'number': 'lucas.bernard6@example.com'},
+        <String, String>{'address': 'lucas.bernard6@example.com'},
       ],
     },
     <String, dynamic>{
@@ -360,7 +360,7 @@ List<Map<String, dynamic>> _getMockContactsData() {
         <String, String>{'number': '+3360120007'},
       ],
       'emails': <Map<String, String>>[
-        <String, String>{'number': 'emma.moreau7@example.com'},
+        <String, String>{'address': 'emma.moreau7@example.com'},
       ],
     },
     <String, dynamic>{
@@ -370,7 +370,7 @@ List<Map<String, dynamic>> _getMockContactsData() {
         <String, String>{'number': '+3360120008'},
       ],
       'emails': <Map<String, String>>[
-        <String, String>{'number': 'hugo.petit8@example.com'},
+        <String, String>{'address': 'hugo.petit8@example.com'},
       ],
     },
     <String, dynamic>{
@@ -380,7 +380,7 @@ List<Map<String, dynamic>> _getMockContactsData() {
         <String, String>{'number': '+3360120009'},
       ],
       'emails': <Map<String, String>>[
-        <String, String>{'number': 'louise.roux9@example.com'},
+        <String, String>{'address': 'louise.roux9@example.com'},
       ],
     },
     <String, dynamic>{
@@ -390,7 +390,7 @@ List<Map<String, dynamic>> _getMockContactsData() {
         <String, String>{'number': '+3360120010'},
       ],
       'emails': <Map<String, String>>[
-        <String, String>{'number': 'antoine.blanc10@example.com'},
+        <String, String>{'address': 'antoine.blanc10@example.com'},
       ],
     },
     <String, dynamic>{
@@ -400,7 +400,7 @@ List<Map<String, dynamic>> _getMockContactsData() {
         <String, String>{'number': '+3360120011'},
       ],
       'emails': <Map<String, String>>[
-        <String, String>{'number': 'camille.noir11@example.com'},
+        <String, String>{'address': 'camille.noir11@example.com'},
       ],
     },
     <String, dynamic>{
@@ -410,7 +410,7 @@ List<Map<String, dynamic>> _getMockContactsData() {
         <String, String>{'number': '+3360120012'},
       ],
       'emails': <Map<String, String>>[
-        <String, String>{'number': 'gabriel.vert12@example.com'},
+        <String, String>{'address': 'gabriel.vert12@example.com'},
       ],
     },
     <String, dynamic>{
@@ -420,7 +420,7 @@ List<Map<String, dynamic>> _getMockContactsData() {
         <String, String>{'number': '+3360120013'},
       ],
       'emails': <Map<String, String>>[
-        <String, String>{'number': 'ines.rouge13@example.com'},
+        <String, String>{'address': 'ines.rouge13@example.com'},
       ],
     },
     <String, dynamic>{
@@ -430,7 +430,7 @@ List<Map<String, dynamic>> _getMockContactsData() {
         <String, String>{'number': '+3360120014'},
       ],
       'emails': <Map<String, String>>[
-        <String, String>{'number': 'nathan.bleu14@example.com'},
+        <String, String>{'address': 'nathan.bleu14@example.com'},
       ],
     },
     <String, dynamic>{
@@ -440,7 +440,7 @@ List<Map<String, dynamic>> _getMockContactsData() {
         <String, String>{'number': '+1 (555) 123-4567'},
       ],
       'emails': <Map<String, String>>[
-        <String, String>{'number': 'john.doe@email.com'},
+        <String, String>{'address': 'john.doe@email.com'},
       ],
     },
     <String, dynamic>{
@@ -450,7 +450,7 @@ List<Map<String, dynamic>> _getMockContactsData() {
         <String, String>{'number': '+1 (555) 987-6543'},
       ],
       'emails': <Map<String, String>>[
-        <String, String>{'number': 'jane.smith@email.com'},
+        <String, String>{'address': 'jane.smith@email.com'},
       ],
     },
     <String, dynamic>{
@@ -460,7 +460,7 @@ List<Map<String, dynamic>> _getMockContactsData() {
         <String, String>{'number': '+34 912 345 678'},
       ],
       'emails': <Map<String, String>>[
-        <String, String>{'number': 'maria.garcia@email.es'},
+        <String, String>{'address': 'maria.garcia@email.es'},
       ],
     },
     <String, dynamic>{
@@ -470,7 +470,7 @@ List<Map<String, dynamic>> _getMockContactsData() {
         <String, String>{'number': '+49 30 12345678'},
       ],
       'emails': <Map<String, String>>[
-        <String, String>{'number': 'hans.mueller@email.de'},
+        <String, String>{'address': 'hans.mueller@email.de'},
       ],
     },
     <String, dynamic>{
@@ -480,7 +480,7 @@ List<Map<String, dynamic>> _getMockContactsData() {
         <String, String>{'number': '+81 3 1234 5678'},
       ],
       'emails': <Map<String, String>>[
-        <String, String>{'number': 'yuki.tanaka@email.jp'},
+        <String, String>{'address': 'yuki.tanaka@email.jp'},
       ],
     },
   ];
