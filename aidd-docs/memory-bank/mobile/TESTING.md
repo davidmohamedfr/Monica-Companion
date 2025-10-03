@@ -183,6 +183,33 @@ integration_test/
 - **Theme integration**: Test light/dark mode adaption
 - **Accessibility**: Verify screen reader compatibility
 
+### Navigation Widget Testing
+- **BLoC lifecycle in navigation**: Test disposal and state maintenance during tab switches
+- **Async operation handling**: Verify tab switches don't crash during loading operations
+- **State preservation testing**: Document limitations with skip markers and references
+- **Edge case navigation**: Rapid tab switches, same tab multiple times, back button
+- **Example test structure**:
+  - Tab Switching Behavior (basic navigation)
+  - BLoC Lifecycle (disposal, state maintenance)
+  - App Lifecycle (async operations, background/foreground)
+  - Edge Cases (rapid switches, duplicate taps)
+- **Reference**: test/features/navigation/screens/main_shell_test.dart (9 tests, 7 passing, 2 skipped)
+
+### Screen Widget Testing
+- **Comprehensive test groups**: Organize by Initial Load, UI Components, User Interactions, View Modes, Error Handling, Lifecycle
+- **Conditional assertions**: Check widget existence before asserting (`if (widget.evaluate().isNotEmpty)`)
+- **Mock-aware expectations**: Tests work with empty mock data (empty lists show empty state, not content)
+- **Lifecycle verification**: Scroll controller disposal, initialization events
+- **Example pattern**: test/features/contacts/screens/contacts_list_screen_test.dart (17 tests, 6 groups)
+
+### Search/Input Widget Testing
+- **Controller lifecycle**: Disposal verification, listener add/remove
+- **Clear button logic**: Show/hide based on text presence
+- **Text input behavior**: Character-by-character updates, callback verification
+- **Edge cases**: Rapid typing, special characters, empty strings
+- **Initial value handling**: Pre-population and clear button state
+- **Example**: test/features/contacts/widgets/contacts_search_bar_test.dart (18 tests, 6 groups)
+
 ### Integration Testing Pattern
 - **Real app startup**: Full `MonicaApp` initialization in tests
 - **Database operations**: Actual CRUD operations on test database (not mocked)
@@ -246,9 +273,16 @@ final List<Contact> expectedContacts = [
 
 ## Test Implementation Strategy
 
+### Test-First Iteration Cycle
+- **Write → Run → Adjust → Document** - Create tests, execute immediately, adjust to reality
+- **Validate actual behavior** - Tests should reflect implementation, not ideal expectations
+- **Document limitations with skip markers** - Use `skip: true` with clear comments for known limitations
+- **Example**: State preservation tests skipped until IndexedStack implemented (test/features/navigation/screens/main_shell_test.dart:98-99)
+
 ### Test Status Management
 - **All enabled tests MUST pass at all times** - no failing tests allowed in enabled state
 - **Disable tests for unimplemented features** rather than premature implementation
+- **Skip tests for documented limitations** - Use skip parameter instead of commenting out code
 - **Focus test coverage on actually implemented functionality**
 - **Use .disabled file extension** to document future test requirements
 - **Current status**: 30 active test files, 6 disabled test files
@@ -287,8 +321,9 @@ final List<Contact> expectedContacts = [
   - Edge cases: SQL injection, unicode, extreme values
 - **Core Services**: App initialization service testing
 - **Core Utils**: Validators, logger, error transformer testing
-- **Feature Widgets**: Contact screen widget testing
-- **Navigation**: Main shell and navigation flow testing
+- **Navigation**: MainShell widget (9 tests: tab switching, BLoC lifecycle, async operations, edge cases)
+- **Contacts Screen**: ContactsListScreen widget (17 tests: states, UI, interactions, view modes, lifecycle)
+- **Search Widget**: ContactsSearchBar widget (18 tests: rendering, input, clear button, controller lifecycle)
 - **Integration**: Database CRUD operations and app flows
 
 ### Disabled (Awaiting Implementation) ⏳
@@ -423,6 +458,68 @@ await tester.tap(find.descendant(
 - **Performance testing**: Include benchmarks for operations on large datasets (1000+ items)
 - **Edge case focus**: Empty states, null values, Unicode, special characters
 - **Widget test resilience**: Handle NetworkImage failures, use predicate matchers for state
+
+## Critical/High Priority Testing Strategy
+
+### Behavior Analysis Process
+1. **List all untested behaviors** systematically by functional area
+2. **Score by criticality** (5=Critical user flows, 4=High priority features, 3=Medium, 2=Low, 0=Not needed)
+3. **Group by concern**: Navigation, Screens, Widgets, Business Logic
+4. **Prioritize**: Focus on Critical (5) and High (4) behaviors first
+5. **Track coverage**: Document tested vs untested in each area
+
+### Focus Areas by Priority
+
+**Critical (Score 5) - Core User Flows:**
+- Navigation state management (BLoC disposal, tab switches)
+- Screen initialization (empty, loading, error states)
+- User interactions (refresh, search, filter combinations)
+- Error recovery (retry buttons, clear filters)
+
+**High (Score 4) - User-Facing Features:**
+- UI widget behavior (search bar, filter bar, view mode selector)
+- Controller lifecycle (disposal, listener management)
+- Edge cases (rapid input, special characters)
+- Widget composition (card items, grid items, list items)
+
+### Test Coverage Targets by Area
+- **Navigation**: 100% (critical path)
+- **Main Screens**: 90%+ (user-facing)
+- **Widgets**: 80%+ (reusable components)
+- **Business Logic**: 90%+ (data integrity)
+
+### Example: Navigation Testing (9 tests, 7 passing, 2 skipped)
+```
+✅ Tab switching behavior (basic navigation)
+✅ BLoC disposal on widget disposal
+✅ BLoC state during tab switches
+✅ Async operations with tab switches
+✅ Rapid tab switches (edge case)
+✅ Same tab tapped multiple times (edge case)
+⏭️  Scroll position preservation (skipped - IndexedStack needed)
+⏭️  Search query preservation (skipped - IndexedStack needed)
+```
+
+### Example: Contacts Screen Testing (17 tests)
+```
+✅ Initial load states (loading, error, empty)
+✅ UI components rendering (AppBar, search, filters)
+✅ User interactions (refresh, pull-to-refresh, contact tap)
+✅ View mode switching (list, grid, card)
+✅ Error handling (retry button, error messages)
+✅ Filter and search combinations
+✅ Widget lifecycle (disposal, initialization)
+```
+
+### Example: Search Widget Testing (18 tests)
+```
+✅ Rendering with default/custom hints
+✅ Initial value pre-population
+✅ Clear button show/hide logic
+✅ Text input callbacks
+✅ Controller disposal
+✅ Edge cases (rapid changes, special chars)
+```
 
 ## Test Development Best Practices
 
