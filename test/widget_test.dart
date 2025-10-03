@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:monica_companion/main.dart';
 import 'package:monica_companion/services/service_locator.dart';
@@ -13,14 +14,16 @@ void main() {
     ServiceLocator.instance.clear();
   });
 
-  testWidgets('App launches and displays welcome screen', (
+  testWidgets('App launches and displays main navigation', (
     WidgetTester tester,
   ) async {
     await tester.pumpWidget(const MonicaApp());
     await tester.pumpAndSettle();
 
-    // Verify welcome screen is displayed
-    expect(find.text('Monica Companion'), findsWidgets);
-    expect(find.text('View Contacts'), findsOneWidget);
+    // Verify main navigation is displayed
+    expect(find.byType(NavigationBar), findsOneWidget);
+    expect(find.text('Contacts'), findsWidgets);
+    expect(find.text('Interactions'), findsWidgets);
+    expect(find.text('Settings'), findsWidgets);
   });
 }

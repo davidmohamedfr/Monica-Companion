@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:monica_companion/core/config/app_config.dart';
 import 'package:monica_companion/core/config/environment.dart';
+import 'package:monica_companion/features/navigation/widgets/bottom_navigation_bar.dart';
 import 'package:monica_companion/main.dart';
 import 'package:monica_companion/services/service_locator.dart';
 
@@ -24,25 +24,14 @@ void main() {
       expect(() => const MonicaApp(), returnsNormally);
     });
 
-    testWidgets('should display welcome screen on startup', (
+    testWidgets('should display main navigation on startup', (
       WidgetTester tester,
     ) async {
       await tester.pumpWidget(const MonicaApp());
       await tester.pumpAndSettle();
 
-      expect(find.text('Monica Companion'), findsWidgets);
-      expect(find.text('Development Build'), findsOneWidget);
-    });
-
-    testWidgets('should display app branding', (WidgetTester tester) async {
-      await tester.pumpWidget(const MonicaApp());
-      await tester.pumpAndSettle();
-
-      expect(find.byType(SvgPicture), findsOneWidget);
-      expect(
-        find.text('Personal relationships, perfectly managed'),
-        findsOneWidget,
-      );
+      expect(find.byType(MonicaBottomNavigationBar), findsOneWidget);
+      expect(find.byType(NavigationBar), findsOneWidget);
     });
 
     test('should initialize app config without error', () {
@@ -55,33 +44,31 @@ void main() {
     });
   });
 
-  group('Welcome Screen', () {
-    testWidgets('should display welcome message', (WidgetTester tester) async {
-      await tester.pumpWidget(const MonicaApp());
-      await tester.pumpAndSettle();
-
-      expect(
-        find.textContaining('Welcome to Monica Companion'),
-        findsOneWidget,
-      );
-    });
-
-    testWidgets('should display environment info', (WidgetTester tester) async {
-      await tester.pumpWidget(const MonicaApp());
-      await tester.pumpAndSettle();
-
-      expect(find.text('Development Build'), findsOneWidget);
-      expect(find.textContaining('Environment:'), findsOneWidget);
-    });
-
-    testWidgets('should display contacts navigation button', (
+  group('Navigation', () {
+    testWidgets('should display 3 navigation tabs', (
       WidgetTester tester,
     ) async {
       await tester.pumpWidget(const MonicaApp());
       await tester.pumpAndSettle();
 
-      expect(find.text('View Contacts'), findsOneWidget);
-      expect(find.byIcon(Icons.contacts), findsOneWidget);
+      // Find navigation bar and check its destinations
+      expect(find.byType(MonicaBottomNavigationBar), findsOneWidget);
+      expect(find.byType(NavigationBar), findsOneWidget);
+
+      // Check that we have exactly 3 navigation destinations
+      final navigationBar = tester.widget<NavigationBar>(
+        find.byType(NavigationBar),
+      );
+      expect(navigationBar.destinations.length, equals(3));
+    });
+
+    testWidgets('should use Material 3 navigation bar', (
+      WidgetTester tester,
+    ) async {
+      await tester.pumpWidget(const MonicaApp());
+      await tester.pumpAndSettle();
+
+      expect(find.byType(NavigationBar), findsOneWidget);
     });
   });
 

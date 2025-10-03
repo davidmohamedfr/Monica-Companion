@@ -14,27 +14,15 @@ void main() {
         app.main();
         await tester.pumpAndSettle(const Duration(seconds: 3));
 
-        // Step 1: Navigate to contacts from welcome screen
-        debugPrint('Step 1: Navigating to contacts...');
+        // Step 1: Verify we're on the main app with navigation
+        debugPrint('Step 1: Verifying app loaded with navigation...');
 
-        // Wait for View Contacts button to appear
+        // Wait for navigation bar to appear
         await tester.pump(const Duration(seconds: 1));
-        expect(find.text('View Contacts'), findsOneWidget);
+        expect(find.byType(NavigationBar), findsOneWidget);
 
-        // Scroll down to reveal button if needed (small screen)
-        await tester.drag(
-          find.byType(SingleChildScrollView),
-          const Offset(0, -300),
-        );
-        await tester.pump(const Duration(milliseconds: 300));
-
-        // Tap button
-        await tester.tap(find.text('View Contacts'));
-        await tester.pumpAndSettle();
-
-        // Verify we're on the contacts screen
-        expect(find.text('Contacts'), findsOneWidget);
-        debugPrint('✅ Successfully navigated to contacts screen');
+        // App starts on Contacts tab by default
+        debugPrint('✅ App loaded, Contacts tab is active by default');
 
         // Step 2: Wait for contacts to load and verify initial state
         debugPrint('Step 2: Waiting for contacts to load...');
@@ -184,14 +172,9 @@ void main() {
 
       debugPrint('🔐 Step 1: Testing permissions and error handling...');
 
-      // Navigate to contacts
-      await tester.drag(
-        find.byType(SingleChildScrollView),
-        const Offset(0, -300),
-      );
-      await tester.pump(const Duration(milliseconds: 300));
-      await tester.tap(find.text('View Contacts'));
-      await tester.pumpAndSettle();
+      // Verify navigation bar is present (app starts on Contacts tab)
+      expect(find.byType(NavigationBar), findsOneWidget);
+      debugPrint('✅ App loaded with navigation, on Contacts tab by default');
 
       // Wait for contacts to load with a more reasonable timeout
       debugPrint('⏳ Step 2: Waiting for contacts to load...');
@@ -253,15 +236,9 @@ void main() {
       app.main();
       await tester.pumpAndSettle();
 
-      // Navigate to contacts
-      debugPrint('📱 Step 2: Navigating to contacts...');
-      await tester.drag(
-        find.byType(SingleChildScrollView),
-        const Offset(0, -300),
-      );
-      await tester.pump(const Duration(milliseconds: 300));
-      await tester.tap(find.text('View Contacts'));
-      await tester.pumpAndSettle();
+      // Verify navigation bar is present (app starts on Contacts tab)
+      debugPrint('📱 Step 2: App loaded on Contacts tab...');
+      expect(find.byType(NavigationBar), findsOneWidget);
       await tester.pump(const Duration(seconds: 2));
 
       // Check if contacts are loaded first
