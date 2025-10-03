@@ -16,27 +16,15 @@ void main() {
 
       debugPrint('🚀 App launched successfully');
 
-      // Step 1: Navigate to contacts
-      debugPrint('📱 Step 1: Navigating to contacts...');
+      // Step 1: Verify we're on the main app with navigation
+      debugPrint('📱 Step 1: Verifying app navigation...');
 
-      // Wait for View Contacts button to appear
+      // Wait for navigation bar to appear
       await tester.pump(const Duration(seconds: 1));
-      expect(find.text('View Contacts'), findsOneWidget);
+      expect(find.byType(NavigationBar), findsOneWidget);
 
-      // Scroll down to reveal button if needed (small screen)
-      await tester.drag(
-        find.byType(SingleChildScrollView),
-        const Offset(0, -300),
-      );
-      await tester.pump(const Duration(milliseconds: 300));
-
-      // Tap button
-      await tester.tap(find.text('View Contacts'));
-      await tester.pumpAndSettle();
-
-      // Verify we're on the contacts screen
-      expect(find.text('Contacts'), findsOneWidget);
-      debugPrint('✅ Successfully navigated to contacts screen');
+      // App starts on Contacts tab by default
+      debugPrint('✅ App loaded on Contacts tab by default');
 
       // Step 2: Wait for contacts to load
       debugPrint('⏳ Step 2: Loading contacts...');

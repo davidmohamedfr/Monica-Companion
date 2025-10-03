@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:monica_companion/features/calls/screens/calls_screen.dart';
 import 'package:monica_companion/features/contacts/screens/contacts_list_screen.dart';
+import 'package:monica_companion/features/interactions/screens/interactions_screen.dart';
 import 'package:monica_companion/features/navigation/widgets/bottom_navigation_bar.dart';
 import 'package:monica_companion/features/settings/screens/settings_screen.dart';
-import 'package:monica_companion/features/sync/screens/sync_screen.dart';
 
 /// Main app shell with bottom navigation
 class MainShell extends StatefulWidget {
@@ -21,11 +20,9 @@ class _MainShellState extends State<MainShell> {
       case 0:
         return const ContactsListScreen();
       case 1:
-        return const CallsScreen();
+        return const InteractionsScreen();
       case 2:
         return const SettingsScreen();
-      case 3:
-        return const SyncScreen();
       default:
         return const ContactsListScreen();
     }
