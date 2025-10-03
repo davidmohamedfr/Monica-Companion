@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:monica_companion/features/calls/widgets/call_log_item.dart';
+import 'package:monica_companion/features/interactions/widgets/interaction_log_item.dart';
 
 void main() {
   group('CallLogItem Widget', () {

@@ -3,6 +3,8 @@ import 'package:mocktail/mocktail.dart';
 import 'package:monica_companion/db/interfaces/database_interface.dart';
 import 'package:monica_companion/db/models/contact.dart';
 import 'package:monica_companion/db/repositories/repository_registry.dart';
+import 'package:monica_companion/features/contacts/bloc/contacts_bloc.dart';
+import 'package:monica_companion/features/contacts/bloc/contacts_state.dart';
 import 'package:monica_companion/services/service_locator.dart';
 
 import '../mocks/mock_services.dart';
@@ -39,11 +41,20 @@ class TestHelpers {
       () => mockRegistry.contactRepository,
     ).thenReturn(mockContactRepository);
 
+    // Create mock contacts bloc
+    final MockContactsBloc mockContactsBloc = MockContactsBloc();
+    when(() => mockContactsBloc.state).thenReturn(const ContactsState());
+    when(
+      () => mockContactsBloc.stream,
+    ).thenAnswer((_) => Stream<ContactsState>.value(const ContactsState()));
+    when(mockContactsBloc.close).thenAnswer((_) async {});
+
     // Clear existing services and register mocks
     ServiceLocator.instance
       ..clear()
       ..registerSingleton<DatabaseInterface>(mockDatabase)
-      ..registerSingleton<RepositoryRegistry>(mockRegistry);
+      ..registerSingleton<RepositoryRegistry>(mockRegistry)
+      ..registerFactory<ContactsBloc>(() => mockContactsBloc);
   }
 
   /// Create a mock DateTime for consistent testing

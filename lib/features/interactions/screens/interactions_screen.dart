@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 
-/// Calls screen - displays call log
-class CallsScreen extends StatelessWidget {
-  const CallsScreen({super.key});
+/// Interactions screen - displays interaction log
+class InteractionsScreen extends StatelessWidget {
+  const InteractionsScreen({super.key});
 
   @override
   Widget build(BuildContext context) => Scaffold(
     appBar: AppBar(
-      title: const Text('Calls'),
+      title: const Text('Interactions'),
       actions: <Widget>[
         IconButton(
           icon: const Icon(Icons.filter_list),
@@ -17,6 +17,6 @@ class CallsScreen extends StatelessWidget {
         ),
       ],
     ),
-    body: const Center(child: Text('Calls Screen - Coming Soon')),
+    body: const Center(child: Text('Interactions Screen - Coming Soon')),
   );
 }
