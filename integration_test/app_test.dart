@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
 import 'package:monica_companion/core/services/app_initialization_service.dart';
@@ -20,20 +21,31 @@ void main() {
       app.main();
       await tester.pumpAndSettle();
 
-      // Verify the app loaded correctly with actual UI elements
-      expect(find.text('Monica Companion'), findsOneWidget);
-      expect(find.text('Development Build'), findsOneWidget);
+      // Verify the app loaded correctly with navigation bar
+      expect(find.byType(NavigationBar), findsOneWidget);
+      // Verify navigation tabs are present
+      expect(find.text('Contacts'), findsWidgets);
+      expect(find.text('Interactions'), findsWidgets);
+      expect(find.text('Settings'), findsWidgets);
     });
 
-    testWidgets('configuration display should work correctly', (
+    testWidgets('navigation should work correctly', (
       WidgetTester tester,
     ) async {
       // Launch the app using the same method as working tests
       app.main();
       await tester.pumpAndSettle();
 
-      // Verify main UI elements are displayed
-      expect(find.textContaining('Environment:'), findsOneWidget);
+      // Verify main navigation bar is displayed
+      expect(find.byType(NavigationBar), findsOneWidget);
+
+      // Verify we can navigate between tabs
+      final interactionsTab = find.text('Interactions').last;
+      await tester.tap(interactionsTab);
+      await tester.pumpAndSettle();
+
+      // Verify interactions screen is displayed
+      expect(find.text('Interactions Screen - Coming Soon'), findsOneWidget);
     });
   });
 }
