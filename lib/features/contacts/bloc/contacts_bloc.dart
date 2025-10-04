@@ -24,6 +24,7 @@ class ContactsBloc extends Bloc<ContactsEvent, ContactsState> {
     on<ChangeViewModeEvent>(_onChangeViewMode);
     on<ChangeSortOrderEvent>(_onChangeSortOrder);
     on<RefreshContactsEvent>(_onRefreshContacts);
+    on<UpdateContactEvent>(_onUpdateContact);
 
     _loadSavedViewMode();
     _loadSavedSortOrder();
@@ -213,6 +214,28 @@ class ContactsBloc extends Bloc<ContactsEvent, ContactsState> {
     Emitter<ContactsState> emit,
   ) async {
     add(const LoadContactsEvent());
+  }
+
+  Future<void> _onUpdateContact(
+    UpdateContactEvent event,
+    Emitter<ContactsState> emit,
+  ) async {
+    final List<Contact> updatedContacts = state.contacts.map((Contact contact) {
+      return contact.id == event.contact.id ? event.contact : contact;
+    }).toList();
+
+    final List<Contact> updatedFilteredContacts = state.filteredContacts.map((
+      Contact contact,
+    ) {
+      return contact.id == event.contact.id ? event.contact : contact;
+    }).toList();
+
+    emit(
+      state.copyWith(
+        contacts: updatedContacts,
+        filteredContacts: updatedFilteredContacts,
+      ),
+    );
   }
 
   List<Contact> _applyCurrentFilters(List<Contact> contacts) {
