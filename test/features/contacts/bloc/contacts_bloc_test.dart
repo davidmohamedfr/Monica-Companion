@@ -169,6 +169,11 @@ void main() {
                 state.searchQuery == 'John' &&
                 state.filteredContacts.isEmpty, // Initial state before debounce
           ),
+          predicate<ContactsState>(
+            (ContactsState state) =>
+                state.searchQuery == 'John' &&
+                state.filteredContacts.length == 1, // Results after debounce
+          ),
         ],
         verify: (_) {
           // Verify the repository method was called after debounce
@@ -216,6 +221,12 @@ void main() {
         expect: () => <Matcher>[
           predicate<ContactsState>(
             (ContactsState state) => state.searchQuery == 'error',
+          ),
+          predicate<ContactsState>(
+            (ContactsState state) =>
+                state.searchQuery == 'error' &&
+                state.errorMessage != null &&
+                state.errorMessage!.contains('Search failed'),
           ),
         ],
         verify: (_) {
