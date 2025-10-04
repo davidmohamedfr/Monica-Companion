@@ -6,6 +6,7 @@ import 'package:monica_companion/features/contacts/bloc/contacts_event.dart';
 import 'package:monica_companion/features/contacts/bloc/contacts_state.dart';
 import 'package:monica_companion/features/contacts/models/contact_filter.dart';
 import 'package:monica_companion/features/contacts/models/contact_model.dart';
+import 'package:monica_companion/features/contacts/models/contact_sort_order.dart';
 import 'package:monica_companion/features/contacts/models/contact_view_mode.dart';
 import 'package:monica_companion/features/contacts/repositories/contacts_repository.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -21,9 +22,11 @@ class ContactsBloc extends Bloc<ContactsEvent, ContactsState> {
     on<SearchContactsEvent>(_onSearchContacts);
     on<FilterContactsEvent>(_onFilterContacts);
     on<ChangeViewModeEvent>(_onChangeViewMode);
+    on<ChangeSortOrderEvent>(_onChangeSortOrder);
     on<RefreshContactsEvent>(_onRefreshContacts);
 
     _loadSavedViewMode();
+    _loadSavedSortOrder();
   }
 
   final ContactsRepository _contactsRepository;
@@ -31,6 +34,7 @@ class ContactsBloc extends Bloc<ContactsEvent, ContactsState> {
   Timer? _debounceTimer;
 
   static const String _viewModeKey = 'contacts_view_mode';
+  static const String _sortOrderKey = 'contacts_sort_order';
 
   void _loadSavedViewMode() {
     final int? savedViewModeIndex = _sharedPreferences.getInt(_viewModeKey);
@@ -38,6 +42,15 @@ class ContactsBloc extends Bloc<ContactsEvent, ContactsState> {
       final ContactViewMode viewMode =
           ContactViewMode.values[savedViewModeIndex];
       add(ChangeViewModeEvent(viewMode));
+    }
+  }
+
+  void _loadSavedSortOrder() {
+    final int? savedSortOrderIndex = _sharedPreferences.getInt(_sortOrderKey);
+    if (savedSortOrderIndex != null) {
+      final ContactSortOrder sortOrder =
+          ContactSortOrder.values[savedSortOrderIndex];
+      add(ChangeSortOrderEvent(sortOrder));
     }
   }
 
@@ -100,7 +113,11 @@ class ContactsBloc extends Bloc<ContactsEvent, ContactsState> {
             .searchAndFilterContacts(event.query, state.currentFilter);
 
         if (!emit.isDone) {
-          emit(state.copyWith(filteredContacts: searchResults));
+          final List<Contact> sortedResults = _applySorting(
+            searchResults,
+            state.currentSortOrder,
+          );
+          emit(state.copyWith(filteredContacts: sortedResults));
         }
       }
     } on Exception catch (e) {
@@ -120,15 +137,21 @@ class ContactsBloc extends Bloc<ContactsEvent, ContactsState> {
     try {
       emit(state.copyWith(currentFilter: event.filter));
 
+      List<Contact> results;
       if (state.searchQuery.isNotEmpty) {
-        final List<Contact> searchResults = await _contactsRepository
-            .searchAndFilterContacts(state.searchQuery, event.filter);
-        emit(state.copyWith(filteredContacts: searchResults));
+        results = await _contactsRepository.searchAndFilterContacts(
+          state.searchQuery,
+          event.filter,
+        );
       } else {
-        final List<Contact> filteredContacts = await _contactsRepository
-            .filterContacts(event.filter);
-        emit(state.copyWith(filteredContacts: filteredContacts));
+        results = await _contactsRepository.filterContacts(event.filter);
       }
+
+      final List<Contact> sortedResults = _applySorting(
+        results,
+        state.currentSortOrder,
+      );
+      emit(state.copyWith(filteredContacts: sortedResults));
     } on Exception catch (e) {
       Logger.error('Failed to filter contacts', error: e);
       emit(
@@ -151,6 +174,27 @@ class ContactsBloc extends Bloc<ContactsEvent, ContactsState> {
     }
   }
 
+  Future<void> _onChangeSortOrder(
+    ChangeSortOrderEvent event,
+    Emitter<ContactsState> emit,
+  ) async {
+    try {
+      await _sharedPreferences.setInt(_sortOrderKey, event.sortOrder.index);
+      final List<Contact> sortedContacts = _applySorting(
+        state.filteredContacts,
+        event.sortOrder,
+      );
+      emit(
+        state.copyWith(
+          currentSortOrder: event.sortOrder,
+          filteredContacts: sortedContacts,
+        ),
+      );
+    } on Exception catch (e) {
+      Logger.error('Failed to save sort order preference', error: e);
+    }
+  }
+
   Future<void> _onRefreshContacts(
     RefreshContactsEvent event,
     Emitter<ContactsState> emit,
@@ -159,24 +203,70 @@ class ContactsBloc extends Bloc<ContactsEvent, ContactsState> {
   }
 
   List<Contact> _applyCurrentFilters(List<Contact> contacts) {
+    List<Contact> filtered;
     switch (state.currentFilter) {
       case ContactFilter.all:
-        return contacts;
+        filtered = contacts;
       case ContactFilter.favorites:
-        return contacts.where((Contact contact) => contact.isFavorite).toList();
+        filtered = contacts
+            .where((Contact contact) => contact.isFavorite)
+            .toList();
       case ContactFilter.recentlyContacted:
         final DateTime now = DateTime.now();
         const Duration recentThreshold = Duration(days: 30);
-        return contacts.where((Contact contact) {
+        filtered = contacts.where((Contact contact) {
           final DateTime? lastContacted = contact.lastContactedAt;
           return lastContacted != null &&
               now.difference(lastContacted) <= recentThreshold;
         }).toList();
       case ContactFilter.needsInteraction:
-        return contacts
+        filtered = contacts
             .where((Contact contact) => contact.needsInteractionSoon)
             .toList();
     }
+    return _applySorting(filtered, state.currentSortOrder);
+  }
+
+  List<Contact> _applySorting(
+    List<Contact> contacts,
+    ContactSortOrder sortOrder,
+  ) {
+    final List<Contact> sortedList = List<Contact>.from(contacts);
+
+    switch (sortOrder) {
+      case ContactSortOrder.nameAscending:
+        sortedList.sort((Contact a, Contact b) {
+          return a.name.toLowerCase().compareTo(b.name.toLowerCase());
+        });
+      case ContactSortOrder.nameDescending:
+        sortedList.sort((Contact a, Contact b) {
+          return b.name.toLowerCase().compareTo(a.name.toLowerCase());
+        });
+      case ContactSortOrder.lastInteractionRecent:
+        sortedList.sort((Contact a, Contact b) {
+          final DateTime? dateA = a.lastContactedAt;
+          final DateTime? dateB = b.lastContactedAt;
+
+          if (dateA == null && dateB == null) return 0;
+          if (dateA == null) return 1;
+          if (dateB == null) return -1;
+
+          return dateB.compareTo(dateA);
+        });
+      case ContactSortOrder.lastInteractionOldest:
+        sortedList.sort((Contact a, Contact b) {
+          final DateTime? dateA = a.lastContactedAt;
+          final DateTime? dateB = b.lastContactedAt;
+
+          if (dateA == null && dateB == null) return 0;
+          if (dateA == null) return 1;
+          if (dateB == null) return -1;
+
+          return dateA.compareTo(dateB);
+        });
+    }
+
+    return sortedList;
   }
 
   @override
