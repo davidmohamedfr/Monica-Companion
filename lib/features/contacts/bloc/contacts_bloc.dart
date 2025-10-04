@@ -224,11 +224,9 @@ class ContactsBloc extends Bloc<ContactsEvent, ContactsState> {
       return contact.id == event.contact.id ? event.contact : contact;
     }).toList();
 
-    final List<Contact> updatedFilteredContacts = state.filteredContacts.map((
-      Contact contact,
-    ) {
-      return contact.id == event.contact.id ? event.contact : contact;
-    }).toList();
+    final List<Contact> updatedFilteredContacts = _applyCurrentFilters(
+      updatedContacts,
+    );
 
     emit(
       state.copyWith(
