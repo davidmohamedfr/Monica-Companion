@@ -112,13 +112,26 @@ lefthook run pre-push
 
 # Run specific test suites
 flutter test                          # Unit tests
-flutter test integration_test/        # Integration tests
 flutter test --coverage               # With coverage
+
+# Integration tests with auto-granted permissions (recommended)
+./scripts/run_integration_tests.sh                              # All tests
+./scripts/run_integration_tests.sh "" integration_test/contacts_integration_test.dart  # Specific test
+./scripts/run_integration_tests.sh emulator-5556                # Specific device
 
 # Quality checks
 flutter analyze --fatal-infos --fatal-warnings
 flutter format --output=none --set-exit-if-changed .
 ```
+
+### Integration Test Permissions
+
+Integration tests require READ_CONTACTS permission. Use the provided script for automatic permission management:
+
+- **Local testing**: Use `./scripts/run_integration_tests.sh` (recommended)
+- **CI/CD**: Script automatically grants permissions during test execution
+- **How it works**: Permission monitor runs in background, continuously granting permissions
+- **No prompts**: Permissions are granted programmatically, tests run unattended
 
 ## 🎨 Commit Message Standards
 

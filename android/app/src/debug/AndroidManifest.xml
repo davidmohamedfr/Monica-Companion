@@ -4,4 +4,9 @@
          to allow setting breakpoints, to provide hot reload, etc.
     -->
     <uses-permission android:name="android.permission.INTERNET"/>
+
+    <!-- READ_CONTACTS permission for integration tests.
+         This will be auto-granted via ADB in the test driver.
+    -->
+    <uses-permission android:name="android.permission.READ_CONTACTS"/>
 </manifest>

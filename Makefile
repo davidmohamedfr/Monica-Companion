@@ -42,15 +42,10 @@ test:
 	@echo "🧪 Running tests..."
 	@flutter test
 
-# Run integration tests with permissions granted
+# Run integration tests with automatic permission granting
 test-integration:
-	@echo "🧪 Running integration tests..."
-	@echo "📱 Building debug APK..."
-	@flutter build apk --debug
-	@echo "📲 Installing APK with permissions granted (-g flag)..."
-	@adb install -r -g build/app/outputs/flutter-apk/app-debug.apk
-	@echo "🚀 Running integration tests..."
-	@flutter test integration_test/
+	@chmod +x scripts/run_integration_tests.sh
+	@./scripts/run_integration_tests.sh
 
 # Build debug APK
 build-debug:
@@ -72,7 +67,7 @@ help:
 	@echo "  lint              - Alias for analyze"
 	@echo "  deps              - Get Flutter dependencies"
 	@echo "  test              - Run unit tests"
-	@echo "  test-integration  - Run integration tests with permissions granted (-g)"
+	@echo "  test-integration  - Run integration tests with auto-granted permissions"
 	@echo "  clean             - Clean build artifacts"
 	@echo "  build-debug       - Build debug APK"
 	@echo "  build-release     - Build release APK"
