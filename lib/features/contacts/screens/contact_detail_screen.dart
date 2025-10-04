@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:monica_companion/features/contacts/models/contact_model.dart';
+import 'package:monica_companion/features/contacts/widgets/contact_info_section.dart';
 
 class ContactDetailScreen extends StatefulWidget {
   const ContactDetailScreen({required this.contact, super.key});
@@ -17,12 +18,7 @@ class _ContactDetailScreenState extends State<ContactDetailScreen> {
     body: SingleChildScrollView(
       child: Padding(
         padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            Text('Contact details for ${widget.contact.name}'),
-          ],
-        ),
+        child: ContactInfoSection(contact: widget.contact),
       ),
     ),
   );
