@@ -1,5 +1,6 @@
 import 'package:monica_companion/features/contacts/models/contact_filter.dart';
 import 'package:monica_companion/features/contacts/models/contact_model.dart';
+import 'package:monica_companion/features/contacts/models/contact_sort_order.dart';
 import 'package:monica_companion/features/contacts/models/contact_view_mode.dart';
 import 'package:monica_companion/features/shared/models/feature_state.dart';
 
@@ -10,6 +11,7 @@ class ContactsState extends FeatureState {
     this.searchQuery = '',
     this.currentFilter = ContactFilter.all,
     this.currentViewMode = ContactViewMode.list,
+    this.currentSortOrder = ContactSortOrder.nameAscending,
     this.isLoading = false,
     this.errorMessage,
   });
@@ -19,6 +21,7 @@ class ContactsState extends FeatureState {
   final String searchQuery;
   final ContactFilter currentFilter;
   final ContactViewMode currentViewMode;
+  final ContactSortOrder currentSortOrder;
   final bool isLoading;
   final String? errorMessage;
 
@@ -28,6 +31,7 @@ class ContactsState extends FeatureState {
     String? searchQuery,
     ContactFilter? currentFilter,
     ContactViewMode? currentViewMode,
+    ContactSortOrder? currentSortOrder,
     bool? isLoading,
     String? errorMessage,
   }) => ContactsState(
@@ -36,6 +40,7 @@ class ContactsState extends FeatureState {
     searchQuery: searchQuery ?? this.searchQuery,
     currentFilter: currentFilter ?? this.currentFilter,
     currentViewMode: currentViewMode ?? this.currentViewMode,
+    currentSortOrder: currentSortOrder ?? this.currentSortOrder,
     isLoading: isLoading ?? this.isLoading,
     errorMessage: errorMessage ?? this.errorMessage,
   );
@@ -49,6 +54,7 @@ class ContactsState extends FeatureState {
     searchQuery,
     currentFilter,
     currentViewMode,
+    currentSortOrder,
     isLoading,
     errorMessage,
   ];
