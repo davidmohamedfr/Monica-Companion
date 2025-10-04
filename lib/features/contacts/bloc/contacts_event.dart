@@ -2,6 +2,7 @@ import 'package:equatable/equatable.dart';
 import 'package:monica_companion/features/contacts/models/contact_filter.dart';
 import 'package:monica_companion/features/contacts/models/contact_model.dart';
 import 'package:monica_companion/features/contacts/models/contact_sort_order.dart';
+import 'package:monica_companion/features/contacts/models/contact_model.dart';
 import 'package:monica_companion/features/contacts/models/contact_view_mode.dart';
 
 abstract class ContactsEvent extends Equatable {
