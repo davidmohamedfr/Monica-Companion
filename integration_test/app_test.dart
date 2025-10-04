@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:integration_test/integration_test.dart';
 import 'package:monica_companion/core/services/app_initialization_service.dart';
 
 import 'package:monica_companion/main.dart' as app;
+import 'helpers/integration_test_helpers.dart';
 
 void main() {
-  IntegrationTestWidgetsFlutterBinding.ensureInitialized();
-
   setUpAll(() async {
+    // Setup integration test environment with permission verification
+    await IntegrationTestHelpers.setupWithPermissions();
+
     // Initialize app services before running tests
     await AppInitializationService.instance.initialize();
   });
