@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:integration_test/integration_test.dart';
 import 'package:monica_companion/main.dart' as app;
 
+import 'helpers/integration_test_helpers.dart';
+
 void main() {
-  IntegrationTestWidgetsFlutterBinding.ensureInitialized();
+  setUpAll(() async {
+    // Setup integration test environment with permission verification
+    await IntegrationTestHelpers.setupWithPermissions();
+  });
 
   group('Contacts Feature Demonstration', () {
     testWidgets('Complete contacts feature walkthrough', (
