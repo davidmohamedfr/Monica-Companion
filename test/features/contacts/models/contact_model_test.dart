@@ -29,6 +29,21 @@ void main() {
     });
 
     group('Constructor Tests', () {
+      test('should create Contact with notes field', () {
+        // Arrange & Act
+        const Contact contact = Contact(
+          id: 'test-id',
+          name: 'Test User',
+          notes: 'Important client, prefers email contact',
+        );
+
+        // Assert
+        expect(
+          contact.notes,
+          equals('Important client, prefers email contact'),
+        );
+      });
+
       test('should create Contact with all parameters', () {
         // Act & Assert
         expect(testContact.id, equals('test-id-123'));
@@ -41,6 +56,17 @@ void main() {
         expect(testContact.needsInteractionSoon, isFalse);
       });
 
+      test('should create Contact without notes field (null)', () {
+        // Arrange & Act
+        const Contact contact = Contact(
+          id: 'no-notes-id',
+          name: 'User Without Notes',
+        );
+
+        // Assert
+        expect(contact.notes, isNull);
+      });
+
       test('should create Contact with required parameters only', () {
         // Arrange & Act
         const Contact contact = Contact(id: 'minimal-id', name: 'Jane Smith');
@@ -51,6 +77,7 @@ void main() {
         expect(contact.phone, isNull);
         expect(contact.email, isNull);
         expect(contact.photoUrl, isNull);
+        expect(contact.notes, isNull);
         expect(contact.isFavorite, isFalse);
         expect(contact.lastContactedAt, isNull);
         expect(contact.needsInteractionSoon, isFalse);
@@ -108,6 +135,17 @@ void main() {
 
         // Assert
         expect(updatedContact.needsInteractionSoon, isTrue);
+        expect(updatedContact.name, equals(testContact.name));
+      });
+
+      test('should create copy with updated notes', () {
+        // Act
+        final Contact updatedContact = testContact.copyWith(
+          notes: 'Updated notes for this contact',
+        );
+
+        // Assert
+        expect(updatedContact.notes, equals('Updated notes for this contact'));
         expect(updatedContact.name, equals(testContact.name));
       });
 
@@ -194,6 +232,24 @@ void main() {
         const Contact contact1 = Contact(id: 'same-id', name: 'Name One');
 
         const Contact contact2 = Contact(id: 'same-id', name: 'Name Two');
+
+        // Act & Assert
+        expect(contact1, isNot(equals(contact2)));
+      });
+
+      test('should not be equal when notes differ', () {
+        // Arrange
+        const Contact contact1 = Contact(
+          id: 'same-id',
+          name: 'Same Name',
+          notes: 'Some notes',
+        );
+
+        const Contact contact2 = Contact(
+          id: 'same-id',
+          name: 'Same Name',
+          notes: 'Different notes',
+        );
 
         // Act & Assert
         expect(contact1, isNot(equals(contact2)));
@@ -290,7 +346,7 @@ void main() {
         final List<Object?> props = contact.props;
 
         // Assert
-        expect(props, hasLength(8));
+        expect(props, hasLength(9));
         expect(props, contains('test-id'));
         expect(props, contains('Test Name'));
         expect(props, contains('+1234567890'));
