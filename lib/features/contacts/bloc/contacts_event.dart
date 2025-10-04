@@ -1,5 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:monica_companion/features/contacts/models/contact_filter.dart';
+import 'package:monica_companion/features/contacts/models/contact_model.dart';
 import 'package:monica_companion/features/contacts/models/contact_sort_order.dart';
 import 'package:monica_companion/features/contacts/models/contact_view_mode.dart';
 
@@ -52,4 +53,13 @@ class ChangeSortOrderEvent extends ContactsEvent {
 
   @override
   List<Object?> get props => <Object?>[sortOrder];
+}
+
+class UpdateContactEvent extends ContactsEvent {
+  const UpdateContactEvent(this.contact);
+
+  final Contact contact;
+
+  @override
+  List<Object?> get props => <Object?>[contact];
 }

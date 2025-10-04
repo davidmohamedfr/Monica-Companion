@@ -465,5 +465,57 @@ void main() {
         expect(bloc.isClosed, isTrue);
       });
     });
+
+    group('UpdateContact Tests', () {
+      blocTest<ContactsBloc, ContactsState>(
+        'should update contact in state',
+        setUp: () {
+          when(() => mockSharedPreferences.getInt(any())).thenReturn(null);
+          when(
+            () => mockContactsRepository.getContacts(),
+          ).thenAnswer((_) async => testContacts);
+        },
+        build: () => contactsBloc,
+        act: (ContactsBloc bloc) async {
+          bloc.add(const LoadContactsEvent());
+          await Future<void>.delayed(const Duration(milliseconds: 100));
+
+          final Contact updatedContact = testContact1.copyWith(
+            name: 'Jane Doe Updated',
+            email: 'jane.updated@example.com',
+          );
+          bloc.add(UpdateContactEvent(updatedContact));
+        },
+        expect: () => <ContactsState>[
+          ContactsState(
+            isLoading: true,
+            contacts: const <Contact>[],
+            filteredContacts: const <Contact>[],
+          ),
+          ContactsState(
+            isLoading: false,
+            contacts: testContacts,
+            filteredContacts: testContacts,
+          ),
+          ContactsState(
+            isLoading: false,
+            contacts: <Contact>[
+              testContact1.copyWith(
+                name: 'Jane Doe Updated',
+                email: 'jane.updated@example.com',
+              ),
+              testContact2,
+            ],
+            filteredContacts: <Contact>[
+              testContact1.copyWith(
+                name: 'Jane Doe Updated',
+                email: 'jane.updated@example.com',
+              ),
+              testContact2,
+            ],
+          ),
+        ],
+      );
+    });
   });
 }
