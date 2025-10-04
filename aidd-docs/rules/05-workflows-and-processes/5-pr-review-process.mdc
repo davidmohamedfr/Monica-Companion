@@ -118,6 +118,33 @@ on:
 - All conversations resolved
 - Final integration test pass
 
+## PR Creation Workflow
+
+- Create PR with descriptive title and body
+- Link to related issue using "Closes #XX"
+- Move associated issue to "Review" column in project board
+- Use GitHub GraphQL API for project automation
+- Ensure PR targets correct base branch
+- Push branch to remote before PR creation
+
+```bash
+# Move issue to Review column after PR creation
+gh api graphql -f query='
+  mutation {
+    updateProjectV2ItemFieldValue(
+      input: {
+        projectId: "PROJECT_ID"
+        itemId: "ITEM_ID"
+        fieldId: "STATUS_FIELD_ID"
+        value: { singleSelectOptionId: "REVIEW_OPTION_ID" }
+      }
+    ) {
+      projectV2Item { id }
+    }
+  }
+'
+```
+
 ## Post-Review Actions
 
 - Successful merge triggers deployment
@@ -126,6 +153,7 @@ on:
 - Documentation updates deployment
 - Team notifications sent
 - Metrics collection for improvement
+- Move issue to "Done" column after merge
 
 ## Emergency Procedures
 
