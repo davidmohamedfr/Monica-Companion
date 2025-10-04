@@ -6,6 +6,7 @@ import 'package:monica_companion/features/contacts/bloc/contacts_state.dart';
 import 'package:monica_companion/features/contacts/models/contact_filter.dart';
 import 'package:monica_companion/features/contacts/models/contact_model.dart';
 import 'package:monica_companion/features/contacts/models/contact_view_mode.dart';
+import 'package:monica_companion/features/contacts/screens/contact_detail_screen.dart';
 import 'package:monica_companion/features/contacts/screens/contacts_list_screen.dart';
 import 'package:monica_companion/features/contacts/widgets/contacts_search_bar.dart';
 import 'package:monica_companion/features/shared/widgets/empty_state_widget.dart';
@@ -188,7 +189,7 @@ void main() {
         expect(tester.takeException(), isNull);
       });
 
-      testWidgets('should show snackbar when contact is tapped', (
+      testWidgets('should navigate to detail screen when contact is tapped', (
         WidgetTester tester,
       ) async {
         // Arrange
@@ -208,9 +209,9 @@ void main() {
           await tester.tap(contactItems.first);
           await tester.pumpAndSettle();
 
-          // Assert: SnackBar should appear
-          expect(find.byType(SnackBar), findsOneWidget);
-          expect(find.textContaining('Coming soon'), findsOneWidget);
+          // Assert: Should navigate to ContactDetailScreen
+          expect(find.byType(ContactDetailScreen), findsOneWidget);
+          expect(find.byType(BackButton), findsOneWidget);
         }
       });
     });
