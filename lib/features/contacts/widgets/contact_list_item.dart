@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:monica_companion/core/utils/date_formatter.dart';
 import 'package:monica_companion/features/contacts/models/contact_model.dart';
 
 class ContactListItem extends StatelessWidget {
@@ -51,6 +52,16 @@ class ContactListItem extends StatelessWidget {
       subtitleParts.add(contact.email!);
     }
 
+    // Add last interaction date
+    if (contact.lastContactedAt != null) {
+      final String dateStr = DateFormatter.formatDualDate(
+        contact.lastContactedAt,
+      );
+      if (dateStr.isNotEmpty) {
+        subtitleParts.add(dateStr);
+      }
+    }
+
     if (subtitleParts.isEmpty) {
       return null;
     }
@@ -60,7 +71,7 @@ class ContactListItem extends StatelessWidget {
       style: theme.textTheme.bodyMedium?.copyWith(
         color: theme.colorScheme.onSurfaceVariant,
       ),
-      maxLines: 1,
+      maxLines: 2, // Allow 2 lines for longer content
       overflow: TextOverflow.ellipsis,
     );
   }
