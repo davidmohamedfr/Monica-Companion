@@ -345,7 +345,7 @@ void main() {
         final Text subtitleText = tester.widget(
           find.textContaining('+1-800-VERY-LONG'),
         );
-        expect(subtitleText.maxLines, equals(1));
+        expect(subtitleText.maxLines, equals(2)); // Updated to 2 lines
         expect(subtitleText.overflow, equals(TextOverflow.ellipsis));
       });
 
@@ -609,6 +609,62 @@ void main() {
         // Assert
         expect(stopwatch.elapsedMilliseconds, lessThan(100));
         expect(find.byType(ContactListItem), findsOneWidget);
+      });
+    });
+
+    group('Phase 3: Last Contacted Date Display Tests', () {
+      testWidgets('Test 3.1: shouldDisplayLastContactedDateInSubtitle', (
+        WidgetTester tester,
+      ) async {
+        // Arrange
+        final Contact contactWithDate = Contact(
+          id: '18',
+          name: 'Date Contact',
+          phone: '+1234567890',
+          email: 'date@example.com',
+          lastContactedAt: DateTime.now().subtract(const Duration(days: 2)),
+        );
+
+        // Act
+        await tester.pumpWidget(createTestWidget(contactWithDate));
+
+        // Assert
+        expect(find.textContaining('2 days ago'), findsOneWidget);
+        expect(find.textContaining('•'), findsWidgets); // Multiple separators
+      });
+
+      testWidgets('Test 3.2: shouldNotDisplayEmptyDateString', (
+        WidgetTester tester,
+      ) async {
+        // Arrange - Contact without lastContactedAt
+        await tester.pumpWidget(createTestWidget(basicContact));
+
+        // Assert - Should have phone and email in subtitle, but no date
+        expect(find.text('+1234567890 • john.doe@example.com'), findsOneWidget);
+        expect(find.textContaining('days ago'), findsNothing);
+        expect(find.textContaining('Today'), findsNothing);
+      });
+
+      testWidgets('Test 3.3: shouldAllowTwoLinesForSubtitle', (
+        WidgetTester tester,
+      ) async {
+        // Arrange
+        final Contact contactWithLongData = Contact(
+          id: '19',
+          name: 'Long Data',
+          phone: '+1-800-VERY-LONG-NUMBER',
+          email: 'very.long.email@example.com',
+          lastContactedAt: DateTime.now().subtract(const Duration(days: 30)),
+        );
+
+        // Act
+        await tester.pumpWidget(createTestWidget(contactWithLongData));
+
+        // Assert
+        final Text subtitleText = tester.widget(
+          find.textContaining('+1-800-VERY-LONG'),
+        );
+        expect(subtitleText.maxLines, equals(2)); // Should allow 2 lines
       });
     });
   });
