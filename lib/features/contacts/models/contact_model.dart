@@ -7,6 +7,7 @@ class Contact extends Equatable {
     this.phone,
     this.email,
     this.photoUrl,
+    this.notes,
     this.isFavorite = false,
     this.lastContactedAt,
     this.needsInteractionSoon = false,
@@ -17,6 +18,7 @@ class Contact extends Equatable {
   final String? phone;
   final String? email;
   final String? photoUrl;
+  final String? notes;
   final bool isFavorite;
   final DateTime? lastContactedAt;
   final bool needsInteractionSoon;
@@ -27,6 +29,7 @@ class Contact extends Equatable {
     String? phone,
     String? email,
     String? photoUrl,
+    String? notes,
     bool? isFavorite,
     DateTime? lastContactedAt,
     bool? needsInteractionSoon,
@@ -36,6 +39,7 @@ class Contact extends Equatable {
     phone: phone ?? this.phone,
     email: email ?? this.email,
     photoUrl: photoUrl ?? this.photoUrl,
+    notes: notes ?? this.notes,
     isFavorite: isFavorite ?? this.isFavorite,
     lastContactedAt: lastContactedAt ?? this.lastContactedAt,
     needsInteractionSoon: needsInteractionSoon ?? this.needsInteractionSoon,
@@ -48,6 +52,7 @@ class Contact extends Equatable {
     phone,
     email,
     photoUrl,
+    notes,
     isFavorite,
     lastContactedAt,
     needsInteractionSoon,
