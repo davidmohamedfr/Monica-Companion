@@ -5,8 +5,9 @@ import 'package:monica_companion/main.dart' as app;
 import 'helpers/integration_test_helpers.dart';
 
 void main() {
+  // Setup: Uses setupWithPermissions() because tests call app.main()
+  // which handles AppInitializationService internally
   setUpAll(() async {
-    // Setup integration test environment with permission verification
     await IntegrationTestHelpers.setupWithPermissions();
   });
 
