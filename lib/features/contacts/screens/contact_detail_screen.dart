@@ -58,6 +58,20 @@ class _ContactDetailScreenState extends State<ContactDetailScreen> {
             onPressed: _showEditDialog,
             tooltip: 'Edit contact',
           ),
+          GestureDetector(
+            onTap: () {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text('Feature coming soon - see issue #65'),
+                ),
+              );
+            },
+            child: IconButton(
+              icon: const Icon(Icons.block),
+              onPressed: null,
+              tooltip: 'Coming soon - Add to exclusion list',
+            ),
+          ),
         ],
       ),
       body: SingleChildScrollView(
