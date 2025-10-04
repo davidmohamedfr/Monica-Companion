@@ -32,13 +32,16 @@ class ContactsBloc extends Bloc<ContactsEvent, ContactsState> {
   final ContactsRepository _contactsRepository;
   final SharedPreferences _sharedPreferences;
   Timer? _debounceTimer;
+  int _searchSequence = 0;
 
   static const String _viewModeKey = 'contacts_view_mode';
   static const String _sortOrderKey = 'contacts_sort_order';
 
   void _loadSavedViewMode() {
     final int? savedViewModeIndex = _sharedPreferences.getInt(_viewModeKey);
-    if (savedViewModeIndex != null) {
+    if (savedViewModeIndex != null &&
+        savedViewModeIndex >= 0 &&
+        savedViewModeIndex < ContactViewMode.values.length) {
       final ContactViewMode viewMode =
           ContactViewMode.values[savedViewModeIndex];
       add(ChangeViewModeEvent(viewMode));
@@ -47,7 +50,9 @@ class ContactsBloc extends Bloc<ContactsEvent, ContactsState> {
 
   void _loadSavedSortOrder() {
     final int? savedSortOrderIndex = _sharedPreferences.getInt(_sortOrderKey);
-    if (savedSortOrderIndex != null) {
+    if (savedSortOrderIndex != null &&
+        savedSortOrderIndex >= 0 &&
+        savedSortOrderIndex < ContactSortOrder.values.length) {
       final ContactSortOrder sortOrder =
           ContactSortOrder.values[savedSortOrderIndex];
       add(ChangeSortOrderEvent(sortOrder));
@@ -88,6 +93,11 @@ class ContactsBloc extends Bloc<ContactsEvent, ContactsState> {
   ) async {
     try {
       _debounceTimer?.cancel();
+
+      // Increment sequence to track latest request
+      _searchSequence++;
+      final int currentSequence = _searchSequence;
+
       emit(state.copyWith(searchQuery: event.query));
 
       if (event.query.isEmpty) {
@@ -107,12 +117,15 @@ class ContactsBloc extends Bloc<ContactsEvent, ContactsState> {
 
       await completer.future;
 
-      // Check if bloc is still active and query hasn't changed
-      if (!emit.isDone && state.searchQuery == event.query) {
+      // Check if bloc is still active, query hasn't changed, AND this is still the latest request
+      if (!emit.isDone &&
+          state.searchQuery == event.query &&
+          currentSequence == _searchSequence) {
         final List<Contact> searchResults = await _contactsRepository
             .searchAndFilterContacts(event.query, state.currentFilter);
 
-        if (!emit.isDone) {
+        // Double-check sequence hasn't changed during async operation
+        if (!emit.isDone && currentSequence == _searchSequence) {
           final List<Contact> sortedResults = _applySorting(
             searchResults,
             state.currentSortOrder,
