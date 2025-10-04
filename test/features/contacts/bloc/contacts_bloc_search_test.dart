@@ -156,5 +156,125 @@ void main() {
         },
       );
     });
+
+    group('Test 1.4: Rapid input single call', () {
+      blocTest<ContactsBloc, ContactsState>(
+        'shouldOnlyTriggerOneRepositoryCallForRapidInput',
+        build: () {
+          when(
+            () => mockContactsRepository.searchAndFilterContacts(
+              'John',
+              ContactFilter.all,
+            ),
+          ).thenAnswer((_) async => <Contact>[testContacts[0]]);
+          return contactsBloc;
+        },
+        seed: () => ContactsState(contacts: testContacts),
+        act: (ContactsBloc bloc) async {
+          // Rapidly add multiple search events
+          bloc.add(const SearchContactsEvent('J'));
+          await Future<void>.delayed(const Duration(milliseconds: 50));
+          bloc.add(const SearchContactsEvent('Jo'));
+          await Future<void>.delayed(const Duration(milliseconds: 50));
+          bloc.add(const SearchContactsEvent('Joh'));
+          await Future<void>.delayed(const Duration(milliseconds: 50));
+          bloc.add(const SearchContactsEvent('John'));
+        },
+        wait: const Duration(milliseconds: 500), // Wait for final debounce
+        verify: (_) {
+          // Should only call repository once with final query
+          verify(
+            () => mockContactsRepository.searchAndFilterContacts(
+              'John',
+              ContactFilter.all,
+            ),
+          ).called(1);
+
+          // Earlier queries should not trigger repository calls
+          verifyNever(
+            () => mockContactsRepository.searchAndFilterContacts('J', any()),
+          );
+          verifyNever(
+            () => mockContactsRepository.searchAndFilterContacts('Jo', any()),
+          );
+          verifyNever(
+            () => mockContactsRepository.searchAndFilterContacts('Joh', any()),
+          );
+        },
+      );
+    });
+
+    group('Test 1.5: State consistency', () {
+      blocTest<ContactsBloc, ContactsState>(
+        'shouldMaintainConsistencyBetweenQueryAndResults',
+        build: () {
+          when(
+            () => mockContactsRepository.searchAndFilterContacts(
+              'John',
+              ContactFilter.all,
+            ),
+          ).thenAnswer(
+            (_) async => Future<List<Contact>>.delayed(
+              const Duration(milliseconds: 100),
+              () => <Contact>[testContacts[0]],
+            ),
+          );
+          when(
+            () => mockContactsRepository.searchAndFilterContacts(
+              'Jane',
+              ContactFilter.all,
+            ),
+          ).thenAnswer((_) async => <Contact>[testContacts[1]]);
+          return contactsBloc;
+        },
+        seed: () => ContactsState(contacts: testContacts),
+        act: (ContactsBloc bloc) async {
+          // Add search for "John", then quickly change to "Jane"
+          bloc.add(const SearchContactsEvent('John'));
+          await Future<void>.delayed(const Duration(milliseconds: 350));
+          bloc.add(const SearchContactsEvent('Jane'));
+        },
+        wait: const Duration(milliseconds: 500),
+        verify: (_) {
+          // Should only call repository for Jane (the final query)
+          // John's call should be cancelled by state consistency check
+          verify(
+            () => mockContactsRepository.searchAndFilterContacts(
+              'Jane',
+              ContactFilter.all,
+            ),
+          ).called(1);
+        },
+      );
+    });
+
+    group('Test 1.6: Error handling', () {
+      blocTest<ContactsBloc, ContactsState>(
+        'shouldEmitErrorStateWhenSearchFails',
+        build: () {
+          when(
+            () => mockContactsRepository.searchAndFilterContacts(any(), any()),
+          ).thenThrow(Exception('Search failed'));
+          return contactsBloc;
+        },
+        seed: () => ContactsState(contacts: testContacts),
+        act: (ContactsBloc bloc) =>
+            bloc.add(const SearchContactsEvent('error')),
+        wait: const Duration(milliseconds: 400),
+        expect: () => <Matcher>[
+          predicate<ContactsState>(
+            (ContactsState state) => state.searchQuery == 'error',
+            'Search query updated immediately',
+          ),
+          predicate<ContactsState>(
+            (ContactsState state) =>
+                state.searchQuery == 'error' &&
+                state.errorMessage != null &&
+                state.errorMessage!.contains('Search failed'),
+            'Error state emitted after debounce',
+          ),
+        ],
+      );
+    });
   });
 }
