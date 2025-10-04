@@ -154,5 +154,51 @@ void main() {
       // Assert
       expect(find.byIcon(Icons.edit), findsOneWidget);
     });
+
+    testWidgets('should display disabled exclusion button in app bar', (
+      WidgetTester tester,
+    ) async {
+      // Arrange & Act
+      await tester.pumpWidget(createTestWidget(testContact));
+
+      // Assert
+      expect(find.byIcon(Icons.block), findsOneWidget);
+
+      final IconButton button = tester.widget<IconButton>(
+        find.byType(IconButton).last,
+      );
+      expect(button.icon, isA<Icon>());
+      expect(button.onPressed, isNull);
+    });
+
+    testWidgets('should show tooltip on exclusion button', (
+      WidgetTester tester,
+    ) async {
+      // Arrange & Act
+      await tester.pumpWidget(createTestWidget(testContact));
+
+      final Finder exclusionButton = find.byIcon(Icons.block);
+
+      // Long press to show tooltip
+      await tester.longPress(exclusionButton);
+      await tester.pumpAndSettle();
+
+      // Assert
+      expect(find.text('Coming soon - Add to exclusion list'), findsOneWidget);
+    });
+
+    testWidgets('should show snackbar when tapping disabled exclusion button', (
+      WidgetTester tester,
+    ) async {
+      // Arrange & Act
+      await tester.pumpWidget(createTestWidget(testContact));
+
+      // Tap the disabled button area
+      await tester.tap(find.byIcon(Icons.block));
+      await tester.pumpAndSettle();
+
+      // Assert
+      expect(find.text('Feature coming soon - see issue #65'), findsOneWidget);
+    });
   });
 }
