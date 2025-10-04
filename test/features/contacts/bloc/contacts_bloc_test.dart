@@ -495,7 +495,7 @@ void main() {
           ContactsState(
             isLoading: false,
             contacts: testContacts,
-            filteredContacts: testContacts,
+            filteredContacts: <Contact>[testContact2, testContact1],
           ),
           ContactsState(
             isLoading: false,

@@ -154,7 +154,6 @@ void main() {
       // Assert
       expect(find.byIcon(Icons.edit), findsOneWidget);
     });
-<<<<<<< HEAD
 
     testWidgets('should display disabled exclusion button in app bar', (
       WidgetTester tester,
