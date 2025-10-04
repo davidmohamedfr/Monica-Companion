@@ -118,6 +118,71 @@ on:
 - All conversations resolved
 - Final integration test pass
 
+## Issue Creation Workflow
+
+- Create GitHub issue with clear title and description
+- Add issue to project board immediately after creation
+- Set status to "Backlog" column by default
+- Use GitHub GraphQL API for project automation
+- Label appropriately (enhancement, bug, etc.)
+
+```bash
+# Add newly created issue to project in Backlog column
+gh api graphql -f query='
+  mutation {
+    addProjectV2ItemById(
+      input: {
+        projectId: "PVT_kwHOAA1yyM4BDBcz"
+        contentId: "ISSUE_NODE_ID"
+      }
+    ) {
+      item {
+        id
+      }
+    }
+  }
+' | jq -r '.data.addProjectV2ItemById.item.id' | \
+xargs -I {} gh api graphql -f query='
+  mutation {
+    updateProjectV2ItemFieldValue(
+      input: {
+        projectId: "PVT_kwHOAA1yyM4BDBcz"
+        itemId: "{}"
+        fieldId: "PVTSSF_lAHOAA1yyM4BDBczzg1ECH4"
+        value: { singleSelectOptionId: "f75ad846" }
+      }
+    ) {
+      projectV2Item { id }
+    }
+  }
+'
+```
+
+## Starting Work on Issue
+
+- Move issue from "Backlog" to "In Progress" when starting work
+- Create feature branch following naming convention
+- Update project board status automatically
+- Link commits to issue number
+
+```bash
+# Move issue to In Progress column when starting work
+gh api graphql -f query='
+  mutation {
+    updateProjectV2ItemFieldValue(
+      input: {
+        projectId: "PVT_kwHOAA1yyM4BDBcz"
+        itemId: "ITEM_ID"
+        fieldId: "PVTSSF_lAHOAA1yyM4BDBczzg1ECH4"
+        value: { singleSelectOptionId: "47fc9ee4" }
+      }
+    ) {
+      projectV2Item { id }
+    }
+  }
+'
+```
+
 ## PR Creation Workflow
 
 - Create PR with descriptive title and body
@@ -133,10 +198,10 @@ gh api graphql -f query='
   mutation {
     updateProjectV2ItemFieldValue(
       input: {
-        projectId: "PROJECT_ID"
+        projectId: "PVT_kwHOAA1yyM4BDBcz"
         itemId: "ITEM_ID"
-        fieldId: "STATUS_FIELD_ID"
-        value: { singleSelectOptionId: "REVIEW_OPTION_ID" }
+        fieldId: "PVTSSF_lAHOAA1yyM4BDBczzg1ECH4"
+        value: { singleSelectOptionId: "7ce3d9b0" }
       }
     ) {
       projectV2Item { id }
