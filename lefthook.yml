@@ -88,6 +88,9 @@ pre-push:
 commit-msg:
   commands:
     conventional-commit:
+      skip:
+        - run: test -f lefthook-local.yml
+          reason: "Using local commit message validation"
       run: |
         # Check for conventional commit format
         if ! head -n1 {1} | grep -qE "^(feat|fix|docs|style|refactor|test|chore)(\(.+\))?: .+"; then
