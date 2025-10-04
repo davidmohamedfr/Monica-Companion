@@ -37,17 +37,24 @@ else
   adb install -g build/app/outputs/flutter-apk/app-debug.apk
 fi
 
-# Start permission monitor in background
+# Grant permissions immediately before starting tests
+echo "🔐 Granting permissions..."
+if [ -n "$DEVICE_ID" ]; then
+  adb -s "$DEVICE_ID" shell pm grant "$PACKAGE_NAME" "$PERMISSION" 2>/dev/null || true
+else
+  adb shell pm grant "$PACKAGE_NAME" "$PERMISSION" 2>/dev/null || true
+fi
+
+# Start permission monitor in background to handle reinstalls during test runs
 echo "🔐 Starting permission monitor..."
 (
-  sleep 2
   while true; do
+    sleep 0.5  # Check every 500ms for faster response
     if [ -n "$DEVICE_ID" ]; then
       adb -s "$DEVICE_ID" shell pm grant "$PACKAGE_NAME" "$PERMISSION" 2>/dev/null || true
     else
       adb shell pm grant "$PACKAGE_NAME" "$PERMISSION" 2>/dev/null || true
     fi
-    sleep 2  # Check every 2 seconds
   done
 ) &
 MONITOR_PID=$!
