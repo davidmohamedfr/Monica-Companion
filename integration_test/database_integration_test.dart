@@ -1,6 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:monica_companion/core/di/database_module.dart';
-import 'package:monica_companion/core/services/app_initialization_service.dart';
 import 'package:monica_companion/db/interfaces/contact_repository.dart';
 import 'package:monica_companion/db/models/contact.dart';
 import 'package:monica_companion/db/repositories/repository_registry.dart';
@@ -13,12 +12,10 @@ void main() {
   group('Database Integration Tests', () {
     late ContactRepository contactRepository;
 
+    // Setup: Uses setupWithPermissionsAndApp() because tests use pumpWidget(MonicaApp())
+    // which requires manual AppInitializationService initialization
     setUpAll(() async {
-      // Setup integration test environment with permission verification
-      await IntegrationTestHelpers.setupWithPermissions();
-
-      // Initialize app services before running tests
-      await AppInitializationService.instance.initialize();
+      await IntegrationTestHelpers.setupWithPermissionsAndApp();
 
       final RepositoryRegistry registry = ServiceLocator.instance
           .get<RepositoryRegistry>();
