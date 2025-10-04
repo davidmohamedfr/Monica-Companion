@@ -34,10 +34,14 @@ class DateFormatter {
       final int weeks = (difference.inDays / 7).floor();
       return '$weeks ${_pluralize('week', weeks)} ago';
     } else if (difference.inDays < 365) {
-      final int months = (difference.inDays / 30).floor();
+      // Use approximate month calculation (30.44 days average)
+      // Note: This is an approximation; actual month lengths vary
+      final int months = (difference.inDays / 30.44).floor();
       return '$months ${_pluralize('month', months)} ago';
     } else {
-      final int years = (difference.inDays / 365).floor();
+      // Use approximate year calculation (365.25 days average including leap years)
+      // Note: This is an approximation for display purposes
+      final int years = (difference.inDays / 365.25).floor();
       return '$years ${_pluralize('year', years)} ago';
     }
   }

@@ -95,7 +95,8 @@ void main() {
     group('Test 2.6: Months ago', () {
       test('shouldReturnMonthsAgoForDatesWithinYear', () {
         // Arrange
-        final DateTime twoMonthsAgo = now.subtract(const Duration(days: 60));
+        // Use 61 days to ensure we get 2 months (61 / 30.44 = 2.00)
+        final DateTime twoMonthsAgo = now.subtract(const Duration(days: 61));
 
         // Act
         final String result = DateFormatter.formatDualDate(
@@ -109,7 +110,8 @@ void main() {
 
       test('shouldUseSingularMonthForOneMonth', () {
         // Arrange
-        final DateTime oneMonthAgo = now.subtract(const Duration(days: 30));
+        // Use 31 days to ensure we get 1 month (31 / 30.44 = 1.01)
+        final DateTime oneMonthAgo = now.subtract(const Duration(days: 31));
 
         // Act
         final String result = DateFormatter.formatDualDate(
@@ -125,7 +127,8 @@ void main() {
     group('Test 2.7: Years ago', () {
       test('shouldReturnYearsAgoForDatesOverYear', () {
         // Arrange
-        final DateTime twoYearsAgo = now.subtract(const Duration(days: 730));
+        // Use 731 days to ensure we get 2 years (731 / 365.25 = 2.00)
+        final DateTime twoYearsAgo = now.subtract(const Duration(days: 731));
 
         // Act
         final String result = DateFormatter.formatDualDate(
@@ -139,7 +142,8 @@ void main() {
 
       test('shouldUseSingularYearForOneYear', () {
         // Arrange
-        final DateTime oneYearAgo = now.subtract(const Duration(days: 365));
+        // Use 366 days to ensure we get 1 year (366 / 365.25 = 1.00)
+        final DateTime oneYearAgo = now.subtract(const Duration(days: 366));
 
         // Act
         final String result = DateFormatter.formatDualDate(
