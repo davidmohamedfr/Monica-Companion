@@ -85,25 +85,24 @@ class ContactsBloc extends Bloc<ContactsEvent, ContactsState> {
         return;
       }
 
-      _debounceTimer = Timer(const Duration(milliseconds: 300), () async {
-        try {
-          final List<Contact> searchResults = await _contactsRepository
-              .searchAndFilterContacts(event.query, state.currentFilter);
+      // Use Completer for proper async debouncing
+      final Completer<void> completer = Completer<void>();
 
-          if (!emit.isDone) {
-            emit(state.copyWith(filteredContacts: searchResults));
-          }
-        } on Exception catch (e) {
-          Logger.error('Failed to search contacts', error: e);
-          if (!emit.isDone) {
-            emit(
-              state.copyWith(
-                errorMessage: 'Failed to search contacts: ${e.toString()}',
-              ),
-            );
-          }
-        }
+      _debounceTimer = Timer(const Duration(milliseconds: 300), () {
+        completer.complete();
       });
+
+      await completer.future;
+
+      // Check if bloc is still active and query hasn't changed
+      if (!emit.isDone && state.searchQuery == event.query) {
+        final List<Contact> searchResults = await _contactsRepository
+            .searchAndFilterContacts(event.query, state.currentFilter);
+
+        if (!emit.isDone) {
+          emit(state.copyWith(filteredContacts: searchResults));
+        }
+      }
     } on Exception catch (e) {
       Logger.error('Failed to search contacts', error: e);
       emit(

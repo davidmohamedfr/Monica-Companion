@@ -115,5 +115,46 @@ void main() {
         },
       );
     });
+
+    group('Test 1.3: Debounce within 300ms', () {
+      blocTest<ContactsBloc, ContactsState>(
+        'shouldDebounceSearchWithin300Milliseconds',
+        build: () {
+          when(
+            () => mockContactsRepository.searchAndFilterContacts(
+              'John',
+              ContactFilter.all,
+            ),
+          ).thenAnswer((_) async => <Contact>[testContacts[0]]);
+          return contactsBloc;
+        },
+        seed: () => ContactsState(contacts: testContacts),
+        act: (ContactsBloc bloc) => bloc.add(const SearchContactsEvent('John')),
+        wait: const Duration(
+          milliseconds: 350,
+        ), // Wait for debounce to complete
+        expect: () => <Matcher>[
+          predicate<ContactsState>(
+            (ContactsState state) => state.searchQuery == 'John',
+            'Search query updated immediately',
+          ),
+          predicate<ContactsState>(
+            (ContactsState state) =>
+                state.searchQuery == 'John' &&
+                state.filteredContacts.length == 1,
+            'After 300ms debounce, search results should be emitted',
+          ),
+        ],
+        verify: (_) {
+          // Repository should be called exactly once after debounce
+          verify(
+            () => mockContactsRepository.searchAndFilterContacts(
+              'John',
+              ContactFilter.all,
+            ),
+          ).called(1);
+        },
+      );
+    });
   });
 }
