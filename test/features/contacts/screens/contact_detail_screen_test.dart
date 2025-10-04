@@ -1,15 +1,29 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:mocktail/mocktail.dart';
+import 'package:monica_companion/features/contacts/bloc/contacts_bloc.dart';
+import 'package:monica_companion/features/contacts/bloc/contacts_event.dart';
+import 'package:monica_companion/features/contacts/bloc/contacts_state.dart';
 import 'package:monica_companion/features/contacts/models/contact_model.dart';
 import 'package:monica_companion/features/contacts/screens/contact_detail_screen.dart';
 import 'package:monica_companion/features/shared/widgets/empty_state_widget.dart';
 import '../../../helpers/test_helpers.dart';
 
+class MockContactsBloc extends Mock implements ContactsBloc {}
+
 void main() {
   group('ContactDetailScreen Tests', () {
     late Contact testContact;
+    late MockContactsBloc mockContactsBloc;
 
-    setUpAll(TestHelpers.setupMockFallbacks);
+    setUpAll(() {
+      TestHelpers.setupMockFallbacks();
+      registerFallbackValue(const ContactsState());
+      registerFallbackValue(
+        const UpdateContactEvent(Contact(id: 'fallback', name: 'Fallback')),
+      );
+    });
 
     setUp(() {
       testContact = const Contact(
@@ -18,15 +32,25 @@ void main() {
         phone: '+1234567890',
         email: 'john.doe@example.com',
       );
+      mockContactsBloc = MockContactsBloc();
+      when(() => mockContactsBloc.state).thenReturn(const ContactsState());
+      when(
+        () => mockContactsBloc.stream,
+      ).thenAnswer((_) => Stream<ContactsState>.empty());
     });
+
+    Widget createTestWidget(Contact contact) => MaterialApp(
+      home: BlocProvider<ContactsBloc>.value(
+        value: mockContactsBloc,
+        child: ContactDetailScreen(contact: contact),
+      ),
+    );
 
     testWidgets('should display contact name in app bar', (
       WidgetTester tester,
     ) async {
       // Arrange & Act
-      await tester.pumpWidget(
-        MaterialApp(home: ContactDetailScreen(contact: testContact)),
-      );
+      await tester.pumpWidget(createTestWidget(testContact));
 
       // Assert
       expect(find.text('John Doe'), findsOneWidget);
@@ -37,9 +61,7 @@ void main() {
       WidgetTester tester,
     ) async {
       // Arrange & Act
-      await tester.pumpWidget(
-        MaterialApp(home: ContactDetailScreen(contact: testContact)),
-      );
+      await tester.pumpWidget(createTestWidget(testContact));
 
       // Assert
       expect(find.byType(SingleChildScrollView), findsOneWidget);
@@ -51,19 +73,22 @@ void main() {
       // Arrange & Act
       await tester.pumpWidget(
         MaterialApp(
-          home: Builder(
-            builder: (BuildContext context) => Scaffold(
-              body: ElevatedButton(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute<void>(
-                      builder: (BuildContext context) =>
-                          ContactDetailScreen(contact: testContact),
-                    ),
-                  );
-                },
-                child: const Text('Navigate'),
+          home: BlocProvider<ContactsBloc>.value(
+            value: mockContactsBloc,
+            child: Builder(
+              builder: (BuildContext context) => Scaffold(
+                body: ElevatedButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute<void>(
+                        builder: (BuildContext context) =>
+                            ContactDetailScreen(contact: testContact),
+                      ),
+                    );
+                  },
+                  child: const Text('Navigate'),
+                ),
               ),
             ),
           ),
@@ -82,9 +107,7 @@ void main() {
       WidgetTester tester,
     ) async {
       // Arrange & Act
-      await tester.pumpWidget(
-        MaterialApp(home: ContactDetailScreen(contact: testContact)),
-      );
+      await tester.pumpWidget(createTestWidget(testContact));
 
       // Assert
       expect(find.text('Recent Interactions'), findsOneWidget);
@@ -94,9 +117,7 @@ void main() {
       WidgetTester tester,
     ) async {
       // Arrange & Act
-      await tester.pumpWidget(
-        MaterialApp(home: ContactDetailScreen(contact: testContact)),
-      );
+      await tester.pumpWidget(createTestWidget(testContact));
 
       // Assert
       expect(find.byType(EmptyStateWidget), findsOneWidget);
@@ -107,9 +128,7 @@ void main() {
       WidgetTester tester,
     ) async {
       // Arrange & Act
-      await tester.pumpWidget(
-        MaterialApp(home: ContactDetailScreen(contact: testContact)),
-      );
+      await tester.pumpWidget(createTestWidget(testContact));
       await tester.pumpAndSettle();
 
       // Assert
@@ -124,6 +143,16 @@ void main() {
       final double interactionsY = tester.getTopLeft(interactionsHeader).dy;
 
       expect(interactionsY, greaterThan(contactInfoY));
+    });
+
+    testWidgets('should display edit button in app bar', (
+      WidgetTester tester,
+    ) async {
+      // Arrange & Act
+      await tester.pumpWidget(createTestWidget(testContact));
+
+      // Assert
+      expect(find.byIcon(Icons.edit), findsOneWidget);
     });
   });
 }
