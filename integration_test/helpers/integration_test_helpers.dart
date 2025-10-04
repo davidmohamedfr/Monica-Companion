@@ -2,9 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
+import 'package:monica_companion/core/services/app_initialization_service.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 /// Integration test helper utilities
+///
+/// Provides standardized setup methods for integration tests:
+///
+/// - Use [setupWithPermissions] for tests that call `app.main()`
+///   (app.main() handles AppInitializationService internally)
+///
+/// - Use [setupWithPermissionsAndApp] for tests that use `pumpWidget(MonicaApp())`
+///   (requires manual AppInitializationService initialization)
 class IntegrationTestHelpers {
   IntegrationTestHelpers._();
 
@@ -19,18 +28,66 @@ class IntegrationTestHelpers {
   /// If permissions are not granted, the test will fail fast with a clear
   /// error.
   ///
+  /// **Use this for tests that call `app.main()`** - the main() function
+  /// handles AppInitializationService internally.
+  ///
+  /// Initializes IntegrationTestWidgetsFlutterBinding which takes precedence
+  /// over WidgetsFlutterBinding.ensureInitialized() in app.main().
+  ///
   /// Usage in tests:
   /// ```dart
   /// setUpAll(() async {
   ///   await IntegrationTestHelpers.setupWithPermissions();
   /// });
+  ///
+  /// testWidgets('test name', (tester) async {
+  ///   app.main();  // app.main() initializes app services
+  ///   await tester.pumpAndSettle();
+  ///   // ... test code
+  /// });
   /// ```
   static Future<IntegrationTestWidgetsFlutterBinding>
   setupWithPermissions() async {
+    // Initialize integration test binding first (takes precedence over app.main)
     final IntegrationTestWidgetsFlutterBinding binding = setupIntegrationTest();
 
-    // Verify READ_CONTACTS permission is granted
+    // Verify permissions
     await _verifyContactsPermission();
+
+    return binding;
+  }
+
+  /// Setup integration test environment with permission validation and app initialization
+  ///
+  /// This ensures required permissions are granted AND initializes app services
+  /// before tests proceed.
+  ///
+  /// **Use this for tests that use `pumpWidget(MonicaApp())`** - these tests
+  /// need manual AppInitializationService initialization since they don't call
+  /// app.main().
+  ///
+  /// Usage in tests:
+  /// ```dart
+  /// setUpAll(() async {
+  ///   await IntegrationTestHelpers.setupWithPermissionsAndApp();
+  /// });
+  ///
+  /// testWidgets('test name', (tester) async {
+  ///   await tester.pumpWidget(const MonicaApp());  // Manual widget pump
+  ///   await tester.pumpAndSettle();
+  ///   // ... test code
+  /// });
+  /// ```
+  static Future<IntegrationTestWidgetsFlutterBinding>
+  setupWithPermissionsAndApp() async {
+    // Initialize IntegrationTestWidgetsFlutterBinding
+    final IntegrationTestWidgetsFlutterBinding binding = setupIntegrationTest();
+
+    // Verify permissions
+    await _verifyContactsPermission();
+
+    // Initialize app services for tests that don't call app.main()
+    await AppInitializationService.instance.initialize();
 
     return binding;
   }
