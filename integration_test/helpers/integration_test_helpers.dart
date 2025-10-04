@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 /// Integration test helper utilities
 class IntegrationTestHelpers {
@@ -11,6 +12,50 @@ class IntegrationTestHelpers {
   static IntegrationTestWidgetsFlutterBinding setupIntegrationTest() =>
       IntegrationTestWidgetsFlutterBinding.ensureInitialized()
         ..framePolicy = LiveTestWidgetsFlutterBindingFramePolicy.fullyLive;
+
+  /// Setup integration test environment with permission validation
+  ///
+  /// This ensures required permissions are granted before tests proceed.
+  /// If permissions are not granted, the test will fail fast with a clear
+  /// error.
+  ///
+  /// Usage in tests:
+  /// ```dart
+  /// setUpAll(() async {
+  ///   await IntegrationTestHelpers.setupWithPermissions();
+  /// });
+  /// ```
+  static Future<IntegrationTestWidgetsFlutterBinding>
+  setupWithPermissions() async {
+    final IntegrationTestWidgetsFlutterBinding binding = setupIntegrationTest();
+
+    // Verify READ_CONTACTS permission is granted
+    await _verifyContactsPermission();
+
+    return binding;
+  }
+
+  /// Verifies that READ_CONTACTS permission is granted
+  ///
+  /// Throws an exception with clear instructions if permission is not granted.
+  static Future<void> _verifyContactsPermission() async {
+    final PermissionStatus status = await Permission.contacts.status;
+
+    if (!status.isGranted) {
+      throw StateError(
+        '❌ READ_CONTACTS permission not granted!\n\n'
+        'Integration tests require contact permissions to be granted.\n\n'
+        'To fix this:\n'
+        '1. Use the test driver to auto-grant permissions:\n'
+        '   flutter drive --driver=test_driver/integration_test_driver.dart \\\n'
+        '     --target=integration_test/your_test.dart\n\n'
+        '2. Or manually grant permission via ADB:\n'
+        '   adb shell pm grant fr.m0hdaCorp.monica_companion \\\n'
+        '     android.permission.READ_CONTACTS\n\n'
+        'Current permission status: $status',
+      );
+    }
+  }
 
   /// Wait for app to fully load
   static Future<void> waitForAppToLoad(WidgetTester tester) async {
