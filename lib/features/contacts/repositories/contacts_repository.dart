@@ -10,6 +10,9 @@ abstract class ContactsRepository {
     String query,
     ContactFilter filter,
   );
+  Future<void> updateDeviceContact(Contact contact);
+  Future<void> createDeviceContact(Contact contact);
+  Future<bool> isContactReadOnly(String contactId);
 }
 
 class ContactsRepositoryImpl implements ContactsRepository {
@@ -60,6 +63,18 @@ class ContactsRepositoryImpl implements ContactsRepository {
 
     return _applyFilter(contacts, filter);
   }
+
+  @override
+  Future<void> updateDeviceContact(Contact contact) async =>
+      _contactsService.updateDeviceContact(contact);
+
+  @override
+  Future<void> createDeviceContact(Contact contact) async =>
+      _contactsService.createDeviceContact(contact);
+
+  @override
+  Future<bool> isContactReadOnly(String contactId) async =>
+      _contactsService.isContactReadOnly(contactId);
 
   List<Contact> _applyFilter(List<Contact> contacts, ContactFilter filter) {
     switch (filter) {
