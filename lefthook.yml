@@ -60,15 +60,20 @@ pre-commit:
 pre-push:
   parallel: false
   commands:
+    # 0. Warm up Flutter tool
+    flutter-warmup:
+      tags: test
+      run: ./scripts/flutter_with_env.sh --version > /dev/null 2>&1 || true
+
     # 1. Ensure dependencies are up to date
     pub-get:
       tags: test
-      run: flutter pub get
+      run: ./scripts/flutter_with_env.sh pub get
 
     # 2. Run all unit and widget tests
     unit-tests:
       tags: test
-      run: flutter test --coverage --reporter=expanded
+      run: ./scripts/flutter_with_env.sh test --coverage --reporter=expanded
       fail_text: |
         ❌ Unit tests failed!
         💡 Fix failing tests before pushing
