@@ -605,6 +605,107 @@ void main() {
       });
     });
 
+    // TDD Tests for Contact Persistence
+    group('Contact Persistence Tests', () {
+      group('updateDeviceContact', () {
+        test('should delegate to service and update contact', () async {
+          // Arrange
+          const Contact updatedContact = Contact(
+            id: '1',
+            name: 'John Updated',
+            phone: '+9999999999',
+            email: 'john.updated@email.com',
+          );
+          when(
+            () => mockContactsService.updateDeviceContact(updatedContact),
+          ).thenAnswer((_) async => {});
+
+          // Act
+          await repository.updateDeviceContact(updatedContact);
+
+          // Assert
+          verify(
+            () => mockContactsService.updateDeviceContact(updatedContact),
+          ).called(1);
+        });
+
+        test('should propagate ContactsException from service', () async {
+          // Arrange
+          const Contact contact = Contact(id: 'test', name: 'Test');
+          when(
+            () => mockContactsService.updateDeviceContact(contact),
+          ).thenThrow(Exception('Contact not found'));
+
+          // Act & Assert
+          expect(
+            () async => repository.updateDeviceContact(contact),
+            throwsA(isA<Exception>()),
+          );
+        });
+      });
+
+      group('createDeviceContact', () {
+        test('should delegate to service and create contact', () async {
+          // Arrange
+          const Contact newContact = Contact(
+            id: 'new-id',
+            name: 'New Contact',
+            phone: '+1111111111',
+          );
+          when(
+            () => mockContactsService.createDeviceContact(newContact),
+          ).thenAnswer((_) async => {});
+
+          // Act
+          await repository.createDeviceContact(newContact);
+
+          // Assert
+          verify(
+            () => mockContactsService.createDeviceContact(newContact),
+          ).called(1);
+        });
+      });
+
+      group('isContactReadOnly', () {
+        test('should delegate to service and return writable status', () async {
+          // Arrange
+          const String contactId = '1';
+          when(
+            () => mockContactsService.isContactReadOnly(contactId),
+          ).thenAnswer((_) async => false);
+
+          // Act
+          final bool result = await repository.isContactReadOnly(contactId);
+
+          // Assert
+          expect(result, isFalse);
+          verify(
+            () => mockContactsService.isContactReadOnly(contactId),
+          ).called(1);
+        });
+
+        test(
+          'should delegate to service and return read-only status',
+          () async {
+            // Arrange
+            const String contactId = 'read-only-id';
+            when(
+              () => mockContactsService.isContactReadOnly(contactId),
+            ).thenAnswer((_) async => true);
+
+            // Act
+            final bool result = await repository.isContactReadOnly(contactId);
+
+            // Assert
+            expect(result, isTrue);
+            verify(
+              () => mockContactsService.isContactReadOnly(contactId),
+            ).called(1);
+          },
+        );
+      });
+    });
+
     group('Performance and Large Dataset Tests', () {
       test('should handle large number of contacts efficiently', () async {
         // Arrange
