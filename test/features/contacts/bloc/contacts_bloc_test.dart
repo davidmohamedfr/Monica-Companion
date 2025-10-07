@@ -31,6 +31,9 @@ void main() {
     setUpAll(() {
       TestHelpers.setupMockFallbacks();
       registerFallbackValue(ContactFilter.all);
+      registerFallbackValue(
+        const Contact(id: 'fallback', name: 'Fallback Contact'),
+      );
     });
 
     setUp(() {
@@ -474,6 +477,9 @@ void main() {
           when(
             () => mockContactsRepository.getContacts(),
           ).thenAnswer((_) async => testContacts);
+          when(
+            () => mockContactsRepository.updateDeviceContact(any()),
+          ).thenAnswer((_) async => {});
         },
         build: () => contactsBloc,
         act: (ContactsBloc bloc) async {
