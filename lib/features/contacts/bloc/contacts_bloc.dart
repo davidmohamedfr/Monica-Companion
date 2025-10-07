@@ -220,20 +220,35 @@ class ContactsBloc extends Bloc<ContactsEvent, ContactsState> {
     UpdateContactEvent event,
     Emitter<ContactsState> emit,
   ) async {
-    final List<Contact> updatedContacts = state.contacts.map((Contact contact) {
-      return contact.id == event.contact.id ? event.contact : contact;
-    }).toList();
+    try {
+      // Persist to device contacts
+      await _contactsRepository.updateDeviceContact(event.contact);
 
-    final List<Contact> updatedFilteredContacts = _applyCurrentFilters(
-      updatedContacts,
-    );
+      // Update in-memory state
+      final List<Contact> updatedContacts = state.contacts.map((
+        Contact contact,
+      ) {
+        return contact.id == event.contact.id ? event.contact : contact;
+      }).toList();
 
-    emit(
-      state.copyWith(
-        contacts: updatedContacts,
-        filteredContacts: updatedFilteredContacts,
-      ),
-    );
+      final List<Contact> updatedFilteredContacts = _applyCurrentFilters(
+        updatedContacts,
+      );
+
+      emit(
+        state.copyWith(
+          contacts: updatedContacts,
+          filteredContacts: updatedFilteredContacts,
+        ),
+      );
+    } on Exception catch (e) {
+      Logger.error('Failed to update contact', error: e);
+      emit(
+        state.copyWith(
+          errorMessage: 'Failed to update contact: ${e.toString()}',
+        ),
+      );
+    }
   }
 
   List<Contact> _applyCurrentFilters(List<Contact> contacts) {

@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:monica_companion/features/contacts/bloc/contacts_bloc.dart';
 import 'package:monica_companion/features/contacts/bloc/contacts_event.dart';
 import 'package:monica_companion/features/contacts/models/contact_model.dart';
+import 'package:monica_companion/features/contacts/repositories/contacts_repository.dart';
 import 'package:monica_companion/features/contacts/widgets/contact_info_section.dart';
 import 'package:monica_companion/features/contacts/widgets/edit_contact_dialog.dart';
 import 'package:monica_companion/features/shared/widgets/empty_state_widget.dart';
@@ -18,11 +19,36 @@ class ContactDetailScreen extends StatefulWidget {
 
 class _ContactDetailScreenState extends State<ContactDetailScreen> {
   late Contact _currentContact;
+  bool _isReadOnly = false;
+  bool _isCheckingReadOnly = true;
 
   @override
   void initState() {
     super.initState();
     _currentContact = widget.contact;
+    _checkReadOnlyStatus();
+  }
+
+  Future<void> _checkReadOnlyStatus() async {
+    try {
+      final ContactsRepository repository = context.read<ContactsRepository>();
+      final bool readOnly = await repository.isContactReadOnly(
+        _currentContact.id,
+      );
+      if (mounted) {
+        setState(() {
+          _isReadOnly = readOnly;
+          _isCheckingReadOnly = false;
+        });
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          _isReadOnly = true; // Assume read-only on error
+          _isCheckingReadOnly = false;
+        });
+      }
+    }
   }
 
   Future<void> _showEditDialog() async {
@@ -53,11 +79,12 @@ class _ContactDetailScreenState extends State<ContactDetailScreen> {
       appBar: AppBar(
         title: Text(_currentContact.name),
         actions: <Widget>[
-          IconButton(
-            icon: const Icon(Icons.edit),
-            onPressed: _showEditDialog,
-            tooltip: 'Edit contact',
-          ),
+          if (!_isCheckingReadOnly && !_isReadOnly)
+            IconButton(
+              icon: const Icon(Icons.edit),
+              onPressed: _showEditDialog,
+              tooltip: 'Edit contact',
+            ),
           GestureDetector(
             onTap: () {
               ScaffoldMessenger.of(context).showSnackBar(

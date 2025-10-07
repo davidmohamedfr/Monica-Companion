@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:monica_companion/core/errors/exceptions.dart';
 import 'package:monica_companion/core/utils/validators.dart';
 import 'package:monica_companion/features/contacts/models/contact_model.dart';
+import 'package:monica_companion/features/contacts/repositories/contacts_repository.dart';
+import 'package:provider/provider.dart';
 
 class EditContactDialog extends StatefulWidget {
   const EditContactDialog({required this.contact, super.key});
@@ -17,6 +20,7 @@ class _EditContactDialogState extends State<EditContactDialog> {
   late TextEditingController _phoneController;
   late TextEditingController _emailController;
   late TextEditingController _notesController;
+  bool _isLoading = false;
 
   @override
   void initState() {
@@ -36,21 +40,53 @@ class _EditContactDialogState extends State<EditContactDialog> {
     super.dispose();
   }
 
-  void _handleSave() {
+  Future<void> _handleSave() async {
     if (_formKey.currentState?.validate() ?? false) {
-      final Contact updatedContact = widget.contact.copyWith(
-        name: _nameController.text.trim(),
-        phone: _phoneController.text.trim().isEmpty
-            ? null
-            : _phoneController.text.trim(),
-        email: _emailController.text.trim().isEmpty
-            ? null
-            : _emailController.text.trim(),
-        notes: _notesController.text.trim().isEmpty
-            ? null
-            : _notesController.text.trim(),
-      );
-      Navigator.of(context).pop(updatedContact);
+      _setLoadingState(true);
+
+      final Contact updatedContact = _buildUpdatedContact();
+
+      try {
+        final ContactsRepository repository = context
+            .read<ContactsRepository>();
+        await repository.updateDeviceContact(updatedContact);
+
+        if (mounted) {
+          Navigator.of(context).pop(updatedContact);
+        }
+      } on ContactsPermissionException catch (e) {
+        _handleError(e.message);
+      } catch (e) {
+        _handleError('Failed to save contact: ${e.toString()}');
+      }
+    }
+  }
+
+  void _setLoadingState(bool isLoading) {
+    setState(() {
+      _isLoading = isLoading;
+    });
+  }
+
+  Contact _buildUpdatedContact() => widget.contact.copyWith(
+    name: _nameController.text.trim(),
+    phone: _phoneController.text.trim().isEmpty
+        ? null
+        : _phoneController.text.trim(),
+    email: _emailController.text.trim().isEmpty
+        ? null
+        : _emailController.text.trim(),
+    notes: _notesController.text.trim().isEmpty
+        ? null
+        : _notesController.text.trim(),
+  );
+
+  void _handleError(String message) {
+    if (mounted) {
+      _setLoadingState(false);
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(message)));
     }
   }
 
@@ -123,10 +159,22 @@ class _EditContactDialogState extends State<EditContactDialog> {
     ),
     actions: <Widget>[
       TextButton(
-        onPressed: () => Navigator.of(context).pop(),
+        onPressed: _isLoading ? null : () => Navigator.of(context).pop(),
         child: const Text('Cancel'),
       ),
-      FilledButton(onPressed: _handleSave, child: const Text('Save')),
+      FilledButton(
+        onPressed: _isLoading ? null : _handleSave,
+        child: _isLoading
+            ? const SizedBox(
+                width: 16,
+                height: 16,
+                child: CircularProgressIndicator(
+                  strokeWidth: 2,
+                  valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                ),
+              )
+            : const Text('Save'),
+      ),
     ],
   );
 }
