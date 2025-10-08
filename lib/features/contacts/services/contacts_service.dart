@@ -192,6 +192,15 @@ class ContactsServiceImpl implements ContactsService {
 
   @override
   Future<bool> isContactReadOnly(String contactId) async {
+    // Check app-level read-only mode first
+    if (_permissionService != null) {
+      final bool appReadOnly = await _permissionService!.isReadOnlyMode();
+      // If app is in read-only mode, contact is read-only
+      // If app is NOT in read-only mode, contact is writable
+      return appReadOnly;
+    }
+
+    // Fallback: check contact-specific read-only status when no PermissionService
     try {
       final fc.Contact? deviceContact = await fc.FlutterContacts.getContact(
         contactId,
