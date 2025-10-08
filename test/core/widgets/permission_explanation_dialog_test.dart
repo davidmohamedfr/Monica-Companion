@@ -61,14 +61,12 @@ void main() {
       await tester.pumpAndSettle();
 
       // Assert
-      expect(
-        find.textContaining('WRITE_CONTACTS'),
-        findsOneWidget,
-      );
+      expect(find.textContaining('WRITE_CONTACTS'), findsOneWidget);
     });
 
-    testWidgets('should have Grant Permission button',
-        (WidgetTester tester) async {
+    testWidgets('should have Grant Permission button', (
+      WidgetTester tester,
+    ) async {
       // Arrange & Act
       await tester.pumpWidget(
         MaterialApp(
@@ -98,8 +96,9 @@ void main() {
       expect(find.text('Grant Permission'), findsOneWidget);
     });
 
-    testWidgets('should have Continue Read-Only button',
-        (WidgetTester tester) async {
+    testWidgets('should have Continue Read-Only button', (
+      WidgetTester tester,
+    ) async {
       // Arrange & Act
       await tester.pumpWidget(
         MaterialApp(
@@ -129,8 +128,9 @@ void main() {
       expect(find.text('Continue Read-Only'), findsOneWidget);
     });
 
-    testWidgets('tapping Grant Permission should return true',
-        (WidgetTester tester) async {
+    testWidgets('tapping Grant Permission should return true', (
+      WidgetTester tester,
+    ) async {
       // Arrange
       bool? result;
 
@@ -166,8 +166,9 @@ void main() {
       expect(result, isTrue);
     });
 
-    testWidgets('tapping Continue Read-Only should return false',
-        (WidgetTester tester) async {
+    testWidgets('tapping Continue Read-Only should return false', (
+      WidgetTester tester,
+    ) async {
       // Arrange
       bool? result;
 
