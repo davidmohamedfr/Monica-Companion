@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:monica_companion/core/utils/logger.dart';
 import 'package:monica_companion/features/contacts/bloc/contacts_bloc.dart';
 import 'package:monica_companion/features/contacts/bloc/contacts_event.dart';
 import 'package:monica_companion/features/contacts/models/contact_model.dart';
@@ -35,6 +36,7 @@ class _ContactDetailScreenState extends State<ContactDetailScreen> {
       final bool readOnly = await repository.isContactReadOnly(
         _currentContact.id,
       );
+      Logger.debug('Contact ${_currentContact.id} readOnly=$readOnly');
       if (mounted) {
         setState(() {
           _isReadOnly = readOnly;
@@ -42,6 +44,7 @@ class _ContactDetailScreenState extends State<ContactDetailScreen> {
         });
       }
     } catch (e) {
+      Logger.error('Error checking read-only status', error: e);
       if (mounted) {
         setState(() {
           _isReadOnly = true; // Assume read-only on error
