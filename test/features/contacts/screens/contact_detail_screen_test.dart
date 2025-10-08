@@ -165,6 +165,7 @@ void main() {
     ) async {
       // Arrange & Act
       await tester.pumpWidget(createTestWidget(testContact));
+      await tester.pumpAndSettle(); // Wait for async _checkReadOnlyStatus
 
       // Assert
       expect(find.byIcon(Icons.edit), findsOneWidget);
