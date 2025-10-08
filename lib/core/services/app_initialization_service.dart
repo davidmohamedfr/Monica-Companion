@@ -6,18 +6,16 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 /// Service responsible for initializing the application
 class AppInitializationService {
-  AppInitializationService._()
-      : _prefs = null,
-        _permissionService = null;
+  AppInitializationService._() : _prefs = null, _permissionService = null;
 
   AppInitializationService.withPreferences(this._prefs)
-      : _permissionService = null;
+    : _permissionService = null;
 
   AppInitializationService.withDependencies({
     required SharedPreferences prefs,
     required PermissionService permissionService,
-  })  : _prefs = prefs,
-        _permissionService = permissionService;
+  }) : _prefs = prefs,
+       _permissionService = permissionService;
 
   static final AppInitializationService _instance =
       AppInitializationService._();
@@ -103,8 +101,8 @@ class AppInitializationService {
 
     if (_permissionService != null) {
       // Check if permission already granted
-      final bool hasPermission =
-          await _permissionService!.hasWriteContactsPermission();
+      final bool hasPermission = await _permissionService!
+          .hasWriteContactsPermission();
 
       if (!hasPermission) {
         // Request permission

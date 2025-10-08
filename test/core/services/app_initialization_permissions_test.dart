@@ -21,30 +21,35 @@ void main() {
 
     group('First Launch Permission Request', () {
       test(
-          'should request WRITE_CONTACTS permission when first launch and READ_CONTACTS granted',
-          () async {
-        // Arrange
-        when(() => mockPrefs.getBool('is_first_launch')).thenReturn(true);
-        when(() => mockPrefs.setBool('is_first_launch', false))
-            .thenAnswer((_) async => true);
-        when(() => mockPermissionService.hasWriteContactsPermission())
-            .thenAnswer((_) async => false);
-        when(() => mockPermissionService.requestWriteContactsPermission())
-            .thenAnswer((_) async => true);
+        'should request WRITE_CONTACTS permission when first launch and READ_CONTACTS granted',
+        () async {
+          // Arrange
+          when(() => mockPrefs.getBool('is_first_launch')).thenReturn(true);
+          when(
+            () => mockPrefs.setBool('is_first_launch', false),
+          ).thenAnswer((_) async => true);
+          when(
+            () => mockPermissionService.hasWriteContactsPermission(),
+          ).thenAnswer((_) async => false);
+          when(
+            () => mockPermissionService.requestWriteContactsPermission(),
+          ).thenAnswer((_) async => true);
 
-        appInitService = AppInitializationService.withDependencies(
-          prefs: mockPrefs,
-          permissionService: mockPermissionService,
-        );
+          appInitService = AppInitializationService.withDependencies(
+            prefs: mockPrefs,
+            permissionService: mockPermissionService,
+          );
 
-        // Act
-        await appInitService.requestPermissionsOnFirstLaunch();
+          // Act
+          await appInitService.requestPermissionsOnFirstLaunch();
 
-        // Assert
-        verify(() => mockPermissionService.requestWriteContactsPermission())
-            .called(1);
-        verify(() => mockPrefs.setBool('is_first_launch', false)).called(1);
-      });
+          // Assert
+          verify(
+            () => mockPermissionService.requestWriteContactsPermission(),
+          ).called(1);
+          verify(() => mockPrefs.setBool('is_first_launch', false)).called(1);
+        },
+      );
 
       test('should not request permissions on subsequent launches', () async {
         // Arrange
@@ -67,12 +72,15 @@ void main() {
       test('should handle permission denial gracefully', () async {
         // Arrange
         when(() => mockPrefs.getBool('is_first_launch')).thenReturn(true);
-        when(() => mockPrefs.setBool('is_first_launch', false))
-            .thenAnswer((_) async => true);
-        when(() => mockPermissionService.hasWriteContactsPermission())
-            .thenAnswer((_) async => false);
-        when(() => mockPermissionService.requestWriteContactsPermission())
-            .thenAnswer((_) async => false);
+        when(
+          () => mockPrefs.setBool('is_first_launch', false),
+        ).thenAnswer((_) async => true);
+        when(
+          () => mockPermissionService.hasWriteContactsPermission(),
+        ).thenAnswer((_) async => false);
+        when(
+          () => mockPermissionService.requestWriteContactsPermission(),
+        ).thenAnswer((_) async => false);
 
         appInitService = AppInitializationService.withDependencies(
           prefs: mockPrefs,
@@ -83,18 +91,21 @@ void main() {
         await appInitService.requestPermissionsOnFirstLaunch();
 
         // Assert - should complete without throwing
-        verify(() => mockPermissionService.requestWriteContactsPermission())
-            .called(1);
+        verify(
+          () => mockPermissionService.requestWriteContactsPermission(),
+        ).called(1);
         verify(() => mockPrefs.setBool('is_first_launch', false)).called(1);
       });
 
       test('should skip if permission already granted', () async {
         // Arrange
         when(() => mockPrefs.getBool('is_first_launch')).thenReturn(true);
-        when(() => mockPrefs.setBool('is_first_launch', false))
-            .thenAnswer((_) async => true);
-        when(() => mockPermissionService.hasWriteContactsPermission())
-            .thenAnswer((_) async => true);
+        when(
+          () => mockPrefs.setBool('is_first_launch', false),
+        ).thenAnswer((_) async => true);
+        when(
+          () => mockPermissionService.hasWriteContactsPermission(),
+        ).thenAnswer((_) async => true);
 
         appInitService = AppInitializationService.withDependencies(
           prefs: mockPrefs,

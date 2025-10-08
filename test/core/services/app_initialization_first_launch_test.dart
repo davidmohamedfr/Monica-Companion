@@ -43,8 +43,9 @@ void main() {
 
       test('setFirstLaunchComplete should set flag to false', () async {
         // Arrange
-        when(() => mockPrefs.setBool('is_first_launch', false))
-            .thenAnswer((_) async => true);
+        when(
+          () => mockPrefs.setBool('is_first_launch', false),
+        ).thenAnswer((_) async => true);
         appInitService = AppInitializationService.withPreferences(mockPrefs);
 
         // Act
