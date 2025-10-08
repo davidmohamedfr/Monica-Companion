@@ -18,105 +18,145 @@ void main() {
 
     group('Update Contact', () {
       test(
-          'updateDeviceContact should throw exception when in read-only mode',
-          () async {
-        // Arrange
-        when(() => mockPermissionService.isReadOnlyMode())
-            .thenAnswer((_) async => true);
+        'updateDeviceContact should throw exception when in read-only mode',
+        () async {
+          // Arrange
+          when(
+            () => mockPermissionService.isReadOnlyMode(),
+          ).thenAnswer((_) async => true);
 
-        contactsService = ContactsServiceImpl(mockPermissionService);
+          contactsService = ContactsServiceImpl(mockPermissionService);
 
-        final Contact testContact = Contact(
-          id: '1',
-          name: 'Test User',
-        );
+          final Contact testContact = Contact(id: '1', name: 'Test User');
 
-        // Act & Assert
-        expect(
-          () => contactsService.updateDeviceContact(testContact),
-          throwsA(isA<ContactsException>()),
-        );
-      });
+          // Act & Assert
+          expect(
+            () => contactsService.updateDeviceContact(testContact),
+            throwsA(isA<ContactsException>()),
+          );
+        },
+      );
 
-      test('updateDeviceContact should work normally when not in read-only mode',
-          () async {
-        // Arrange
-        when(() => mockPermissionService.isReadOnlyMode())
-            .thenAnswer((_) async => false);
+      test(
+        'updateDeviceContact should work normally when not in read-only mode',
+        () async {
+          // Arrange
+          when(
+            () => mockPermissionService.isReadOnlyMode(),
+          ).thenAnswer((_) async => false);
 
-        contactsService = ContactsServiceImpl(mockPermissionService);
+          contactsService = ContactsServiceImpl(mockPermissionService);
 
-        final Contact testContact = Contact(
-          id: '1',
-          name: 'Test User',
-        );
+          final Contact testContact = Contact(id: '1', name: 'Test User');
 
-        // Act & Assert
-        // This will fail because we need to mock flutter_contacts
-        // For now, we just verify the read-only check passes
-        try {
-          await contactsService.updateDeviceContact(testContact);
-        } catch (e) {
-          // We expect it to fail due to missing mocks, but NOT due to read-only
-          expect(e, isNot(isA<ContactsException>().having(
-            (e) => e.toString(),
-            'message',
-            contains('read-only'),
-          )));
-        }
+          // Act & Assert
+          // This will fail because we need to mock flutter_contacts
+          // For now, we just verify the read-only check passes
+          try {
+            await contactsService.updateDeviceContact(testContact);
+          } catch (e) {
+            // We expect it to fail due to missing mocks, but NOT due to read-only
+            expect(
+              e,
+              isNot(
+                isA<ContactsException>().having(
+                  (e) => e.toString(),
+                  'message',
+                  contains('read-only'),
+                ),
+              ),
+            );
+          }
 
-        verify(() => mockPermissionService.isReadOnlyMode()).called(1);
-      });
+          verify(() => mockPermissionService.isReadOnlyMode()).called(1);
+        },
+      );
     });
 
     group('Create Contact', () {
       test(
-          'createDeviceContact should throw exception when in read-only mode',
-          () async {
+        'createDeviceContact should throw exception when in read-only mode',
+        () async {
+          // Arrange
+          when(
+            () => mockPermissionService.isReadOnlyMode(),
+          ).thenAnswer((_) async => true);
+
+          contactsService = ContactsServiceImpl(mockPermissionService);
+
+          final Contact testContact = Contact(id: '1', name: 'Test User');
+
+          // Act & Assert
+          expect(
+            () => contactsService.createDeviceContact(testContact),
+            throwsA(isA<ContactsException>()),
+          );
+        },
+      );
+
+      test(
+        'createDeviceContact should work normally when not in read-only mode',
+        () async {
+          // Arrange
+          when(
+            () => mockPermissionService.isReadOnlyMode(),
+          ).thenAnswer((_) async => false);
+
+          contactsService = ContactsServiceImpl(mockPermissionService);
+
+          final Contact testContact = Contact(id: '1', name: 'Test User');
+
+          // Act & Assert
+          try {
+            await contactsService.createDeviceContact(testContact);
+          } catch (e) {
+            // We expect it to fail due to missing mocks, but NOT due to read-only
+            expect(
+              e,
+              isNot(
+                isA<ContactsException>().having(
+                  (e) => e.toString(),
+                  'message',
+                  contains('read-only'),
+                ),
+              ),
+            );
+          }
+
+          verify(() => mockPermissionService.isReadOnlyMode()).called(1);
+        },
+      );
+    });
+
+    group('isContactReadOnly', () {
+      test('should return true when app is in read-only mode', () async {
         // Arrange
-        when(() => mockPermissionService.isReadOnlyMode())
-            .thenAnswer((_) async => true);
+        when(
+          () => mockPermissionService.isReadOnlyMode(),
+        ).thenAnswer((_) async => true);
 
         contactsService = ContactsServiceImpl(mockPermissionService);
 
-        final Contact testContact = Contact(
-          id: '1',
-          name: 'Test User',
-        );
+        // Act
+        final bool result = await contactsService.isContactReadOnly('123');
 
-        // Act & Assert
-        expect(
-          () => contactsService.createDeviceContact(testContact),
-          throwsA(isA<ContactsException>()),
-        );
+        // Assert
+        expect(result, isTrue);
       });
 
-      test('createDeviceContact should work normally when not in read-only mode',
-          () async {
+      test('should return false when app is NOT in read-only mode', () async {
         // Arrange
-        when(() => mockPermissionService.isReadOnlyMode())
-            .thenAnswer((_) async => false);
+        when(
+          () => mockPermissionService.isReadOnlyMode(),
+        ).thenAnswer((_) async => false);
 
         contactsService = ContactsServiceImpl(mockPermissionService);
 
-        final Contact testContact = Contact(
-          id: '1',
-          name: 'Test User',
-        );
+        // Act
+        final bool result = await contactsService.isContactReadOnly('123');
 
-        // Act & Assert
-        try {
-          await contactsService.createDeviceContact(testContact);
-        } catch (e) {
-          // We expect it to fail due to missing mocks, but NOT due to read-only
-          expect(e, isNot(isA<ContactsException>().having(
-            (e) => e.toString(),
-            'message',
-            contains('read-only'),
-          )));
-        }
-
-        verify(() => mockPermissionService.isReadOnlyMode()).called(1);
+        // Assert
+        expect(result, isFalse);
       });
     });
   });
