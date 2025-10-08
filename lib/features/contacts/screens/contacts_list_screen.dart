@@ -6,6 +6,7 @@ import 'package:monica_companion/features/contacts/bloc/contacts_state.dart';
 import 'package:monica_companion/features/contacts/models/contact_filter.dart';
 import 'package:monica_companion/features/contacts/models/contact_model.dart';
 import 'package:monica_companion/features/contacts/models/contact_view_mode.dart';
+import 'package:monica_companion/features/contacts/repositories/contacts_repository.dart';
 import 'package:monica_companion/features/contacts/screens/contact_detail_screen.dart';
 import 'package:monica_companion/features/contacts/widgets/contact_card_item.dart';
 import 'package:monica_companion/features/contacts/widgets/contact_grid_item.dart';
@@ -195,11 +196,17 @@ class _ContactsListScreenState extends State<ContactsListScreen> {
   }
 
   void _navigateToContactDetail(Contact contact) {
+    // Get repository from current context before navigation
+    final ContactsRepository repository = context.read<ContactsRepository>();
+
     Navigator.push(
       context,
       MaterialPageRoute<void>(
         builder: (BuildContext context) =>
-            ContactDetailScreen(contact: contact),
+            RepositoryProvider<ContactsRepository>.value(
+              value: repository,
+              child: ContactDetailScreen(contact: contact),
+            ),
       ),
     );
   }
