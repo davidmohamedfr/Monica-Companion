@@ -474,9 +474,26 @@ void main() {
         'should update contact in state',
         setUp: () {
           when(() => mockSharedPreferences.getInt(any())).thenReturn(null);
-          when(
-            () => mockContactsRepository.getContacts(),
-          ).thenAnswer((_) async => testContacts);
+
+          // First call returns original contacts, second call returns updated
+          int callCount = 0;
+          when(() => mockContactsRepository.getContacts()).thenAnswer((
+            _,
+          ) async {
+            callCount++;
+            if (callCount == 1) {
+              return testContacts;
+            } else {
+              return <Contact>[
+                testContact1.copyWith(
+                  name: 'Jane Doe Updated',
+                  email: 'jane.updated@example.com',
+                ),
+                testContact2,
+              ];
+            }
+          });
+
           when(
             () => mockContactsRepository.updateDeviceContact(any()),
           ).thenAnswer((_) async => {});

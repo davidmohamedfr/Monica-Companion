@@ -54,14 +54,21 @@ class _ContactDetailScreenState extends State<ContactDetailScreen> {
   }
 
   Future<void> _showEditDialog() async {
+    // Get repository and bloc from current context before showing dialog
+    final ContactsRepository repository = context.read<ContactsRepository>();
+    final ContactsBloc bloc = context.read<ContactsBloc>();
+
     final Contact? updatedContact = await showDialog<Contact>(
       context: context,
       builder: (BuildContext context) =>
-          EditContactDialog(contact: _currentContact),
+          RepositoryProvider<ContactsRepository>.value(
+            value: repository,
+            child: EditContactDialog(contact: _currentContact),
+          ),
     );
 
     if (updatedContact != null && mounted) {
-      context.read<ContactsBloc>().add(UpdateContactEvent(updatedContact));
+      bloc.add(UpdateContactEvent(updatedContact));
       setState(() {
         _currentContact = updatedContact;
       });
