@@ -224,20 +224,17 @@ class ContactsBloc extends Bloc<ContactsEvent, ContactsState> {
       // Persist to device contacts
       await _contactsRepository.updateDeviceContact(event.contact);
 
-      // Update in-memory state
-      final List<Contact> updatedContacts = state.contacts.map((
-        Contact contact,
-      ) {
-        return contact.id == event.contact.id ? event.contact : contact;
-      }).toList();
+      // Refresh contacts from device to ensure we have the latest data
+      final List<Contact> refreshedContacts = await _contactsRepository
+          .getContacts();
 
       final List<Contact> updatedFilteredContacts = _applyCurrentFilters(
-        updatedContacts,
+        refreshedContacts,
       );
 
       emit(
         state.copyWith(
-          contacts: updatedContacts,
+          contacts: refreshedContacts,
           filteredContacts: updatedFilteredContacts,
         ),
       );

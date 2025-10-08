@@ -196,17 +196,22 @@ class _ContactsListScreenState extends State<ContactsListScreen> {
   }
 
   void _navigateToContactDetail(Contact contact) {
-    // Get repository from current context before navigation
+    // Get repository and bloc from current context before navigation
     final ContactsRepository repository = context.read<ContactsRepository>();
+    final ContactsBloc bloc = context.read<ContactsBloc>();
 
     Navigator.push(
       context,
       MaterialPageRoute<void>(
-        builder: (BuildContext context) =>
-            RepositoryProvider<ContactsRepository>.value(
-              value: repository,
-              child: ContactDetailScreen(contact: contact),
-            ),
+        builder: (BuildContext context) => MultiBlocProvider(
+          providers: <BlocProvider<dynamic>>[
+            BlocProvider<ContactsBloc>.value(value: bloc),
+          ],
+          child: RepositoryProvider<ContactsRepository>.value(
+            value: repository,
+            child: ContactDetailScreen(contact: contact),
+          ),
+        ),
       ),
     );
   }

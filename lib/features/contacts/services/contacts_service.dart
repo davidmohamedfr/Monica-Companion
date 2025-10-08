@@ -30,8 +30,13 @@ class ContactsServiceImpl implements ContactsService {
       }
 
       // Fetch real device contacts
-      final List<fc.Contact> deviceContacts = await fc
-          .FlutterContacts.getContacts(withProperties: true, withPhoto: true);
+      // Note: withAccounts is required for Android to enable contact updates
+      final List<fc.Contact> deviceContacts =
+          await fc.FlutterContacts.getContacts(
+            withProperties: true,
+            withPhoto: true,
+            withAccounts: true,
+          );
 
       // Convert to our Contact model
       return deviceContacts.map((fc.Contact deviceContact) {
@@ -109,14 +114,22 @@ class ContactsServiceImpl implements ContactsService {
       final fc.Contact? deviceContact = await fc.FlutterContacts.getContact(
         contact.id,
         withProperties: true,
+        withAccounts: true,
       );
 
       if (deviceContact == null) {
         throw ContactsException('Contact not found: ${contact.id}');
       }
 
-      deviceContact.name.first = '';
-      deviceContact.name.last = '';
+      // Split name into first/last or set as first name
+      final List<String> nameParts = contact.name.trim().split(' ');
+      if (nameParts.length > 1) {
+        deviceContact.name.first = nameParts.first;
+        deviceContact.name.last = nameParts.skip(1).join(' ');
+      } else {
+        deviceContact.name.first = contact.name.trim();
+        deviceContact.name.last = '';
+      }
       deviceContact.displayName = contact.name;
 
       deviceContact.phones.clear();
@@ -206,6 +219,7 @@ class ContactsServiceImpl implements ContactsService {
       final fc.Contact? deviceContact = await fc.FlutterContacts.getContact(
         contactId,
         withProperties: true,
+        withAccounts: true,
       );
 
       if (deviceContact == null) {
