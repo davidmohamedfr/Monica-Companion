@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
 import 'package:monica_companion/core/services/app_initialization_service.dart';
+import 'package:monica_companion/core/services/permission_service.dart';
 import 'package:monica_companion/features/contacts/bloc/contacts_bloc.dart';
 import 'package:monica_companion/features/navigation/screens/main_shell.dart';
 import 'package:monica_companion/services/service_locator.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -12,6 +13,18 @@ void main() async {
   // Initialize application services
   try {
     await AppInitializationService.instance.initialize();
+
+    // Request permissions on first launch
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    final PermissionService permissionService = ServiceLocator.instance
+        .get<PermissionService>();
+    final AppInitializationService appInitService =
+        AppInitializationService.withDependencies(
+          prefs: prefs,
+          permissionService: permissionService,
+        );
+    await appInitService.requestPermissionsOnFirstLaunch();
+
     runApp(const MonicaApp());
   } catch (e) {
     // In a production app, you might want to show an error screen
