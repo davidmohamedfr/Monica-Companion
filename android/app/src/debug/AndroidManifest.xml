@@ -5,8 +5,9 @@
     -->
     <uses-permission android:name="android.permission.INTERNET"/>
 
-    <!-- READ_CONTACTS permission for integration tests.
-         This will be auto-granted via ADB in the test driver.
+    <!-- READ_CONTACTS and WRITE_CONTACTS permissions for integration tests.
+         These will be auto-granted via ADB in the test driver.
     -->
     <uses-permission android:name="android.permission.READ_CONTACTS"/>
+    <uses-permission android:name="android.permission.WRITE_CONTACTS"/>
 </manifest>
