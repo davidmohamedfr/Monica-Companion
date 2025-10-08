@@ -1,5 +1,6 @@
 import 'package:flutter_contacts/flutter_contacts.dart' as fc;
 import 'package:monica_companion/core/errors/exceptions.dart';
+import 'package:monica_companion/core/services/permission_service.dart';
 import 'package:monica_companion/features/contacts/models/contact_model.dart';
 import 'package:permission_handler/permission_handler.dart';
 
@@ -13,6 +14,9 @@ abstract class ContactsService {
 }
 
 class ContactsServiceImpl implements ContactsService {
+  final PermissionService? _permissionService;
+
+  ContactsServiceImpl([this._permissionService]);
   @override
   Future<List<Contact>> getDeviceContacts() async {
     try {
@@ -82,6 +86,17 @@ class ContactsServiceImpl implements ContactsService {
   @override
   Future<void> updateDeviceContact(Contact contact) async {
     try {
+      // Check read-only mode first (if service available)
+      if (_permissionService != null) {
+        final bool readOnly = await _permissionService!.isReadOnlyMode();
+        if (readOnly) {
+          throw const ContactsException(
+            'Cannot update contacts in read-only mode. '
+            'Please grant WRITE_CONTACTS permission in Settings.',
+          );
+        }
+      }
+
       final bool hasPermission = await hasContactsPermission();
       if (!hasPermission) {
         final bool granted = await requestContactsPermission();
@@ -130,6 +145,17 @@ class ContactsServiceImpl implements ContactsService {
   @override
   Future<void> createDeviceContact(Contact contact) async {
     try {
+      // Check read-only mode first (if service available)
+      if (_permissionService != null) {
+        final bool readOnly = await _permissionService!.isReadOnlyMode();
+        if (readOnly) {
+          throw const ContactsException(
+            'Cannot create contacts in read-only mode. '
+            'Please grant WRITE_CONTACTS permission in Settings.',
+          );
+        }
+      }
+
       final bool hasPermission = await hasContactsPermission();
       if (!hasPermission) {
         final bool granted = await requestContactsPermission();
