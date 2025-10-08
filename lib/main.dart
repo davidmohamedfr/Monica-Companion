@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:monica_companion/core/services/app_initialization_service.dart';
 import 'package:monica_companion/core/services/permission_service.dart';
 import 'package:monica_companion/features/contacts/bloc/contacts_bloc.dart';
+import 'package:monica_companion/features/contacts/repositories/contacts_repository.dart';
 import 'package:monica_companion/features/navigation/screens/main_shell.dart';
 import 'package:monica_companion/services/service_locator.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -48,10 +49,18 @@ class MonicaApp extends StatelessWidget {
       ).copyWith(primary: _monicaBrandColor),
       useMaterial3: true,
     ),
-    home: BlocProvider<ContactsBloc>(
-      create: (BuildContext context) =>
-          ServiceLocator.instance.get<ContactsBloc>(),
-      child: const MainShell(),
+    home: MultiRepositoryProvider(
+      providers: <RepositoryProvider<dynamic>>[
+        RepositoryProvider<ContactsRepository>(
+          create: (BuildContext context) =>
+              ServiceLocator.instance.get<ContactsRepository>(),
+        ),
+      ],
+      child: BlocProvider<ContactsBloc>(
+        create: (BuildContext context) =>
+            ServiceLocator.instance.get<ContactsBloc>(),
+        child: const MainShell(),
+      ),
     ),
   );
 }

@@ -193,21 +193,13 @@ class ContactsServiceImpl implements ContactsService {
 
   @override
   Future<bool> isContactReadOnly(String contactId) async {
-    Logger.debug('isContactReadOnly: contactId=$contactId');
-    Logger.debug(
-      'isContactReadOnly: _permissionService=${_permissionService != null ? "available" : "NULL"}',
-    );
-
     // Check app-level read-only mode first
     if (_permissionService != null) {
       final bool appReadOnly = await _permissionService!.isReadOnlyMode();
-      Logger.debug('isContactReadOnly: appReadOnly=$appReadOnly');
       // If app is in read-only mode, contact is read-only
       // If app is NOT in read-only mode, contact is writable
       return appReadOnly;
     }
-
-    Logger.debug('isContactReadOnly: Using fallback (no PermissionService)');
 
     // Fallback: check contact-specific read-only status when no PermissionService
     try {
@@ -217,18 +209,13 @@ class ContactsServiceImpl implements ContactsService {
       );
 
       if (deviceContact == null) {
-        Logger.debug('isContactReadOnly: Contact not found, returning true');
         return true;
       }
 
       // For now, assume all fetched contacts are writable
       // This can be refined based on account type if needed
-      Logger.debug('isContactReadOnly: Contact found, returning false');
       return false;
     } catch (e) {
-      Logger.debug(
-        'isContactReadOnly: Error fetching contact: $e, returning true',
-      );
       // If we can't fetch the contact, assume read-only
       return true;
     }

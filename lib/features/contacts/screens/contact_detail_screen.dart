@@ -36,7 +36,6 @@ class _ContactDetailScreenState extends State<ContactDetailScreen> {
       final bool readOnly = await repository.isContactReadOnly(
         _currentContact.id,
       );
-      Logger.debug('Contact ${_currentContact.id} readOnly=$readOnly');
       if (mounted) {
         setState(() {
           _isReadOnly = readOnly;
