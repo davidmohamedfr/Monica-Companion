@@ -6,16 +6,21 @@ import 'package:monica_companion/features/contacts/bloc/contacts_bloc.dart';
 import 'package:monica_companion/features/contacts/bloc/contacts_event.dart';
 import 'package:monica_companion/features/contacts/bloc/contacts_state.dart';
 import 'package:monica_companion/features/contacts/models/contact_model.dart';
+import 'package:monica_companion/features/contacts/repositories/contacts_repository.dart';
 import 'package:monica_companion/features/contacts/screens/contact_detail_screen.dart';
 import 'package:monica_companion/features/shared/widgets/empty_state_widget.dart';
+import 'package:provider/provider.dart';
 import '../../../helpers/test_helpers.dart';
 
 class MockContactsBloc extends Mock implements ContactsBloc {}
+
+class MockContactsRepository extends Mock implements ContactsRepository {}
 
 void main() {
   group('ContactDetailScreen Tests', () {
     late Contact testContact;
     late MockContactsBloc mockContactsBloc;
+    late MockContactsRepository mockContactsRepository;
 
     setUpAll(() {
       TestHelpers.setupMockFallbacks();
@@ -33,16 +38,26 @@ void main() {
         email: 'john.doe@example.com',
       );
       mockContactsBloc = MockContactsBloc();
+      mockContactsRepository = MockContactsRepository();
+
       when(() => mockContactsBloc.state).thenReturn(const ContactsState());
       when(
         () => mockContactsBloc.stream,
       ).thenAnswer((_) => Stream<ContactsState>.empty());
+
+      // Mock repository to return writable (not read-only) by default
+      when(
+        () => mockContactsRepository.isContactReadOnly(any()),
+      ).thenAnswer((_) async => false);
     });
 
     Widget createTestWidget(Contact contact) => MaterialApp(
-      home: BlocProvider<ContactsBloc>.value(
-        value: mockContactsBloc,
-        child: ContactDetailScreen(contact: contact),
+      home: Provider<ContactsRepository>.value(
+        value: mockContactsRepository,
+        child: BlocProvider<ContactsBloc>.value(
+          value: mockContactsBloc,
+          child: ContactDetailScreen(contact: contact),
+        ),
       ),
     );
 
