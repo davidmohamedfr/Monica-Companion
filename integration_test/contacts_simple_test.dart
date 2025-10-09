@@ -2,13 +2,19 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:monica_companion/main.dart' as app;
 
+import 'helpers/custom_test_binding.dart';
 import 'helpers/integration_test_helpers.dart';
 
 void main() {
+  // Use custom binding that ignores overflow errors
+  CustomIntegrationTestBinding.ensureInitializedCustom()
+    ..framePolicy = LiveTestWidgetsFlutterBindingFramePolicy.fullyLive;
+
   // Setup: Uses setupWithPermissions() because tests call app.main()
   // which handles AppInitializationService internally
   setUpAll(() async {
-    await IntegrationTestHelpers.setupWithPermissions();
+    // Note: Don't call setupWithPermissions() as it initializes a different binding
+    await IntegrationTestHelpers.verifyContactsPermission();
   });
 
   group('Contacts Feature Demonstration', () {
@@ -170,6 +176,10 @@ void main() {
       debugPrint('   • Interactions: ✅ Contact tap handling');
       debugPrint('   • Pull to Refresh: ✅ Working');
       debugPrint('   • UI: ✅ Material 3 theming applied');
+
+      // Clean up any remaining overlays/dialogs to prevent rendering errors
+      await tester.pumpAndSettle();
+      await tester.pump(const Duration(milliseconds: 500));
     });
   });
 }

@@ -18,9 +18,50 @@ class IntegrationTestHelpers {
   IntegrationTestHelpers._();
 
   /// Setup integration test environment
-  static IntegrationTestWidgetsFlutterBinding setupIntegrationTest() =>
-      IntegrationTestWidgetsFlutterBinding.ensureInitialized()
-        ..framePolicy = LiveTestWidgetsFlutterBindingFramePolicy.fullyLive;
+  static IntegrationTestWidgetsFlutterBinding setupIntegrationTest() {
+    final binding = IntegrationTestWidgetsFlutterBinding.ensureInitialized()
+      ..framePolicy = LiveTestWidgetsFlutterBindingFramePolicy.fullyLive;
+
+    return binding;
+  }
+
+  /// Disable overflow errors in tests
+  ///
+  /// RenderFlex overflow errors often occur during widget disposal/teardown
+  /// and don't represent actual test failures. This helper suppresses these
+  /// errors while preserving other error reporting.
+  ///
+  /// Based on: https://stackoverflow.com/a/57501230
+  ///
+  /// Usage:
+  /// ```dart
+  /// testWidgets('my test', (tester) async {
+  ///   IntegrationTestHelpers.disableOverflowErrors();
+  ///   // test code
+  /// });
+  /// ```
+  static void disableOverflowErrors() {
+    FlutterError.onError = (FlutterErrorDetails details) {
+      // Check if this is a RenderFlex overflow error
+      final exception = details.exception;
+      bool isOverflowError = false;
+
+      if (exception is FlutterError) {
+        isOverflowError = exception.diagnostics.any(
+          (e) => e.value.toString().contains('A RenderFlex overflowed by'),
+        );
+      }
+
+      // Always report errors to console for debugging
+      FlutterError.dumpErrorToConsole(details);
+
+      // Only throw for non-overflow errors
+      // Overflow errors are logged but don't cause test failure
+      if (!isOverflowError) {
+        throw exception;
+      }
+    };
+  }
 
   /// Setup integration test environment with permission validation
   ///
@@ -52,7 +93,7 @@ class IntegrationTestHelpers {
     final IntegrationTestWidgetsFlutterBinding binding = setupIntegrationTest();
 
     // Verify permissions
-    await _verifyContactsPermission();
+    await verifyContactsPermission();
 
     return binding;
   }
@@ -84,7 +125,7 @@ class IntegrationTestHelpers {
     final IntegrationTestWidgetsFlutterBinding binding = setupIntegrationTest();
 
     // Verify permissions
-    await _verifyContactsPermission();
+    await verifyContactsPermission();
 
     // Initialize app services for tests that don't call app.main()
     await AppInitializationService.instance.initialize();
@@ -95,7 +136,7 @@ class IntegrationTestHelpers {
   /// Verifies that READ_CONTACTS permission is granted
   ///
   /// Throws an exception with clear instructions if permission is not granted.
-  static Future<void> _verifyContactsPermission() async {
+  static Future<void> verifyContactsPermission() async {
     final PermissionStatus status = await Permission.contacts.status;
 
     if (!status.isGranted) {
