@@ -7,23 +7,31 @@ set -e
 #          permissions when app is reinstalled during test execution
 #
 # Solution: Run permission monitor in background that continuously grants
-#           permissions every 2 seconds during test execution
+#           permissions during test execution. Tests are run individually
+#           to avoid Flutter framework rendering errors during batch teardown.
 #
-# Usage: ./scripts/run_integration_tests.sh [device-id] [test-file]
+# Usage: ./scripts/run_integration_tests.sh [device-id]
 # Examples:
 #   ./scripts/run_integration_tests.sh
 #   ./scripts/run_integration_tests.sh emulator-5556
-#   ./scripts/run_integration_tests.sh "" integration_test/contacts_integration_test.dart
 
 DEVICE_ID=${1:-}
-TEST_TARGET=${2:-"integration_test/"}
 PACKAGE_NAME="fr.m0hdaCorp.monica_companion"
 READ_PERMISSION="android.permission.READ_CONTACTS"
 WRITE_PERMISSION="android.permission.WRITE_CONTACTS"
 
-echo "🚀 Running integration tests with auto-granted permissions"
+# List of test files to run individually
+TEST_FILES=(
+  "integration_test/app_test.dart"
+  "integration_test/contact_edit_button_test.dart"
+  "integration_test/contacts_integration_test.dart"
+  "integration_test/contacts_simple_test.dart"
+  "integration_test/database_integration_test.dart"
+)
+
+echo "🚀 Running integration tests individually with auto-granted permissions"
 echo "   Device: ${DEVICE_ID:-auto}"
-echo "   Target: $TEST_TARGET"
+echo "   Tests: ${#TEST_FILES[@]} files"
 echo ""
 
 # Build APK
@@ -68,26 +76,61 @@ echo "✅ Permission monitor started (PID: $MONITOR_PID)"
 # Trap to cleanup monitor on exit
 trap "kill $MONITOR_PID 2>/dev/null || true" EXIT
 
-# Run tests
+# Run tests individually
 echo ""
-echo "🧪 Running integration tests..."
-if [ -n "$DEVICE_ID" ]; then
-  flutter test "$TEST_TARGET" -d "$DEVICE_ID"
-else
-  flutter test "$TEST_TARGET"
-fi
+echo "🧪 Running integration tests individually..."
+FAILED_TESTS=()
+PASSED_TESTS=()
+TOTAL_TESTS=${#TEST_FILES[@]}
+CURRENT_TEST=0
 
-TEST_RESULT=$?
+for TEST_FILE in "${TEST_FILES[@]}"; do
+  CURRENT_TEST=$((CURRENT_TEST + 1))
+  echo ""
+  echo "[$CURRENT_TEST/$TOTAL_TESTS] Running: $TEST_FILE"
+  echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+
+  if [ -n "$DEVICE_ID" ]; then
+    if flutter test "$TEST_FILE" -d "$DEVICE_ID"; then
+      PASSED_TESTS+=("$TEST_FILE")
+      echo "✅ PASSED: $TEST_FILE"
+    else
+      FAILED_TESTS+=("$TEST_FILE")
+      echo "❌ FAILED: $TEST_FILE"
+    fi
+  else
+    if flutter test "$TEST_FILE"; then
+      PASSED_TESTS+=("$TEST_FILE")
+      echo "✅ PASSED: $TEST_FILE"
+    else
+      FAILED_TESTS+=("$TEST_FILE")
+      echo "❌ FAILED: $TEST_FILE"
+    fi
+  fi
+done
 
 # Cleanup
 echo ""
 echo "🧹 Cleaning up..."
 kill $MONITOR_PID 2>/dev/null || true
 
-if [ $TEST_RESULT -eq 0 ]; then
-  echo "✅ Integration tests completed successfully!"
-else
-  echo "❌ Integration tests failed with exit code $TEST_RESULT"
-fi
+# Summary
+echo ""
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo "📊 Test Summary"
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo "Total:  $TOTAL_TESTS"
+echo "Passed: ${#PASSED_TESTS[@]}"
+echo "Failed: ${#FAILED_TESTS[@]}"
+echo ""
 
-exit $TEST_RESULT
+if [ ${#FAILED_TESTS[@]} -eq 0 ]; then
+  echo "✅ All integration tests passed!"
+  exit 0
+else
+  echo "❌ Failed tests:"
+  for TEST in "${FAILED_TESTS[@]}"; do
+    echo "   - $TEST"
+  done
+  exit 1
+fi
