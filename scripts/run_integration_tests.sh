@@ -18,7 +18,8 @@ set -e
 DEVICE_ID=${1:-}
 TEST_TARGET=${2:-"integration_test/"}
 PACKAGE_NAME="fr.m0hdaCorp.monica_companion"
-PERMISSION="android.permission.READ_CONTACTS"
+READ_PERMISSION="android.permission.READ_CONTACTS"
+WRITE_PERMISSION="android.permission.WRITE_CONTACTS"
 
 echo "🚀 Running integration tests with auto-granted permissions"
 echo "   Device: ${DEVICE_ID:-auto}"
@@ -40,9 +41,11 @@ fi
 # Grant permissions immediately before starting tests
 echo "🔐 Granting permissions..."
 if [ -n "$DEVICE_ID" ]; then
-  adb -s "$DEVICE_ID" shell pm grant "$PACKAGE_NAME" "$PERMISSION" 2>/dev/null || true
+  adb -s "$DEVICE_ID" shell pm grant "$PACKAGE_NAME" "$READ_PERMISSION" 2>/dev/null || true
+  adb -s "$DEVICE_ID" shell pm grant "$PACKAGE_NAME" "$WRITE_PERMISSION" 2>/dev/null || true
 else
-  adb shell pm grant "$PACKAGE_NAME" "$PERMISSION" 2>/dev/null || true
+  adb shell pm grant "$PACKAGE_NAME" "$READ_PERMISSION" 2>/dev/null || true
+  adb shell pm grant "$PACKAGE_NAME" "$WRITE_PERMISSION" 2>/dev/null || true
 fi
 
 # Start permission monitor in background to handle reinstalls during test runs
@@ -51,9 +54,11 @@ echo "🔐 Starting permission monitor..."
   while true; do
     sleep 0.5  # Check every 500ms for faster response
     if [ -n "$DEVICE_ID" ]; then
-      adb -s "$DEVICE_ID" shell pm grant "$PACKAGE_NAME" "$PERMISSION" 2>/dev/null || true
+      adb -s "$DEVICE_ID" shell pm grant "$PACKAGE_NAME" "$READ_PERMISSION" 2>/dev/null || true
+      adb -s "$DEVICE_ID" shell pm grant "$PACKAGE_NAME" "$WRITE_PERMISSION" 2>/dev/null || true
     else
-      adb shell pm grant "$PACKAGE_NAME" "$PERMISSION" 2>/dev/null || true
+      adb shell pm grant "$PACKAGE_NAME" "$READ_PERMISSION" 2>/dev/null || true
+      adb shell pm grant "$PACKAGE_NAME" "$WRITE_PERMISSION" 2>/dev/null || true
     fi
   done
 ) &

@@ -26,8 +26,10 @@ class DatabaseModule {
   static void dispose() {
     final ServiceLocator locator = ServiceLocator.instance;
 
-    // Dispose repository registry
-    locator.get<RepositoryRegistry>().dispose();
+    // Dispose repository registry if registered
+    if (locator.isRegistered<RepositoryRegistry>()) {
+      locator.get<RepositoryRegistry>().dispose();
+    }
 
     // Unregister services
     locator
