@@ -82,7 +82,7 @@ class FeatureUtils {
       context: context,
       builder: (BuildContext context) => AlertDialog(
         title: Text(title),
-        content: Text(content),
+        content: SingleChildScrollView(child: Text(content)),
         actions: <Widget>[
           TextButton(
             onPressed: () => Navigator.of(context).pop(false),
