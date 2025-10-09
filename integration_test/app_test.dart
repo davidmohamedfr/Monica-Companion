@@ -17,6 +17,10 @@ void main() {
     ) async {
       // Launch the app using the same method as working tests
       app.main();
+      await tester.pumpAndSettle(const Duration(seconds: 3));
+
+      // Wait for app to fully initialize
+      await tester.pump();
       await tester.pumpAndSettle();
 
       // Verify the app loaded correctly with navigation bar
@@ -32,6 +36,10 @@ void main() {
     ) async {
       // Launch the app using the same method as working tests
       app.main();
+      await tester.pumpAndSettle(const Duration(seconds: 3));
+
+      // Wait for app to fully initialize
+      await tester.pump();
       await tester.pumpAndSettle();
 
       // Verify main navigation bar is displayed
