@@ -8,11 +8,13 @@ class PermissionExplanationDialog extends StatelessWidget {
   Widget build(BuildContext context) {
     return AlertDialog(
       title: const Text('Permission Required'),
-      content: const Text(
-        'Companion needs WRITE_CONTACTS permission to sync contacts between '
-        'your phone and Monica.\n\n'
-        'Without this permission, the app will run in read-only mode and '
-        'cannot update your phone contacts.',
+      content: SingleChildScrollView(
+        child: Text(
+          'Companion needs WRITE_CONTACTS permission to sync contacts between '
+          'your phone and Monica.\n\n'
+          'Without this permission, the app will run in read-only mode and '
+          'cannot update your phone contacts.',
+        ),
       ),
       actions: <Widget>[
         TextButton(
