@@ -78,8 +78,8 @@ void main() {
       // Arrange & Act
       await tester.pumpWidget(createTestWidget(testContact));
 
-      // Assert
-      expect(find.byType(SingleChildScrollView), findsOneWidget);
+      // Assert - allow multiple scrollable widgets (EmptyStateWidget also has one)
+      expect(find.byType(SingleChildScrollView), findsWidgets);
     });
 
     testWidgets('should have back button when navigated to', (
