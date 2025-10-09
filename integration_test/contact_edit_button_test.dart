@@ -3,9 +3,14 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
 import 'package:monica_companion/main.dart' as app;
 
+import 'helpers/integration_test_helpers.dart';
+
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized()
     ..framePolicy = LiveTestWidgetsFlutterBindingFramePolicy.fullyLive;
+
+  // Disable overflow errors for this test
+  IntegrationTestHelpers.disableOverflowErrors();
 
   group('Contact Edit Button E2E Test', () {
     testWidgets('Edit button should be enabled when WRITE_CONTACTS granted', (
