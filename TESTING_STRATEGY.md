@@ -126,12 +126,31 @@ flutter format --output=none --set-exit-if-changed .
 
 ### Integration Test Permissions
 
-Integration tests require READ_CONTACTS permission. Use the provided script for automatic permission management:
+Integration tests require READ_CONTACTS and WRITE_CONTACTS permissions. Use the provided script for automatic permission management:
 
 - **Local testing**: Use `./scripts/run_integration_tests.sh` (recommended)
 - **CI/CD**: Script automatically grants permissions during test execution
 - **How it works**: Permission monitor runs in background, continuously granting permissions
 - **No prompts**: Permissions are granted programmatically, tests run unattended
+- **Required Permissions**: Both READ_CONTACTS and WRITE_CONTACTS must be granted
+  - Automatically handled by `run_integration_tests.sh` permission monitor
+  - Monitor grants permissions every 500ms to handle app reinstalls during tests
+
+### Widget Overflow in Tests
+
+Integration tests may encounter RenderFlex overflow errors during tearDown:
+
+- **Cause**: Widget disposal timing during test cleanup, not actual test failures
+- **Solution**: Call `IntegrationTestHelpers.disableOverflowErrors()` at test start
+- **Example**:
+  ```dart
+  testWidgets('my test', (tester) async {
+    IntegrationTestHelpers.disableOverflowErrors();
+    // test code
+  });
+  ```
+- **Why it works**: Suppresses overflow errors during widget disposal while preserving other error reporting
+- **When to use**: All integration tests that show UI (especially with dialogs/modals)
 
 ## 🎨 Commit Message Standards
 
