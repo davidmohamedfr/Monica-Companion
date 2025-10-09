@@ -75,9 +75,17 @@ void main() {
       } else {
         debugPrint('✅ Edit button found in AppBar');
 
+        // Find the IconButton that contains the edit icon
+        final Finder iconButtonFinder = find.ancestor(
+          of: editButton,
+          matching: find.byType(IconButton),
+        );
+
+        expect(iconButtonFinder, findsOneWidget);
+
         // Check if button is enabled
         final IconButton editButtonWidget = tester.widget<IconButton>(
-          editButton,
+          iconButtonFinder,
         );
 
         if (editButtonWidget.onPressed == null) {
@@ -87,7 +95,7 @@ void main() {
           debugPrint('✅ Edit button is ENABLED');
 
           // Try tapping it
-          await tester.tap(editButton);
+          await tester.tap(iconButtonFinder);
           await tester.pumpAndSettle();
 
           // Should open edit dialog

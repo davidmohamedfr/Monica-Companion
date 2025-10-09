@@ -142,8 +142,10 @@ void main() {
           expect(find.textContaining('Coming soon'), findsOneWidget);
           debugPrint('✅ Contact tap shows "Coming soon" message');
 
-          // Wait for snackbar to disappear
-          await tester.pump(const Duration(seconds: 3));
+          // Dismiss snackbar to avoid rendering issues
+          ScaffoldMessenger.of(
+            tester.element(find.byType(Scaffold).first),
+          ).hideCurrentSnackBar();
           await tester.pumpAndSettle();
         } else {
           debugPrint('✅ Contact tap interaction completed');
