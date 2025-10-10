@@ -6,7 +6,8 @@ void main() {
     const int testContactId = 1;
     const String testRelationshipType = 'friend';
     const String testStartDate = '2020-03-15T00:00:00.000Z';
-    const String testDescription = 'Met at university during computer science program';
+    const String testDescription =
+        'Met at university during computer science program';
 
     test('should create Relationship with required fields', () {
       const Relationship relationship = Relationship(
@@ -121,7 +122,10 @@ void main() {
       expect(updated.relationshipType, 'colleague');
       expect(updated.startDate, testStartDate);
       expect(updated.description, testDescription);
-      expect(original.relationshipType, testRelationshipType); // Original should be unchanged
+      expect(
+        original.relationshipType,
+        testRelationshipType,
+      ); // Original should be unchanged
     });
 
     test('should implement Equatable correctly', () {
@@ -152,7 +156,7 @@ void main() {
     });
 
     test('should handle different relationship types', () {
-      const List<String> relationshipTypes = [
+      const List<String> relationshipTypes = <String>[
         'friend',
         'family',
         'colleague',
@@ -182,7 +186,7 @@ void main() {
     });
 
     test('should handle different start date formats', () {
-      const List<String> startDates = [
+      const List<String> startDates = <String>[
         '2020-01-01T00:00:00.000Z',
         '2019-06-15T12:30:00.000Z',
         '2021-12-25T18:00:00.000Z',
@@ -207,7 +211,7 @@ void main() {
     });
 
     test('should handle various relationship descriptions', () {
-      const List<String> descriptions = [
+      const List<String> descriptions = <String>[
         'College roommate',
         'Work colleague from marketing department',
         'Childhood friend from neighborhood',
@@ -232,12 +236,13 @@ void main() {
     });
 
     test('should handle long relationship descriptions', () {
-      const String longDescription = 'This is a very detailed description of how we met and developed our relationship. '
+      const String longDescription =
+          'This is a very detailed description of how we met and developed our relationship. '
           'We first encountered each other during our freshman year at university in the computer science program. '
           'Initially we were just classmates, but over time we became study partners and eventually close friends. '
           'Our friendship has continued to grow stronger over the years through shared experiences and mutual support.';
 
-      final Relationship relationship = Relationship(
+      const Relationship relationship = Relationship(
         contactId: testContactId,
         relationshipType: testRelationshipType,
         description: longDescription,
@@ -250,7 +255,7 @@ void main() {
     });
 
     test('should handle special characters in relationship type', () {
-      const List<String> specialTypes = [
+      const List<String> specialTypes = <String>[
         'ex-colleague',
         'step-parent',
         'in-law',
@@ -291,15 +296,16 @@ void main() {
     });
 
     test('should preserve relationship hierarchy information', () {
-      const Map<String, String> familyRelationships = {
+      const Map<String, String> familyRelationships = <String, String>{
         'parent': 'Mother figure in my life',
         'child': 'My daughter from previous marriage',
         'sibling': 'Younger brother, very close relationship',
         'grandparent': 'Maternal grandmother, very influential',
-        'cousin': 'First cousin on father\'s side',
+        'cousin': "First cousin on father's side",
       };
 
-      for (final MapEntry<String, String> entry in familyRelationships.entries) {
+      for (final MapEntry<String, String> entry
+          in familyRelationships.entries) {
         final Relationship relationship = Relationship(
           contactId: testContactId,
           relationshipType: entry.key,
@@ -315,7 +321,7 @@ void main() {
     });
 
     test('should handle professional relationship types', () {
-      const Map<String, String> professionalRelationships = {
+      const Map<String, String> professionalRelationships = <String, String>{
         'manager': 'Direct supervisor at current company',
         'employee': 'Junior developer on my team',
         'client': 'Long-term business client',
@@ -323,7 +329,8 @@ void main() {
         'mentor': 'Career guidance and professional development',
       };
 
-      for (final MapEntry<String, String> entry in professionalRelationships.entries) {
+      for (final MapEntry<String, String> entry
+          in professionalRelationships.entries) {
         final Relationship relationship = Relationship(
           contactId: testContactId,
           relationshipType: entry.key,
@@ -354,8 +361,14 @@ void main() {
       );
 
       expect(evolved.relationshipType, 'friend');
-      expect(evolved.description, 'Developed into close friendship over shared interests');
-      expect(evolved.startDate, '2020-01-01T00:00:00.000Z'); // Keep original start date
+      expect(
+        evolved.description,
+        'Developed into close friendship over shared interests',
+      );
+      expect(
+        evolved.startDate,
+        '2020-01-01T00:00:00.000Z',
+      ); // Keep original start date
       expect(original.relationshipType, 'acquaintance'); // Original unchanged
     });
   });

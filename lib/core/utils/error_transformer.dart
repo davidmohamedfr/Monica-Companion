@@ -138,16 +138,14 @@ class ErrorTransformer {
   }
 
   /// Get user-friendly error message from failure
-  static String getUserFriendlyMessage(Failure failure) {
-    return switch (failure) {
-      DatabaseFailure() => _getDatabaseErrorMessage(failure),
-      NetworkFailure() => 'Please check your internet connection and try again.',
-      ValidationFailure() => _getValidationErrorMessage(failure),
-      AuthenticationFailure() => 'Authentication failed. Please sign in again.',
-      PermissionFailure() => 'Permission denied. Please check app permissions.',
-      _ => failure.message,
-    };
-  }
+  static String getUserFriendlyMessage(Failure failure) => switch (failure) {
+    DatabaseFailure() => _getDatabaseErrorMessage(failure),
+    NetworkFailure() => 'Please check your internet connection and try again.',
+    ValidationFailure() => _getValidationErrorMessage(failure),
+    AuthenticationFailure() => 'Authentication failed. Please sign in again.',
+    PermissionFailure() => 'Permission denied. Please check app permissions.',
+    _ => failure.message,
+  };
 
   static String _getDatabaseErrorMessage(DatabaseFailure failure) {
     switch (failure.code) {
@@ -160,7 +158,7 @@ class ErrorTransformer {
       case 'TIMEOUT_ERROR':
         return 'The operation took too long. Please try again.';
       case 'SCHEMA_ERROR':
-        return 'There\'s an issue with the app data. Please restart the app.';
+        return "There's an issue with the app data. Please restart the app.";
       case 'CORRUPTION_ERROR':
         return 'The app data is corrupted. Please contact support.';
       default:
@@ -177,7 +175,7 @@ class ErrorTransformer {
       case 'CHECK_CONSTRAINT':
         return 'Please check that all information is correct.';
       case 'FOREIGN_KEY_CONSTRAINT':
-        return 'Cannot delete this item as it\'s being used elsewhere.';
+        return "Cannot delete this item as it's being used elsewhere.";
       default:
         return 'Please check your input and try again.';
     }

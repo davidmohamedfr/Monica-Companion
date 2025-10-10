@@ -43,77 +43,99 @@ void main() {
         ),
       ];
 
-      final List<Map<String, dynamic>> mockDatabaseResponse = expectedInteractions
-          .map((Interaction interaction) => interaction.toMap())
-          .toList();
+      final List<Map<String, dynamic>> mockDatabaseResponse =
+          expectedInteractions
+              .map((Interaction interaction) => interaction.toMap())
+              .toList();
 
-      testWidgets('should return interactions for valid contact ID ordered by date descending', (WidgetTester tester) async {
-        // Arrange
-        when(() => mockDatabase.rawQuery(
-          any(),
-          any(),
-        )).thenAnswer((_) async => mockDatabaseResponse);
+      testWidgets(
+        'should return interactions for valid contact ID ordered by date descending',
+        (WidgetTester tester) async {
+          // Arrange
+          when(
+            () => mockDatabase.rawQuery(any(), any()),
+          ).thenAnswer((_) async => mockDatabaseResponse);
 
-        // Act
-        final List<Interaction> result = await repository.findByContactId(testContactId);
+          // Act
+          final List<Interaction> result = await repository.findByContactId(
+            testContactId,
+          );
 
-        // Assert
-        expect(result, hasLength(2));
-        expect(result, equals(expectedInteractions));
+          // Assert
+          expect(result, hasLength(2));
+          expect(result, equals(expectedInteractions));
 
-        // Verify correct SQL query was executed
-        verify(() => mockDatabase.rawQuery(
-          '''
+          // Verify correct SQL query was executed
+          verify(
+            () => mockDatabase.rawQuery(
+              '''
         SELECT * FROM interactions
         WHERE contact_id = ?
         ORDER BY date DESC
       ''',
-          <dynamic>[testContactId],
-        )).called(1);
-      });
+              <dynamic>[testContactId],
+            ),
+          ).called(1);
+        },
+      );
 
-      testWidgets('should return empty list when no interactions found for contact', (WidgetTester tester) async {
-        // Arrange
-        const int nonExistentContactId = 999;
-        when(() => mockDatabase.rawQuery(
-          any(),
-          any(),
-        )).thenAnswer((_) async => <Map<String, dynamic>>[]);
+      testWidgets(
+        'should return empty list when no interactions found for contact',
+        (WidgetTester tester) async {
+          // Arrange
+          const int nonExistentContactId = 999;
+          when(
+            () => mockDatabase.rawQuery(any(), any()),
+          ).thenAnswer((_) async => <Map<String, dynamic>>[]);
 
-        // Act
-        final List<Interaction> result = await repository.findByContactId(nonExistentContactId);
+          // Act
+          final List<Interaction> result = await repository.findByContactId(
+            nonExistentContactId,
+          );
 
-        // Assert
-        expect(result, isEmpty);
-        verify(() => mockDatabase.rawQuery(
-          any(),
-          <dynamic>[nonExistentContactId],
-        )).called(1);
-      });
+          // Assert
+          expect(result, isEmpty);
+          verify(
+            () => mockDatabase.rawQuery(any(), <dynamic>[nonExistentContactId]),
+          ).called(1);
+        },
+      );
 
-      testWidgets('should throw DatabaseException when database query fails', (WidgetTester tester) async {
+      testWidgets('should throw DatabaseException when database query fails', (
+        WidgetTester tester,
+      ) async {
         // Arrange
         const String errorMessage = 'Database connection lost';
-        when(() => mockDatabase.rawQuery(
-          any(),
-          any(),
-        )).thenThrow(Exception(errorMessage));
+        when(
+          () => mockDatabase.rawQuery(any(), any()),
+        ).thenThrow(Exception(errorMessage));
 
         // Act & Assert
         expect(
           () => repository.findByContactId(testContactId),
-          throwsA(isA<DatabaseException>()
-              .having((DatabaseException e) => e.message, 'message', 'An unexpected error occurred. Please try again.')
-              .having((DatabaseException e) => e.code, 'code', 'UNKNOWN_ERROR')),
+          throwsA(
+            isA<DatabaseException>()
+                .having(
+                  (DatabaseException e) => e.message,
+                  'message',
+                  'An unexpected error occurred. Please try again.',
+                )
+                .having(
+                  (DatabaseException e) => e.code,
+                  'code',
+                  'UNKNOWN_ERROR',
+                ),
+          ),
         );
 
-        verify(() => mockDatabase.rawQuery(
-          any(),
-          <dynamic>[testContactId],
-        )).called(1);
+        verify(
+          () => mockDatabase.rawQuery(any(), <dynamic>[testContactId]),
+        ).called(1);
       });
 
-      testWidgets('should handle valid data with missing optional fields', (WidgetTester tester) async {
+      testWidgets('should handle valid data with missing optional fields', (
+        WidgetTester tester,
+      ) async {
         // Arrange
         final List<Map<String, dynamic>> dataWithNulls = <Map<String, dynamic>>[
           <String, dynamic>{
@@ -129,13 +151,14 @@ void main() {
           },
         ];
 
-        when(() => mockDatabase.rawQuery(
-          any(),
-          any(),
-        )).thenAnswer((_) async => dataWithNulls);
+        when(
+          () => mockDatabase.rawQuery(any(), any()),
+        ).thenAnswer((_) async => dataWithNulls);
 
         // Act
-        final List<Interaction> result = await repository.findByContactId(testContactId);
+        final List<Interaction> result = await repository.findByContactId(
+          testContactId,
+        );
 
         // Assert
         expect(result, hasLength(1));
@@ -148,27 +171,33 @@ void main() {
         expect(result.first.location, isNull);
       });
 
-      testWidgets('should handle large result sets efficiently', (WidgetTester tester) async {
+      testWidgets('should handle large result sets efficiently', (
+        WidgetTester tester,
+      ) async {
         // Arrange
-        final List<Map<String, dynamic>> largeDataset = List<Map<String, dynamic>>.generate(
-          100,
-          (int index) => Interaction(
-            id: index + 1,
-            contactId: testContactId,
-            type: 'message',
-            date: testDate.subtract(Duration(days: index)).toIso8601String(),
-            notes: 'Interaction $index',
-            createdAt: testDate.subtract(Duration(days: index)),
-          ).toMap(),
-        );
+        final List<Map<String, dynamic>> largeDataset =
+            List<Map<String, dynamic>>.generate(
+              100,
+              (int index) => Interaction(
+                id: index + 1,
+                contactId: testContactId,
+                type: 'message',
+                date: testDate
+                    .subtract(Duration(days: index))
+                    .toIso8601String(),
+                notes: 'Interaction $index',
+                createdAt: testDate.subtract(Duration(days: index)),
+              ).toMap(),
+            );
 
-        when(() => mockDatabase.rawQuery(
-          any(),
-          any(),
-        )).thenAnswer((_) async => largeDataset);
+        when(
+          () => mockDatabase.rawQuery(any(), any()),
+        ).thenAnswer((_) async => largeDataset);
 
         // Act
-        final List<Interaction> result = await repository.findByContactId(testContactId);
+        final List<Interaction> result = await repository.findByContactId(
+          testContactId,
+        );
 
         // Assert
         expect(result, hasLength(100));

@@ -63,10 +63,34 @@ void main() {
       expect(find.byType(NavigationBar), findsOneWidget);
 
       // Should find navigation destinations within NavigationBar
-      expect(find.descendant(of: find.byType(NavigationBar), matching: find.text('Contacts')), findsOneWidget);
-      expect(find.descendant(of: find.byType(NavigationBar), matching: find.text('Calls')), findsOneWidget);
-      expect(find.descendant(of: find.byType(NavigationBar), matching: find.text('Settings')), findsOneWidget);
-      expect(find.descendant(of: find.byType(NavigationBar), matching: find.text('Sync')), findsOneWidget);
+      expect(
+        find.descendant(
+          of: find.byType(NavigationBar),
+          matching: find.text('Contacts'),
+        ),
+        findsOneWidget,
+      );
+      expect(
+        find.descendant(
+          of: find.byType(NavigationBar),
+          matching: find.text('Calls'),
+        ),
+        findsOneWidget,
+      );
+      expect(
+        find.descendant(
+          of: find.byType(NavigationBar),
+          matching: find.text('Settings'),
+        ),
+        findsOneWidget,
+      );
+      expect(
+        find.descendant(
+          of: find.byType(NavigationBar),
+          matching: find.text('Sync'),
+        ),
+        findsOneWidget,
+      );
     });
 
     test('should initialize app config without error', () {
@@ -90,7 +114,13 @@ void main() {
       await tester.pumpAndSettle();
 
       // Should find the Contacts screen app bar title (not navigation label)
-      expect(find.descendant(of: find.byType(AppBar), matching: find.text('Contacts')), findsOneWidget);
+      expect(
+        find.descendant(
+          of: find.byType(AppBar),
+          matching: find.text('Contacts'),
+        ),
+        findsOneWidget,
+      );
     });
 
     testWidgets('should display navigation tabs', (WidgetTester tester) async {
@@ -99,28 +129,67 @@ void main() {
       await tester.pumpAndSettle();
 
       // Should find all navigation tab labels within NavigationBar
-      expect(find.descendant(of: find.byType(NavigationBar), matching: find.text('Contacts')), findsOneWidget);
-      expect(find.descendant(of: find.byType(NavigationBar), matching: find.text('Calls')), findsOneWidget);
-      expect(find.descendant(of: find.byType(NavigationBar), matching: find.text('Settings')), findsOneWidget);
-      expect(find.descendant(of: find.byType(NavigationBar), matching: find.text('Sync')), findsOneWidget);
+      expect(
+        find.descendant(
+          of: find.byType(NavigationBar),
+          matching: find.text('Contacts'),
+        ),
+        findsOneWidget,
+      );
+      expect(
+        find.descendant(
+          of: find.byType(NavigationBar),
+          matching: find.text('Calls'),
+        ),
+        findsOneWidget,
+      );
+      expect(
+        find.descendant(
+          of: find.byType(NavigationBar),
+          matching: find.text('Settings'),
+        ),
+        findsOneWidget,
+      );
+      expect(
+        find.descendant(
+          of: find.byType(NavigationBar),
+          matching: find.text('Sync'),
+        ),
+        findsOneWidget,
+      );
     });
 
-    testWidgets('should navigate between tabs', (
-      WidgetTester tester,
-    ) async {
+    testWidgets('should navigate between tabs', (WidgetTester tester) async {
       // GREEN: This test verifies navigation between tabs works
       await tester.pumpWidget(const MonicaApp());
       await tester.pumpAndSettle();
 
       // Start on Contacts tab - check app bar title
-      expect(find.descendant(of: find.byType(AppBar), matching: find.text('Contacts')), findsOneWidget);
+      expect(
+        find.descendant(
+          of: find.byType(AppBar),
+          matching: find.text('Contacts'),
+        ),
+        findsOneWidget,
+      );
 
       // Navigate to Settings by tapping the Settings navigation destination
-      await tester.tap(find.descendant(of: find.byType(NavigationBar), matching: find.text('Settings')));
+      await tester.tap(
+        find.descendant(
+          of: find.byType(NavigationBar),
+          matching: find.text('Settings'),
+        ),
+      );
       await tester.pumpAndSettle();
 
       // Should now show Settings screen - check app bar title
-      expect(find.descendant(of: find.byType(AppBar), matching: find.text('Settings')), findsOneWidget);
+      expect(
+        find.descendant(
+          of: find.byType(AppBar),
+          matching: find.text('Settings'),
+        ),
+        findsOneWidget,
+      );
     });
 
     testWidgets('should display app bar with actions', (
@@ -131,11 +200,29 @@ void main() {
       await tester.pumpAndSettle();
 
       // Should find app bar with title
-      expect(find.descendant(of: find.byType(AppBar), matching: find.text('Contacts')), findsOneWidget);
+      expect(
+        find.descendant(
+          of: find.byType(AppBar),
+          matching: find.text('Contacts'),
+        ),
+        findsOneWidget,
+      );
 
       // Should find action buttons (search and add) within AppBar
-      expect(find.descendant(of: find.byType(AppBar), matching: find.byIcon(Icons.search)), findsOneWidget);
-      expect(find.descendant(of: find.byType(AppBar), matching: find.byIcon(Icons.add)), findsOneWidget);
+      expect(
+        find.descendant(
+          of: find.byType(AppBar),
+          matching: find.byIcon(Icons.search),
+        ),
+        findsOneWidget,
+      );
+      expect(
+        find.descendant(
+          of: find.byType(AppBar),
+          matching: find.byIcon(Icons.add),
+        ),
+        findsOneWidget,
+      );
     });
   });
 
@@ -186,7 +273,9 @@ void main() {
       expect(navBar.destinations.length, equals(4));
     });
 
-    testWidgets('should apply Monica brand colors', (WidgetTester tester) async {
+    testWidgets('should apply Monica brand colors', (
+      WidgetTester tester,
+    ) async {
       // GREEN: This test verifies Monica brand colors are applied
       await tester.pumpWidget(const MonicaApp());
       await tester.pumpAndSettle();
@@ -260,8 +349,12 @@ void main() {
       expect(find.byType(Scaffold), findsNWidgets(2));
 
       // The main Scaffold (from MainShell) should have bottom navigation
-      final Iterable<Scaffold> scaffolds = tester.widgetList(find.byType(Scaffold)).cast<Scaffold>();
-      final Scaffold mainScaffold = scaffolds.firstWhere((Scaffold s) => s.bottomNavigationBar != null);
+      final Iterable<Scaffold> scaffolds = tester
+          .widgetList(find.byType(Scaffold))
+          .cast<Scaffold>();
+      final Scaffold mainScaffold = scaffolds.firstWhere(
+        (Scaffold s) => s.bottomNavigationBar != null,
+      );
       expect(mainScaffold.bottomNavigationBar, isNotNull);
     });
 
@@ -274,7 +367,13 @@ void main() {
 
       // Should find AppBar with title
       expect(find.byType(AppBar), findsOneWidget);
-      expect(find.descendant(of: find.byType(AppBar), matching: find.text('Contacts')), findsOneWidget);
+      expect(
+        find.descendant(
+          of: find.byType(AppBar),
+          matching: find.text('Contacts'),
+        ),
+        findsOneWidget,
+      );
     });
 
     testWidgets('should implement bottom navigation', (

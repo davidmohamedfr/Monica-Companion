@@ -6,7 +6,7 @@ void main() {
     const int testContactId = 1;
     const String testEventType = 'birthday';
     const String testDate = '2024-01-15T00:00:00.000Z';
-    const String testDescription = 'John\'s 30th birthday celebration';
+    const String testDescription = "John's 30th birthday celebration";
     const int testImportance = 5;
 
     test('should create LifeEvent with required fields', () {
@@ -170,7 +170,13 @@ void main() {
     });
 
     test('should handle different event types', () {
-      const List<String> eventTypes = ['birthday', 'anniversary', 'job_change', 'graduation', 'wedding'];
+      const List<String> eventTypes = <String>[
+        'birthday',
+        'anniversary',
+        'job_change',
+        'graduation',
+        'wedding',
+      ];
 
       for (final String eventType in eventTypes) {
         final LifeEvent lifeEvent = LifeEvent(
@@ -190,7 +196,7 @@ void main() {
     });
 
     test('should handle importance levels correctly', () {
-      const List<int> importanceLevels = [1, 2, 3, 4, 5];
+      const List<int> importanceLevels = <int>[1, 2, 3, 4, 5];
 
       for (final int importance in importanceLevels) {
         final LifeEvent lifeEvent = LifeEvent(

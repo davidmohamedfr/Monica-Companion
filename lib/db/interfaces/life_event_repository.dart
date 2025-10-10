@@ -2,7 +2,8 @@ import 'package:monica_companion/db/interfaces/repository_interface.dart';
 import 'package:monica_companion/db/models/life_event.dart';
 
 /// Repository interface for LifeEvent entities
-abstract class LifeEventRepository implements RepositoryInterface<LifeEvent, int> {
+abstract class LifeEventRepository
+    implements RepositoryInterface<LifeEvent, int> {
   /// Find life events for a specific contact
   Future<List<LifeEvent>> findByContactId(int contactId);
 
@@ -19,7 +20,10 @@ abstract class LifeEventRepository implements RepositoryInterface<LifeEvent, int
   Future<List<LifeEvent>> findUpcomingEvents(int daysAhead);
 
   /// Find life events by importance level range
-  Future<List<LifeEvent>> findByImportanceRange(int minImportance, int maxImportance);
+  Future<List<LifeEvent>> findByImportanceRange(
+    int minImportance,
+    int maxImportance,
+  );
 
   /// Count life events for a contact
   Future<int> countByContactId(int contactId);

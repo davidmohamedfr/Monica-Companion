@@ -4,14 +4,11 @@ import 'package:sqflite/sqflite.dart';
 
 /// Database migration runner for managing schema versions
 class MigrationRunner {
-
   MigrationRunner(this._database);
   final DatabaseInterface _database;
 
   /// List of all migrations in order
-  final List<Migration> _migrations = <Migration>[
-    V1InitialSchema(),
-  ];
+  final List<Migration> _migrations = <Migration>[V1InitialSchema()];
 
   /// Run all pending migrations
   Future<void> runMigrations() async {
@@ -72,10 +69,11 @@ class MigrationRunner {
     }
 
     // Find migrations to rollback (in reverse order)
-    final List<Migration> migrationsToRollback = _migrations
-        .where((Migration m) => m.version > targetVersion)
-        .toList()
-      ..sort((Migration a, Migration b) => b.version.compareTo(a.version)); // Reverse order
+    final List<Migration> migrationsToRollback =
+        _migrations.where((Migration m) => m.version > targetVersion).toList()
+          ..sort(
+            (Migration a, Migration b) => b.version.compareTo(a.version),
+          ); // Reverse order
 
     for (final Migration migration in migrationsToRollback) {
       await _database.transaction((Transaction txn) async {
