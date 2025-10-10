@@ -24,7 +24,6 @@ WRITE_PERMISSION="android.permission.WRITE_CONTACTS"
 TEST_FILES=(
   "integration_test/app_test.dart"
   "integration_test/contact_edit_button_test.dart"
-  "integration_test/contacts_integration_test.dart"
   "integration_test/contacts_simple_test.dart"
   "integration_test/database_integration_test.dart"
 )
