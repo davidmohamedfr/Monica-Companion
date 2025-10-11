@@ -10,12 +10,32 @@ set -e
 #           permissions during test execution. Tests are run individually
 #           to avoid Flutter framework rendering errors during batch teardown.
 #
-# Usage: ./scripts/run_integration_tests.sh [device-id]
+# Usage: ./scripts/run_integration_tests.sh [device-id] [--apk-path <path>]
 # Examples:
 #   ./scripts/run_integration_tests.sh
 #   ./scripts/run_integration_tests.sh emulator-5556
+#   ./scripts/run_integration_tests.sh --apk-path build/app/outputs/flutter-apk/app-debug.apk
+#   ./scripts/run_integration_tests.sh emulator-5556 --apk-path /path/to/app-debug.apk
 
-DEVICE_ID=${1:-}
+# Parse arguments
+DEVICE_ID=""
+APK_PATH=""
+
+while [[ $# -gt 0 ]]; do
+  case $1 in
+    --apk-path)
+      APK_PATH="$2"
+      shift 2
+      ;;
+    *)
+      if [ -z "$DEVICE_ID" ]; then
+        DEVICE_ID="$1"
+      fi
+      shift
+      ;;
+  esac
+done
+
 PACKAGE_NAME="fr.m0hdaCorp.monica_companion"
 READ_PERMISSION="android.permission.READ_CONTACTS"
 WRITE_PERMISSION="android.permission.WRITE_CONTACTS"
@@ -33,16 +53,27 @@ echo "   Device: ${DEVICE_ID:-auto}"
 echo "   Tests: ${#TEST_FILES[@]} files"
 echo ""
 
-# Build APK
-echo "Building APK..."
-flutter build apk --debug
+# Determine APK path
+if [ -n "$APK_PATH" ]; then
+  # Validate provided APK path
+  if [ ! -f "$APK_PATH" ]; then
+    echo "❌ Error: APK file not found at: $APK_PATH"
+    exit 1
+  fi
+  echo "Using pre-built APK: $APK_PATH"
+else
+  # Build APK if not provided
+  echo "Building APK..."
+  flutter build apk --debug
+  APK_PATH="build/app/outputs/flutter-apk/app-debug.apk"
+fi
 
 # Install with permissions
 echo "Installing APK with permissions..."
 if [ -n "$DEVICE_ID" ]; then
-  adb -s "$DEVICE_ID" install -g build/app/outputs/flutter-apk/app-debug.apk
+  adb -s "$DEVICE_ID" install -g "$APK_PATH"
 else
-  adb install -g build/app/outputs/flutter-apk/app-debug.apk
+  adb install -g "$APK_PATH"
 fi
 
 # Grant permissions immediately before starting tests
