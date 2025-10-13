@@ -6,6 +6,9 @@ class DateFormatter {
 
   static const String _separator = ' • ';
 
+  // Cache DateFormat instance to avoid repeated instantiation
+  static final DateFormat _dateFormat = DateFormat('MMM d, y');
+
   /// Formats a date as "relative time • absolute date"
   /// Example: "2 days ago • Oct 2, 2024"
   ///
@@ -18,7 +21,7 @@ class DateFormatter {
     final Duration difference = currentTime.difference(date);
 
     final String relative = _formatRelativeTime(difference);
-    final String absolute = DateFormat('MMM d, y').format(date);
+    final String absolute = _dateFormat.format(date);
 
     return '$relative$_separator$absolute';
   }
