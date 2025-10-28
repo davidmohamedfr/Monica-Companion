@@ -15,7 +15,7 @@ jobs:
   # Job de préparation - réchauffe tous les caches
   prepare:
     name: Prepare & Cache
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     timeout-minutes: 15
     outputs:
       flutter-cache-key: ${{ steps.cache-keys.outputs.flutter-key }}
@@ -85,7 +85,7 @@ jobs:
 
   lint:
     name: Lint & Format
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     needs: prepare
     timeout-minutes: 10
     steps:
@@ -263,7 +263,7 @@ jobs:
   test:
     name: Tests & Coverage
     needs: [prepare]
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     timeout-minutes: 15
 
     steps:
@@ -340,7 +340,7 @@ jobs:
   integration:
     name: All Checks Passed
     needs: [lint, test]
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     if: success()
 
     steps:

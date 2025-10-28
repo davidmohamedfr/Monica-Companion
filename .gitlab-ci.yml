@@ -1,0 +1,350 @@
+# GitLab CI/CD Pipeline for Monica-Companion
+# Migrated from GitHub Actions workflows (push.yml, PR.yml, release.yml)
+
+# Workflow rules: Control when pipelines are created
+workflow:
+  auto_cancel:
+    on_new_commit: interruptible # Cancel old pipelines on new commit
+  rules:
+    # Run on tags (highest priority)
+    - if: "$CI_COMMIT_TAG"
+    # Run on push to dev or main (these are branch pipelines)
+    - if: '$CI_COMMIT_BRANCH == "dev"'
+    - if: '$CI_COMMIT_BRANCH == "main"'
+    # Run MR pipeline (detached pipeline for merge requests)
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+
+stages:
+  - prepare
+  - lint
+  - test
+  - build
+  - integration_test
+  - release
+
+# Use Flutter Docker image for shared runners
+image: ghcr.io/cirruslabs/flutter:3.35.4
+
+variables:
+  JAVA_VERSION: "17"
+  FLUTTER_VERSION: "3.35.4"
+  PUB_CACHE: "$CI_PROJECT_DIR/.pub-cache"
+
+# Global cache configuration
+cache:
+  key:
+    files:
+      - pubspec.yaml
+      - pubspec.lock
+  paths:
+    - .pub-cache/
+    - .dart_tool/
+
+# ============================================
+# PREPARE STAGE - Warm caches
+# ============================================
+prepare:
+  stage: prepare
+  timeout: 15 minutes
+  interruptible: true
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+    - if: '$CI_COMMIT_BRANCH == "dev"'
+    - if: '$CI_COMMIT_BRANCH == "main"'
+  script:
+    - echo "Installing Flutter $FLUTTER_VERSION..."
+    - flutter --version
+    - flutter pub get
+    - flutter pub deps
+    - dart analyze --no-fatal-warnings . || true
+    - dart format --output=none . || true
+  cache:
+    key: flutter-$FLUTTER_VERSION-$CI_RUNNER_ID
+    paths:
+      - .pub-cache/
+      - .dart_tool/
+  artifacts:
+    paths:
+      - .dart_tool/package_config.json
+    expire_in: 1 hour
+
+# ============================================
+# LINT STAGE - Code quality checks
+# ============================================
+lint:
+  stage: lint
+  timeout: 10 minutes
+  interruptible: true
+  needs:
+    - prepare
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+    - if: '$CI_COMMIT_BRANCH == "dev"'
+    - if: '$CI_COMMIT_BRANCH == "main"'
+  script:
+    # Get dependencies first
+    - flutter pub get
+
+    # Formatting check
+    - echo "🎨 Checking code formatting..."
+    - dart format --output=none --set-exit-if-changed .
+
+    # Analysis
+    - echo "🔍 Running static analysis..."
+    - dart analyze --no-fatal-warnings
+
+    # Validate configuration
+    - echo "📋 Validating analysis_options.yaml..."
+    - test -f analysis_options.yaml || (echo "❌ analysis_options.yaml missing" && exit 1)
+
+    # Check unused dependencies
+    - echo "📦 Checking for unused dependencies..."
+    - flutter pub deps --json | jq '.packages[] | select(.kind == "direct") | .name' > used_deps.txt || true
+    - grep -r "import 'package:" lib/ | sed "s/.*package:\([^\/]*\).*/\1/" | sort -u > imported_deps.txt || true
+
+    # Check outdated dependencies
+    - echo "🔄 Checking for outdated dependencies..."
+    - flutter pub outdated --exit-code || true
+
+    # Security audit
+    - echo "🔒 Running security audit..."
+    - dart pub audit || true
+
+    # Security scan for hardcoded secrets
+    - echo "🔐 Scanning for hardcoded secrets..."
+    - |
+      if grep -rE "api_key\s*=\s*['\"][^'\"]+['\"]" lib/ --include="*.dart"; then
+        echo "❌ Hardcoded API key found"
+        exit 1
+      fi
+    - |
+      if grep -rE "password\s*=\s*['\"][^'\"]+['\"]" lib/ --include="*.dart"; then
+        echo "❌ Hardcoded password found"
+        exit 1
+      fi
+    - |
+      if grep -r "print(" lib/ --include="*.dart"; then
+        echo "❌ Debug print statements found in lib/"
+        exit 1
+      fi
+
+    # Documentation check
+    - echo "📚 Checking documentation..."
+    - test -f README.md || (echo "❌ README.md missing" && exit 1)
+    - test -f LICENSE || (echo "❌ LICENSE missing" && exit 1)
+    - test -f SECURITY.md || (echo "❌ SECURITY.md missing" && exit 1)
+    - test -f PRIVACY.md || (echo "❌ PRIVACY.md missing" && exit 1)
+
+    # File structure validation
+    - echo "📁 Validating project structure..."
+    - test -d lib || (echo "❌ lib/ directory missing" && exit 1)
+    - test -d test || (echo "❌ test/ directory missing" && exit 1)
+    - test -d integration_test || (echo "❌ integration_test/ directory missing" && exit 1)
+    - test -f test/helpers/test_helpers.dart || (echo "❌ test/helpers/test_helpers.dart missing" && exit 1)
+  allow_failure:
+    exit_codes:
+      - 1
+
+# ============================================
+# TEST STAGE - Unit and widget tests
+# ============================================
+test:
+  stage: test
+  timeout: 15 minutes
+  interruptible: true
+  needs:
+    - prepare
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+    - if: '$CI_COMMIT_BRANCH == "dev"'
+    - if: '$CI_COMMIT_BRANCH == "main"'
+  script:
+    - echo "🧪 Running unit and widget tests..."
+    - flutter pub get
+    - flutter test --coverage --test-randomize-ordering-seed random
+
+    # Calculate coverage percentage
+    - |
+      if [ -f coverage/lcov.info ]; then
+        total_lines=$(grep -E "^DA:" coverage/lcov.info | wc -l)
+        covered_lines=$(grep -E "^DA:" coverage/lcov.info | grep -E ",1$|,[2-9][0-9]*$" | wc -l)
+        if [ $total_lines -gt 0 ]; then
+          coverage=$((covered_lines * 100 / total_lines))
+          echo "📊 Test coverage: ${coverage}%"
+          if [ $coverage -lt 60 ]; then
+            echo "⚠️ Warning: Test coverage is below 60%"
+          fi
+        fi
+      fi
+  artifacts:
+    paths:
+      - coverage/
+    reports:
+      coverage_report:
+        coverage_format: cobertura
+        path: coverage/lcov.info
+    expire_in: 7 days
+  coverage: '/Test coverage: \d+%/'
+
+# ============================================
+# BUILD STAGE - Build debug APK
+# ============================================
+build_apk:
+  stage: build
+  timeout: 15 minutes
+  interruptible: true
+  needs:
+    - prepare
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+    - if: '$CI_COMMIT_BRANCH == "dev"'
+    - if: '$CI_COMMIT_BRANCH == "main"'
+  script:
+    - echo "🔨 Building debug APK..."
+    - flutter pub get
+    - flutter build apk --debug
+  artifacts:
+    paths:
+      - build/app/outputs/flutter-apk/app-debug.apk
+    expire_in: 1 day
+
+# ============================================
+# INTEGRATION TEST STAGE - Device testing
+# ============================================
+# integration_test:
+#   stage: integration_test
+#   timeout: 30 minutes
+#   interruptible: true
+#   tags:
+#     - docker  # Run on Vermeeren18 runner with KVM support
+#   needs:
+#     - prepare
+#     - build_apk
+#   rules:
+#     - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+#     - if: '$CI_COMMIT_BRANCH == "dev"'
+#     - if: '$CI_COMMIT_BRANCH == "main"'
+#   before_script:
+#     # Setup Android SDK environment
+#     - echo "🤖 Setting up Android SDK environment..."
+#     - export ANDROID_HOME="${ANDROID_HOME:-$HOME/Android/Sdk}"
+#     - export ANDROID_SDK_ROOT="$ANDROID_HOME"
+#     - export PATH="$PATH:$ANDROID_HOME/emulator:$ANDROID_HOME/platform-tools:$ANDROID_HOME/cmdline-tools/latest/bin"
+
+#     # Verify Android SDK installation
+#     - echo "📱 Checking Android SDK..."
+#     - sdkmanager --version || echo "⚠️ sdkmanager not found"
+#     - adb version || echo "⚠️ adb not found"
+
+#     # Check KVM (informational only)
+#     - echo "🔍 Checking KVM availability..."
+#     - ls -la /dev/kvm || echo "⚠️ KVM not available - emulator will be VERY slow (20-30 min boot time)"
+
+#     # Install Android system image if not present
+#     - echo "📥 Installing Android system image..."
+#     - yes | sdkmanager --licenses || true
+#     - sdkmanager "system-images;android-30;google_apis;x86_64"
+
+#     # Delete existing AVD and create fresh one
+#     - echo "📲 Setting up Android emulator..."
+#     - echo "Deleting any existing AVD..."
+#     - avdmanager delete avd --name test_avd 2>/dev/null || echo "No existing AVD to delete"
+#     - echo "Creating fresh AVD..."
+#     - echo "no" | avdmanager create avd --force --name test_avd --package "system-images;android-30;google_apis;x86_64" --device "pixel_4" --abi google_apis/x86_64
+
+#     # Start emulator in background with software rendering (KVM not available in Docker)
+#     - echo "🚀 Starting emulator in background..."
+#     - nohup $ANDROID_HOME/emulator/emulator -avd test_avd -no-window -no-audio -no-boot-anim -gpu swiftshader_indirect -accel off -camera-back none -camera-front none > /tmp/emulator.log 2>&1 &
+#     - EMULATOR_PID=$!
+#     - echo "Emulator started with PID:$EMULATOR_PID"
+
+#     # Health check
+#     - echo "🔍 Waiting for emulator process to initialize..."
+#     - sleep 10
+#     - ps -p $EMULATOR_PID || { echo "❌ Emulator process died"; echo "📋 Emulator log:"; cat /tmp/emulator.log; exit 1; }
+
+#     # Wait for device with timeout
+#     - echo "⏳ Waiting for emulator to boot (max 15 minutes)..."
+#     - timeout 900 adb wait-for-device || { echo "❌ Emulator device not detected"; exit 1; }
+#     - echo "✅ Device detected, waiting for boot completion..."
+#     - timeout 600 adb shell 'while [[ -z $(getprop sys.boot_completed) ]]; do sleep 1; done' || { echo "❌ Emulator boot timeout"; cat /tmp/emulator.log; exit 1; }
+
+#     # Wait for package manager service to be ready with aggressive stabilization
+#     - echo "📦 Waiting for package manager service..."
+#     - timeout 180 adb shell 'while ! pm list packages > /dev/null 2>&1; do sleep 2; done' || echo "⚠️ Package manager check timed out"
+#     - echo "⏸️ Letting PM service stabilize (30s)..."
+#     - sleep 30
+#     - echo "🔄 Verifying PM service stability..."
+#     - for i in 1 2 3; do adb shell pm list packages > /dev/null 2>&1 && echo "✓ PM check $i passed" || { echo "✗ PM check $i failed"; sleep 10; }; done
+#     - echo "📱 Device status:"
+#     - adb devices
+#     - echo "✅ Emulator is ready!"
+
+#   script:
+#     - echo "🧪 Running integration tests..."
+#     - flutter pub get
+#     - chmod +x scripts/run_integration_tests.sh
+#     - ./scripts/run_integration_tests.sh --apk-path build/app/outputs/flutter-apk/app-debug.apk
+
+#   after_script:
+#     # Kill emulator
+#     - echo "🛑 Stopping emulator..."
+#     - adb emu kill || true
+
+#   artifacts:
+#     when: on_failure
+#     paths:
+#       - integration_test_failures/
+#     expire_in: 3 days
+
+# ============================================
+# RELEASE STAGE - Production builds
+# ============================================
+release:
+  stage: release
+  timeout: 20 minutes
+  rules:
+    - if: '$CI_COMMIT_TAG =~ /^v[0-9]+\.[0-9]+\.[0-9]+/'
+  script:
+    - echo "🚀 Building release artifacts for $CI_COMMIT_TAG..."
+    - flutter pub get
+
+    # Run tests before release
+    - flutter test
+
+    # Build release APK
+    - flutter build apk --release
+
+    # Build release AAB
+    - flutter build appbundle --release
+  artifacts:
+    paths:
+      - build/app/outputs/flutter-apk/app-release.apk
+      - build/app/outputs/bundle/release/app-release.aab
+    name: "monica-mobile-app-$CI_COMMIT_TAG"
+  release:
+    tag_name: $CI_COMMIT_TAG
+    name: "Release $CI_COMMIT_TAG"
+    description: |
+      ## Changes in this Release
+
+      - Built from commit $CI_COMMIT_SHA
+      - APK and AAB files available for download
+
+      ## Installation
+
+      ### From APK
+      1. Download the APK file below
+      2. Enable "Install from Unknown Sources" in Android settings
+      3. Install the APK
+
+      ### From F-Droid (coming soon)
+      - Will be available on F-Droid store
+    assets:
+      links:
+        - name: "monica-mobile-app-$CI_COMMIT_TAG.apk"
+          url: "$CI_PROJECT_URL/-/jobs/$CI_JOB_ID/artifacts/file/build/app/outputs/flutter-apk/app-release.apk"
+          link_type: package
+        - name: "monica-mobile-app-$CI_COMMIT_TAG.aab"
+          url: "$CI_PROJECT_URL/-/jobs/$CI_JOB_ID/artifacts/file/build/app/outputs/bundle/release/app-release.aab"
+          link_type: package

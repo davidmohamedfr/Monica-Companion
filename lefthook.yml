@@ -43,7 +43,7 @@ pre-commit:
     # 4. Verify dependencies
     deps-check:
       tags: quality
-      run: flutter pub deps --json > /dev/null
+      run: ./scripts/flutter_with_env.sh pub deps --json > /dev/null
       fail_text: |
         ❌ Dependency issues found!
         💡 Run 'flutter pub get' to resolve dependencies
@@ -80,6 +80,17 @@ pre-push:
         else
           echo "⚠️  No coverage report found - ensure tests are running properly"
         fi
+
+    # 4. Run integration tests locally
+    integration-tests:
+      tags: test
+      run: |
+        echo "🧪 Running integration tests..."
+        chmod +x scripts/run_integration_tests.sh
+        ./scripts/run_integration_tests.sh
+      fail_text: |
+        ❌ Integration tests failed!
+        💡 Fix failing integration tests before pushing
 
 # Commit message quality
 commit-msg:
@@ -125,7 +136,7 @@ post-checkout:
       run: |
         if [ -f "pubspec.yaml" ]; then
           echo "Getting Flutter dependencies..."
-          flutter pub get || echo "Flutter not available, skipping pub get"
+          ./scripts/flutter_with_env.sh pub get || echo "Flutter not available, skipping pub get"
         fi
 
 # Output configuration for better UX
@@ -155,5 +166,5 @@ skip_output:
 #
 # TESTING STAGES:
 # 📝 pre-commit: Format, lint, debug checks, dependencies
-# 🧪 pre-push: Unit tests, coverage
-# 🚀 CI/PR: Integration tests, device tests, comprehensive validation
+# 🧪 pre-push: Unit tests, integration tests, coverage
+# 🚀 CI: Lint, unit tests, build verification (integration tests run locally)

@@ -62,10 +62,97 @@ if [ -n "$APK_PATH" ]; then
   fi
   echo "Using pre-built APK: $APK_PATH"
 else
-  # Build APK if not provided
+  # Build APK if not provided (fail fast if build fails)
   echo "Building APK..."
-  flutter build apk --debug
+  "$(dirname "$0")/flutter_with_env.sh" build apk --debug
   APK_PATH="build/app/outputs/flutter-apk/app-debug.apk"
+fi
+
+# Check for connected devices and start emulator if needed
+EMULATOR_STARTED=false
+EMULATOR_PID=""
+AVD_NAME="test_integration_avd"
+
+echo "🔍 Checking for connected devices..."
+DEVICE_COUNT=$(adb devices | grep -c "device$" || true)
+
+if [ "$DEVICE_COUNT" -eq 0 ]; then
+  echo "⚠️  No devices connected. Starting emulator..."
+
+  # Setup Android SDK paths
+  export ANDROID_HOME="${ANDROID_HOME:-$HOME/Android/Sdk}"
+  export ANDROID_SDK_ROOT="$ANDROID_HOME"
+  export PATH="$PATH:$ANDROID_HOME/emulator:$ANDROID_HOME/platform-tools:$ANDROID_HOME/cmdline-tools/latest/bin"
+
+  # Detect host architecture and select appropriate system image
+  HOST_ARCH=$(uname -m)
+  if [[ "$HOST_ARCH" == "arm64" || "$HOST_ARCH" == "aarch64" ]]; then
+    # Use AOSP (default) for ARM64 - Google APIs not available for ARM64
+    SYSTEM_IMAGE="system-images;android-34;default;arm64-v8a"
+    ABI="default/arm64-v8a"
+    API_LEVEL="34"
+    echo "🔍 Detected ARM64 host (Apple Silicon) - using API 34 AOSP arm64-v8a emulator"
+    echo "ℹ️  Note: Using AOSP image (Google APIs not available for ARM64)"
+  else
+    SYSTEM_IMAGE="system-images;android-30;google_apis;x86_64"
+    ABI="google_apis/x86_64"
+    API_LEVEL="30"
+    echo "🔍 Detected x86_64 host - using API 30 x86_64 emulator with Google APIs"
+  fi
+
+  # Install system image if not present
+  echo "📥 Ensuring system image is installed..."
+  yes | sdkmanager --licenses 2>/dev/null || true
+  sdkmanager "$SYSTEM_IMAGE" 2>/dev/null || echo "System image may already be installed"
+
+  # Delete existing test AVD if present
+  echo "🗑️  Removing any existing test AVD..."
+  avdmanager delete avd --name "$AVD_NAME" 2>/dev/null || true
+
+  # Create fresh AVD
+  echo "📲 Creating test AVD..."
+  echo "no" | avdmanager create avd --force \
+    --name "$AVD_NAME" \
+    --package "$SYSTEM_IMAGE" \
+    --device "pixel_4" \
+    --abi "$ABI"
+
+  # Start emulator in background
+  echo "🚀 Starting emulator..."
+  nohup "$ANDROID_HOME/emulator/emulator" -avd "$AVD_NAME" \
+    -no-window -no-audio -no-boot-anim \
+    -gpu swiftshader_indirect -accel off \
+    -camera-back none -camera-front none \
+    > /tmp/emulator.log 2>&1 &
+  EMULATOR_PID=$!
+  EMULATOR_STARTED=true
+  echo "✅ Emulator started (PID: $EMULATOR_PID)"
+
+  # Wait for emulator to boot
+  echo "⏳ Waiting for emulator to boot (max 15 minutes)..."
+  timeout 900 adb wait-for-device || { echo "❌ Emulator device not detected"; kill $EMULATOR_PID 2>/dev/null; exit 1; }
+  echo "⏳ Waiting for boot to complete..."
+  timeout 600 adb shell 'while [[ -z $(getprop sys.boot_completed) ]]; do sleep 1; done' || {
+    echo "❌ Emulator boot timeout"
+    kill $EMULATOR_PID 2>/dev/null
+    exit 1
+  }
+
+  # Wait for package manager to stabilize
+  echo "📦 Waiting for package manager service..."
+  timeout 180 adb shell 'while ! pm list packages > /dev/null 2>&1; do sleep 2; done' || echo "⚠️ PM check timed out"
+  sleep 30
+  echo "✅ Emulator ready!"
+
+  # Get the emulator device ID
+  DEVICE_ID=$(adb devices | grep "emulator" | awk '{print $1}' | head -1)
+  echo "📱 Using emulator device: $DEVICE_ID"
+else
+  echo "✅ Found $DEVICE_COUNT connected device(s)"
+  if [ -z "$DEVICE_ID" ]; then
+    DEVICE_ID=$(adb devices | grep "device$" | awk '{print $1}' | head -1)
+    echo "📱 Using device: $DEVICE_ID"
+  fi
 fi
 
 # Install with permissions
@@ -75,6 +162,18 @@ if [ -n "$DEVICE_ID" ]; then
 else
   adb install -g "$APK_PATH"
 fi
+
+# Wait for package manager to stabilize after APK installation
+echo "📦 Waiting for package manager to stabilize after installation..."
+sleep 5  # Brief initial wait
+if [ -n "$DEVICE_ID" ]; then
+  timeout 60 adb -s "$DEVICE_ID" shell 'while ! pm list packages > /dev/null 2>&1; do sleep 2; done' || echo "⚠️ PM check timed out"
+else
+  timeout 60 adb shell 'while ! pm list packages > /dev/null 2>&1; do sleep 2; done' || echo "⚠️ PM check timed out"
+fi
+echo "⏸️ Letting PM service stabilize (10s)..."
+sleep 10
+echo "✅ PM service ready after installation"
 
 # Grant permissions immediately before starting tests
 echo "🔐 Granting permissions..."
@@ -103,8 +202,12 @@ echo "🔐 Starting permission monitor..."
 MONITOR_PID=$!
 echo "✅ Permission monitor started (PID: $MONITOR_PID)"
 
-# Trap to cleanup monitor on exit
-trap "kill $MONITOR_PID 2>/dev/null || true" EXIT
+# Update trap to cleanup both monitor and emulator on exit
+if [ "$EMULATOR_STARTED" = true ]; then
+  trap "echo '🧹 Cleaning up...'; kill $MONITOR_PID 2>/dev/null || true; echo '🛑 Stopping emulator...'; adb -s $DEVICE_ID emu kill 2>/dev/null || kill $EMULATOR_PID 2>/dev/null; echo '🗑️  Deleting test AVD...'; avdmanager delete avd --name $AVD_NAME 2>/dev/null || true" EXIT
+else
+  trap "kill $MONITOR_PID 2>/dev/null || true" EXIT
+fi
 
 # Run tests individually
 echo ""
@@ -121,7 +224,7 @@ for TEST_FILE in "${TEST_FILES[@]}"; do
   echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 
   if [ -n "$DEVICE_ID" ]; then
-    if flutter test "$TEST_FILE" -d "$DEVICE_ID"; then
+    if "$(dirname "$0")/flutter_with_env.sh" test "$TEST_FILE" -d "$DEVICE_ID"; then
       PASSED_TESTS+=("$TEST_FILE")
       echo "✅ PASSED: $TEST_FILE"
     else
@@ -129,7 +232,7 @@ for TEST_FILE in "${TEST_FILES[@]}"; do
       echo "❌ FAILED: $TEST_FILE"
     fi
   else
-    if flutter test "$TEST_FILE"; then
+    if "$(dirname "$0")/flutter_with_env.sh" test "$TEST_FILE"; then
       PASSED_TESTS+=("$TEST_FILE")
       echo "✅ PASSED: $TEST_FILE"
     else
@@ -138,11 +241,6 @@ for TEST_FILE in "${TEST_FILES[@]}"; do
     fi
   fi
 done
-
-# Cleanup
-echo ""
-echo "🧹 Cleaning up..."
-kill $MONITOR_PID 2>/dev/null || true
 
 # Summary
 echo ""

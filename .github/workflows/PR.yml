@@ -21,7 +21,7 @@ jobs:
   # Job de préparation - réchauffe tous les caches
   prepare:
     name: Prepare & Cache
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     timeout-minutes: 15
     outputs:
       flutter-cache-key: ${{ steps.cache-keys.outputs.flutter-key }}
@@ -91,7 +91,7 @@ jobs:
 
   build-apk:
     name: Build APK
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     needs: [prepare]
     timeout-minutes: 15
     steps:
@@ -136,7 +136,7 @@ jobs:
 
   integration_test:
     name: Integration Tests
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     needs: [prepare, build-apk]
     steps:
     - name: Checkout code
@@ -227,7 +227,7 @@ jobs:
   integration:
     name: All Checks Passed
     needs: [integration_test]
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     if: success()
 
     steps:
