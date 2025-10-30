@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:monica_companion/core/utils/communication_utils.dart';
 import 'package:monica_companion/core/utils/logger.dart';
 import 'package:monica_companion/features/contacts/bloc/contacts_bloc.dart';
 import 'package:monica_companion/features/contacts/bloc/contacts_event.dart';
@@ -80,6 +81,66 @@ class _ContactDetailScreenState extends State<ContactDetailScreen> {
     }
   }
 
+  Future<void> _makePhoneCall() async {
+    if (_currentContact.phone == null || _currentContact.phone!.isEmpty) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('No phone number available')),
+        );
+      }
+      return;
+    }
+
+    final bool success = await CommunicationUtils.makePhoneCall(
+      _currentContact.phone!,
+    );
+    if (!success && mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Unable to make phone call')),
+      );
+    }
+  }
+
+  Future<void> _sendSMS() async {
+    if (_currentContact.phone == null || _currentContact.phone!.isEmpty) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('No phone number available')),
+        );
+      }
+      return;
+    }
+
+    final bool success = await CommunicationUtils.sendSMS(
+      _currentContact.phone!,
+    );
+    if (!success && mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Unable to open messaging app')),
+      );
+    }
+  }
+
+  Future<void> _sendEmail() async {
+    if (_currentContact.email == null || _currentContact.email!.isEmpty) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('No email address available')),
+        );
+      }
+      return;
+    }
+
+    final bool success = await CommunicationUtils.sendEmail(
+      _currentContact.email!,
+    );
+    if (!success && mounted) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Unable to open email app')));
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final ThemeData theme = Theme.of(context);
@@ -117,6 +178,41 @@ class _ContactDetailScreenState extends State<ContactDetailScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
               ContactInfoSection(contact: _currentContact),
+              const SizedBox(height: 24),
+              // Communication action buttons
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: <Widget>[
+                  if (_currentContact.phone != null &&
+                      _currentContact.phone!.isNotEmpty) ...<Widget>[
+                    Expanded(
+                      child: OutlinedButton.icon(
+                        onPressed: _makePhoneCall,
+                        icon: const Icon(Icons.phone),
+                        label: const Text('Call'),
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: OutlinedButton.icon(
+                        onPressed: _sendSMS,
+                        icon: const Icon(Icons.message),
+                        label: const Text('Message'),
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                  ],
+                  if (_currentContact.email != null &&
+                      _currentContact.email!.isNotEmpty)
+                    Expanded(
+                      child: OutlinedButton.icon(
+                        onPressed: _sendEmail,
+                        icon: const Icon(Icons.email),
+                        label: const Text('Email'),
+                      ),
+                    ),
+                ],
+              ),
               const SizedBox(height: 32),
               const Divider(),
               const SizedBox(height: 16),
