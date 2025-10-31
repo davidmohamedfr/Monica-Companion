@@ -3,7 +3,7 @@ name: Release
 on:
   push:
     tags:
-      - 'v*.*.*'
+      - '*'
 
 env:
   JAVA_VERSION: "17"
@@ -33,52 +33,54 @@ jobs:
       
     - name: Build release APK
       run: flutter build apk --release
-      
-    - name: Build release AAB
-      run: flutter build appbundle --release
-      
-    - name: Create Release
-      id: create_release
-      uses: actions/create-release@v1
+
+    - name: Prepare release artifacts
+      run: |
+        cd build/app/outputs/flutter-apk
+        mv app-release.apk monica-companion-${{ github.ref_name }}.apk
+        sha256sum monica-companion-${{ github.ref_name }}.apk > monica-companion-${{ github.ref_name }}.apk.sha256
+        cat monica-companion-${{ github.ref_name }}.apk.sha256
+
+    - name: Create Release with APK
+      uses: softprops/action-gh-release@v2
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        tag_name: ${{ github.ref }}
-        release_name: Release ${{ github.ref }}
+        tag_name: ${{ github.ref_name }}
+        name: Release ${{ github.ref_name }}
         draft: false
         prerelease: false
         body: |
-          ## Changes in this Release
-          
-          - Built from commit ${{ github.sha }}
-          - APK and AAB files available for download
-          
-          ## Installation
-          
-          ### From APK
-          1. Download the APK file below
-          2. Enable "Install from Unknown Sources" in Android settings
-          3. Install the APK
-          
-          ### From F-Droid (coming soon)
-          - Will be available on F-Droid store
-          
-    - name: Upload Release APK
-      uses: actions/upload-release-asset@v1
+          ## Monica Companion - Release ${{ github.ref_name }}
+
+          **Build Information:**
+          - Built from commit: `${{ github.sha }}`
+          - Build date: ${{ github.event.head_commit.timestamp }}
+          - Flutter version: ${{ env.FLUTTER_VERSION }}
+
+          ## Installation Instructions
+
+          ### From APK (Recommended)
+          1. Download the APK file below: `monica-companion-${{ github.ref_name }}.apk`
+          2. Verify checksum (optional): Download `.sha256` file and compare
+          3. Enable "Install from Unknown Sources" in Android settings
+          4. Install the APK on your device
+
+          ### Checksum Verification
+          ```bash
+          sha256sum -c monica-companion-${{ github.ref_name }}.apk.sha256
+          ```
+
+          ## Changes
+          See commit history for detailed changes since last release.
+        files: |
+          build/app/outputs/flutter-apk/monica-companion-${{ github.ref_name }}.apk
+          build/app/outputs/flutter-apk/monica-companion-${{ github.ref_name }}.apk.sha256
+        fail_on_unmatched_files: true
+
+    - name: Cleanup old releases
+      if: success()
+      run: ./scripts/cleanup_old_releases.sh
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: build/app/outputs/flutter-apk/app-release.apk
-        asset_name: monica-mobile-app-${{ github.ref_name }}.apk
-        asset_content_type: application/vnd.android.package-archive
-        
-    - name: Upload Release AAB
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: build/app/outputs/bundle/release/app-release.aab
-        asset_name: monica-mobile-app-${{ github.ref_name }}.aab
-        asset_content_type: application/octet-stream
+        GITHUB_REPOSITORY: ${{ github.repository }}
