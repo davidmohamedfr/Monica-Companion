@@ -303,48 +303,95 @@ build_apk:
 release:
   stage: release
   timeout: 20 minutes
+  needs:
+    - test
   rules:
-    - if: '$CI_COMMIT_TAG =~ /^v[0-9]+\.[0-9]+\.[0-9]+/'
+    - if: '$CI_COMMIT_TAG'
   script:
     - echo "🚀 Building release artifacts for $CI_COMMIT_TAG..."
     - flutter pub get
 
     # Run tests before release
+    - echo "🧪 Running tests..."
     - flutter test
 
-    # Build release APK
+    # Build release APK only
+    - echo "🔨 Building release APK..."
     - flutter build apk --release
 
-    # Build release AAB
-    - flutter build appbundle --release
+    # Prepare artifacts with version naming
+    - echo "📦 Preparing release artifacts..."
+    - cd build/app/outputs/flutter-apk
+    - mv app-release.apk monica-companion-$CI_COMMIT_TAG.apk
+    - sha256sum monica-companion-$CI_COMMIT_TAG.apk > monica-companion-$CI_COMMIT_TAG.apk.sha256
+    - cat monica-companion-$CI_COMMIT_TAG.apk.sha256
+    - cd -
+
+    # Cleanup old releases (keep last 2)
+    - echo "🧹 Cleaning up old releases..."
+    - |
+      # Install curl and jq if not available
+      apt-get update && apt-get install -y curl jq || true
+
+      # Fetch all releases
+      RELEASES=$(curl --header "PRIVATE-TOKEN: $CI_JOB_TOKEN" \
+        "$CI_API_V4_URL/projects/$CI_PROJECT_ID/releases" | jq -r '.[].tag_name' | head -20)
+
+      # Count releases
+      RELEASE_COUNT=$(echo "$RELEASES" | wc -l)
+      echo "📊 Found $RELEASE_COUNT releases"
+
+      # If more than 2 releases exist, delete oldest ones
+      if [ "$RELEASE_COUNT" -gt 2 ]; then
+        RELEASES_TO_DELETE=$(echo "$RELEASES" | tail -n +3)
+        echo "🗑️ Will delete: $RELEASES_TO_DELETE"
+
+        for TAG in $RELEASES_TO_DELETE; do
+          echo "Deleting release: $TAG"
+          curl --request DELETE --header "PRIVATE-TOKEN: $CI_JOB_TOKEN" \
+            "$CI_API_V4_URL/projects/$CI_PROJECT_ID/releases/$TAG" || echo "⚠️ Failed to delete $TAG"
+        done
+      else
+        echo "✅ Only $RELEASE_COUNT releases exist, no cleanup needed"
+      fi
   artifacts:
     paths:
-      - build/app/outputs/flutter-apk/app-release.apk
-      - build/app/outputs/bundle/release/app-release.aab
-    name: "monica-mobile-app-$CI_COMMIT_TAG"
+      - build/app/outputs/flutter-apk/monica-companion-$CI_COMMIT_TAG.apk
+      - build/app/outputs/flutter-apk/monica-companion-$CI_COMMIT_TAG.apk.sha256
+    name: "monica-companion-$CI_COMMIT_TAG"
+    expire_in: never
   release:
     tag_name: $CI_COMMIT_TAG
     name: "Release $CI_COMMIT_TAG"
     description: |
-      ## Changes in this Release
+      ## Monica Companion - Release $CI_COMMIT_TAG
 
-      - Built from commit $CI_COMMIT_SHA
-      - APK and AAB files available for download
+      **Build Information:**
+      - Built from commit: `$CI_COMMIT_SHA`
+      - Build date: $CI_COMMIT_TIMESTAMP
+      - Flutter version: $FLUTTER_VERSION
+      - Pipeline: $CI_PIPELINE_URL
 
-      ## Installation
+      ## Installation Instructions
 
-      ### From APK
-      1. Download the APK file below
-      2. Enable "Install from Unknown Sources" in Android settings
-      3. Install the APK
+      ### From APK (Recommended)
+      1. Download the APK file below: `monica-companion-$CI_COMMIT_TAG.apk`
+      2. Verify checksum (optional): Download `.sha256` file and compare
+      3. Enable "Install from Unknown Sources" in Android settings
+      4. Install the APK on your device
 
-      ### From F-Droid (coming soon)
-      - Will be available on F-Droid store
+      ### Checksum Verification
+      ```bash
+      sha256sum -c monica-companion-$CI_COMMIT_TAG.apk.sha256
+      ```
+
+      ## Changes
+      See commit history for detailed changes since last release.
     assets:
       links:
-        - name: "monica-mobile-app-$CI_COMMIT_TAG.apk"
-          url: "$CI_PROJECT_URL/-/jobs/$CI_JOB_ID/artifacts/file/build/app/outputs/flutter-apk/app-release.apk"
+        - name: "monica-companion-$CI_COMMIT_TAG.apk"
+          url: "$CI_PROJECT_URL/-/jobs/$CI_JOB_ID/artifacts/file/build/app/outputs/flutter-apk/monica-companion-$CI_COMMIT_TAG.apk"
           link_type: package
-        - name: "monica-mobile-app-$CI_COMMIT_TAG.aab"
-          url: "$CI_PROJECT_URL/-/jobs/$CI_JOB_ID/artifacts/file/build/app/outputs/bundle/release/app-release.aab"
-          link_type: package
+        - name: "monica-companion-$CI_COMMIT_TAG.apk.sha256"
+          url: "$CI_PROJECT_URL/-/jobs/$CI_JOB_ID/artifacts/file/build/app/outputs/flutter-apk/monica-companion-$CI_COMMIT_TAG.apk.sha256"
+          link_type: other
