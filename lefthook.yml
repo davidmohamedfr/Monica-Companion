@@ -51,6 +51,8 @@ pre-commit:
 # Pre-push: Unit tests before any push
 pre-push:
   parallel: false
+  exclude_tags:
+    - heavy-test
   commands:
     # 0. Warm up Flutter tool
     flutter-warmup:
@@ -83,7 +85,7 @@ pre-push:
 
     # 4. Run integration tests locally
     integration-tests:
-      tags: test
+      tags: heavy-test
       run: |
         echo "🧪 Running integration tests..."
         chmod +x scripts/run_integration_tests.sh
@@ -150,7 +152,6 @@ output:
 skip_output:
   - meta
   - skips
-
 # Instructions for team members
 #
 # USAGE:
