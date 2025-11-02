@@ -194,7 +194,8 @@ build_apk:
   timeout: 15 minutes
   interruptible: true
   needs:
-    - prepare
+    - test
+    - lint
   rules:
     - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
     - if: '$CI_COMMIT_BRANCH == "dev"'
@@ -303,11 +304,11 @@ build_apk:
 release:
   stage: release
   timeout: 20 minutes
-  interruptible: false  # Don't cancel release pipelines
+  interruptible: false # Don't cancel release pipelines
   # No dependency on test job - tags are created from tested commits on dev/main
   # Tests are still run inline below as final validation before release
   rules:
-    - if: '$CI_COMMIT_TAG'
+    - if: "$CI_COMMIT_TAG"
   script:
     - echo "🚀 Building release artifacts for $CI_COMMIT_TAG..."
     - flutter pub get
@@ -331,10 +332,7 @@ release:
     # Cleanup old releases (keep last 2)
     - echo "🧹 Cleaning up old releases..."
     - |
-      # Install curl and jq if not available
-      apt-get update && apt-get install -y curl jq || true
-
-      # Fetch all releases
+      # Fetch all releases (curl and jq pre-installed on runner)
       RELEASES=$(curl --header "PRIVATE-TOKEN: $CI_JOB_TOKEN" \
         "$CI_API_V4_URL/projects/$CI_PROJECT_ID/releases" | jq -r '.[].tag_name' | head -20)
 
