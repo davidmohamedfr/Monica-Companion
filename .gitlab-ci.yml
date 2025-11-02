@@ -112,9 +112,21 @@ lint:
 
     # Security scan for hardcoded secrets
     - echo "🔐 Scanning for hardcoded secrets..."
-    - grep -rE "api_key\s*=\s*['\"][^'\"]+['\"]" lib/ --include="*.dart" && echo "❌ Hardcoded API key found" && exit 1 || true
-    - grep -rE "password\s*=\s*['\"][^'\"]+['\"]" lib/ --include="*.dart" && echo "❌ Hardcoded password found" && exit 1 || true
-    - grep -r "print(" lib/ --include="*.dart" && echo "❌ Debug print statements found in lib/" && exit 1 || true
+    - |
+      if grep -rE "api_key\s*=\s*['\"][^'\"]+['\"]" lib/ --include="*.dart"; then
+        echo "❌ Hardcoded API key found"
+        exit 1
+      fi
+    - |
+      if grep -rE "password\s*=\s*['\"][^'\"]+['\"]" lib/ --include="*.dart"; then
+        echo "❌ Hardcoded password found"
+        exit 1
+      fi
+    - |
+      if grep -r "print(" lib/ --include="*.dart"; then
+        echo "❌ Debug print statements found in lib/"
+        exit 1
+      fi
 
     # Documentation check
     - echo "📚 Checking documentation..."
@@ -152,11 +164,18 @@ test:
     - flutter test --coverage --test-randomize-ordering-seed random
 
     # Calculate coverage percentage
-    - test -f coverage/lcov.info && total_lines=$(grep -E "^DA:" coverage/lcov.info | wc -l) || total_lines=0
-    - test -f coverage/lcov.info && covered_lines=$(grep -E "^DA:" coverage/lcov.info | grep -E ",1$|,[2-9][0-9]*$" | wc -l) || covered_lines=0
-    - test $total_lines -gt 0 && coverage=$((covered_lines * 100 / total_lines)) || coverage=0
-    - test $total_lines -gt 0 && echo "📊 Test coverage: ${coverage}%" || echo "No coverage data"
-    - test $coverage -lt 60 && test $total_lines -gt 0 && echo "⚠️ Warning: Test coverage is below 60%" || true
+    - |
+      if [ -f coverage/lcov.info ]; then
+        total_lines=$(grep -E "^DA:" coverage/lcov.info | wc -l)
+        covered_lines=$(grep -E "^DA:" coverage/lcov.info | grep -E ",1$|,[2-9][0-9]*$" | wc -l)
+        if [ $total_lines -gt 0 ]; then
+          coverage=$((covered_lines * 100 / total_lines))
+          echo "📊 Test coverage: ${coverage}%"
+          if [ $coverage -lt 60 ]; then
+            echo "⚠️ Warning: Test coverage is below 60%"
+          fi
+        fi
+      fi
   artifacts:
     paths:
       - coverage/
