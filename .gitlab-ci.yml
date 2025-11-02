@@ -318,16 +318,8 @@ release:
       "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/monica-companion/${CI_COMMIT_TAG}/monica-companion-${CI_COMMIT_TAG}.apk.sha256"
     - echo "✅ Uploaded to: ${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/monica-companion/${CI_COMMIT_TAG}/"
 
-    # Cleanup old releases (keep last 2)
-    - echo "🧹 Cleaning up old releases..."
-    - apt-get update && apt-get install -y curl jq || true
-    - RELEASES=$(curl --header "PRIVATE-TOKEN: $CI_JOB_TOKEN" "$CI_API_V4_URL/projects/$CI_PROJECT_ID/releases" | jq -r '.[].tag_name' | head -20)
-    - RELEASE_COUNT=$(echo "$RELEASES" | wc -l)
-    - echo "📊 Found $RELEASE_COUNT releases"
-    - test "$RELEASE_COUNT" -le 2 && echo "✅ Only $RELEASE_COUNT releases exist, no cleanup needed" && exit 0 || echo "Will delete old releases"
-    - RELEASES_TO_DELETE=$(echo "$RELEASES" | tail -n +3)
-    - echo "🗑️ Will delete:$RELEASES_TO_DELETE"
-    - echo "$RELEASES_TO_DELETE" | while read TAG; do echo "Deleting release:$TAG"; curl --request DELETE --header "PRIVATE-TOKEN:$CI_JOB_TOKEN" "$CI_API_V4_URL/projects/$CI_PROJECT_ID/releases/$TAG" || echo "⚠️ Failed to delete $TAG"; done
+    # Cleanup old releases (keep last 2) - Skip for now to avoid complexity
+    - echo "🧹 Release cleanup skipped - manual cleanup recommended"
   artifacts:
     paths:
       - build/app/outputs/flutter-apk/monica-companion-$CI_COMMIT_TAG.apk
