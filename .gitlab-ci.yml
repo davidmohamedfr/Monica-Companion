@@ -16,8 +16,7 @@ workflow:
 
 stages:
   - prepare
-  - lint
-  - test
+  - quality
   - build
   - integration_test
   - release
@@ -72,7 +71,7 @@ prepare:
 # LINT STAGE - Code quality checks
 # ============================================
 lint:
-  stage: lint
+  stage: quality
   timeout: 10 minutes
   interruptible: true
   needs:
@@ -149,7 +148,7 @@ lint:
 # TEST STAGE - Unit and widget tests
 # ============================================
 test:
-  stage: test
+  stage: quality
   timeout: 15 minutes
   interruptible: true
   needs:
@@ -334,24 +333,28 @@ release:
     - |
       # Fetch all releases (curl and jq pre-installed on runner)
       RELEASES=$(curl --header "PRIVATE-TOKEN: $CI_JOB_TOKEN" \
-        "$CI_API_V4_URL/projects/$CI_PROJECT_ID/releases" | jq -r '.[].tag_name' | head -20)
+        "$CI_API_V4_URL/projects/$CI_PROJECT_ID/releases" | jq -r '.[].tag_name' 2>/dev/null | head -20 || echo "")
 
-      # Count releases
-      RELEASE_COUNT=$(echo "$RELEASES" | wc -l)
-      echo "📊 Found $RELEASE_COUNT releases"
-
-      # If more than 2 releases exist, delete oldest ones
-      if [ "$RELEASE_COUNT" -gt 2 ]; then
-        RELEASES_TO_DELETE=$(echo "$RELEASES" | tail -n +3)
-        echo "🗑️ Will delete: $RELEASES_TO_DELETE"
-
-        for TAG in $RELEASES_TO_DELETE; do
-          echo "Deleting release: $TAG"
-          curl --request DELETE --header "PRIVATE-TOKEN: $CI_JOB_TOKEN" \
-            "$CI_API_V4_URL/projects/$CI_PROJECT_ID/releases/$TAG" || echo "⚠️ Failed to delete $TAG"
-        done
+      # Count releases (handle empty response)
+      if [ -z "$RELEASES" ]; then
+        echo "📊 No existing releases found"
       else
-        echo "✅ Only $RELEASE_COUNT releases exist, no cleanup needed"
+        RELEASE_COUNT=$(echo "$RELEASES" | wc -l)
+        echo "📊 Found $RELEASE_COUNT releases"
+
+        # If more than 2 releases exist, delete oldest ones
+        if [ "$RELEASE_COUNT" -gt 2 ]; then
+          RELEASES_TO_DELETE=$(echo "$RELEASES" | tail -n +3)
+          echo "🗑️ Will delete: $RELEASES_TO_DELETE"
+
+          for TAG in $RELEASES_TO_DELETE; do
+            echo "Deleting release: $TAG"
+            curl --request DELETE --header "PRIVATE-TOKEN: $CI_JOB_TOKEN" \
+              "$CI_API_V4_URL/projects/$CI_PROJECT_ID/releases/$TAG" || echo "⚠️ Failed to delete $TAG"
+          done
+        else
+          echo "✅ Only $RELEASE_COUNT releases exist, no cleanup needed"
+        fi
       fi
   artifacts:
     paths:
