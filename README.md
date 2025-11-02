@@ -6,7 +6,7 @@ A mobile companion application for [Monica](https://github.com/monicahq/monica),
 
 **Currently in Development** - V1 targeting Android platform
 
-This project is in active development phase with AIDD (AI-Driven Development) tooling setup complete. The Flutter mobile application is planned but not yet implemented.
+This project is in active development phase. The Flutter mobile application features are being implemented progressively.
 
 ## 🚀 Features (Planned V1)
 
@@ -27,11 +27,12 @@ This project is in active development phase with AIDD (AI-Driven Development) to
 
 ### For Users
 
-**Option 1: GitHub Releases (Recommended)**
-1. Go to [Releases](https://github.com/yourusername/monica-mobile-app/releases)
-2. Download the latest APK
-3. Enable "Install from Unknown Sources" in Android settings
-4. Install the APK
+**Option 1: GitLab Releases (Recommended)**
+1. Go to [Releases](https://gitlab.com/m0hdacorp/drafts/monica-companion/-/releases)
+2. Download the latest APK: [monica-companion-latest.apk](https://gitlab.com/m0hdacorp/drafts/monica-companion/-/releases/permalink/latest/downloads/monica-companion-latest.apk)
+3. Verify checksum (optional): Download the `.sha256` file and compare
+4. Enable "Install from Unknown Sources" in Android settings
+5. Install the APK
 
 **Option 2: F-Droid**
 - Available on F-Droid store (coming soon)
@@ -50,8 +51,8 @@ This project is in active development phase with AIDD (AI-Driven Development) to
 #### Setup
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/monica-mobile-app.git
-cd monica-mobile-app
+git clone https://gitlab.com/m0hdacorp/drafts/monica-companion.git
+cd monica-companion
 
 # Install Flutter dependencies
 flutter pub get
