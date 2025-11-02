@@ -4,9 +4,9 @@ A mobile companion application for [Monica](https://github.com/monicahq/monica),
 
 ## 🎯 Project Status
 
-**Currently in Development** - V1 targeting Android platform
+**Alpha Release (a0.1.x)** - Android platform
 
-This project is in active development phase. The Flutter mobile application features are being implemented progressively.
+This project is in early alpha stage. Core features are being implemented and tested. Expect bugs and breaking changes between releases.
 
 ## 🚀 Features (Planned V1)
 
@@ -28,11 +28,15 @@ This project is in active development phase. The Flutter mobile application feat
 ### For Users
 
 **Option 1: GitLab Releases (Recommended)**
-1. Go to [Releases](https://gitlab.com/m0hdacorp/drafts/monica-companion/-/releases) and download the latest APK
-   - Or use direct link: View the [latest release](https://gitlab.com/m0hdacorp/drafts/monica-companion/-/releases/permalink/latest) and download `monica-companion-v*.apk`
+1. Go to [Releases](https://gitlab.com/m0hdacorp/drafts/monica-companion/-/releases) and download the latest alpha APK (`monica-companion-a0.*.apk`)
 2. Verify checksum (optional): Download the `.sha256` file and compare
+   ```bash
+   sha256sum -c monica-companion-a0.*.apk.sha256
+   ```
 3. Enable "Install from Unknown Sources" in Android settings
 4. Install the APK
+
+> **Note**: Currently in alpha (a0.x.x). The app is under active development.
 
 **Option 2: F-Droid**
 - Available on F-Droid store (coming soon)
