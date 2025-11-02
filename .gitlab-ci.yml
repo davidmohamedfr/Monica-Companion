@@ -303,6 +303,7 @@ build_apk:
 release:
   stage: release
   timeout: 20 minutes
+  interruptible: false  # Don't cancel release pipelines
   # No dependency on test job - tags are created from tested commits on dev/main
   # Tests are still run inline below as final validation before release
   rules:
