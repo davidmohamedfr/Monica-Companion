@@ -331,8 +331,9 @@ release:
     # Create GitLab release using glab CLI
     - echo "🚀 Creating GitLab release..."
     - |
-      glab release create "$CI_COMMIT_TAG" \
+      GITLAB_TOKEN="$CI_JOB_TOKEN" glab release create "$CI_COMMIT_TAG" \
         --name "Release $CI_COMMIT_TAG" \
+        --ref "$CI_COMMIT_SHA" \
         --notes "## Monica Companion - Release $CI_COMMIT_TAG
 
       **Build Information:**
