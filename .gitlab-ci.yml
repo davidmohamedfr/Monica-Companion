@@ -152,17 +152,11 @@ test:
     - flutter test --coverage --test-randomize-ordering-seed random
 
     # Calculate coverage percentage
-    - test -f coverage/lcov.info && echo "Calculating coverage..." || echo "No coverage file"
-    - |
-      if [ -f coverage/lcov.info ]; then
-        total_lines=$(grep -E "^DA:" coverage/lcov.info | wc -l)
-        covered_lines=$(grep -E "^DA:" coverage/lcov.info | grep -E ",1$|,[2-9][0-9]*$" | wc -l)
-        if [ $total_lines -gt 0 ]; then
-          coverage=$((covered_lines * 100 / total_lines))
-          echo "📊 Test coverage: ${coverage}%"
-          test $coverage -lt 60 && echo "⚠️ Warning: Test coverage is below 60%" || true
-        fi
-      fi
+    - test -f coverage/lcov.info && total_lines=$(grep -E "^DA:" coverage/lcov.info | wc -l) || total_lines=0
+    - test -f coverage/lcov.info && covered_lines=$(grep -E "^DA:" coverage/lcov.info | grep -E ",1$|,[2-9][0-9]*$" | wc -l) || covered_lines=0
+    - test $total_lines -gt 0 && coverage=$((covered_lines * 100 / total_lines)) || coverage=0
+    - test $total_lines -gt 0 && echo "📊 Test coverage: ${coverage}%" || echo "No coverage data"
+    - test $coverage -lt 60 && test $total_lines -gt 0 && echo "⚠️ Warning: Test coverage is below 60%" || true
   artifacts:
     paths:
       - coverage/
@@ -330,17 +324,10 @@ release:
     - RELEASES=$(curl --header "PRIVATE-TOKEN: $CI_JOB_TOKEN" "$CI_API_V4_URL/projects/$CI_PROJECT_ID/releases" | jq -r '.[].tag_name' | head -20)
     - RELEASE_COUNT=$(echo "$RELEASES" | wc -l)
     - echo "📊 Found $RELEASE_COUNT releases"
-    - |
-      if [ "$RELEASE_COUNT" -gt 2 ]; then
-        RELEASES_TO_DELETE=$(echo "$RELEASES" | tail -n +3)
-        echo "🗑️ Will delete: $RELEASES_TO_DELETE"
-        for TAG in $RELEASES_TO_DELETE; do
-          echo "Deleting release: $TAG"
-          curl --request DELETE --header "PRIVATE-TOKEN: $CI_JOB_TOKEN" "$CI_API_V4_URL/projects/$CI_PROJECT_ID/releases/$TAG" || echo "⚠️ Failed to delete $TAG"
-        done
-      else
-        echo "✅ Only $RELEASE_COUNT releases exist, no cleanup needed"
-      fi
+    - test "$RELEASE_COUNT" -le 2 && echo "✅ Only $RELEASE_COUNT releases exist, no cleanup needed" && exit 0 || echo "Will delete old releases"
+    - RELEASES_TO_DELETE=$(echo "$RELEASES" | tail -n +3)
+    - echo "🗑️ Will delete:$RELEASES_TO_DELETE"
+    - echo "$RELEASES_TO_DELETE" | while read TAG; do echo "Deleting release:$TAG"; curl --request DELETE --header "PRIVATE-TOKEN:$CI_JOB_TOKEN" "$CI_API_V4_URL/projects/$CI_PROJECT_ID/releases/$TAG" || echo "⚠️ Failed to delete $TAG"; done
   artifacts:
     paths:
       - build/app/outputs/flutter-apk/monica-companion-$CI_COMMIT_TAG.apk
