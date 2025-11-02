@@ -112,21 +112,9 @@ lint:
 
     # Security scan for hardcoded secrets
     - echo "🔐 Scanning for hardcoded secrets..."
-    - |
-      if grep -rE "api_key\s*=\s*['\"][^'\"]+['\"]" lib/ --include="*.dart"; then
-        echo "❌ Hardcoded API key found"
-        exit 1
-      fi
-    - |
-      if grep -rE "password\s*=\s*['\"][^'\"]+['\"]" lib/ --include="*.dart"; then
-        echo "❌ Hardcoded password found"
-        exit 1
-      fi
-    - |
-      if grep -r "print(" lib/ --include="*.dart"; then
-        echo "❌ Debug print statements found in lib/"
-        exit 1
-      fi
+    - grep -rE "api_key\s*=\s*['\"][^'\"]+['\"]" lib/ --include="*.dart" && echo "❌ Hardcoded API key found" && exit 1 || true
+    - grep -rE "password\s*=\s*['\"][^'\"]+['\"]" lib/ --include="*.dart" && echo "❌ Hardcoded password found" && exit 1 || true
+    - grep -r "print(" lib/ --include="*.dart" && echo "❌ Debug print statements found in lib/" && exit 1 || true
 
     # Documentation check
     - echo "📚 Checking documentation..."
@@ -164,6 +152,7 @@ test:
     - flutter test --coverage --test-randomize-ordering-seed random
 
     # Calculate coverage percentage
+    - test -f coverage/lcov.info && echo "Calculating coverage..." || echo "No coverage file"
     - |
       if [ -f coverage/lcov.info ]; then
         total_lines=$(grep -E "^DA:" coverage/lcov.info | wc -l)
@@ -171,9 +160,7 @@ test:
         if [ $total_lines -gt 0 ]; then
           coverage=$((covered_lines * 100 / total_lines))
           echo "📊 Test coverage: ${coverage}%"
-          if [ $coverage -lt 60 ]; then
-            echo "⚠️ Warning: Test coverage is below 60%"
-          fi
+          test $coverage -lt 60 && echo "⚠️ Warning: Test coverage is below 60%" || true
         fi
       fi
   artifacts:
