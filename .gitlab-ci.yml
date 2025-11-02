@@ -328,16 +328,15 @@ release:
     - cat monica-companion-$CI_COMMIT_TAG.apk.sha256
     - cd -
 
-    # Create GitLab release using glab CLI
-    - echo "🚀 Creating GitLab release..."
+    # Create GitLab release using API
+    - echo "🚀 Creating GitLab release via API..."
     - |
-      GITLAB_TOKEN="$CI_JOB_TOKEN" glab release create "$CI_COMMIT_TAG" \
-        --name "Release $CI_COMMIT_TAG" \
-        --ref "$CI_COMMIT_SHA" \
-        --notes "## Monica Companion - Release $CI_COMMIT_TAG
+      # Prepare release description
+      RELEASE_DESCRIPTION=$(cat <<'EOF'
+      ## Monica Companion - Release $CI_COMMIT_TAG
 
       **Build Information:**
-      - Built from commit: \`$CI_COMMIT_SHA\`
+      - Built from commit: `$CI_COMMIT_SHA`
       - Build date: $CI_COMMIT_TIMESTAMP
       - Flutter version: $FLUTTER_VERSION
       - Pipeline: $CI_PIPELINE_URL
@@ -345,39 +344,79 @@ release:
       ## Installation Instructions
 
       ### From APK (Recommended)
-      1. Download the APK file below: \`monica-companion-$CI_COMMIT_TAG.apk\`
-      2. Verify checksum (optional): Download \`.sha256\` file and compare
-      3. Enable \"Install from Unknown Sources\" in Android settings
+      1. Download the APK file below: `monica-companion-$CI_COMMIT_TAG.apk`
+      2. Verify checksum (optional): Download `.sha256` file and compare
+      3. Enable "Install from Unknown Sources" in Android settings
       4. Install the APK on your device
 
       ### Checksum Verification
-      \`\`\`bash
+      ```bash
       sha256sum -c monica-companion-$CI_COMMIT_TAG.apk.sha256
-      \`\`\`
+      ```
 
       ## Changes
-      See commit history for detailed changes since last release." \
-        build/app/outputs/flutter-apk/monica-companion-$CI_COMMIT_TAG.apk#monica-companion-$CI_COMMIT_TAG.apk \
-        build/app/outputs/flutter-apk/monica-companion-$CI_COMMIT_TAG.apk.sha256#monica-companion-$CI_COMMIT_TAG.apk.sha256
+      See commit history for detailed changes since last release.
+      EOF
+      )
+
+      # Escape description for JSON
+      RELEASE_DESCRIPTION=$(echo "$RELEASE_DESCRIPTION" | jq -Rs .)
+
+      # Create release using GitLab API
+      curl --fail --request POST \
+        --header "JOB-TOKEN: $CI_JOB_TOKEN" \
+        --header "Content-Type: application/json" \
+        --data "{
+          \"name\": \"Release $CI_COMMIT_TAG\",
+          \"tag_name\": \"$CI_COMMIT_TAG\",
+          \"description\": $RELEASE_DESCRIPTION,
+          \"assets\": {
+            \"links\": [
+              {
+                \"name\": \"monica-companion-$CI_COMMIT_TAG.apk\",
+                \"url\": \"$CI_PROJECT_URL/-/jobs/$CI_JOB_ID/artifacts/file/build/app/outputs/flutter-apk/monica-companion-$CI_COMMIT_TAG.apk\",
+                \"link_type\": \"package\"
+              },
+              {
+                \"name\": \"monica-companion-$CI_COMMIT_TAG.apk.sha256\",
+                \"url\": \"$CI_PROJECT_URL/-/jobs/$CI_JOB_ID/artifacts/file/build/app/outputs/flutter-apk/monica-companion-$CI_COMMIT_TAG.apk.sha256\",
+                \"link_type\": \"other\"
+              }
+            ]
+          }
+        }" \
+        "$CI_API_V4_URL/projects/$CI_PROJECT_ID/releases"
+
+      echo "✅ Release created successfully"
 
     # Cleanup old releases (keep last 2)
     - echo "🧹 Cleaning up old releases..."
     - |
-      # List all releases
-      RELEASE_COUNT=$(glab release list --per-page 100 | wc -l)
-      echo "📊 Found $RELEASE_COUNT releases"
+      # Fetch all releases via API
+      RELEASES=$(curl --silent --header "JOB-TOKEN: $CI_JOB_TOKEN" \
+        "$CI_API_V4_URL/projects/$CI_PROJECT_ID/releases?per_page=100" | jq -r '.[].tag_name')
 
-      # If more than 2 releases exist, delete oldest ones
-      if [ "$RELEASE_COUNT" -gt 2 ]; then
-        RELEASES_TO_DELETE=$(glab release list --per-page 100 | tail -n +3 | awk '{print $1}')
-        echo "🗑️ Will delete old releases..."
-
-        for TAG in $RELEASES_TO_DELETE; do
-          echo "Deleting release: $TAG"
-          glab release delete "$TAG" --yes || echo "⚠️ Failed to delete $TAG"
-        done
+      # Count releases
+      if [ -z "$RELEASES" ]; then
+        echo "📊 No existing releases found (besides current)"
       else
-        echo "✅ Only $RELEASE_COUNT releases exist, no cleanup needed"
+        RELEASE_COUNT=$(echo "$RELEASES" | wc -l)
+        echo "📊 Found $RELEASE_COUNT releases"
+
+        # If more than 2 releases exist, delete oldest ones
+        if [ "$RELEASE_COUNT" -gt 2 ]; then
+          RELEASES_TO_DELETE=$(echo "$RELEASES" | tail -n +3)
+          echo "🗑️ Will delete old releases..."
+
+          for TAG in $RELEASES_TO_DELETE; do
+            echo "Deleting release: $TAG"
+            curl --request DELETE \
+              --header "JOB-TOKEN: $CI_JOB_TOKEN" \
+              "$CI_API_V4_URL/projects/$CI_PROJECT_ID/releases/$TAG" || echo "⚠️ Failed to delete $TAG"
+          done
+        else
+          echo "✅ Only $RELEASE_COUNT releases exist, no cleanup needed"
+        fi
       fi
 
   artifacts:
