@@ -331,12 +331,12 @@ release:
     # Create GitLab release using API
     - echo "🚀 Creating GitLab release via API..."
     - |
-      # Prepare release description
-      RELEASE_DESCRIPTION=$(cat <<'EOF'
+      # Prepare release description (without quotes to allow variable expansion)
+      RELEASE_DESCRIPTION=$(cat <<EOF
       ## Monica Companion - Release $CI_COMMIT_TAG
 
       **Build Information:**
-      - Built from commit: `$CI_COMMIT_SHA`
+      - Built from commit: \`$CI_COMMIT_SHA\`
       - Build date: $CI_COMMIT_TIMESTAMP
       - Flutter version: $FLUTTER_VERSION
       - Pipeline: $CI_PIPELINE_URL
@@ -344,15 +344,15 @@ release:
       ## Installation Instructions
 
       ### From APK (Recommended)
-      1. Download the APK file below: `monica-companion-$CI_COMMIT_TAG.apk`
-      2. Verify checksum (optional): Download `.sha256` file and compare
+      1. Download the APK file below: \`monica-companion-$CI_COMMIT_TAG.apk\`
+      2. Verify checksum (optional): Download \`.sha256\` file and compare
       3. Enable "Install from Unknown Sources" in Android settings
       4. Install the APK on your device
 
       ### Checksum Verification
-      ```bash
+      \`\`\`bash
       sha256sum -c monica-companion-$CI_COMMIT_TAG.apk.sha256
-      ```
+      \`\`\`
 
       ## Changes
       See commit history for detailed changes since last release.
