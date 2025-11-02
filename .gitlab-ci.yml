@@ -388,47 +388,7 @@ release:
         "$CI_API_V4_URL/projects/$CI_PROJECT_ID/releases"
 
       echo "✅ Release created successfully"
-
-    # Update README with latest release link
-    - echo "📝 Updating README with latest release..."
-    - |
-      # Create symlink assets for "latest" permalink
-      LATEST_APK_URL="$CI_PROJECT_URL/-/releases/permalink/latest/downloads/monica-companion-latest.apk"
-      LATEST_SHA256_URL="$CI_PROJECT_URL/-/releases/permalink/latest/downloads/monica-companion-latest.apk.sha256"
-
-      # Update release to add "latest" asset links
-      curl --silent --request PUT \
-        --header "JOB-TOKEN: $CI_JOB_TOKEN" \
-        --header "Content-Type: application/json" \
-        --data "{
-          \"assets\": {
-            \"links\": [
-              {
-                \"name\": \"monica-companion-$CI_COMMIT_TAG.apk\",
-                \"url\": \"$CI_PROJECT_URL/-/jobs/$CI_JOB_ID/artifacts/file/build/app/outputs/flutter-apk/monica-companion-$CI_COMMIT_TAG.apk\",
-                \"link_type\": \"package\"
-              },
-              {
-                \"name\": \"monica-companion-$CI_COMMIT_TAG.apk.sha256\",
-                \"url\": \"$CI_PROJECT_URL/-/jobs/$CI_JOB_ID/artifacts/file/build/app/outputs/flutter-apk/monica-companion-$CI_COMMIT_TAG.apk.sha256\",
-                \"link_type\": \"other\"
-              },
-              {
-                \"name\": \"monica-companion-latest.apk\",
-                \"url\": \"$CI_PROJECT_URL/-/jobs/$CI_JOB_ID/artifacts/file/build/app/outputs/flutter-apk/monica-companion-$CI_COMMIT_TAG.apk\",
-                \"link_type\": \"package\"
-              },
-              {
-                \"name\": \"monica-companion-latest.apk.sha256\",
-                \"url\": \"$CI_PROJECT_URL/-/jobs/$CI_JOB_ID/artifacts/file/build/app/outputs/flutter-apk/monica-companion-$CI_COMMIT_TAG.apk.sha256\",
-                \"link_type\": \"other\"
-              }
-            ]
-          }
-        }" \
-        "$CI_API_V4_URL/projects/$CI_PROJECT_ID/releases/$CI_COMMIT_TAG" || echo "⚠️ Failed to add latest links"
-
-      echo "✅ README links updated (uses GitLab's latest permalink)"
+      echo "📝 Users can access via: $CI_PROJECT_URL/-/releases/permalink/latest"
 
     # Cleanup old releases (keep last 2)
     - echo "🧹 Cleaning up old releases..."

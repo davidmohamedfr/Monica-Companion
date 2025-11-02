@@ -28,11 +28,11 @@ This project is in active development phase. The Flutter mobile application feat
 ### For Users
 
 **Option 1: GitLab Releases (Recommended)**
-1. Go to [Releases](https://gitlab.com/m0hdacorp/drafts/monica-companion/-/releases)
-2. Download the latest APK: [monica-companion-latest.apk](https://gitlab.com/m0hdacorp/drafts/monica-companion/-/releases/permalink/latest/downloads/monica-companion-latest.apk)
-3. Verify checksum (optional): Download the `.sha256` file and compare
-4. Enable "Install from Unknown Sources" in Android settings
-5. Install the APK
+1. Go to [Releases](https://gitlab.com/m0hdacorp/drafts/monica-companion/-/releases) and download the latest APK
+   - Or use direct link: View the [latest release](https://gitlab.com/m0hdacorp/drafts/monica-companion/-/releases/permalink/latest) and download `monica-companion-v*.apk`
+2. Verify checksum (optional): Download the `.sha256` file and compare
+3. Enable "Install from Unknown Sources" in Android settings
+4. Install the APK
 
 **Option 2: F-Droid**
 - Available on F-Droid store (coming soon)
