@@ -318,9 +318,9 @@ release:
 
     # Setup keystore for signing
     - echo "🔐 Setting up APK signing..."
-    - echo "$KEYSTORE_BASE64" | base64 -d > Monica-Companion/android/monica-companion-release.jks
+    - echo "$KEYSTORE_BASE64" | base64 -d > android/monica-companion-release.jks
     - |
-      cat > Monica-Companion/android/key.properties <<EOF
+      cat > android/key.properties <<EOF
       storePassword=$KEYSTORE_PASSWORD
       keyPassword=$KEY_PASSWORD
       keyAlias=$KEY_ALIAS
