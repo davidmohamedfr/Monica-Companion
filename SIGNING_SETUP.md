@@ -18,7 +18,7 @@ Implemented proper APK signing with release keystore for both local and CI/CD bu
 
 ### 1. Keystore File
 
-**Location**: `Monica-Companion/android/monica-companion-release.jks`
+**Location**: `android/monica-companion-release.jks`
 
 **Details**:
 - **Key Alias**: monica-companion
@@ -28,7 +28,7 @@ Implemented proper APK signing with release keystore for both local and CI/CD bu
 
 ### 2. Key Properties File
 
-**Location**: `Monica-Companion/android/key.properties` (gitignored)
+**Location**: `android/key.properties` (gitignored)
 
 **Content**:
 ```properties
@@ -40,7 +40,7 @@ storeFile=monica-companion-release.jks
 
 ### 3. Build Configuration
 
-**File**: `Monica-Companion/android/app/build.gradle`
+**File**: `android/app/build.gradle`
 
 **Changes**:
 - Added keystore properties loading
@@ -50,7 +50,6 @@ storeFile=monica-companion-release.jks
 ### 4. Build Release APK Locally
 
 ```bash
-cd Monica-Companion
 flutter build apk --release
 ```
 
@@ -91,7 +90,7 @@ Add these as **Protected** and **Masked** variables in GitLab Project Settings �
 ### Generate KEYSTORE_BASE64 Value
 
 ```bash
-base64 -i Monica-Companion/android/app/monica-companion-release.jks
+base64 -i android/monica-companion-release.jks
 ```
 
 **Base64 Encoded Keystore**:
@@ -114,8 +113,8 @@ The `.gitlab-ci.yml` release job now:
 
 ### Files to Keep Secure (Never Commit)
 
-- ✅ `Monica-Companion/android/key.properties` - Already in `.gitignore`
-- ✅ `Monica-Companion/android/monica-companion-release.jks` - Already in `.gitignore`
+- ✅ `android/key.properties` - Already in `.gitignore`
+- ✅ `android/monica-companion-release.jks` - Already in `.gitignore`
 
 ### GitLab Variables Security
 
@@ -130,7 +129,6 @@ The `.gitlab-ci.yml` release job now:
 ### Test Local Build
 
 ```bash
-cd Monica-Companion
 flutter build apk --release
 adb install build/app/outputs/flutter-apk/app-release.apk
 ```
@@ -152,7 +150,7 @@ Should install successfully on Android 14+ without "package is invalid" error.
 ⚠️ **WARNING**: Regenerating the keystore means users cannot update the app without uninstalling first. Only do this if absolutely necessary.
 
 ```bash
-cd Monica-Companion/android
+cd android
 keytool -genkey -v -keystore monica-companion-release.jks \
   -keyalg RSA -keysize 2048 -validity 10000 \
   -alias monica-companion \
