@@ -316,6 +316,17 @@ release:
     - echo "🧪 Running tests..."
     - flutter test
 
+    # Setup keystore for signing
+    - echo "🔐 Setting up APK signing..."
+    - echo "$KEYSTORE_BASE64" | base64 -d > Monica-Companion/android/monica-companion-release.jks
+    - |
+      cat > Monica-Companion/android/key.properties <<EOF
+      storePassword=$KEYSTORE_PASSWORD
+      keyPassword=$KEY_PASSWORD
+      keyAlias=$KEY_ALIAS
+      storeFile=monica-companion-release.jks
+      EOF
+
     # Build release APK only
     - echo "🔨 Building release APK..."
     - flutter build apk --release
