@@ -20,12 +20,13 @@ class SqliteContactRepository extends BaseRepository<Contact, int>
     try {
       const String sql = '''
         SELECT * FROM contacts
-        WHERE name LIKE ?
+        WHERE name LIKE ? ESCAPE '\\'
         ORDER BY name ASC
       ''';
+      final String sanitizedName = sanitizeSearchQuery(name);
       final List<Map<String, dynamic>> results = await database.rawQuery(
         sql,
-        <dynamic>['%$name%'],
+        <dynamic>['%$sanitizedName%'],
       );
       return results.map(fromMap).toList();
     } on Object catch (e) {
@@ -147,10 +148,11 @@ class SqliteContactRepository extends BaseRepository<Contact, int>
     try {
       const String sql = '''
         SELECT * FROM contacts
-        WHERE name LIKE ? OR email LIKE ? OR phone LIKE ?
+        WHERE name LIKE ? ESCAPE '\\' OR email LIKE ? ESCAPE '\\' OR phone LIKE ? ESCAPE '\\'
         ORDER BY name ASC
       ''';
-      final String searchPattern = '%$query%';
+      final String sanitizedQuery = sanitizeSearchQuery(query);
+      final String searchPattern = '%$sanitizedQuery%';
       final List<Map<String, dynamic>> results = await database.rawQuery(
         sql,
         <dynamic>[searchPattern, searchPattern, searchPattern],

@@ -127,10 +127,11 @@ class SqliteGiftRepository extends BaseRepository<Gift, int>
     try {
       const String sql = '''
         SELECT * FROM gifts
-        WHERE name LIKE ?
+        WHERE name LIKE ? ESCAPE '\\'
         ORDER BY date_given DESC, created_at DESC
       ''';
-      final String searchPattern = '%$name%';
+      final String sanitizedName = sanitizeSearchQuery(name);
+      final String searchPattern = '%$sanitizedName%';
       final List<Map<String, dynamic>> results = await database.rawQuery(
         sql,
         <dynamic>[searchPattern],

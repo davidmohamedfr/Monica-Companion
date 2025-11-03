@@ -121,10 +121,11 @@ class SqliteNoteRepository extends BaseRepository<Note, int>
     try {
       const String sql = '''
         SELECT * FROM notes
-        WHERE content LIKE ?
+        WHERE content LIKE ? ESCAPE '\\'
         ORDER BY updated_at DESC, created_at DESC
       ''';
-      final String searchPattern = '%$searchQuery%';
+      final String sanitizedQuery = sanitizeSearchQuery(searchQuery);
+      final String searchPattern = '%$sanitizedQuery%';
       final List<Map<String, dynamic>> results = await database.rawQuery(
         sql,
         <dynamic>[searchPattern],

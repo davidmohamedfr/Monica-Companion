@@ -189,4 +189,41 @@ abstract class BaseRepository<T extends BaseModel, ID>
       throw DatabaseException('Failed to clear entities: $e');
     }
   }
+
+  /// Sanitize search query to prevent SQL injection in LIKE clauses
+  ///
+  /// This method escapes special SQL LIKE wildcards and limits query length
+  /// to prevent malicious SQL injection attacks through search inputs.
+  ///
+  /// Security measures:
+  /// - Truncates queries longer than 100 characters
+  /// - Escapes backslash (\) characters
+  /// - Escapes percent (%) wildcards
+  /// - Escapes underscore (_) wildcards
+  /// - Escapes bracket ([) characters
+  ///
+  /// **IMPORTANT**: When using sanitized queries, always add `ESCAPE '\'`
+  /// clause to your SQL LIKE statement.
+  ///
+  /// Example:
+  /// ```dart
+  /// final sanitized = sanitizeSearchQuery(userInput);
+  /// final pattern = '%$sanitized%';
+  /// final sql = "SELECT * FROM table WHERE column LIKE ? ESCAPE '\\'";
+  /// ```
+  ///
+  /// @param query The user-provided search query to sanitize
+  /// @return Sanitized query safe for use in LIKE patterns
+  String sanitizeSearchQuery(String query) {
+    // Limit query length to prevent DOS attacks
+    String sanitized = query.length > 100 ? query.substring(0, 100) : query;
+
+    // Escape special LIKE wildcards and characters
+    // Order matters: backslash must be escaped first
+    return sanitized
+        .replaceAll(r'\', r'\\') // Escape backslash first
+        .replaceAll('%', r'\%')   // Escape percent wildcard
+        .replaceAll('_', r'\_')   // Escape underscore wildcard
+        .replaceAll('[', r'\[');  // Escape bracket character
+  }
 }

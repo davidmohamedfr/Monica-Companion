@@ -80,10 +80,11 @@ class SqliteActivityRepository extends BaseRepository<Activity, int>
     try {
       const String sql = '''
         SELECT * FROM activities
-        WHERE location LIKE ?
+        WHERE location LIKE ? ESCAPE '\\'
         ORDER BY date DESC
       ''';
-      final String searchPattern = '%$location%';
+      final String sanitizedLocation = sanitizeSearchQuery(location);
+      final String searchPattern = '%$sanitizedLocation%';
       final List<Map<String, dynamic>> results = await database.rawQuery(
         sql,
         <dynamic>[searchPattern],
@@ -136,10 +137,11 @@ class SqliteActivityRepository extends BaseRepository<Activity, int>
     try {
       const String sql = '''
         SELECT * FROM activities
-        WHERE title LIKE ?
+        WHERE title LIKE ? ESCAPE '\\'
         ORDER BY date DESC
       ''';
-      final String searchPattern = '%$title%';
+      final String sanitizedTitle = sanitizeSearchQuery(title);
+      final String searchPattern = '%$sanitizedTitle%';
       final List<Map<String, dynamic>> results = await database.rawQuery(
         sql,
         <dynamic>[searchPattern],

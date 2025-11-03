@@ -208,10 +208,11 @@ class SqliteReminderRepository extends BaseRepository<Reminder, int>
     try {
       const String sql = '''
         SELECT * FROM reminders
-        WHERE title LIKE ?
+        WHERE title LIKE ? ESCAPE '\\'
         ORDER BY due_date ASC
       ''';
-      final String searchPattern = '%$title%';
+      final String sanitizedTitle = sanitizeSearchQuery(title);
+      final String searchPattern = '%$sanitizedTitle%';
       final List<Map<String, dynamic>> results = await database.rawQuery(
         sql,
         <dynamic>[searchPattern],
