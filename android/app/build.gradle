@@ -5,10 +5,17 @@ plugins {
 }
 
 // Load keystore properties for signing
+// Supports both local file (key.properties) and environment variables (CI/CD)
 def keystoreProperties = new Properties()
 def keystorePropertiesFile = rootProject.file('key.properties')
 if (keystorePropertiesFile.exists()) {
     keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
+} else {
+    // Fallback to environment variables for CI/CD
+    keystoreProperties['keyAlias'] = System.getenv('KEYSTORE_ALIAS') ?: ''
+    keystoreProperties['keyPassword'] = System.getenv('KEYSTORE_PASSWORD') ?: ''
+    keystoreProperties['storeFile'] = System.getenv('KEYSTORE_FILE') ?: ''
+    keystoreProperties['storePassword'] = System.getenv('KEYSTORE_STORE_PASSWORD') ?: ''
 }
 
 android {

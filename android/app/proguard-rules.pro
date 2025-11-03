@@ -12,13 +12,12 @@
 #   public *;
 #}
 
-# Uncomment this to preserve the line number information for
-# debugging stack traces.
-#-keepattributes SourceFile,LineNumberTable
+# Preserve line number information for debugging stack traces
+# This is critical for crash reporting and production debugging
+-keepattributes SourceFile,LineNumberTable
 
-# If you keep the line number information, uncomment this to
-# hide the original source file name.
-#-renamesourcefileattribute SourceFile
+# Hide the original source file name for security
+-renamesourcefileattribute SourceFile
 
 # Flutter wrapper
 -keep class io.flutter.app.** { *; }
@@ -41,3 +40,26 @@
 -dontwarn com.google.android.play.core.tasks.OnFailureListener
 -dontwarn com.google.android.play.core.tasks.OnSuccessListener
 -dontwarn com.google.android.play.core.tasks.Task
+
+# Preserve model classes to prevent serialization issues
+# Keep all classes in db/models package for database operations
+-keep class com.monicahq.monica_companion.db.models.** { *; }
+
+# Preserve annotations for reflection-based serialization
+-keepattributes *Annotation*
+-keepattributes Signature
+-keepattributes InnerClasses
+-keepattributes EnclosingMethod
+
+# Keep serialization-related methods
+-keepclassmembers class * implements java.io.Serializable {
+    static final long serialVersionUID;
+    private static final java.io.ObjectStreamField[] serialPersistentFields;
+    private void writeObject(java.io.ObjectOutputStream);
+    private void readObject(java.io.ObjectInputStream);
+    java.lang.Object writeReplace();
+    java.lang.Object readResolve();
+}
+
+# Preserve generic signatures for type safety
+-keepattributes Signature
