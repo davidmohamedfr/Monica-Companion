@@ -99,9 +99,9 @@ void main() {
       test('should validate correct URL formats', () {
         // Valid URLs
         expect(Validators.isValidUrl('https://example.com'), isTrue);
-        expect(Validators.isValidUrl('http://example.com'), isTrue);
+        expect(Validators.isValidUrlAllowHttp('http://example.com'), isTrue);
         expect(Validators.isValidUrl('https://www.example.com'), isTrue);
-        expect(Validators.isValidUrl('http://subdomain.example.com'), isTrue);
+        expect(Validators.isValidUrlAllowHttp('http://subdomain.example.com'), isTrue);
         expect(Validators.isValidUrl('https://example.com/path'), isTrue);
         expect(
           Validators.isValidUrl('https://example.com/path/to/resource'),
@@ -146,7 +146,7 @@ void main() {
           isTrue,
         ); // Uri.parse allows this
         expect(
-          Validators.isValidUrl('http://'),
+          Validators.isValidUrlAllowHttp('http://'),
           isTrue,
         ); // Uri.parse allows this
       });
@@ -154,7 +154,7 @@ void main() {
       test('should handle edge cases', () {
         // Edge cases
         expect(Validators.isValidUrl('https://localhost'), isTrue);
-        expect(Validators.isValidUrl('http://127.0.0.1'), isTrue);
+        expect(Validators.isValidUrlAllowHttp('http://127.0.0.1'), isTrue);
         expect(Validators.isValidUrl('https://192.168.1.1'), isTrue);
         expect(Validators.isValidUrl('https://example.com:80'), isTrue);
         expect(Validators.isValidUrl('https://example.com:443'), isTrue);
@@ -198,6 +198,27 @@ void main() {
           Validators.isValidUrl('https://example.com?search=hello%20world'),
           isTrue,
         );
+      });
+    });
+
+    group('isValidUrlAllowHttp Tests', () {
+      test('should validate both HTTP and HTTPS URLs', () {
+        // HTTPS URLs should be valid
+        expect(Validators.isValidUrlAllowHttp('https://example.com'), isTrue);
+        expect(Validators.isValidUrlAllowHttp('https://www.example.com'), isTrue);
+
+        // HTTP URLs should be valid
+        expect(Validators.isValidUrlAllowHttp('http://example.com'), isTrue);
+        expect(Validators.isValidUrlAllowHttp('http://subdomain.example.com'), isTrue);
+        expect(Validators.isValidUrlAllowHttp('http://127.0.0.1'), isTrue);
+        expect(Validators.isValidUrlAllowHttp('http://localhost:3000'), isTrue);
+      });
+
+      test('should reject invalid schemes', () {
+        // Invalid schemes
+        expect(Validators.isValidUrlAllowHttp('ftp://example.com'), isFalse);
+        expect(Validators.isValidUrlAllowHttp('file:///path/to/file'), isFalse);
+        expect(Validators.isValidUrlAllowHttp('example.com'), isFalse);
       });
     });
 
@@ -351,31 +372,31 @@ void main() {
 
     group('isValidApiToken Tests', () {
       test('should validate correct API token formats', () {
-        // Valid API tokens (at least 10 characters)
+        // Valid API tokens (32-128 characters, 10+ unique chars)
         expect(
-          Validators.isValidApiToken('1234567890'),
+          Validators.isValidApiToken('abcdefghij1234567890klmnopqrstuv'),
           isTrue,
-        ); // Exactly 10 chars
+        ); // Exactly 32 chars with 10+ unique
         expect(
-          Validators.isValidApiToken('abcdefghijklmnop'),
+          Validators.isValidApiToken('abcdefghijklmnopqrstuvwxyz123456'),
           isTrue,
-        ); // 16 chars
+        ); // 32 chars alphanumeric
         expect(
-          Validators.isValidApiToken('sk-1234567890abcdef'),
+          Validators.isValidApiToken('sk-1234567890abcdef1234567890abcdef'),
           isTrue,
-        ); // Stripe-like format
+        ); // Stripe-like format extended
         expect(
-          Validators.isValidApiToken('ghp_1234567890abcdefghijk'),
+          Validators.isValidApiToken('ghp_1234567890abcdefghijk1234567890'),
           isTrue,
-        ); // GitHub-like format
+        ); // GitHub-like format extended
         expect(
-          Validators.isValidApiToken('xoxb-1234567890-abcdef'),
+          Validators.isValidApiToken('xoxb-1234567890-abcdef-1234567890-ghijkl'),
           isTrue,
-        ); // Slack-like format
+        ); // Slack-like format extended
         expect(
-          Validators.isValidApiToken('AIza1234567890abcdefGHIJKL'),
+          Validators.isValidApiToken('AIza1234567890abcdefGHIJKLMNOPQRSTUV'),
           isTrue,
-        ); // Google API-like format
+        ); // Google API-like format extended
         expect(
           Validators.isValidApiToken(
             'very_long_api_token_with_underscores_and_numbers_123456',
@@ -395,116 +416,123 @@ void main() {
           Validators.isValidApiToken('123456789'),
           isFalse,
         ); // Too short (9 chars)
+        expect(
+          Validators.isValidApiToken('1234567890'),
+          isFalse,
+        ); // Too short (10 chars, need 32+)
+        expect(
+          Validators.isValidApiToken('abcdefghijklmnopqrstuvwxyz'),
+          isFalse,
+        ); // Too short (26 chars, need 32+)
         expect(Validators.isValidApiToken('   '), isFalse); // Only whitespace
         expect(
           Validators.isValidApiToken('        '),
           isFalse,
-        ); // Only spaces (8 chars, < 10)
+        ); // Only spaces (8 chars, < 32)
         expect(
           Validators.isValidApiToken('   short   '),
-          isTrue,
-        ); // 11 chars total with content
+          isFalse,
+        ); // Content too short after trim
       });
 
       test('should handle tokens with whitespace', () {
-        // Tokens with leading/trailing whitespace
+        // Tokens with leading/trailing whitespace - trimmed then validated
         expect(
-          Validators.isValidApiToken('  1234567890  '),
+          Validators.isValidApiToken('  abcdefghij1234567890klmnopqrstuv  '),
           isTrue,
-        ); // Valid after trim
+        ); // Valid after trim (32 chars)
         expect(
-          Validators.isValidApiToken('\t1234567890\t'),
+          Validators.isValidApiToken('\tabcdefghij1234567890klmnopqrstuv\t'),
           isTrue,
-        ); // Valid after trim
+        ); // Valid after trim (32 chars)
         expect(
-          Validators.isValidApiToken('\n1234567890\n'),
+          Validators.isValidApiToken('\nabcdefghij1234567890klmnopqrstuv\n'),
           isTrue,
-        ); // Valid after trim
+        ); // Valid after trim (32 chars)
         expect(
           Validators.isValidApiToken('  123456789  '),
-          isTrue,
-        ); // 13 chars total with content
+          isFalse,
+        ); // Too short after trim
       });
 
       test('should handle various character types', () {
-        // Different character types
+        // Different character types (32+ chars, allowed chars only)
         expect(
-          Validators.isValidApiToken('ABC1234567'),
+          Validators.isValidApiToken('ABCDEFGHIJKLMNOPQRSTUVWXYZabcdef'),
           isTrue,
-        ); // Mixed case + numbers
+        ); // Mixed case + numbers (32 chars)
         expect(
-          Validators.isValidApiToken('abc-123-def'),
+          Validators.isValidApiToken('abc-123-def-456-ghi-789-jkl-012-mn'),
           isTrue,
-        ); // With hyphens
+        ); // With hyphens (34 chars)
         expect(
-          Validators.isValidApiToken('abc_123_def'),
+          Validators.isValidApiToken('abc_123_def_456_ghi_789_jkl_012_mn'),
           isTrue,
-        ); // With underscores
-        expect(Validators.isValidApiToken('abc.123.def'), isTrue); // With dots
+        ); // With underscores (34 chars)
+        expect(
+          Validators.isValidApiToken('abc.123.def.456.ghi.789.jkl.012.mn'),
+          isTrue,
+        ); // With dots (34 chars)
         expect(
           Validators.isValidApiToken('abc@123#def'),
-          isTrue,
-        ); // With special chars
+          isFalse,
+        ); // Special chars not allowed (@, #)
         expect(
-          Validators.isValidApiToken('1234567890'),
+          Validators.isValidApiToken('12345678901234567890123456789012'),
           isTrue,
-        ); // Only numbers
+        ); // Only numbers (32 chars with exactly 10 unique: 0-9)
         expect(
-          Validators.isValidApiToken('abcdefghij'),
+          Validators.isValidApiToken('abcdefghijklmnopqrstuvwxyzABCDEF'),
           isTrue,
-        ); // Only letters
+        ); // Only letters (32 chars with 10+ unique)
       });
 
       test('should handle edge cases', () {
         // Edge cases
         expect(
-          Validators.isValidApiToken('a123456789'),
+          Validators.isValidApiToken('abcdefghij1234567890klmnopqrstuv'),
           isTrue,
-        ); // Exactly 10 chars
+        ); // Exactly 32 chars with 10+ unique
         expect(
-          Validators.isValidApiToken('0123456789'),
+          Validators.isValidApiToken('0123456789abcdefghijklmnopqrstuv'),
           isTrue,
-        ); // Starting with zero
+        ); // Starting with zero (32 chars, 10+ unique)
         expect(
           Validators.isValidApiToken(r'!@#$%^&*()'),
-          isTrue,
-        ); // Only special chars (10)
+          isFalse,
+        ); // Special chars not allowed
         expect(
           Validators.isValidApiToken('          '),
           isFalse,
-        ); // 10 spaces but empty after trim
+        ); // Spaces but empty after trim
       });
 
       test('should validate realistic API token examples', () {
-        // Real-world-like examples
+        // Real-world-like examples (extended to 32+ chars)
         expect(
-          Validators.isValidApiToken('pk_test_1234567890abcdef'),
+          Validators.isValidApiToken('pk_test_1234567890abcdef1234567890abcd'),
           isTrue,
-        ); // Stripe public key
+        ); // Stripe public key (38 chars)
         expect(
-          Validators.isValidApiToken('sk_live_1234567890abcdef'),
+          Validators.isValidApiToken('sk_live_1234567890abcdef1234567890abcd'),
           isTrue,
-        ); // Stripe secret key
+        ); // Stripe secret key (38 chars)
         expect(
           Validators.isValidApiToken(
             'xoxb-1234567890-1234567890-abcdefghijklmnopqrstuvwx',
           ),
           isTrue,
-        ); // Slack bot token
+        ); // Slack bot token (48 chars)
         expect(
           Validators.isValidApiToken(
             'ghp_abcdefghijklmnopqrstuvwxyz1234567890',
           ),
           isTrue,
-        ); // GitHub personal access token
+        ); // GitHub personal access token (40 chars)
         expect(
-          Validators.isValidApiToken('Bearer 1234567890abcdef'),
+          Validators.isValidApiToken('AKIAIOSFODNN7EXAMPLE1234567890ABCDEFGH'),
           isTrue,
-        ); // Bearer token format
-        expect(
-          Validators.isValidApiToken('AKIAIOSFODNN7EXAMPLE'),
-          isTrue,
-        ); // AWS access key format
+        ); // AWS access key format (38 chars)
       });
     });
 
@@ -551,7 +579,7 @@ void main() {
         expect(
           Validators.isValidApiToken(unicodeString),
           isFalse,
-        ); // Unicode emojis are < 10 bytes
+        ); // Unicode emojis not in allowed charset
         expect(Validators.isNotEmpty(unicodeString), isTrue);
       });
 
@@ -584,7 +612,7 @@ void main() {
         const String email = 'test@example.com';
         const String url = 'https://example.com';
         const String phone = '+1234567890';
-        const String token = 'valid_api_token_123';
+        const String token = 'valid_api_token_1234567890abcdefghijklmnop';
         const String text = 'some text';
 
         final Stopwatch stopwatch = Stopwatch()..start();
